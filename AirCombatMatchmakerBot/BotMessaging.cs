@@ -36,9 +36,18 @@ public static class BotMessaging
     }
 
     // Send message to a specific channel in discord with the log information
-    public static async void SendLogMessage(string _logMessage)
+    public static async void SendLogMessage(string _logMessage, LogLevel _logLevel)
     {
-        string completeLogString = "```" + _logMessage + "```";
+        string completeLogString = "";
+
+        // Warns the admins if something is probably wrong with the bot
+        if (_logLevel <= LoggingParameters.BotLogWarnAdminsLevel)
+        {
+            completeLogString += "WARNING <@111788167195033600>! The bot produced an log level of " 
+                + _logLevel.ToString() + ". Here's the log:";
+        }
+
+        completeLogString += "```" + _logMessage + "```";
 
         if (BotReference.clientRef != null && BotReference.connected)
         {

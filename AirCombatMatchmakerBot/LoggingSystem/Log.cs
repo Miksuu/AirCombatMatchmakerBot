@@ -31,7 +31,7 @@ public static class Log
         // Restricts what logging go to the #log channel, by the log level in logging parameters.
         if (_logLevel <= LoggingParameters.BotLogDiscordChannelLevel)
         {
-            BotMessaging.SendLogMessage(logMessageRaw);
+            BotMessaging.SendLogMessage(logMessageRaw, _logLevel);
         }
     }
 

@@ -38,6 +38,15 @@ public static class CommandHandler
             case "!cat":
                 BotMessaging.SendMessage(MessageChannel, _Message, "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687");
                 break;
+            case "!logprint":
+                BotMessaging.SendMessage(MessageChannel, _Message, "PRINTING ALL LOG LEVELS");
+
+                foreach (var item in Enum.GetValues(typeof(LogLevel)))
+                {
+                    Log.WriteLine("Log level: " + item.ToString(), (LogLevel)item);
+                }
+
+                break;
             default:
                 BotMessaging.SendMessage(MessageChannel, _Message, "Unknown command.", true);
                 break;
