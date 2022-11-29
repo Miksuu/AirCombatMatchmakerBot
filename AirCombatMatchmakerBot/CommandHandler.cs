@@ -7,31 +7,30 @@ public static class CommandHandler
         ISocketMessageChannel MessageChannel = _Message.Channel;
         //ulong senderID = _Message.Author.Id;
 
-        var message = _Message.Content;
-
         // IF YOU WANT TO DO ANY LOGGING ABOVE THIS LINE,
         // NEED TO MAKE A CIRCULAR DEPENDENCY FIX OR CONFIRM THAT THE MESSAGE IS NOT IN THE #log CHANNEL
 
         // Returns if the message doesn't start with the prefix, or the author is a bot
         if ((!_Message.Content.StartsWith('!') || _Message.Author.IsBot)) return Task.CompletedTask;
 
-        Log.WriteLine("messageTest: " + message + " | " + message.ToString(), LogLevel.DEBUG);
+        //Log.WriteLine("messageTest: " + message + " | " + message.ToString(), LogLevel.DEBUG);
 
-        Log.WriteLine("Message received from: " + _Message.Author.Id + " in: " + MessageChannel, LogLevel.DEBUG);
+        Log.WriteLine("Message received from: " + _Message.Author.Id + " in: " + MessageChannel, LogLevel.VERBOSE);
 
-        Log.WriteLine("Received message! in " + MessageChannel, LogLevel.DEBUG);
+        Log.WriteLine("Received message! in " + MessageChannel, LogLevel.VERBOSE);
 
         //if (senderID != ulongHere) return;
 
         // Split in to the parameters
         string[] cmdParameters = _Message.Content.Split(' ');
 
+        // Just for logging
         foreach (var msgPart in cmdParameters)
         {
-            Log.WriteLine("msgPart: " + msgPart, LogLevel.DEBUG);
+            Log.WriteLine("msgPart: " + msgPart, LogLevel.VERBOSE);
         }
 
-        Log.WriteLine("msg content: " + _Message.Content.ToString(), LogLevel.DEBUG);
+        Log.WriteLine("msg content: " + _Message.Content.ToString(), LogLevel.VERBOSE);
 
         // The main switch case for handling the commands
         switch (cmdParameters[0]) // The first part of the message, the command
