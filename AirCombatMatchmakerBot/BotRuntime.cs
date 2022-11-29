@@ -43,11 +43,11 @@ public class BotRuntime
 
         BotReference.clientRef.Ready += () =>
         {
-            Console.WriteLine("Bot is connected!");
+            Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
             return Task.CompletedTask;
         };
 
-        Console.WriteLine("INIT DONE");
+        Log.WriteLine("INIT DONE", LogLevel.DEBUG);
 
         // Block this task until the program is closed.
         await Task.Delay(-1);
@@ -58,6 +58,6 @@ public class BotRuntime
     {
         // If the message was not in the cache, downloading it will result in getting a copy of `after`.
         var message = await before.GetOrDownloadAsync();
-        //Console.WriteLine($"{message} -> {after}");
+        //Log.WriteLine($"{message} -> {after}");
     } */
 }

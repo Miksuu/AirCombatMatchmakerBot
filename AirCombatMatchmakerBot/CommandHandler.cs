@@ -9,11 +9,11 @@ public static class CommandHandler
 
         var message = _Message.Content;
 
-        Console.WriteLine("messageTest: " + message + " | " + message.ToString());
+        Log.WriteLine("messageTest: " + message + " | " + message.ToString(), LogLevel.DEBUG);
 
-        Console.WriteLine("Message received from: " + senderID + " in: " + MessageChannel);
+        Log.WriteLine("Message received from: " + senderID + " in: " + MessageChannel, LogLevel.DEBUG);
 
-        Console.WriteLine("Received message! in " + MessageChannel);
+        Log.WriteLine("Received message! in " + MessageChannel, LogLevel.DEBUG);
 
         // Returns if the message doesn't start with the prefix, or the author is a bot
         if ((!_Message.Content.StartsWith('!') || _Message.Author.IsBot)) return;
@@ -25,17 +25,17 @@ public static class CommandHandler
 
         foreach (var msgPart in cmdParameters)
         {
-            Console.WriteLine("msgPart: " + msgPart);
+            Log.WriteLine("msgPart: " + msgPart, LogLevel.DEBUG);
         }
 
-        Console.WriteLine("msg content: " + _Message.Content.ToString());
+        Log.WriteLine("msg content: " + _Message.Content.ToString(), LogLevel.DEBUG);
 
         // The main switch case for handling the commands
         switch (cmdParameters[0]) // The first part of the message, the command
         {
             case "!test":
                 await MessageChannel.SendMessageAsync(_Message.Author.Mention +
-                    ", https://tenor.com/view/wow-omg-meme-suprise-gif-24927190");
+                    ", https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687");
                 break;
             default:
                 await MessageChannel.SendMessageAsync("Unknown command!");
