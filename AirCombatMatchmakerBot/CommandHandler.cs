@@ -9,14 +9,17 @@ public static class CommandHandler
 
         var message = _Message.Content;
 
+        // IF YOU WANT TO DO ANY LOGGING ABOVE THIS LINE,
+        // NEED TO MAKE A CIRCULAR DEPENDENCY FIX OR CONFIRM THAT THE MESSAGE IS NOT IN THE #log CHANNEL
+
+        // Returns if the message doesn't start with the prefix, or the author is a bot
+        if ((!_Message.Content.StartsWith('!') || _Message.Author.IsBot)) return;
+
         Log.WriteLine("messageTest: " + message + " | " + message.ToString(), LogLevel.DEBUG);
 
         Log.WriteLine("Message received from: " + senderID + " in: " + MessageChannel, LogLevel.DEBUG);
 
         Log.WriteLine("Received message! in " + MessageChannel, LogLevel.DEBUG);
-
-        // Returns if the message doesn't start with the prefix, or the author is a bot
-        if ((!_Message.Content.StartsWith('!') || _Message.Author.IsBot)) return;
 
         //if (senderID != ulongHere) return;
 
@@ -33,9 +36,8 @@ public static class CommandHandler
         // The main switch case for handling the commands
         switch (cmdParameters[0]) // The first part of the message, the command
         {
-            case "!test":
-                await MessageChannel.SendMessageAsync(_Message.Author.Mention +
-                    ", https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687");
+            case "!cat":
+                BotMessaging.SendMessage(MessageChannel, _Message, "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687");
                 break;
             default:
                 await MessageChannel.SendMessageAsync("Unknown command!");

@@ -18,14 +18,17 @@ public static class Log
         string date = DateTime.Now.Date.ToString("dd.MM.yyyy", culture);
         string time = DateTime.Now.ToString("hh:mm:ss.fff", culture);
 
-        string logMessage =
-            (date + " " + time + " - [LOG | " + _logLevel + "]: "
+        string logMessageRaw = (date + " " + time + " - [LOG | " + _logLevel + "]: "
             + Path.GetFileName(_filePath) + ": " + _memberName + "()" +
-            ", line " + _lineNumber + ": " + _message).Pastel(GetColorCode(_logLevel));
+            ", line " + _lineNumber + ": " + _message);
 
-        WriteToFileLogFile(_logLevel, logMessage);
+        string logMessageColor = logMessageRaw.Pastel(GetColorCode(_logLevel));
 
-        Console.WriteLine(logMessage);
+        WriteToFileLogFile(_logLevel, logMessageColor);
+
+        Console.WriteLine(logMessageColor);
+
+        BotMessaging.SendLogMessage(logMessageRaw);
     }
 
     private static Color GetColorCode(LogLevel _logLevel)

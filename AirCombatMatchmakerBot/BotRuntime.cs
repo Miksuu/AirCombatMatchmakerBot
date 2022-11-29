@@ -43,11 +43,10 @@ public class BotRuntime
 
         BotReference.clientRef.Ready += () =>
         {
+            BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
             return Task.CompletedTask;
         };
-
-        Log.WriteLine("INIT DONE", LogLevel.DEBUG);
 
         // Block this task until the program is closed.
         await Task.Delay(-1);
