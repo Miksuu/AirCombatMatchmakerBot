@@ -2,10 +2,10 @@
 
 public static class CommandHandler
 {
-    public static async Task HandleCommand(SocketMessage _Message)
+    public static Task HandleCommand(SocketMessage _Message)
     {
         ISocketMessageChannel MessageChannel = _Message.Channel;
-        ulong senderID = _Message.Author.Id;
+        //ulong senderID = _Message.Author.Id;
 
         var message = _Message.Content;
 
@@ -13,11 +13,11 @@ public static class CommandHandler
         // NEED TO MAKE A CIRCULAR DEPENDENCY FIX OR CONFIRM THAT THE MESSAGE IS NOT IN THE #log CHANNEL
 
         // Returns if the message doesn't start with the prefix, or the author is a bot
-        if ((!_Message.Content.StartsWith('!') || _Message.Author.IsBot)) return;
+        if ((!_Message.Content.StartsWith('!') || _Message.Author.IsBot)) return Task.CompletedTask;
 
         Log.WriteLine("messageTest: " + message + " | " + message.ToString(), LogLevel.DEBUG);
 
-        Log.WriteLine("Message received from: " + senderID + " in: " + MessageChannel, LogLevel.DEBUG);
+        Log.WriteLine("Message received from: " + _Message.Author.Id + " in: " + MessageChannel, LogLevel.DEBUG);
 
         Log.WriteLine("Received message! in " + MessageChannel, LogLevel.DEBUG);
 
@@ -40,9 +40,10 @@ public static class CommandHandler
                 BotMessaging.SendMessage(MessageChannel, _Message, "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687");
                 break;
             default:
-                await MessageChannel.SendMessageAsync("Unknown command!");
+                BotMessaging.SendMessage(MessageChannel, _Message, "Unknown command.", true);
                 break;
         }
-        return;
+
+        return Task.CompletedTask;
     }
 }
