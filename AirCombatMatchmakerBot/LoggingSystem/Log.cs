@@ -28,7 +28,11 @@ public static class Log
 
         Console.WriteLine(logMessageColor);
 
-        BotMessaging.SendLogMessage(logMessageRaw);
+        // Restricts what logging go to the #log channel, by the log level in logging parameters.
+        if (_logLevel <= LoggingParameters.BotLogDiscordChannelLevel)
+        {
+            BotMessaging.SendLogMessage(logMessageRaw);
+        }
     }
 
     private static Color GetColorCode(LogLevel _logLevel)
