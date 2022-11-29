@@ -24,7 +24,7 @@ public static class Log
 
         string logMessageColor = logMessageRaw.Pastel(GetColorCode(_logLevel));
 
-        WriteToFileLogFile(_logLevel, logMessageColor);
+        WriteToFileLogFile(_logLevel, logMessageRaw);
 
         Console.WriteLine(logMessageColor);
 
