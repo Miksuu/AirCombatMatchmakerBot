@@ -1,4 +1,4 @@
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using Discord.Commands;
 using System.Reflection;
 using Discord.Net;
@@ -23,6 +23,13 @@ public static class CommandHandler
         return Task.CompletedTask;
     }
 
+    private static Task PrepareCommands()
+    {
+        CommandBuilder.AddNewCommand("cat", "prints a cute cat");
+
+        return Task.CompletedTask;
+    }
+
     private static async Task SlashCommandHandler(SocketSlashCommand _command)
     {
         switch (_command.Data.Name)
@@ -37,12 +44,5 @@ public static class CommandHandler
         }
 
         Log.WriteLine("Sending message done", LogLevel.VERBOSE);
-    }
-
-    public static Task PrepareCommands()
-    {
-        CommandBuilder.AddNewCommand("cat", "prints a cute cat");
-
-        return Task.CompletedTask;
     }
 }
