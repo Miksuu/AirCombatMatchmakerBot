@@ -1,4 +1,4 @@
-﻿using Discord.WebSocket;
+using Discord.WebSocket;
 using Discord.Commands;
 using System.Reflection;
 using Discord.Net;
@@ -32,7 +32,7 @@ public static class CommandHandler
                     "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687"));
                 break;
             default:
-                await _command.RespondAsync(BotMessaging.GetResponse(_command, "Unknown command!", true));
+                await _command.RespondAsync(BotMessaging.GetResponse(_command, "Unknown command!"));
                 break;
         }
 
