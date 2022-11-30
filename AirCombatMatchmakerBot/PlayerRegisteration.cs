@@ -18,10 +18,14 @@ public static class PlayerRegisteration
             Log.WriteLine("User: " + _user + " has joined the discord with id: " + _user.Id +
                 " starting the registation process", LogLevel.DEBUG);
 
-            SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+            if (BotReference.clientRef != null)
+            {
+                SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
 
-            // Creates a private channel for the user to proceed with the registeration 
-            string chName = await ChannelManager.CreateANewChannel(_user, guild);
+                // Creates a private channel for the user to proceed with the registeration 
+                await ChannelManager.CreateANewChannel(_user, guild);
+            }
+            else Exceptions.BotClientRefNull();
         }
         else
         {

@@ -17,20 +17,15 @@ public static class ChannelManager
                 Log.WriteLine("Found channel: " + SGC.Name + " in " +
                     nameof(PlayerRegisteration.channelCreationQueue), LogLevel.DEBUG);
 
-                SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-
-                await SetChannelPermissions(kvp.Value, guild, (SocketGuildChannel)_channel);
+                if (BotReference.clientRef != null)
+                {
+                    SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+                    await SetChannelPermissions(kvp.Value, guild, (SocketGuildChannel)_channel);
+                }
+                else Exceptions.BotClientRefNull();
             }
         }
     }
-
-    /*
-    private static async Task SetPermissionsForNewPlayer(
-        SocketGuildUser _user, SocketGuild _guild, SocketChannel _channel)
-    {
-        Log.WriteLine("Starting to set permissions for the new user", LogLevel.DEBUG);
-        
-    } */
 
     public static async Task<string> CreateANewChannel(SocketGuildUser _user, SocketGuild _guild)
     {
@@ -46,7 +41,7 @@ public static class ChannelManager
 
                 var newChannel = await _guild.CreateTextChannelAsync(channelName, tcp => tcp.CategoryId = 1047529896735428638);
 
-                Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.DEBUG);
+                Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
 
                 PlayerRegisteration.channelCreationQueue.Add(newChannel.Name, _user);
 
@@ -69,7 +64,7 @@ public static class ChannelManager
 
         if (_channel != null)
         {
-            Log.WriteLine("FOUND CHANNEL: " + _channel.Id, LogLevel.DEBUG);
+            Log.WriteLine("FOUND CHANNEL TO SET PERMISSIONS ON: " + _channel.Id, LogLevel.DEBUG);
 
             // Allow the channell access to the new user
             await _channel.AddPermissionOverwriteAsync(_guild.GetUser(_user.Id), permissionOverridesUser);
@@ -81,29 +76,21 @@ public static class ChannelManager
         }
         else
         {
-            Log.WriteLine("Channel " + _channel.Id + " null!", LogLevel.CRITICAL);
+            Log.WriteLine("_Channel was null!", LogLevel.CRITICAL);
         }
-
-        /*
-        foreach (var ch in _guild.Channels)
-        {
-            Log.WriteLine("Looping through channel name: " + ch.Name, LogLevel.VERBOSE);
-
-            if (_channelName == ch.Name)
-            {
-
-            }
-        }*/
     }
 
     public static SocketGuildChannel FindChannel(SocketGuild _guild, string _channelName)
     {
-        if (_guild != null)
+        if (_guild.Channels != null)
         {
-            return _guild.Channels.SingleOrDefault(x => x.Name == _channelName);
+            var result = _guild.Channels.SingleOrDefault(x => x.Name == _channelName);
+            if (result != null)
+            {
+                return result;
+            }
         }
-        else Exceptions.GuildRefNull();
-
+        else { Exceptions.GuildRefNull(); }
         return null;
     }
 }
