@@ -39,6 +39,9 @@ public class BotRuntime
 
         //_client.MessageUpdated += MessageUpdated;
 
+        PlayerRegisteration.channelCreationQueue = new();
+
+
         BotReference.clientRef.Ready += async() =>
         {
             BotReference.connected = true;
@@ -48,6 +51,8 @@ public class BotRuntime
             await CommandHandler.InstallCommandsAsync();
 
             BotReference.clientRef.UserJoined += PlayerRegisteration.HandleUserJoin;
+
+            BotReference.clientRef.ChannelCreated += ChannelManager.HandleChannelCreation;
 
             return;
         };

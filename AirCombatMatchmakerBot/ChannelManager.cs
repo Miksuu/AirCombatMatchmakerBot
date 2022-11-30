@@ -1,16 +1,37 @@
 ﻿using Discord;
-using Discord.Rest;
 using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 
 public static class ChannelManager
 {
+    public static async Task HandleChannelCreation(SocketChannel _channel)
+    {
+        Log.WriteLine("HANDING CHANNEL CREATION FOR CHANNEL: " + _channel.Id + ", Queue size: " +
+            PlayerRegisteration.channelCreationQueue.Count, LogLevel.DEBUG);
+
+        foreach (var kvp in PlayerRegisteration.channelCreationQueue)
+        {
+            SocketGuildChannel SGC = (SocketGuildChannel)_channel;
+
+            if (kvp.Key == SGC.Name)
+            {
+                Log.WriteLine("Found channel: " + SGC.Name + " in " +
+                    nameof(PlayerRegisteration.channelCreationQueue), LogLevel.DEBUG);
+
+                SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+
+                await SetChannelPermissions(kvp.Value, guild, (SocketGuildChannel)_channel);
+            }
+        }
+    }
+
+    /*
+    private static async Task SetPermissionsForNewPlayer(
+        SocketGuildUser _user, SocketGuild _guild, SocketChannel _channel)
+    {
+        Log.WriteLine("Starting to set permissions for the new user", LogLevel.DEBUG);
+        
+    } */
+
     public static async Task<string> CreateANewChannel(SocketGuildUser _user, SocketGuild _guild)
     {
         string channelName = "registeration-" + _user.Id;
@@ -23,9 +44,13 @@ public static class ChannelManager
             {
                 Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
 
-                await _guild.CreateTextChannelAsync(channelName, tcp => tcp.CategoryId = 1047529896735428638);
+                var newChannel = await _guild.CreateTextChannelAsync(channelName, tcp => tcp.CategoryId = 1047529896735428638);
 
                 Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.DEBUG);
+
+                PlayerRegisteration.channelCreationQueue.Add(newChannel.Name, _user);
+
+                Log.WriteLine("Added to the queue done: " + PlayerRegisteration.channelCreationQueue.Count, LogLevel.DEBUG);
             }
             else Exceptions.BotClientRefNull();
         }
@@ -37,33 +62,28 @@ public static class ChannelManager
         return channelName;
     }
 
-    public static async Task SetChannelPermissions(SocketGuildUser _user, SocketGuild _guild, string _channelName)
+    public static async Task SetChannelPermissions(SocketGuildUser _user, SocketGuild _guild, SocketGuildChannel _channel)
     {
         // Sets permission overrides
-        var permissionOverridesEveryone = new OverwritePermissions(viewChannel: PermValue.Deny);
+        //var permissionOverridesEveryone = new OverwritePermissions(viewChannel: PermValue.Deny);
         var permissionOverridesUser = new OverwritePermissions(viewChannel: PermValue.Allow);
 
-        // Finds the channel that has been created
-        var channel = FindChannel(_guild, _channelName);
-
-        if (channel != null)
+        if (_channel != null)
         {
-            Log.WriteLine("FOUND CHANNEL: " + channel.Name, LogLevel.DEBUG);
+            Log.WriteLine("FOUND CHANNEL: " + _channel.Id, LogLevel.DEBUG);
 
             // Deny the channel access for everyone else
-            await channel.AddPermissionOverwriteAsync(_guild.EveryoneRole, permissionOverridesEveryone);
+            //await channel.AddPermissionOverwriteAsync(_guild.EveryoneRole, permissionOverridesEveryone);
 
             // Allow the channell access to the new user
-            await channel.AddPermissionOverwriteAsync(_guild.GetUser(_user.Id), permissionOverridesUser);
+            await _channel.AddPermissionOverwriteAsync(_guild.GetUser(_user.Id), permissionOverridesUser);
 
             Log.WriteLine("Setting permissions done.", LogLevel.DEBUG);
         }
         else
         {
-            Log.WriteLine("Channel " + _channelName + " null!", LogLevel.CRITICAL);
+            Log.WriteLine("Channel " + _channel.Id + " null!", LogLevel.CRITICAL);
         }
-
-
 
         /*
         foreach (var ch in _guild.Channels)

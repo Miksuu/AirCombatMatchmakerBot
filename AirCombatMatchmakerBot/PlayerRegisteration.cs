@@ -9,6 +9,8 @@ using System.Xml.Linq;
 
 public static class PlayerRegisteration
 {
+    public static Dictionary<string, SocketGuildUser> channelCreationQueue = new();
+
     public static async Task HandleUserJoin(SocketGuildUser _user)
     {
         if (!_user.IsBot)
@@ -20,19 +22,11 @@ public static class PlayerRegisteration
 
             // Creates a private channel for the user to proceed with the registeration 
             string chName = await ChannelManager.CreateANewChannel(_user, guild);
-
-            await SetPermissionsForNewPlayer(_user, guild, chName);
         }
         else
         {
             Log.WriteLine("A bot: " + _user.Nickname +
                 " joined the discord, disregarding the registeration process", LogLevel.WARNING);
         }
-    }
-
-    private static async Task SetPermissionsForNewPlayer(SocketGuildUser _user, SocketGuild _guild, string _channelName)
-    {
-        Log.WriteLine("Starting to set permissions for the new user", LogLevel.DEBUG);
-        await ChannelManager.SetChannelPermissions(_user, _guild, _channelName);
     }
 }
