@@ -5,9 +5,8 @@ using static System.Net.WebRequestMethods;
 public static class BotMessaging
 {
     // Send message to a user with a mention
-    public static async void SendMessage(
-        ISocketMessageChannel _SocketMessageChannel,
-        SocketMessage _SocketMessage,
+    public static string GetResponse(
+        SocketSlashCommand _command,
         string _messageString,
         bool unknownCommand = false) // just for logging purposes
     {
@@ -22,17 +21,13 @@ public static class BotMessaging
             logMessageString += "UNKNOWN";
         }
 
-        logMessageString += " command on channel: " + _SocketMessageChannel.Name +
-            " | that contains: " + _SocketMessage.Content +
+        logMessageString += " command on channel: " + _command.Channel +
+            " | that contains: " + _command.Data.Name +
             " | response: " + _messageString;
 
         Log.WriteLine(logMessageString, LogLevel.DEBUG);
 
-        await _SocketMessageChannel.SendMessageAsync(
-            _SocketMessage.Author.Mention + ", " +
-            _messageString);
-
-        Log.WriteLine("Sending message done", LogLevel.VERBOSE);
+        return _messageString;
     }
 
     // Send message to a specific channel in discord with the log information

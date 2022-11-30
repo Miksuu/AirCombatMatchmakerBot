@@ -8,7 +8,7 @@ using static System.Net.WebRequestMethods;
 
 public static class CommandHandler
 {
-    private static readonly CommandService commands;
+    //private static readonly CommandService commands;
 
     public static async Task InstallCommandsAsync()
     {
@@ -16,10 +16,35 @@ public static class CommandHandler
         BotReference.clientRef.SlashCommandExecuted += SlashCommandHandler;
     }
 
-    private static async Task SlashCommandHandler(SocketSlashCommand command)
+    private static async Task SlashCommandHandler(SocketSlashCommand _command)
     {
-        await command.RespondAsync($"You executed {command.Data.Name} command." +
+        /*
+        await _command.RespondAsync($"You executed {_command.Data.Name} command." +
             $" Here's a cat: https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687");
+        */
+
+        switch (_command.Data.Name)
+        {
+            case "cat":
+                await _command.RespondAsync(BotMessaging.GetResponse(_command,
+                    "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687"));
+                break;
+                /*
+            case "logprint":
+                BotMessaging.GetResponse(_command, "PRINTING ALL LOG LEVELS");
+
+                foreach (var item in Enum.GetValues(typeof(LogLevel)))
+                {
+                    Log.WriteLine("Log level: " + item.ToString(), (LogLevel)item);
+                }
+
+                break; */
+            default:
+                await _command.RespondAsync(BotMessaging.GetResponse(_command, "Unknown command!", true));
+                break;
+        }
+
+        Log.WriteLine("Sending message done", LogLevel.VERBOSE);
     }
 
     public static Task PrepareCommands()
@@ -34,23 +59,23 @@ public static class CommandHandler
     /*
     private static async Task HandleCommandAsync(SocketMessage messageParam)
     {
-        // Don't process the command if it was a system message
+        // Don't process the _command if it was a system message
         var message = messageParam as SocketUserMessage;
         if (message == null) return;
 
-        // Create a number to track where the prefix ends and the command begins
+        // Create a number to track where the prefix ends and the _command begins
         int argPos = 0;
 
-        // Determine if the message is a command based on the prefix and make sure no bots trigger commandService
+        // Determine if the message is a _command based on the prefix and make sure no bots trigger commandService
         if (!(message.HasCharPrefix('/', ref argPos) ||
             message.HasMentionPrefix(BotReference.clientRef.CurrentUser, ref argPos)) ||
             message.Author.IsBot)
             return;
 
-        // Create a WebSocket-based command context based on the message
+        // Create a WebSocket-based _command context based on the message
         var context = new SocketCommandContext(BotReference.clientRef, message);
 
-        // Execute the command with the command context we just
+        // Execute the _command with the _command context we just
         // created, along with the service provider for precondition checks.
         await BotReference.commandService.ExecuteAsync(
             context: context,
@@ -91,13 +116,13 @@ public static class CommandHandler
         Log.WriteLine("msg content: " + _Message.Content.ToString(), LogLevel.VERBOSE);
 
         // The main switch case for handling the commandService
-        switch (cmdParameters[0]) // The first part of the message, the command
+        switch (cmdParameters[0]) // The first part of the message, the _command
         {
             case "!cat":
-                BotMessaging.SendMessage(MessageChannel, _Message, "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687");
+                BotMessaging.GetResponse(MessageChannel, _Message, "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687");
                 break;
             case "!logprint":
-                BotMessaging.SendMessage(MessageChannel, _Message, "PRINTING ALL LOG LEVELS");
+                BotMessaging.GetResponse(MessageChannel, _Message, "PRINTING ALL LOG LEVELS");
 
                 foreach (var item in Enum.GetValues(typeof(LogLevel)))
                 {
@@ -106,7 +131,7 @@ public static class CommandHandler
 
                 break;
             default:
-                BotMessaging.SendMessage(MessageChannel, _Message, "Unknown command.", true);
+                BotMessaging.GetResponse(MessageChannel, _Message, "Unknown _command.", true);
                 break;
         }
 
