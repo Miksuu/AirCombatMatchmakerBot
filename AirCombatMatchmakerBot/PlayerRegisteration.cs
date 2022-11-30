@@ -23,7 +23,7 @@ public static class PlayerRegisteration
                 SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
 
                 // Creates a private channel for the user to proceed with the registeration 
-                await ChannelManager.CreateANewChannel(_user, guild);
+                await CreateANewRegisterationChannel(_user, guild, 1047529896735428638);
             }
             else Exceptions.BotClientRefNull();
         }
@@ -31,6 +31,37 @@ public static class PlayerRegisteration
         {
             Log.WriteLine("A bot: " + _user.Nickname +
                 " joined the discord, disregarding the registeration process", LogLevel.WARNING);
+        }
+    }
+
+    public static async Task CreateANewRegisterationChannel(SocketGuildUser _user, SocketGuild _guild, ulong _forCategory)
+    {
+        string channelName = "registeration-" + _user.Id;
+
+        // Try to find if the channel exists already (should not be the case)
+        var channel = ChannelManager.FindChannel(_guild, channelName);
+        if (channel == null)
+        {
+            if (BotReference.clientRef != null)
+            {
+                Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
+
+                var newChannel = await _guild.CreateTextChannelAsync(channelName, tcp => tcp.CategoryId = _forCategory);
+
+                Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
+
+                channelCreationQueue.Add(newChannel.Name, _user);
+
+                Log.WriteLine("Added to the queue done: " + PlayerRegisteration.channelCreationQueue.Count, LogLevel.DEBUG);
+            }
+            else Exceptions.BotClientRefNull();
+        }
+        // If the channel exists showhow, give the permissions manually still.
+        else
+        {
+            Log.WriteLine("This channel already exists! (should not be the case). Giving permissions anyway.", LogLevel.ERROR);
+            channelCreationQueue.Add(channelName, _user);
+            await ChannelManager.HandleChannelCreation(channel);
         }
     }
 }

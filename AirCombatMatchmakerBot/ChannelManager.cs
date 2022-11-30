@@ -20,44 +20,14 @@ public static class ChannelManager
                 if (BotReference.clientRef != null)
                 {
                     SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-                    await SetChannelPermissions(kvp.Value, guild, (SocketGuildChannel)_channel);
+                    await SetRegisterationChannelPermissions(kvp.Value, guild, (SocketGuildChannel)_channel);
                 }
                 else Exceptions.BotClientRefNull();
             }
         }
     }
 
-    public static async Task<string> CreateANewChannel(SocketGuildUser _user, SocketGuild _guild)
-    {
-        string channelName = "registeration-" + _user.Id;
-
-        var channel = FindChannel(_guild, channelName);
-
-        if (channel == null)
-        {
-            if (BotReference.clientRef != null)
-            {
-                Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
-
-                var newChannel = await _guild.CreateTextChannelAsync(channelName, tcp => tcp.CategoryId = 1047529896735428638);
-
-                Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
-
-                PlayerRegisteration.channelCreationQueue.Add(newChannel.Name, _user);
-
-                Log.WriteLine("Added to the queue done: " + PlayerRegisteration.channelCreationQueue.Count, LogLevel.DEBUG);
-            }
-            else Exceptions.BotClientRefNull();
-        }
-        else
-        {
-            Log.WriteLine("This channel already exists! (should not be the case)", LogLevel.WARNING);
-        }
-
-        return channelName;
-    }
-
-    public static async Task SetChannelPermissions(SocketGuildUser _user, SocketGuild _guild, SocketGuildChannel _channel)
+    public static async Task SetRegisterationChannelPermissions(SocketGuildUser _user, SocketGuild _guild, SocketGuildChannel _channel)
     {
         // Sets permission overrides
         var permissionOverridesUser = new OverwritePermissions(viewChannel: PermValue.Allow);
@@ -88,6 +58,10 @@ public static class ChannelManager
             if (result != null)
             {
                 return result;
+            }
+            else
+            {
+                Log.WriteLine("Didn't find channel that I was looking for named: " + _channelName, LogLevel.ERROR);
             }
         }
         else { Exceptions.GuildRefNull(); }
