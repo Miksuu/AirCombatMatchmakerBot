@@ -11,6 +11,8 @@ public class BotRuntime
 {
     public async Task BotRuntimeTask()
     {
+        await SerializationManager.DeSerializeDB();
+
         // Required after some discord API change
         var config = new DiscordSocketConfig()
         {

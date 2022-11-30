@@ -33,4 +33,25 @@ public static class PlayerManager
 
         await ChannelManager.DeleteUsersChannelsOnLeave(_guild, _user);
     }
+
+    public static Task AddNewPlayer(ulong _playerID, string _playerName)
+    {
+        Log.WriteLine("Adding a new player: " + _playerName + " (" + _playerID + ").", LogLevel.DEBUG);
+
+        // Checks if the player is already in the databse, just in case
+        if (!Database.Instance.PlayerData.PlayerIDs.ContainsKey(_playerID))
+        {
+            Database.Instance.PlayerData.PlayerIDs.Add(_playerID, new Player(_playerID, _playerName));
+            SerializationManager.SerializeDB();
+        }
+        else
+        {
+            Log.WriteLine("Tried to add a player that was already in the database!" ,LogLevel.WARNING);
+        }
+
+
+
+
+        return Task.CompletedTask;
+    }
 }

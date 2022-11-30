@@ -21,7 +21,8 @@ public static class ChannelManager
                 {
                     SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
 
-                    // Sets the players permissions to be accessible (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
+                    // Sets the players permissions to be accessible
+                    // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
                     await SetRegisterationChannelPermissions(kvp.Value, guild, SocketGuildChannel);
                     // Creates the registeration button
                     BotMessaging.CreateButton(SocketGuildChannel,
@@ -34,7 +35,8 @@ public static class ChannelManager
         }
     }
 
-    public static async Task SetRegisterationChannelPermissions(SocketGuildUser _user, SocketGuild _guild, SocketGuildChannel _channel)
+    public static async Task SetRegisterationChannelPermissions(
+        SocketGuildUser _user, SocketGuild _guild, SocketGuildChannel _channel)
     {
         // Sets permission overrides
         var permissionOverridesUser = new OverwritePermissions(viewChannel: PermValue.Allow);
@@ -79,7 +81,8 @@ public static class ChannelManager
     {
         var channelToBeDeleted = _guild.Channels.First(x => x.Name.Contains("registeration_" + _user.Id));
 
-        Log.WriteLine("Deleting channel: " + channelToBeDeleted.Name + " with ID: " + channelToBeDeleted.Id);
+        Log.WriteLine("Deleting channel: " + channelToBeDeleted.Name +
+            " with ID: " + channelToBeDeleted.Id, LogLevel.DEBUG);
 
         if (channelToBeDeleted != null)
         {
