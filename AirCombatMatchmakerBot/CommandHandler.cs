@@ -29,16 +29,6 @@ public static class CommandHandler
                 await _command.RespondAsync(BotMessaging.GetResponse(_command,
                     "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687"));
                 break;
-                /*
-            case "logprint":
-                BotMessaging.GetResponse(_command, "PRINTING ALL LOG LEVELS");
-
-                foreach (var item in Enum.GetValues(typeof(LogLevel)))
-                {
-                    Log.WriteLine("Log level: " + item.ToString(), (LogLevel)item);
-                }
-
-                break; */
             default:
                 await _command.RespondAsync(BotMessaging.GetResponse(_command, "Unknown command!", true));
                 break;
