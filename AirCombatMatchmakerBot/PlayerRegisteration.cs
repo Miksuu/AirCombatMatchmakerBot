@@ -11,29 +11,6 @@ public static class PlayerRegisteration
 {
     public static Dictionary<string, SocketGuildUser> channelCreationQueue = new();
 
-    public static async Task HandleUserJoin(SocketGuildUser _user)
-    {
-        if (!_user.IsBot)
-        {
-            Log.WriteLine("User: " + _user + " has joined the discord with id: " + _user.Id +
-                " starting the registation process", LogLevel.DEBUG);
-
-            if (BotReference.clientRef != null)
-            {
-                SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-
-                // Creates a private channel for the user to proceed with the registeration 
-                await CreateANewRegisterationChannel(_user, guild, 1047529896735428638);
-            }
-            else Exceptions.BotClientRefNull();
-        }
-        else
-        {
-            Log.WriteLine("A bot: " + _user.Nickname +
-                " joined the discord, disregarding the registeration process", LogLevel.WARNING);
-        }
-    }
-
     public static async Task CreateANewRegisterationChannel(SocketGuildUser _user, SocketGuild _guild, ulong _forCategory)
     {
         string channelName = "registeration-" + _user.Id;

@@ -49,7 +49,7 @@ public class BotRuntime
             // Listens for the commandService
             await CommandHandler.InstallCommandsAsync();
 
-            BotReference.clientRef.UserJoined += PlayerRegisteration.HandleUserJoin;
+            BotReference.clientRef.UserJoined += PlayerManager.HandleUserJoin;
 
             BotReference.clientRef.ChannelCreated += ChannelManager.HandleChannelCreation;
 
