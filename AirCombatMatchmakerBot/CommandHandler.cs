@@ -4,7 +4,6 @@ using System.Reflection;
 using Discord.Net;
 using Discord;
 using Newtonsoft.Json;
-using static System.Net.WebRequestMethods;
 
 public static class CommandHandler
 {
@@ -43,6 +42,6 @@ public static class CommandHandler
                 break;
         }
 
-        Log.WriteLine("Sending message done", LogLevel.VERBOSE);
+        Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
     }
 }
