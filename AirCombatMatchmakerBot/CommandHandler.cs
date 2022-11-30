@@ -8,10 +8,19 @@ using static System.Net.WebRequestMethods;
 
 public static class CommandHandler
 {
-    public static async Task InstallCommandsAsync()
+    public static Task InstallCommandsAsync()
     {
-        BotReference.clientRef.Ready += PrepareCommands;
-        BotReference.clientRef.SlashCommandExecuted += SlashCommandHandler;
+        if (BotReference.clientRef != null)
+        {
+            BotReference.clientRef.Ready += PrepareCommands;
+            BotReference.clientRef.SlashCommandExecuted += SlashCommandHandler;
+        }
+        else
+        {
+            Exceptions.BotClientRefNull();
+        }
+
+        return Task.CompletedTask;
     }
 
     private static async Task SlashCommandHandler(SocketSlashCommand _command)
