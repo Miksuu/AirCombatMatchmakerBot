@@ -53,6 +53,8 @@ public class BotRuntime
 
             BotReference.clientRef.ChannelCreated += ChannelManager.HandleChannelCreation;
 
+            BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
+
             BotReference.clientRef.UserLeft += PlayerManager.HandlePlayerLeave;
 
             return;

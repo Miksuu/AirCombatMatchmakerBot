@@ -34,11 +34,13 @@ public static class CommandHandler
         switch (_command.Data.Name)
         {
             case "cat":
-                await _command.RespondAsync(BotMessaging.GetResponse(_command,
-                    "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687"));
+                await _command.RespondAsync(BotMessaging.GetMessageResponse(_command.Data.Name,
+                    "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687", _command.Channel.Name));
                 break;
             default:
-                await _command.RespondAsync(BotMessaging.GetResponse(_command, "Unknown command!"));
+                await _command.RespondAsync(BotMessaging.GetMessageResponse(_command.Data.Name,
+                    "Unknown command!",
+                    _command.Channel.Name));
                 break;
         }
 

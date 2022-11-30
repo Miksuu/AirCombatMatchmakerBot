@@ -13,7 +13,7 @@ public static class PlayerRegisteration
 
     public static async Task CreateANewRegisterationChannel(SocketGuildUser _user, SocketGuild _guild, ulong _forCategory)
     {
-        string channelName = "registeration-" + _user.Id;
+        string channelName = "registeration_" + _user.Id;
 
         // Try to find if the channel exists already (should not be the case)
         var channel = ChannelManager.FindChannel(_guild, channelName);

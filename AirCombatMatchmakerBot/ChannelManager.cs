@@ -10,11 +10,11 @@ public static class ChannelManager
 
         foreach (var kvp in PlayerRegisteration.channelCreationQueue)
         {
-            SocketGuildChannel SGC = (SocketGuildChannel)_channel;
+            SocketGuildChannel SocketGuildChannel = (SocketGuildChannel)_channel;
 
-            if (kvp.Key == SGC.Name)
+            if (kvp.Key == SocketGuildChannel.Name)
             {
-                Log.WriteLine("Found channel: " + SGC.Name + " in " +
+                Log.WriteLine("Found channel: " + SocketGuildChannel.Name + " in " +
                     nameof(PlayerRegisteration.channelCreationQueue), LogLevel.DEBUG);
 
                 if (BotReference.clientRef != null)
@@ -22,13 +22,12 @@ public static class ChannelManager
                     SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
 
                     // Sets the players permissions to be accessible (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
-                    await SetRegisterationChannelPermissions(kvp.Value, guild, SGC);
-
+                    await SetRegisterationChannelPermissions(kvp.Value, guild, SocketGuildChannel);
                     // Creates the registeration button
-                    BotMessaging.CreateButton(SGC,
-                        "Click this button to register",
-                        "Register",
-                        "custom-id");
+                    BotMessaging.CreateButton(SocketGuildChannel,
+                        "Click this button to register [verification process with DCS" +
+                        " account linking will be included later here]",
+                        "Register", SocketGuildChannel.Name);
                 }
                 else Exceptions.BotClientRefNull();
             }
@@ -78,7 +77,7 @@ public static class ChannelManager
 
     public static Task DeleteUsersChannelsOnLeave(SocketGuild _guild, SocketUser _user)
     {
-        var channelToBeDeleted = _guild.Channels.First(x => x.Name.Contains("registeration-" + _user.Id));
+        var channelToBeDeleted = _guild.Channels.First(x => x.Name.Contains("registeration_" + _user.Id));
 
         if (channelToBeDeleted != null)
         {
