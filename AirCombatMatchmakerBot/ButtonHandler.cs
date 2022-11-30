@@ -20,7 +20,7 @@ public static class ButtonHandler
                 // Check that the button is the user's one
                 if (_component.User.Id.ToString() == splitString[1])
                 {
-                    await PlayerManager.AddNewPlayer(_component.User.Id, _component.User.Username);
+                    await PlayerManager.AddNewPlayer(_component);
 
                     await _component.RespondAsync(
                         _component.User.Mention + ", " +

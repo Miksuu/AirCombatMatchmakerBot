@@ -6,6 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 public class BotRuntime
 {
@@ -57,6 +62,10 @@ public class BotRuntime
 
             BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
 
+            BotReference.clientRef.MessageUpdated += PlayerManager.MessageUpdated;
+
+            BotReference.clientRef.GuildMemberUpdated += PlayerManager.HandleGuildMemberUpdated;
+
             BotReference.clientRef.UserLeft += PlayerManager.HandlePlayerLeave;
 
             return;
@@ -66,11 +75,4 @@ public class BotRuntime
         await Task.Delay(-1);
     }
 
-    /*
-    private async Task MessageUpdated(Cacheable<IMessage, ulong> before, SocketMessage after, ISocketMessageChannel channel)
-    {
-        // If the message was not in the cache, downloading it will result in getting a copy of `after`.
-        var message = await before.GetOrDownloadAsync();
-        //Log.WriteLine($"{message} -> {after}");
-    } */
 }

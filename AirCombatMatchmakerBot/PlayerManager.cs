@@ -34,24 +34,49 @@ public static class PlayerManager
         await ChannelManager.DeleteUsersChannelsOnLeave(_guild, _user);
     }
 
-    public static Task AddNewPlayer(ulong _playerID, string _playerName)
+    public static async Task AddNewPlayer(SocketMessageComponent _component)
     {
-        Log.WriteLine("Adding a new player: " + _playerName + " (" + _playerID + ").", LogLevel.DEBUG);
+        ulong playerId = _component.User.Id;
+
+        var nickName = GetSocketGuildUserById(playerId).Nickname;
+
+        Log.WriteLine("Adding a new player: " + nickName + " (" + playerId + ").", LogLevel.DEBUG);
 
         // Checks if the player is already in the databse, just in case
-        if (!Database.Instance.PlayerData.PlayerIDs.ContainsKey(_playerID))
+        if (!Database.Instance.PlayerData.PlayerIDs.ContainsKey(playerId))
         {
-            Database.Instance.PlayerData.PlayerIDs.Add(_playerID, new Player(_playerID, _playerName));
-            SerializationManager.SerializeDB();
+            Database.Instance.PlayerData.PlayerIDs.Add(playerId, new Player(playerId, nickName));
+            await SerializationManager.SerializeDB();
         }
         else
         {
             Log.WriteLine("Tried to add a player that was already in the database!" ,LogLevel.WARNING);
         }
+    }
 
+    public static async Task HandleGuildMemberUpdated(Cacheable<SocketGuildUser, ulong> before, SocketGuildUser _socketGuildUserAfter)
+    {
+        var playerValue = Database.Instance.PlayerData.PlayerIDs.First(x => x.Key == _socketGuildUserAfter.Id).Value;
 
+        Log.WriteLine("Updating user: " + _socketGuildUserAfter.Username + " (" + _socketGuildUserAfter.Id + ")" + 
+            " | name: " + playerValue.playerNickName + " -> " + _socketGuildUserAfter.Nickname, LogLevel.DEBUG);
 
+        if (playerValue != null)
+        {
+            playerValue.playerNickName = _socketGuildUserAfter.Nickname;
+        }
+        else Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username + "'s profile, no valid player found (not registed?) ", LogLevel.DEBUG);
+    }
 
-        return Task.CompletedTask;
+    public static async Task MessageUpdated(Cacheable<IMessage, ulong> before, SocketMessage after, ISocketMessageChannel channel)
+    {
+        // If the message was not in the cache, downloading it will result in getting a copy of `after`.
+        var message = await before.GetOrDownloadAsync();
+        Console.WriteLine($"{message} -> {after}");
+    }
+
+    public static SocketGuildUser GetSocketGuildUserById(ulong _id)
+    {
+        return (SocketGuildUser)BotReference.clientRef.GetUserAsync(_id).Result;
     }
 }

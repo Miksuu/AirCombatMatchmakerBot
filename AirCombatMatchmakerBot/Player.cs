@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 public class Player
 {
     public int skillRating { get; set; }
-    public string playerName { get; set; }
+    public string playerNickName { get; set; }
     public ulong playerId { get; set; }
 
     public Player()
@@ -15,10 +15,10 @@ public class Player
         skillRating = 1600;
     }
 
-    public Player(ulong _playerID, string _playerName)
+    public Player(ulong _playerID, string _playerNickName)
     {
         skillRating = 1600;
-        playerName = _playerName;
+        playerNickName = _playerNickName;
         playerId = _playerID;
     }
 }
