@@ -61,10 +61,27 @@ public static class ChannelManager
             }
             else
             {
-                Log.WriteLine("Didn't find channel that I was looking for named: " + _channelName, LogLevel.ERROR);
+                Log.WriteLine("Didn't find channel that I was looking for named: " + _channelName, LogLevel.DEBUG);
             }
         }
         else { Exceptions.GuildRefNull(); }
         return null;
+    }
+
+    public static Task DeleteUsersChannelsOnLeave(SocketGuild _guild, SocketUser _user)
+    {
+        var channelToBeDeleted = _guild.Channels.First(x => x.Name.Contains("registeration-" + _user.Id));
+
+        if (channelToBeDeleted != null)
+        {
+            channelToBeDeleted.DeleteAsync();
+        }
+        // If the registeing channel is removed afterwards, maybe handle this better way.
+        else
+        {
+            Log.WriteLine("Channel was not found, perhaps the user had registered " +
+                "and left after? Implement a better way here.", LogLevel.WARNING);
+        }
+        return Task.CompletedTask;
     }
 }

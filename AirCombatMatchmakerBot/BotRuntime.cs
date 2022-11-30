@@ -41,7 +41,6 @@ public class BotRuntime
 
         PlayerRegisteration.channelCreationQueue = new();
 
-
         BotReference.clientRef.Ready += async() =>
         {
             BotReference.connected = true;
@@ -53,6 +52,8 @@ public class BotRuntime
             BotReference.clientRef.UserJoined += PlayerRegisteration.HandleUserJoin;
 
             BotReference.clientRef.ChannelCreated += ChannelManager.HandleChannelCreation;
+
+            BotReference.clientRef.UserLeft += PlayerManager.HandlePlayerLeave;
 
             return;
         };

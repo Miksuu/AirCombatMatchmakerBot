@@ -52,7 +52,7 @@ public static class PlayerRegisteration
 
                 channelCreationQueue.Add(newChannel.Name, _user);
 
-                Log.WriteLine("Added to the queue done: " + PlayerRegisteration.channelCreationQueue.Count, LogLevel.DEBUG);
+                Log.WriteLine("Added to the queue done: " + channelCreationQueue.Count, LogLevel.DEBUG);
             }
             else Exceptions.BotClientRefNull();
         }
