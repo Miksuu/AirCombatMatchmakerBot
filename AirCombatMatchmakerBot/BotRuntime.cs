@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Discord.Commands;
 
 public class BotRuntime
 {
@@ -18,9 +19,6 @@ public class BotRuntime
 
         // Make the reference to a static class that has the main bot reference
         BotReference.clientRef = new DiscordSocketClient(config);
-
-        // Listens for the commands
-        BotReference.clientRef.MessageReceived += CommandHandler.HandleCommand;
 
         //GlobalVariables.clientRef.ReactionAdded += ReactionManager.Instance.HandleReactionAddTask;
         //GlobalVariables.clientRef.ReactionRemoved += ReactionManager.Instance.HandleReactionRemove;
@@ -41,11 +39,15 @@ public class BotRuntime
 
         //_client.MessageUpdated += MessageUpdated;
 
-        BotReference.clientRef.Ready += () =>
+        BotReference.clientRef.Ready += async() =>
         {
             BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
-            return Task.CompletedTask;
+
+            // Listens for the commandService
+            await CommandHandler.InstallCommandsAsync();
+
+            return;
         };
 
         // Block this task until the program is closed.
