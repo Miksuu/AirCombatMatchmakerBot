@@ -39,4 +39,29 @@ public static class BotMessaging
                 SendMessageAsync(completeLogString);
         }
     }
+
+    // Creates a button to a specific channel
+    public static async void CreateButton(SocketGuildChannel _channel,
+        string _textOnTheSameMessage,
+        string _label,
+        string _customId)
+    {
+        var builder = new ComponentBuilder()
+            .WithButton(_label, _customId);
+
+        if (BotReference.clientRef != null)
+        {
+            var textChannel = BotReference.clientRef.GetGuild(BotReference.GuildID).GetTextChannel(_channel.Id);
+
+            if (textChannel != null) 
+            {
+                await textChannel.SendMessageAsync(_textOnTheSameMessage, components: builder.Build());
+            }
+            else
+            {
+                Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
+            }
+        }
+        else Exceptions.BotClientRefNull();
+    }
 }

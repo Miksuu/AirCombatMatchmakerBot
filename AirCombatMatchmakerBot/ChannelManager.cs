@@ -20,7 +20,15 @@ public static class ChannelManager
                 if (BotReference.clientRef != null)
                 {
                     SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-                    await SetRegisterationChannelPermissions(kvp.Value, guild, (SocketGuildChannel)_channel);
+
+                    // Sets the players permissions to be accessible (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
+                    await SetRegisterationChannelPermissions(kvp.Value, guild, SGC);
+
+                    // Creates the registeration button
+                    BotMessaging.CreateButton(SGC,
+                        "Click this button to register",
+                        "Register",
+                        "custom-id");
                 }
                 else Exceptions.BotClientRefNull();
             }
