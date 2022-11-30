@@ -47,6 +47,8 @@ public class BotRuntime
             // Listens for the commandService
             await CommandHandler.InstallCommandsAsync();
 
+            BotReference.clientRef.UserJoined += PlayerRegisteration.HandleUserJoin;
+
             return;
         };
 

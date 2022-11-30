@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using static System.Net.WebRequestMethods;
 
 public static class BotMessaging
 {
