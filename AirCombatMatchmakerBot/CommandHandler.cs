@@ -4,77 +4,31 @@ using System.Reflection;
 using Discord.Net;
 using Discord;
 using Newtonsoft.Json;
+using static System.Net.WebRequestMethods;
 
-
-/*
-// Create a module with no prefix
-public class InfoModule : ModuleBase<SocketCommandContext>
+public static class CommandHandler
 {
-    // ~say hello world -> hello world
-    [Discord.Interactions.SlashCommand("say", "say something")]
-    [Summary("Echoes a message.")]
-    public Task SayAsync([Remainder][Summary("The text to echo")] string echo)
-        => ReplyAsync(echo);
+    private static readonly CommandService commands;
 
-    // ReplyAsync is a method on ModuleBase 
-}
-
-// Create a module with the 'sample' prefix
-[Group("sample")]
-public class SampleModule : ModuleBase<SocketCommandContext>
-{
-    [Discord.Interactions.SlashCommand("square", "square a number")]
-    // ~sample square 20 -> 400
-    [Summary("Squares a number.")]
-    public async Task SquareAsync(
-        [Summary("The number to square.")]
-        int num)
-    {
-        // We can also access the channel from the Command Context.
-        await Context.Channel.SendMessageAsync($"{num}^2 = {Math.Pow(num, 2)}");
-    }
-
-    // ~sample userinfo --> foxbot#0282
-    // ~sample userinfo @Khionu --> Khionu#8708
-    // ~sample userinfo Khionu#8708 --> Khionu#8708
-    // ~sample userinfo Khionu --> Khionu#8708
-    // ~sample userinfo 96642168176807936 --> Khionu#8708
-    // ~sample whois 96642168176807936 --> Khionu#8708
-    [Discord.Interactions.SlashCommand("userinfo", "enter uid")]
-    [Summary
-    ("Returns info about the current user, or the user parameter, if one passed.")]
-    [Alias("user", "whois")]
-    public async Task UserInfoAsync(
-        [Summary("The (optional) user to get info from")]
-        SocketUser user = null)
-    {
-        var userInfo = user ?? Context.Client.CurrentUser;
-        await ReplyAsync($"{userInfo.Username}#{userInfo.Discriminator}");
-    }
-}
-*/
-
-public class CommandHandler
-{
     public static async Task InstallCommandsAsync()
     {
+        BotReference.clientRef.Ready += PrepareCommands;
+        BotReference.clientRef.SlashCommandExecuted += SlashCommandHandler;
+    }
+
+    private static async Task SlashCommandHandler(SocketSlashCommand command)
+    {
+        await command.RespondAsync($"You executed {command.Data.Name} command." +
+            $" Here's a cat: https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687");
+    }
+
+    public static Task PrepareCommands()
+    {
+        //var guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+
         CommandBuilder.AddNewCommand("cat", "prints a cute cat");
 
-
-        // Hook the MessageReceived event into our command handler
-        //BotReference.clientRef.MessageReceived += HandleCommandAsync;
-
-        // Here we discover all of the command modules in the entry 
-        // assembly and load them. Starting from Discord.NET 2.0, a
-        // service provider is required to be passed into the
-        // module registration method to inject the 
-        // required dependencies.
-        //
-        // If you do not use Dependency Injection, pass null.
-        // See Dependency Injection guide for more information.
-        /*
-        await BotReference.commandService.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
-                                        services: null);*/
+        return Task.CompletedTask;
     }
 
     /*
