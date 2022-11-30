@@ -10,4 +10,9 @@ public static class Exceptions
     {
         Log.WriteLine(nameof(BotReference.clientRef) + " was null!", LogLevel.CRITICAL);
     }
+
+    public static void GuildRefNull()
+    {
+        Log.WriteLine("Guild ref was null! Wrong ID?" , LogLevel.CRITICAL);
+    }
 }

@@ -15,15 +15,24 @@ public static class ChannelManager
     {
         string channelName = "registeration-" + _user.Id;
 
-        if (BotReference.clientRef != null)
+        var channel = FindChannel(_guild, channelName);
+
+        if (channel == null)
         {
-            Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
+            if (BotReference.clientRef != null)
+            {
+                Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
 
-            await _guild.CreateTextChannelAsync(channelName, tcp => tcp.CategoryId = 1047529896735428638);
+                await _guild.CreateTextChannelAsync(channelName, tcp => tcp.CategoryId = 1047529896735428638);
 
-            Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.DEBUG);
+                Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.DEBUG);
+            }
+            else Exceptions.BotClientRefNull();
         }
-        else Exceptions.BotClientRefNull();
+        else
+        {
+            Log.WriteLine("This channel already exists! (should not be the case)", LogLevel.WARNING);
+        }
 
         return channelName;
     }
@@ -35,11 +44,11 @@ public static class ChannelManager
         var permissionOverridesUser = new OverwritePermissions(viewChannel: PermValue.Allow);
 
         // Finds the channel that has been created
-        var channel = _guild.Channels.SingleOrDefault(x => x.Name == _channelName);
+        var channel = FindChannel(_guild, _channelName);
 
         if (channel != null)
         {
-            Log.WriteLine("FOUND CHANNEL: " + channel.Name, LogLevel.WARNING);
+            Log.WriteLine("FOUND CHANNEL: " + channel.Name, LogLevel.DEBUG);
 
             // Deny the channel access for everyone else
             await channel.AddPermissionOverwriteAsync(_guild.EveryoneRole, permissionOverridesEveryone);
@@ -66,5 +75,16 @@ public static class ChannelManager
 
             }
         }*/
+    }
+
+    public static SocketGuildChannel FindChannel(SocketGuild _guild, string _channelName)
+    {
+        if (_guild != null)
+        {
+            return _guild.Channels.SingleOrDefault(x => x.Name == _channelName);
+        }
+        else Exceptions.GuildRefNull();
+
+        return null;
     }
 }
