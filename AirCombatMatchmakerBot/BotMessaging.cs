@@ -7,21 +7,9 @@ public static class BotMessaging
     // Send message to a user with a mention
     public static string GetResponse(
         SocketSlashCommand _command,
-        string _messageString,
-        bool unknownCommand = false) // just for logging purposes
+        string _messageString)
     {
-        string logMessageString = "Received an message that is a ";
-
-        if (!unknownCommand)
-        {
-            logMessageString += "VALID";
-        }
-        else
-        {
-            logMessageString += "UNKNOWN";
-        }
-
-        logMessageString += " command on channel: " + _command.Channel +
+        string logMessageString = "Received an message that is a command on channel: " + _command.Channel +
             " | that contains: " + _command.Data.Name +
             " | response: " + _messageString;
 
