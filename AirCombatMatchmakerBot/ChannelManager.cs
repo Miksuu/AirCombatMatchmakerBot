@@ -65,20 +65,19 @@ public static class ChannelManager
     public static async Task SetChannelPermissions(SocketGuildUser _user, SocketGuild _guild, SocketGuildChannel _channel)
     {
         // Sets permission overrides
-        //var permissionOverridesEveryone = new OverwritePermissions(viewChannel: PermValue.Deny);
         var permissionOverridesUser = new OverwritePermissions(viewChannel: PermValue.Allow);
 
         if (_channel != null)
         {
             Log.WriteLine("FOUND CHANNEL: " + _channel.Id, LogLevel.DEBUG);
 
-            // Deny the channel access for everyone else
-            //await channel.AddPermissionOverwriteAsync(_guild.EveryoneRole, permissionOverridesEveryone);
-
             // Allow the channell access to the new user
             await _channel.AddPermissionOverwriteAsync(_guild.GetUser(_user.Id), permissionOverridesUser);
 
-            Log.WriteLine("Setting permissions done.", LogLevel.DEBUG);
+            PlayerRegisteration.channelCreationQueue.Remove(_channel.Name);
+
+            Log.WriteLine("Setting permissions done. Queue size is now: " +
+                PlayerRegisteration.channelCreationQueue.Count, LogLevel.DEBUG);
         }
         else
         {
