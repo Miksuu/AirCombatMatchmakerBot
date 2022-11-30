@@ -79,6 +79,8 @@ public static class ChannelManager
     {
         var channelToBeDeleted = _guild.Channels.First(x => x.Name.Contains("registeration_" + _user.Id));
 
+        Log.WriteLine("Deleting channel: " + channelToBeDeleted.Name + " with ID: " + channelToBeDeleted.Id);
+
         if (channelToBeDeleted != null)
         {
             channelToBeDeleted.DeleteAsync();
