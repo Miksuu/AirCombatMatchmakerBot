@@ -62,7 +62,7 @@ public class BotRuntime
 
             BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
 
-            BotReference.clientRef.MessageUpdated += PlayerManager.MessageUpdated;
+            //BotReference.clientRef.MessageUpdated += PlayerManager.MessageUpdated;
 
             BotReference.clientRef.GuildMemberUpdated += PlayerManager.HandleGuildMemberUpdated;
 

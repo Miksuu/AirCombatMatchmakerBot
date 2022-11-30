@@ -9,8 +9,11 @@ public static class CommandHandler
 {
     public static Task InstallCommandsAsync()
     {
+        Log.WriteLine("Starting to install the commands.", LogLevel.VERBOSE);
+
         if (BotReference.clientRef != null)
         {
+            Log.WriteLine("clientRef is not null.", LogLevel.VERBOSE);
             BotReference.clientRef.Ready += PrepareCommands;
             BotReference.clientRef.SlashCommandExecuted += SlashCommandHandler;
         }
@@ -24,7 +27,16 @@ public static class CommandHandler
 
     private static Task PrepareCommands()
     {
-        CommandBuilder.AddNewCommand("cat", "prints a cute cat");
+        Log.WriteLine("Starting to prepare the commands.", LogLevel.VERBOSE);
+
+        CommandBuilder.AddNewCommand("cats", "Prints a cute cat!");
+        CommandBuilder.AddNewCommandWithOption("terminate",
+            "deletes a player profile, completely",
+            "userId", 
+            "which user do you want to terminate?"
+            );
+
+        Log.WriteLine("Done preparing the commands.", LogLevel.VERBOSE);
 
         return Task.CompletedTask;
     }
@@ -36,6 +48,9 @@ public static class CommandHandler
             case "cat":
                 await _command.RespondAsync(BotMessaging.GetMessageResponse(_command.Data.Name,
                     "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687", _command.Channel.Name));
+                break;
+            case "terminate":
+                PlayerManager.DeletePlayerProfile();
                 break;
             default:
                 await _command.RespondAsync(BotMessaging.GetMessageResponse(_command.Data.Name,

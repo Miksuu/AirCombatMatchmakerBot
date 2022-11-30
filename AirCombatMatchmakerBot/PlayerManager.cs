@@ -21,7 +21,7 @@ public static class PlayerManager
         }
         else
         {
-            Log.WriteLine("A bot: " + _user.Nickname +
+            Log.WriteLine("A bot: " + _user.Username +
                 " joined the discord, disregarding the registeration process", LogLevel.WARNING);
         }
     }
@@ -38,7 +38,7 @@ public static class PlayerManager
     {
         ulong playerId = _component.User.Id;
 
-        var nickName = GetSocketGuildUserById(playerId).Nickname;
+        var nickName = CheckIfNickNameIsEmptyAndReturnUsername(playerId);
 
         Log.WriteLine("Adding a new player: " + nickName + " (" + playerId + ").", LogLevel.DEBUG);
 
@@ -50,7 +50,7 @@ public static class PlayerManager
         }
         else
         {
-            Log.WriteLine("Tried to add a player that was already in the database!" ,LogLevel.WARNING);
+            Log.WriteLine("Tried to add a player that was already in the database!", LogLevel.WARNING);
         }
     }
 
@@ -58,12 +58,18 @@ public static class PlayerManager
     {
         var playerValue = Database.Instance.PlayerData.PlayerIDs.First(x => x.Key == _socketGuildUserAfter.Id).Value;
 
+        // This should not be empty, since it's being looked up from the database
+        string playerValueNickName = playerValue.playerNickName;
+
+        string socketGuildUserAfterNickName = CheckIfNickNameIsEmptyAndReturnUsername(_socketGuildUserAfter.Id);
+
         Log.WriteLine("Updating user: " + _socketGuildUserAfter.Username + " (" + _socketGuildUserAfter.Id + ")" + 
-            " | name: " + playerValue.playerNickName + " -> " + _socketGuildUserAfter.Nickname, LogLevel.DEBUG);
+            " | name: " + playerValueNickName + " -> " + socketGuildUserAfterNickName, LogLevel.DEBUG);
 
         if (playerValue != null)
         {
-            playerValue.playerNickName = _socketGuildUserAfter.Nickname;
+            playerValue.playerNickName = socketGuildUserAfterNickName;
+            await SerializationManager.SerializeDB();
         }
         else Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username + "'s profile, no valid player found (not registed?) ", LogLevel.DEBUG);
     }
@@ -78,5 +84,29 @@ public static class PlayerManager
     public static SocketGuildUser GetSocketGuildUserById(ulong _id)
     {
         return (SocketGuildUser)BotReference.clientRef.GetUserAsync(_id).Result;
+    }
+
+    public static string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
+    {
+        var SocketGuildUser = GetSocketGuildUserById(_id);
+        string userName = SocketGuildUser.Username;
+        string nickName = SocketGuildUser.Nickname;
+
+        Log.WriteLine("Checking if " + userName + "'s (" + _id + ")" +
+            " nickName: " + nickName + " | " + " is the same", LogLevel.DEBUG);
+
+        if (nickName == "" || nickName == userName || nickName == null)
+        {
+            return userName;
+        }
+        else
+        {
+            return nickName;
+        }
+    }
+
+    public static async Task DeletePlayerProfile()
+    {
+        //Database.Instance.PlayerData.PlayerIDs
     }
 }
