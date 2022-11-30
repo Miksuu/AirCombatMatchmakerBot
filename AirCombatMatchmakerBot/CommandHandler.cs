@@ -58,12 +58,8 @@ public class CommandHandler
 {
     public static async Task InstallCommandsAsync()
     {
-        var guildCommand = new SlashCommandBuilder()
-            .WithName("list-roles")
-            .WithDescription("Lists all roles of a user.")
-            .AddOption("user", ApplicationCommandOptionType.User, "The users whos roles you want to be listed", isRequired: true);
+        CommandBuilder.AddNewCommand("cat", "prints a cute cat");
 
-        await BotReference.clientRef.Rest.CreateGuildCommand(guildCommand.Build(), BotReference.GuildID);
 
         // Hook the MessageReceived event into our command handler
         //BotReference.clientRef.MessageReceived += HandleCommandAsync;
