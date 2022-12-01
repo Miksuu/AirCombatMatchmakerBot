@@ -20,7 +20,7 @@ public static class CommandHandler
         else
         {
             Exceptions.BotClientRefNull();
-        }   
+        }
         return Task.CompletedTask;
     }
 
@@ -31,7 +31,7 @@ public static class CommandHandler
         CommandBuilder.AddNewCommand("cats", "Prints a cute cat!");
         CommandBuilder.AddNewCommandWithOption("terminate",
             "deletes a player profile, completely",
-            "userid", 
+            "userid",
             "which user do you want to terminate?"
             );
 
@@ -48,8 +48,12 @@ public static class CommandHandler
                 await _command.RespondAsync(BotMessaging.GetMessageResponse(_command.Data.Name,
                     "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687", _command.Channel.Name));
                 break;
+            // ADMIN COMMAND
             case "terminate":
-                PlayerManager.DeletePlayerProfile();
+                if (CheckIfCommandSenderWasAnAdmin(_command))
+                {
+                    await PlayerManager.DeletePlayerProfile();
+                }
                 break;
             default:
                 await _command.RespondAsync(BotMessaging.GetMessageResponse(_command.Data.Name,
@@ -59,5 +63,10 @@ public static class CommandHandler
         }
 
         Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
+    }
+
+    private static bool CheckIfCommandSenderWasAnAdmin(SocketSlashCommand _command)
+    {
+        return Database.Instance.adminIDs.Contains(_command.User.Id);
     }
 }

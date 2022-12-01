@@ -13,7 +13,7 @@ public class Database
 
     //public List<Tournament> Tournaments { get; set; }
 
-    public Dictionary<ulong, string> adminIDs { get; set; }
+    public List<ulong> adminIDs { get; set; }
 
     public List<ulong> cantRegisterIDs { get; set; }
 
@@ -25,8 +25,12 @@ public class Database
     public Database()
     {
         PlayerData = new PlayerData();
-        //Tournaments = new List<Tournament>();
-        adminIDs = new Dictionary<ulong, string>();
+
+        // Load this from json
+        adminIDs = new List<ulong> { 
+            111788167195033600
+        };
+
         cantRegisterIDs = new List<ulong>();
     }
 
