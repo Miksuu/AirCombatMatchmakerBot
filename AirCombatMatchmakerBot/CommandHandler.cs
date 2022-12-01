@@ -20,8 +20,7 @@ public static class CommandHandler
         else
         {
             Exceptions.BotClientRefNull();
-        }
-
+        }   
         return Task.CompletedTask;
     }
 
@@ -32,7 +31,7 @@ public static class CommandHandler
         CommandBuilder.AddNewCommand("cats", "Prints a cute cat!");
         CommandBuilder.AddNewCommandWithOption("terminate",
             "deletes a player profile, completely",
-            "userId", 
+            "userid", 
             "which user do you want to terminate?"
             );
 

@@ -38,8 +38,8 @@ public class CommandBuilder
             _optionName, ApplicationCommandOptionType.String,
             _optionDescription, isRequired: true);
 
-        Log.WriteLine("Installing a command: " + _commandName + ", with description: " + _description + 
-            " that's has an option with name: " + _optionName + " and optionDescription: " + _description, LogLevel.DEBUG);
+        Log.WriteLine("Installing a command: " + _commandName + " | with description: " + _description + 
+            " | that has an option with name: " + _optionName + " | and optionDescription: " + _description, LogLevel.DEBUG);
 
         if (BotReference.clientRef != null)
         {

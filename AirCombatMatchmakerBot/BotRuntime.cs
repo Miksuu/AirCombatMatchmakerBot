@@ -48,13 +48,10 @@ public class BotRuntime
 
         PlayerRegisteration.channelCreationQueue = new();
 
-        BotReference.clientRef.Ready += async() =>
+        BotReference.clientRef.Ready += () =>
         {
             BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
-
-            // Listens for the commandService
-            await CommandHandler.InstallCommandsAsync();
 
             BotReference.clientRef.UserJoined += PlayerManager.HandleUserJoin;
 
@@ -68,8 +65,11 @@ public class BotRuntime
 
             BotReference.clientRef.UserLeft += PlayerManager.HandlePlayerLeave;
 
-            return;
+            return Task.CompletedTask;
         };
+
+        // Listens for the commandService
+        await CommandHandler.InstallCommandsAsync();
 
         // Block this task until the program is closed.
         await Task.Delay(-1);
