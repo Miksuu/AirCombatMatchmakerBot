@@ -105,8 +105,9 @@ public static class PlayerManager
         }
     }
 
-    public static async Task DeletePlayerProfile()
+    public static async Task DeletePlayerProfile(string _dataValue)
     {
-        //Database.Instance.PlayerData.PlayerIDs
+        Log.WriteLine("Deleting a player profile " + _dataValue, LogLevel.VERBOSE);
+        Database.Instance.PlayerData.PlayerIDs.First(x => x.Value.playerId == UInt64.Parse(_dataValue));
     }
 }

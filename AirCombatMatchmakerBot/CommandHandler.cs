@@ -42,6 +42,20 @@ public static class CommandHandler
 
     private static async Task SlashCommandHandler(SocketSlashCommand _command)
     {
+        var firstOptionValue = _command.Data.Options.First().Value.ToString();
+
+        if (firstOptionValue == null)
+        {
+            Log.WriteLine("The command " + _command.Data.Name + " does not have any options in it.", LogLevel.DEBUG);
+        }
+        else
+        {
+            Log.WriteLine("The command " + _command.Data.Name + " had " + _command.Data.Options.Count + " in it." +
+                " The first command had an argument: " + firstOptionValue, LogLevel.DEBUG);
+
+            // Add a for loop here to print the command arguments, if multiple later on.
+        }
+
         switch (_command.Data.Name)
         {
             case "cat":
@@ -52,7 +66,7 @@ public static class CommandHandler
             case "terminate":
                 if (CheckIfCommandSenderWasAnAdmin(_command))
                 {
-                    await PlayerManager.DeletePlayerProfile();
+                    await PlayerManager.DeletePlayerProfile(firstOptionValue);
                 }
                 break;
             default:
