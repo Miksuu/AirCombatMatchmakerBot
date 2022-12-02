@@ -22,6 +22,30 @@ public static class ChannelManager
         }
     }
 
+    public static Task DeleteUsersChannelsOnLeave(SocketGuild _guild, SocketUser _user)
+    {
+        var channelToBeDeleted = _guild.Channels.First(x => x.Name.Contains("registeration_" + _user.Id));
+
+        Log.WriteLine("Deleting channel: " + channelToBeDeleted.Name +
+            " with ID: " + channelToBeDeleted.Id, LogLevel.DEBUG);
+
+        if (channelToBeDeleted != null)
+        {
+            // Remove the player's channel
+            channelToBeDeleted.DeleteAsync();
+            // Remove the players user registeration from the database
+            DatabaseMethods.RemoveUserRegisterationFromDatabase(_user.Id);
+        }
+        // If the registeing channel is removed afterwards, maybe handle this better way.
+        else
+        {
+            Log.WriteLine("Channel was not found, perhaps the user had registered " +
+                "and left after? Implement a better way here.", LogLevel.WARNING);
+        }
+        return Task.CompletedTask;
+    }
+
+
     /*
     public static SocketGuildChannel? FindChannel(SocketGuild _guild, string _channelName)
     {
@@ -42,23 +66,4 @@ public static class ChannelManager
         return null;
     } */
 
-    public static Task DeleteUsersChannelsOnLeave(SocketGuild _guild, SocketUser _user)
-    {
-        var channelToBeDeleted = _guild.Channels.First(x => x.Name.Contains("registeration_" + _user.Id));
-
-        Log.WriteLine("Deleting channel: " + channelToBeDeleted.Name +
-            " with ID: " + channelToBeDeleted.Id, LogLevel.DEBUG);
-
-        if (channelToBeDeleted != null)
-        {
-            channelToBeDeleted.DeleteAsync();
-        }
-        // If the registeing channel is removed afterwards, maybe handle this better way.
-        else
-        {
-            Log.WriteLine("Channel was not found, perhaps the user had registered " +
-                "and left after? Implement a better way here.", LogLevel.WARNING);
-        }
-        return Task.CompletedTask;
-    }
 }

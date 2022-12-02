@@ -48,7 +48,7 @@ public static class BotMessaging
         string _label,
         string _customId)
     {
-        Log.WriteLine("Creating a button on channel: " + _channel.Name + " (" + _channel.Id + ")," +
+        Log.WriteLine("Creating a button on channel: " + _channel.Name +
             "with text before the button: " + _textOnTheSameMessage + " | label: " + _label + " | custom-id:" +
             _customId, LogLevel.DEBUG);
 

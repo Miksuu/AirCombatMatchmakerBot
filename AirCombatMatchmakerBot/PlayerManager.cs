@@ -68,10 +68,14 @@ public static class PlayerManager
 
         Log.WriteLine("Adding a new player: " + nickName + " (" + _playerId + ").", LogLevel.DEBUG);
 
-        // Checks if the player is already in the databse, just in case
+        // Checks if the player is already in the database, just in case
         if (!CheckIfUserIdExistsInTheDatabase(_playerId))
         {
+            // Add to the profile
             Database.Instance.PlayerData.PlayerIDs.Add(_playerId, new Player(_playerId, nickName));
+            // Remove player registeration object
+            DatabaseMethods.RemoveUserRegisterationFromDatabase(_playerId);
+
             return true;
         }
         else

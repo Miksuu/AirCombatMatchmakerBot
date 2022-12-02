@@ -31,7 +31,7 @@ public static class PlayerRegisteration
             var channel = guild.GetChannel(newChannel.Id);
 
             // Place the newly created id to the object of non registered user
-            _nonRegisteredUser.discordRegisterationChannelId = channel.Id;
+            _nonRegisteredUser.discordRegisterationChannelId = newChannel.Id;
 
             // Sets the players permissions to be accessible
             // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
@@ -109,6 +109,8 @@ public static class PlayerRegisteration
         else Exceptions.BotClientRefNull();
 
         await SerializationManager.SerializeDB();
+
+        Log.WriteLine("Done checking.", LogLevel.DEBUG);
     }
 
     public static bool CheckIfUserHasANonRegisterdUserProfile(ulong _userId)
@@ -125,7 +127,6 @@ public static class PlayerRegisteration
         }
 
         Log.WriteLine("Did not find " + _userId, LogLevel.VERBOSE);
-
         return false;
     }
 
