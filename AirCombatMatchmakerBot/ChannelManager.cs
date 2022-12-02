@@ -46,33 +46,6 @@ public static class ChannelManager
                 "Register", channel.Name);
         }
         else Exceptions.BotClientRefNull();
-
-        /*
-        foreach (var kvp in PlayerRegisteration.channelCreationQueue)
-        {
-            SocketGuildChannel SocketGuildChannel = (SocketGuildChannel)_channel;
-
-            if (kvp.Key == SocketGuildChannel.Name)
-            {
-                Log.WriteLine("Found channel: " + SocketGuildChannel.Name + " in " +
-                    nameof(PlayerRegisteration.channelCreationQueue), LogLevel.DEBUG);
-
-                if (BotReference.clientRef != null)
-                {
-                    SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-
-                    // Sets the players permissions to be accessible
-                    // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
-                    await SetRegisterationChannelPermissions(kvp.Value, guild, SocketGuildChannel);
-                    // Creates the registeration button
-                    BotMessaging.CreateButton(SocketGuildChannel,
-                        "Click this button to register [verification process with DCS" +
-                        " account linking will be included later here]",
-                        "Register", SocketGuildChannel.Name);
-                }
-                else Exceptions.BotClientRefNull();
-            }
-        }*/
     }
 
     public static async Task SetRegisterationChannelPermissions(

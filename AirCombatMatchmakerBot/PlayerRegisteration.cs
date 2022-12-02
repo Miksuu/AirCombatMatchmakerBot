@@ -98,16 +98,27 @@ public static class PlayerRegisteration
                         else
                         {
                             Log.WriteLine(user.Username + " not found in the database", LogLevel.DEBUG);
+
                             NonRegisteredUser nonRegisteredUser =
                                 CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(user.Id);
 
-                            if (nonRegisteredUser != null)
+                            if (!nonRegisteredUser.channelHasBeenCreated)
                             {
-                                await ChannelManager.HandleChannelCreationManually(nonRegisteredUser);
+                                if (nonRegisteredUser != null)
+                                {
+                                    await ChannelManager.HandleChannelCreationManually(nonRegisteredUser);
+                                    nonRegisteredUser.channelHasBeenCreated = true;
+
+                                    SerializationManager.SerializeDB();
+                                }
+                                else
+                                {
+                                    Log.WriteLine(nameof(nonRegisteredUser) + " was null!", LogLevel.ERROR);
+                                }
                             }
                             else
                             {
-                                Log.WriteLine(nameof(nonRegisteredUser) + " was null!", LogLevel.ERROR);
+                                Log.WriteLine("Channel had been done for " + user.Id + " already.", LogLevel.VERBOSE);
                             }
                         }
                     }
