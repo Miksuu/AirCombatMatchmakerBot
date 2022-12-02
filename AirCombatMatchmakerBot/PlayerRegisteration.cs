@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -11,7 +12,8 @@ public static class PlayerRegisteration
 {
     public static Dictionary<string, SocketGuildUser> channelCreationQueue = new();
 
-    public static async Task CreateANewRegisterationChannel(SocketGuildUser _user, SocketGuild _guild, ulong _forCategory)
+    public static async Task CreateANewRegisterationChannel(
+        SocketGuildUser _user, SocketGuild _guild, ulong _forCategory)
     {
         string channelName = "registeration_" + _user.Id;
 
@@ -37,8 +39,17 @@ public static class PlayerRegisteration
         else
         {
             Log.WriteLine("This channel already exists! (should not be the case). Giving permissions anyway.", LogLevel.ERROR);
-            channelCreationQueue.Add(channelName, _user);
-            await ChannelManager.HandleChannelCreation(channel);
+            await CreateANewRegisterationChannelManually(channelName, _user, _guild);
         }
+    }
+
+    public static async Task CreateANewRegisterationChannelManually(
+        string _channelName, SocketGuildUser _user, SocketGuild _guild)
+    {
+        Log.WriteLine("Starting the creation of registration channelName: " + _channelName +
+            " for user: " + _user.Username, LogLevel.DEBUG);
+        var channel = ChannelManager.FindChannel(_guild, _channelName);
+        channelCreationQueue.Add(_channelName, _user);
+        await ChannelManager.HandleChannelCreation(channel);
     }
 }
