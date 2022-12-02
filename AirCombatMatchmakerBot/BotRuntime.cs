@@ -57,7 +57,7 @@ public class BotRuntime
 
             BotReference.clientRef.UserJoined += PlayerManager.HandleUserJoin;
 
-            BotReference.clientRef.ChannelCreated += ChannelManager.HandleChannelCreationFromDelegate;
+            //BotReference.clientRef.ChannelCreated += ChannelManager.HandleChannelCreationFromDelegate;
 
             BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
 

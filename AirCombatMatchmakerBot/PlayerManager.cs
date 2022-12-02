@@ -14,8 +14,34 @@ public static class PlayerManager
             {
                 SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
 
+                Log.WriteLine("Checking " + _user.Username + " aka "
+                    + PlayerManager.CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
+                    " (" + _user.Id + ")", LogLevel.DEBUG);
+
+                if (CheckIfUserIdExistsInTheDatabase(_user.Id))
+                {
+                    Log.WriteLine(_user.Username + " found in the database", LogLevel.DEBUG);
+
+                    // TODO: Handle recovery of the access to the user.
+                }
+                else
+                {
+                    Log.WriteLine(_user.Username + " not found in the database", LogLevel.DEBUG);
+                    NonRegisteredUser nonRegisteredUser =
+                        PlayerRegisteration.CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(_user.Id);
+
+                    if (nonRegisteredUser != null)
+                    {
+                        await PlayerRegisteration.CreateANewRegisterationChannel(nonRegisteredUser);
+                        //await ChannelManager.HandleChannelCreationManually(nonRegisteredUser);
+                    }
+                    else
+                    {
+                        Log.WriteLine(nameof(nonRegisteredUser) + " was null!", LogLevel.ERROR);
+                    }
+                }
                 // Creates a private channel for the user to proceed with the registeration 
-                PlayerRegisteration.CreateANewRegisterationChannel(_user.Id, guild, 1047529896735428638); // category ID
+                
             }
             else Exceptions.BotClientRefNull();
         }
