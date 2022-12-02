@@ -7,30 +7,10 @@ public static class SerializationManager
     // Run this everytime when relevant data needs to be saved to the database
     public static Task SerializeDB()
     {
-        /*   
-           List<Tournament> TournamentsT = new List<Tournament>();
-
-           Dictionary<ulong, string> adminIDsT = new Dictionary<ulong, string>()
-           {
-               { 111788167195033600, "Miksuu" }
-           };
-
-           List<ulong> cantRegisterIDsT = new List<ulong>()
-           {
-               956237183012982815 // The bot
-           };
-
-           var db = new Database(TournamentsT, adminIDsT, cantRegisterIDsT);
-        var options = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            MaxDepth = 64 // Fixed
-        }; */
-
         Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
-        serializer.Converters.Add(new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter());
-        serializer.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
-        serializer.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
+        //serializer.Converters.Add(new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter());
+        //serializer.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
+        //serializer.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
         serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
         serializer.MaxDepth= 64;
 
