@@ -34,8 +34,10 @@ public static class PlayerManager
         await ChannelManager.DeleteUsersChannelsOnLeave(_guild, _user);
     }
 
-    public static async Task<bool> AddNewPlayerToTheDatabaseById(ulong _playerId)
+    public static bool AddNewPlayerToTheDatabaseById(ulong _playerId)
     {
+        Log.WriteLine("Start of the addnewplayer with: " + _playerId, LogLevel.VERBOSE);
+
         var nickName = CheckIfNickNameIsEmptyAndReturnUsername(_playerId);
 
         Log.WriteLine("Adding a new player: " + nickName + " (" + _playerId + ").", LogLevel.DEBUG);
@@ -74,24 +76,39 @@ public static class PlayerManager
 
     public static string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
     {
+        Log.WriteLine("Checking if nickname is empty and return username with ID: " + _id, LogLevel.DEBUG);
+
         var SocketGuildUser = GetSocketGuildUserById(_id);
-        string userName = SocketGuildUser.Username;
-        string nickName = SocketGuildUser.Nickname;
 
-        Log.WriteLine("Checking if " + userName + "'s (" + _id + ")" +
-            " nickName: " + nickName + " | " + " is the same", LogLevel.DEBUG);
-
-        if (nickName == "" || nickName == userName || nickName == null)
+        if (SocketGuildUser != null)
         {
-            return userName;
+            Log.WriteLine("SocketGuildUser " + _id + " is not null", LogLevel.VERBOSE);
+
+            string userName = SocketGuildUser.Username;
+            string nickName = SocketGuildUser.Nickname;
+
+            Log.WriteLine("Checking if " + userName + "'s (" + _id + ")" +
+                " nickName: " + nickName + " | " + " is the same", LogLevel.DEBUG);
+
+            if (nickName == "" || nickName == userName || nickName == null)
+            {
+                Log.WriteLine("returning userName", LogLevel.VERBOSE);
+                return userName;
+            }
+            else
+            {
+                Log.WriteLine("returning nickName", LogLevel.VERBOSE);
+                return nickName;
+            }
         }
         else
         {
-            return nickName;
+            Log.WriteLine("SocketGuildUser by ID: " + _id + " is null!", LogLevel.ERROR);
+            return null;
         }
     }
 
-    public static async Task<bool> DeletePlayerProfile(string _dataValue)
+    public static bool DeletePlayerProfile(string _dataValue)
     {
         ulong id = UInt64.Parse(_dataValue);
         if (CheckIfUserIdExistsInTheDatabase(id))
@@ -116,9 +133,11 @@ public static class PlayerManager
     // Gets the user by the discord UserId. This may not be present in the Database.
     public static SocketGuildUser? GetSocketGuildUserById(ulong _id)
     {
+        Log.WriteLine("Getting SocketGuildUser by id: " + _id, LogLevel.DEBUG);
+
         if (BotReference.clientRef != null)
         {
-            return (SocketGuildUser)BotReference.clientRef.GetUserAsync(_id).Result;
+            return BotReference.clientRef.GetGuild(BotReference.GuildID).GetUser(_id);
         }
 
         else
