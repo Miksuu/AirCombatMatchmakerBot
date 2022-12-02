@@ -18,11 +18,11 @@ public static class PlayerRegisteration
         Log.WriteLine("HANDING CHANNEL CREATION FOR CHANNEL: " + _nonRegisteredUser.discordRegisterationChannelId +
             "discordUserId: " + _nonRegisteredUser.discordUserId, LogLevel.DEBUG);
 
-        SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-        string channelName = _nonRegisteredUser.ConstructChannelName();
-
         if (BotReference.clientRef != null)
         {
+            SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+            string channelName = _nonRegisteredUser.ConstructChannelName();
+
             Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
 
             var newChannel = await guild.CreateTextChannelAsync(
