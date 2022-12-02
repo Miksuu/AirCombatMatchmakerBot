@@ -7,6 +7,8 @@ public static class SerializationManager
     // Run this everytime when relevant data needs to be saved to the database
     public static Task SerializeDB()
     {
+        Log.WriteLine("SERIALIZING DB", LogLevel.VERBOSE);
+
         Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
         //serializer.Converters.Add(new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter());
         //serializer.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
@@ -25,13 +27,7 @@ public static class SerializationManager
             sw.Close();
         };
 
-
-
-        //Log.WriteLine("SERIALIZING JSON: " + jsonStringSer);
-
-
-        //Log.WriteLine(ServerManager.Instance.dcsInstallationPath);
-
+        Log.WriteLine("DB SERIALIZATION DONE!", LogLevel.VERBOSE);
         return Task.CompletedTask;
     }
 
