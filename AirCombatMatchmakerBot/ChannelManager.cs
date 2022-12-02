@@ -59,7 +59,7 @@ public static class ChannelManager
         }
     }
 
-    public static SocketGuildChannel FindChannel(SocketGuild _guild, string _channelName)
+    public static SocketGuildChannel? FindChannel(SocketGuild _guild, string _channelName)
     {
         if (_guild.Channels != null)
         {
@@ -74,6 +74,7 @@ public static class ChannelManager
             }
         }
         else { Exceptions.GuildRefNull(); }
+
         return null;
     }
 

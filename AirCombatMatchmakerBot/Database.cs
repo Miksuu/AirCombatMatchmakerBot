@@ -17,7 +17,11 @@ public class Database
 
     public List<ulong> cantRegisterIDs { get; set; }
 
+    // The registered users
     public PlayerData PlayerData { get; set; }
+
+    // Users not registered, more simple class for them without any player data.
+    public List<NonRegisteredUser> NonRegisteredUsers { get; set; }
 
     public int channelTournamentIndex { get; set; }
     public int channelMatchIndex { get; set; }
@@ -25,6 +29,7 @@ public class Database
     public Database()
     {
         PlayerData = new PlayerData();
+        NonRegisteredUsers = new List<NonRegisteredUser>();
 
         // Load this from json
         adminIDs = new List<ulong> { 
