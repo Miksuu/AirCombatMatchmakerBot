@@ -148,7 +148,23 @@ public static class PlayerRegisteration
             " list either, adding a new one in to it", LogLevel.DEBUG);
         NonRegisteredUser nonRegisteredUserNew = new NonRegisteredUser(_userId);
 
-        Database.Instance.NonRegisteredUsers.Add(nonRegisteredUserNew);
+        bool contains = false;
+
+        foreach (NonRegisteredUser nonRegisteredUser in Database.Instance.NonRegisteredUsers)
+        {
+            if (nonRegisteredUser.discordUserId == nonRegisteredUserNew.discordUserId)
+            {
+                Log.WriteLine(nameof(Database.Instance.NonRegisteredUsers) +
+                    " already contains: " + nonRegisteredUserNew.discordUserId, LogLevel.ERROR);
+                contains = true;
+            }
+        }
+
+        if (!contains)
+        {
+            Database.Instance.NonRegisteredUsers.Add(nonRegisteredUserNew);
+        }
+
         Log.WriteLine(nameof(NonRegisteredUser) + " count is now: " +
             Database.Instance.NonRegisteredUsers.Count, LogLevel.VERBOSE);
 
