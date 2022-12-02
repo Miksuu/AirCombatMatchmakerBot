@@ -15,7 +15,7 @@ public static class PlayerManager
                 SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
 
                 // Creates a private channel for the user to proceed with the registeration 
-                await PlayerRegisteration.CreateANewRegisterationChannel(_user, guild, 1047529896735428638); // category ID
+                PlayerRegisteration.CreateANewRegisterationChannel(_user.Id, guild, 1047529896735428638); // category ID
             }
             else Exceptions.BotClientRefNull();
         }

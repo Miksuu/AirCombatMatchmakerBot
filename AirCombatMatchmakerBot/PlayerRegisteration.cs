@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication.ExtendedProtection;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -10,10 +11,10 @@ using System.Xml.Linq;
 
 public static class PlayerRegisteration
 {
-    public static async Task CreateANewRegisterationChannel(
-        SocketGuildUser _user, SocketGuild _guild, ulong _forCategory)
+    public static async Task<ulong> CreateANewRegisterationChannel(
+        ulong _userId, SocketGuild _guild, ulong _forCategory)
     {
-        NonRegisteredUser nonRegisteredUser = CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(_user);
+        NonRegisteredUser nonRegisteredUser = CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(_userId);
 
         string channelName = nonRegisteredUser.ConstructChannelName();
 
@@ -37,8 +38,10 @@ public static class PlayerRegisteration
 
                 Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
 
-                //channelCreationQueue.Add(nonRegisteredUser, _user);
+                //channelCreationQueue.Add(nonRegisteredUser, _userId);
                 //Log.WriteLine("Added to the queue done: " + channelCreationQueue.Count, LogLevel.DEBUG);
+
+                return newChannel.Id;
             }
             else Exceptions.BotClientRefNull();
         }
@@ -47,8 +50,9 @@ public static class PlayerRegisteration
         {
             Log.WriteLine("This channel already exists! " +
                 "(should not be the case). Giving permissions anyway.", LogLevel.ERROR);
-            await CreateANewRegisterationChannelManually(nonRegisteredUser, _user, _guild);
+            //await CreateANewRegisterationChannelManually(nonRegisteredUser, _userId, _guild);
         }
+        return 0;
     }
 
     public static async Task CreateANewRegisterationChannelManually(
@@ -59,7 +63,7 @@ public static class PlayerRegisteration
         Log.WriteLine("Starting the creation of registration channelName: " + channelName +
             " for user: " + _user.Username, LogLevel.DEBUG);
         //var channel = ChannelManager.FindChannel(_guild, channelName);
-        //channelCreationQueue.Add(_nonRegisteredUser, _user);
+        //channelCreationQueue.Add(_nonRegisteredUser, _userId);
 
         await ChannelManager.HandleChannelCreationManually(_nonRegisteredUser);
     }
@@ -89,13 +93,22 @@ public static class PlayerRegisteration
                         {
                             Log.WriteLine(user.Username + " found in the database", LogLevel.DEBUG);
 
-                            // Handle recovery of the access to the user.
+                            // TODO: Handle recovery of the access to the user.
                         }
                         else
                         {
                             Log.WriteLine(user.Username + " not found in the database", LogLevel.DEBUG);
                             NonRegisteredUser nonRegisteredUser =
-                                CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(user);
+                                CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(user.Id);
+
+                            if (nonRegisteredUser != null)
+                            {
+                                await ChannelManager.HandleChannelCreationManually(nonRegisteredUser);
+                            }
+                            else
+                            {
+                                Log.WriteLine(nameof(nonRegisteredUser) + " was null!", LogLevel.ERROR);
+                            }
                         }
                     }
                     else Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);
@@ -108,13 +121,13 @@ public static class PlayerRegisteration
         await SerializationManager.SerializeDB();
     }
 
-    public static NonRegisteredUser CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(SocketGuildUser _user)
+    public static NonRegisteredUser CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(ulong _userId)
     {
         foreach (NonRegisteredUser nonRegisteredUser in Database.Instance.NonRegisteredUsers)
         {
             Log.WriteLine("Checking if " + nameof(NonRegisteredUser) + " id: " +
-                nonRegisteredUser.discordUserId + " matches userId: " + _user.Id, LogLevel.VERBOSE);
-            if (nonRegisteredUser.discordUserId == _user.Id)
+                nonRegisteredUser.discordUserId + " matches userId: " + _userId, LogLevel.VERBOSE);
+            if (nonRegisteredUser.discordUserId == _userId)
             {
                 Log.WriteLine("The user was found on " + nameof(NonRegisteredUser) + " list.", LogLevel.VERBOSE);
 
@@ -123,9 +136,9 @@ public static class PlayerRegisteration
         }
 
         // If the code doesn't find the profile
-        Log.WriteLine("No " + _user.Id + " was found from the " + nameof(NonRegisteredUser) +
+        Log.WriteLine("No " + _userId + " was found from the " + nameof(NonRegisteredUser) +
             " list either, adding a new one in to it", LogLevel.DEBUG);
-        NonRegisteredUser nonRegisteredUserNew = new NonRegisteredUser(_user.Id);
+        NonRegisteredUser nonRegisteredUserNew = new NonRegisteredUser(_userId);
 
         Database.Instance.NonRegisteredUsers.Add(nonRegisteredUserNew);
         Log.WriteLine(nameof(NonRegisteredUser) + " count is now: " +

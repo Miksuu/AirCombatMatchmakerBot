@@ -3,8 +3,6 @@ using Discord.WebSocket;
 
 public static class ChannelManager
 {
-
-
     public static async Task HandleChannelCreationFromDelegate(SocketChannel _newChannel)
     {
         if (_newChannel != null)
@@ -29,15 +27,14 @@ public static class ChannelManager
 
     public static async Task HandleChannelCreationManually(NonRegisteredUser _nonRegisteredUser)
     {
-
-
         Log.WriteLine("HANDING CHANNEL CREATION FOR CHANNEL: " + _nonRegisteredUser.discordRegisterationChannelId +
             "discordUserId: " + _nonRegisteredUser.discordUserId, LogLevel.DEBUG);
 
         if (BotReference.clientRef != null)
         {
             SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-            SocketGuildChannel channel = guild.GetTextChannel(_nonRegisteredUser.discordRegisterationChannelId);
+            SocketGuildChannel channel = guild.GetChannel(PlayerRegisteration.CreateANewRegisterationChannel(
+                _nonRegisteredUser.discordUserId, guild, 1047529896735428638).Result);
 
             // Sets the players permissions to be accessible
             // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
