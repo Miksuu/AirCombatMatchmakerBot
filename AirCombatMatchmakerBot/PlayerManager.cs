@@ -34,26 +34,24 @@ public static class PlayerManager
         await ChannelManager.DeleteUsersChannelsOnLeave(_guild, _user);
     }
 
-    public static async Task AddNewPlayer(SocketMessageComponent _component)
+    public static async Task<bool> AddNewPlayerToTheDatabaseById(ulong _playerId)
     {
-        ulong playerId = _component.User.Id;
+        var nickName = CheckIfNickNameIsEmptyAndReturnUsername(_playerId);
 
-        var nickName = CheckIfNickNameIsEmptyAndReturnUsername(playerId);
-
-        Log.WriteLine("Adding a new player: " + nickName + " (" + playerId + ").", LogLevel.DEBUG);
+        Log.WriteLine("Adding a new player: " + nickName + " (" + _playerId + ").", LogLevel.DEBUG);
 
         // Checks if the player is already in the databse, just in case
-        if (!Database.Instance.PlayerData.PlayerIDs.ContainsKey(playerId))
+        if (!CheckIfUserIdExistsInTheDatabase(_playerId))
         {
-            Database.Instance.PlayerData.PlayerIDs.Add(playerId, new Player(playerId, nickName));
-            await SerializationManager.SerializeDB();
+            Database.Instance.PlayerData.PlayerIDs.Add(_playerId, new Player(_playerId, nickName));
+            return true;
         }
         else
         {
             Log.WriteLine("Tried to add a player that was already in the database!", LogLevel.WARNING);
+            return false;
         }
     }
-
     public static async Task HandleGuildMemberUpdated(Cacheable<SocketGuildUser, ulong> before, SocketGuildUser _socketGuildUserAfter)
     {
         var playerValue = Database.Instance.PlayerData.PlayerIDs.First(x => x.Key == _socketGuildUserAfter.Id).Value;
@@ -73,8 +71,6 @@ public static class PlayerManager
         }
         else Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username + "'s profile, no valid player found (not registed?) ", LogLevel.DEBUG);
     }
-
-
 
     public static string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
     {
