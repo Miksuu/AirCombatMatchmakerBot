@@ -46,7 +46,7 @@ public class BotRuntime
 
         //_client.MessageUpdated += MessageUpdated;
 
-        PlayerRegisteration.channelCreationQueue = new();
+        //PlayerRegisteration.channelCreationQueue = new();
 
         BotReference.clientRef.Ready += async () =>
         {
@@ -57,7 +57,7 @@ public class BotRuntime
 
             BotReference.clientRef.UserJoined += PlayerManager.HandleUserJoin;
 
-            BotReference.clientRef.ChannelCreated += ChannelManager.HandleChannelCreation;
+            BotReference.clientRef.ChannelCreated += ChannelManager.HandleChannelCreationFromDelegate;
 
             BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
 

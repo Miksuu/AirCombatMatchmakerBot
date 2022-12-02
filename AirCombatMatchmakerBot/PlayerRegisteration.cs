@@ -10,8 +10,6 @@ using System.Xml.Linq;
 
 public static class PlayerRegisteration
 {
-    public static Dictionary<NonRegisteredUser, SocketGuildUser> channelCreationQueue = new();
-
     public static async Task CreateANewRegisterationChannel(
         SocketGuildUser _user, SocketGuild _guild, ulong _forCategory)
     {
@@ -39,9 +37,8 @@ public static class PlayerRegisteration
 
                 Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
 
-                channelCreationQueue.Add(nonRegisteredUser, _user);
-
-                Log.WriteLine("Added to the queue done: " + channelCreationQueue.Count, LogLevel.DEBUG);
+                //channelCreationQueue.Add(nonRegisteredUser, _user);
+                //Log.WriteLine("Added to the queue done: " + channelCreationQueue.Count, LogLevel.DEBUG);
             }
             else Exceptions.BotClientRefNull();
         }
@@ -62,8 +59,9 @@ public static class PlayerRegisteration
         Log.WriteLine("Starting the creation of registration channelName: " + channelName +
             " for user: " + _user.Username, LogLevel.DEBUG);
         //var channel = ChannelManager.FindChannel(_guild, channelName);
-        channelCreationQueue.Add(_nonRegisteredUser, _user);
-        await ChannelManager.HandleChannelCreation(channel);
+        //channelCreationQueue.Add(_nonRegisteredUser, _user);
+
+        await ChannelManager.HandleChannelCreationManually(_nonRegisteredUser);
     }
 
     public static async Task CheckForUsersThatAreNotRegisteredAfterDowntime()
@@ -96,7 +94,8 @@ public static class PlayerRegisteration
                         else
                         {
                             Log.WriteLine(user.Username + " not found in the database", LogLevel.DEBUG);
-                            CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(user);
+                            NonRegisteredUser nonRegisteredUser =
+                                CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(user);
                         }
                     }
                     else Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);

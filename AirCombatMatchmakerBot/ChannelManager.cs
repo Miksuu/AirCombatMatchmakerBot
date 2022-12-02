@@ -3,11 +3,54 @@ using Discord.WebSocket;
 
 public static class ChannelManager
 {
-    public static async Task HandleChannelCreation(SocketChannel _channel)
-    {
-        Log.WriteLine("HANDING CHANNEL CREATION FOR CHANNEL: " + _channel.Id + ", Queue size: " +
-            PlayerRegisteration.channelCreationQueue.Count, LogLevel.DEBUG);
 
+
+    public static async Task HandleChannelCreationFromDelegate(SocketChannel _newChannel)
+    {
+        if (_newChannel != null)
+        {
+            NonRegisteredUser _nonRegisteredUser = Database.Instance.NonRegisteredUsers.Find(
+                x => x.discordRegisterationChannelId == _newChannel.Id);
+
+            if (_nonRegisteredUser != null) 
+            {
+                await HandleChannelCreationManually(_nonRegisteredUser);
+            }
+            else
+            {
+                Log.WriteLine(nameof(_nonRegisteredUser) + " was null!", LogLevel.CRITICAL);
+            }
+        }    
+        else
+        {
+            Log.WriteLine(nameof(_newChannel) + " was null!", LogLevel.CRITICAL);
+        }
+    }
+
+    public static async Task HandleChannelCreationManually(NonRegisteredUser _nonRegisteredUser)
+    {
+
+
+        Log.WriteLine("HANDING CHANNEL CREATION FOR CHANNEL: " + _nonRegisteredUser.discordRegisterationChannelId +
+            "discordUserId: " + _nonRegisteredUser.discordUserId, LogLevel.DEBUG);
+
+        if (BotReference.clientRef != null)
+        {
+            SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+            SocketGuildChannel channel = guild.GetTextChannel(_nonRegisteredUser.discordRegisterationChannelId);
+
+            // Sets the players permissions to be accessible
+            // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
+            await SetRegisterationChannelPermissions(_nonRegisteredUser.discordUserId, guild, channel);
+            // Creates the registeration button
+            BotMessaging.CreateButton(channel,
+                "Click this button to register [verification process with DCS" +
+                " account linking will be included later here]",
+                "Register", channel.Name);
+        }
+        else Exceptions.BotClientRefNull();
+
+        /*
         foreach (var kvp in PlayerRegisteration.channelCreationQueue)
         {
             SocketGuildChannel SocketGuildChannel = (SocketGuildChannel)_channel;
@@ -32,11 +75,11 @@ public static class ChannelManager
                 }
                 else Exceptions.BotClientRefNull();
             }
-        }
+        }*/
     }
 
     public static async Task SetRegisterationChannelPermissions(
-        SocketGuildUser _user, SocketGuild _guild, SocketGuildChannel _channel)
+        ulong _userId, SocketGuild _guild, SocketGuildChannel _channel)
     {
         // Sets permission overrides
         var permissionOverridesUser = new OverwritePermissions(viewChannel: PermValue.Allow);
@@ -46,12 +89,7 @@ public static class ChannelManager
             Log.WriteLine("FOUND CHANNEL TO SET PERMISSIONS ON: " + _channel.Id, LogLevel.DEBUG);
 
             // Allow the channell access to the new user
-            await _channel.AddPermissionOverwriteAsync(_guild.GetUser(_user.Id), permissionOverridesUser);
-
-            PlayerRegisteration.channelCreationQueue.Remove(_channel.Name);
-
-            Log.WriteLine("Setting permissions done. Queue size is now: " +
-                PlayerRegisteration.channelCreationQueue.Count, LogLevel.DEBUG);
+            await _channel.AddPermissionOverwriteAsync(_guild.GetUser(_userId), permissionOverridesUser);
         }
         else
         {
