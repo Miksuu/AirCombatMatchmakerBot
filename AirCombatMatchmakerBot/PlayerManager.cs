@@ -74,17 +74,7 @@ public static class PlayerManager
         else Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username + "'s profile, no valid player found (not registed?) ", LogLevel.DEBUG);
     }
 
-    public static async Task MessageUpdated(Cacheable<IMessage, ulong> before, SocketMessage after, ISocketMessageChannel channel)
-    {
-        // If the message was not in the cache, downloading it will result in getting a copy of `after`.
-        var message = await before.GetOrDownloadAsync();
-        Console.WriteLine($"{message} -> {after}");
-    }
 
-    public static SocketGuildUser GetSocketGuildUserById(ulong _id)
-    {
-        return (SocketGuildUser)BotReference.clientRef.GetUserAsync(_id).Result;
-    }
 
     public static string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
     {
@@ -105,9 +95,48 @@ public static class PlayerManager
         }
     }
 
-    public static async Task DeletePlayerProfile(string _dataValue)
+    public static async Task<bool> DeletePlayerProfile(string _dataValue)
     {
-        Log.WriteLine("Deleting a player profile " + _dataValue, LogLevel.VERBOSE);
-        Database.Instance.PlayerData.PlayerIDs.First(x => x.Value.playerId == UInt64.Parse(_dataValue));
+        ulong id = UInt64.Parse(_dataValue);
+        if (CheckIfUserIdExistsInTheDatabase(id))
+        {
+            Log.WriteLine("Deleting a player profile " + _dataValue, LogLevel.DEBUG);
+            Database.Instance.PlayerData.PlayerIDs.Remove(id);
+            return true;
+        }
+        else
+        {
+            Log.WriteLine("Did not find ID: " + id + "in the local database.", LogLevel.DEBUG);
+            return false;
+        }
     }
+
+    // Just checks if the User discord ID profile exists in the database file
+    private static bool CheckIfUserIdExistsInTheDatabase(ulong _id)
+    {
+        return Database.Instance.PlayerData.PlayerIDs.ContainsKey(_id);
+    }
+
+    // Gets the user by the discord UserId. This may not be present in the Database.
+    public static SocketGuildUser? GetSocketGuildUserById(ulong _id)
+    {
+        if (BotReference.clientRef != null)
+        {
+            return (SocketGuildUser)BotReference.clientRef.GetUserAsync(_id).Result;
+        }
+
+        else
+        {
+            Exceptions.BotClientRefNull();
+            return null;
+        }
+    }
+
+    /*
+    public static async Task MessageUpdated(Cacheable<IMessage, ulong> before, SocketMessage after, ISocketMessageChannel channel)
+    {
+        // If the message was not in the cache, downloading it will result in getting a copy of `after`.
+        var message = await before.GetOrDownloadAsync();
+        Console.WriteLine($"{message} -> {after}");
+    } */
 }

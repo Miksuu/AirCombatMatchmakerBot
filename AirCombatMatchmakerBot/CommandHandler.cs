@@ -56,25 +56,58 @@ public static class CommandHandler
             // Add a for loop here to print the command arguments, if multiple later on.
         }
 
+
+        string response = "EMPTY REPONSE";
+        LogLevel logLevel = LogLevel.DEBUG;
         switch (_command.Data.Name)
         {
             case "cat":
-                await _command.RespondAsync(BotMessaging.GetMessageResponse(_command.Data.Name,
-                    "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687", _command.Channel.Name));
+                response = "https://tenor.com/view/war-dimden-cute-cat-mean-gif-22892687";
                 break;
-            // ADMIN COMMAND
+            // ADMIN COMMANDS
             case "terminate":
+                // Check if the user is admin
                 if (CheckIfCommandSenderWasAnAdmin(_command))
                 {
-                    await PlayerManager.DeletePlayerProfile(firstOptionValue);
+                    if (firstOptionValue != null)
+                    {
+                        // Deletes the player profile and returns a bool as task if if was succesful,
+                        // otherwise inform the user that it didn't exist in the database
+                        if (await PlayerManager.DeletePlayerProfile(firstOptionValue))
+                        {
+                            response = "Deleted: " + firstOptionValue + " from the database.";
+                        }
+                        // Didn't find it from the DB
+                        else
+                        {
+                            response = "Unknown player id: " + firstOptionValue + " could not find it from the database.";
+
+                        }
+                    }
+                    else
+                    {
+                        response = nameof(firstOptionValue) + " was null!";
+                    }
+                }
+                // Inform the non-admin
+                else
+                {
+                    response = "You are not an admin, this command is not for you!";
                 }
                 break;
             default:
-                await _command.RespondAsync(BotMessaging.GetMessageResponse(_command.Data.Name,
-                    "Unknown command!",
-                    _command.Channel.Name));
+                response = "Default response! Something's wrong";
+                logLevel = LogLevel.ERROR;
                 break;
         }
+
+        await SerializationManager.SerializeDB();
+
+        Log.WriteLine(response, logLevel);
+
+        // Respond to the user based on the string result
+        await _command.RespondAsync(BotMessaging.GetMessageResponse(
+            _command.Data.Name, response, _command.Channel.Name)); ;
 
         Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
     }
