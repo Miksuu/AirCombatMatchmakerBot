@@ -39,7 +39,7 @@ public class CommandBuilder
             _optionDescription, isRequired: true);
 
         Log.WriteLine("Installing a command: " + _commandName + " | with description: " + _description + 
-            " | that has an option with name: " + _optionName + " | and optionDescription: " + _description, LogLevel.DEBUG);
+            " | that has an option with name: " + _optionName + " | and optionDescription: " + _optionDescription, LogLevel.DEBUG);
 
         if (BotReference.clientRef != null)
         {
