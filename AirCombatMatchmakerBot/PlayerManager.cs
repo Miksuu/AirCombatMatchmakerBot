@@ -76,7 +76,7 @@ public static class PlayerManager
 
     public static string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
     {
-        Log.WriteLine("Checking if nickname is empty and return username with ID: " + _id, LogLevel.DEBUG);
+        Log.WriteLine("Checking if nickname is empty and return username with ID: " + _id, LogLevel.VERBOSE);
 
         var SocketGuildUser = GetSocketGuildUserById(_id);
 
@@ -88,7 +88,7 @@ public static class PlayerManager
             string nickName = SocketGuildUser.Nickname;
 
             Log.WriteLine("Checking if " + userName + "'s (" + _id + ")" +
-                " nickName: " + nickName + " | " + " is the same", LogLevel.DEBUG);
+                " nickName: " + nickName + " | " + " is the same", LogLevel.VERBOSE);
 
             if (nickName == "" || nickName == userName || nickName == null)
             {

@@ -48,10 +48,12 @@ public class BotRuntime
 
         PlayerRegisteration.channelCreationQueue = new();
 
-        BotReference.clientRef.Ready += () =>
+        BotReference.clientRef.Ready += async () =>
         {
             BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
+
+            await PlayerRegisteration.CheckForUsersThatAreNotRegisteredAfterDowntime();
 
             BotReference.clientRef.UserJoined += PlayerManager.HandleUserJoin;
 
@@ -64,8 +66,6 @@ public class BotRuntime
             BotReference.clientRef.GuildMemberUpdated += PlayerManager.HandleGuildMemberUpdated;
 
             BotReference.clientRef.UserLeft += PlayerManager.HandlePlayerLeave;
-
-            return Task.CompletedTask;
         };
 
         // Listens for the commandService

@@ -52,4 +52,36 @@ public static class PlayerRegisteration
         channelCreationQueue.Add(_channelName, _user);
         await ChannelManager.HandleChannelCreation(channel);
     }
+
+    public static async Task CheckForUsersThatAreNotRegisteredAfterDowntime()
+    {
+        Log.WriteLine("Checking for Users that entered the discord during " +
+            "the bot's downtime and that are not on the registeration list", LogLevel.DEBUG);
+
+        if (BotReference.clientRef != null)
+        {
+            var guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+            var guildUserIds = guild.Users.Select(user => user.Id);
+
+            Log.WriteLine("USERS COUNT: " + guildUserIds.Count(), LogLevel.DEBUG);
+
+            foreach (var userId in guildUserIds)
+            {
+                SocketGuildUser user = guild.GetUser(userId);
+
+                if (user != null)
+                {
+                    if (!user.IsBot)
+                    {
+                        Log.WriteLine("Checking " + user.Username + " aka "
+                            + PlayerManager.CheckIfNickNameIsEmptyAndReturnUsername(user.Id) +
+                            " (" + user.Id + ")", LogLevel.DEBUG);
+                    }
+                    else Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);
+                }
+                else Log.WriteLine("User is null!", LogLevel.CRITICAL);
+            }
+        }
+        else Exceptions.BotClientRefNull();
+    }
 }
