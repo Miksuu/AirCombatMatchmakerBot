@@ -9,8 +9,6 @@ public class NonRegisteredUser
 {
     public ulong discordUserId { get; set; }
     public ulong discordRegisterationChannelId { get; set; }
-    
-    public bool channelHasBeenCreated { get; set; }
 
     NonRegisteredUser() { }
     public NonRegisteredUser(ulong discordUserId)
