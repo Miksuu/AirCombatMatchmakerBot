@@ -13,7 +13,7 @@ using System.Xml.Linq;
 public static class PlayerRegisteration
 {
     public static Dictionary<ulong, NonRegisteredUser> channelQueue = new();
-    //public static bool delayWhile = true;
+    public static bool useWaitingChannels = true;
     
     public static async Task CreateANewRegisterationChannel(
         NonRegisteredUser _nonRegisteredUser)
@@ -55,6 +55,8 @@ public static class PlayerRegisteration
 
     public static async Task CheckForUsersThatAreNotRegisteredAfterDowntime()
     {
+        List<SocketGuildUser> foundUsers = new List<SocketGuildUser>();
+
         Log.WriteLine("Checking for Users that entered the discord during " +
             "the bot's downtime and that are not on the registeration list", LogLevel.DEBUG);
 
@@ -82,8 +84,8 @@ public static class PlayerRegisteration
                         else
                         {
                             Log.WriteLine(user.Username + "(" + user.Id + ")" + "was not found!" +
-                                " handling user join during downtime.", LogLevel.DEBUG);
-                            await PlayerManager.HandleUserJoin(user);
+                                " adding user to the list!", LogLevel.VERBOSE);
+                            foundUsers.Add(user);
                         }
                     }
                     else Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);
@@ -93,11 +95,22 @@ public static class PlayerRegisteration
         }
         else Exceptions.BotClientRefNull();
 
-        await SerializationManager.SerializeDB();
+        Log.WriteLine("Starting to go through foundUsers: " + foundUsers.Count, LogLevel.DEBUG);
 
         //delayWhile = false;
 
-        Log.WriteLine("Done checking.", LogLevel.DEBUG);
+        Log.WriteLine("Done checking", LogLevel.DEBUG);
+
+        foreach (SocketGuildUser user in foundUsers)
+        {
+            Log.WriteLine(user.Username + "(" + user.Id + ")" + "was not found!" +
+                " handling user join during downtime.", LogLevel.DEBUG);
+            await PlayerManager.HandleUserJoin(user);
+        }
+
+        useWaitingChannels = false;
+
+        await ChannelManager.CreateChannelsFromWaitingChannels();
     }
 
     public static bool CheckIfUserHasANonRegisterdUserProfile(ulong _userId)

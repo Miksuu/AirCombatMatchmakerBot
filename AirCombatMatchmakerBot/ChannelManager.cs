@@ -4,44 +4,69 @@ using System;
 
 public static class ChannelManager
 {
+    static List<SocketChannel> waitingChannels = new();
     public static async Task FinishChannelCreationFromDelegate(SocketChannel _newChannel)
     {
-        Log.WriteLine("invoked", LogLevel.DEBUG);
+        Log.WriteLine("Delegate fired. " + nameof(PlayerRegisteration.useWaitingChannels) +
+            ": " + PlayerRegisteration.useWaitingChannels, LogLevel.DEBUG); ;
+        if (PlayerRegisteration.useWaitingChannels)
+        {
+            waitingChannels.Add(_newChannel);
+        }
+        else await HandleOneChannel(_newChannel);
+    }
+
+    public static async Task CreateChannelsFromWaitingChannels()
+    {
+        Log.WriteLine("Creating channels from the waiting channels. Count: " +
+            waitingChannels.Count, LogLevel.DEBUG);
+        foreach (SocketChannel _newChannel in waitingChannels)
+        {
+            await HandleOneChannel(_newChannel);
+        }
+    }
+
+    public static async Task HandleOneChannel(SocketChannel _newChannel)
+    {
+        Log.WriteLine("Invoked newChannel creation", LogLevel.DEBUG);
         if (PlayerRegisteration.channelQueue.ContainsKey(_newChannel.Id))
         {
-            SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+            if (BotReference.clientRef != null)
+            {
+                SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
 
-            var channel = guild.GetTextChannel(_newChannel.Id) as ITextChannel;
+                var channel = guild.GetTextChannel(_newChannel.Id) as ITextChannel;
 
-            // Place the newly created id to the object of non registered user
-            PlayerRegisteration.channelQueue[_newChannel.Id].discordRegisterationChannelId = _newChannel.Id;
+                // Place the newly created id to the object of non registered user
+                PlayerRegisteration.channelQueue[_newChannel.Id].discordRegisterationChannelId = _newChannel.Id;
 
-            string channelName = PlayerRegisteration.channelQueue[_newChannel.Id].ConstructChannelName();
+                string channelName = PlayerRegisteration.channelQueue[_newChannel.Id].ConstructChannelName();
 
-            // Sets the players permissions to be accessible
-            // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
-            await ChannelManager.SetRegisterationChannelPermissions(
-                PlayerRegisteration.channelQueue[_newChannel.Id].discordUserId, guild, channel);
-            // Creates the registeration button
-            BotMessaging.CreateButton(channel,
-                "Click this button to register [verification process with DCS" +
-                " account linking will be included later here]",
-                "Register", channelName);
+                // Sets the players permissions to be accessible
+                // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
+                await SetRegisterationChannelPermissions(
+                    PlayerRegisteration.channelQueue[_newChannel.Id].discordUserId, guild, channel);
+                // Creates the registeration button
+                BotMessaging.CreateButton(channel,
+                    "Click this button to register [verification process with DCS" +
+                    " account linking will be included later here]",
+                    "Register", channelName);
 
-            Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
+                Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
 
-            PlayerRegisteration.channelQueue.Remove(_newChannel.Id);
-            Log.WriteLine("Removed from the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
+                PlayerRegisteration.channelQueue.Remove(_newChannel.Id);
+                Log.WriteLine("Removed from the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
+            }
+            else
+            {
+                Exceptions.BotClientRefNull();
+            }
         }
         else
         {
             Log.WriteLine("Does not contain key for: " + _newChannel.Id, LogLevel.WARNING);
-            while (!PlayerRegisteration.channelQueue.ContainsKey(_newChannel.Id))
-            {
-                await Task.Delay(100);
-            }
-            await FinishChannelCreationFromDelegate(_newChannel);
         }
+
         await SerializationManager.SerializeDB();
     }
 

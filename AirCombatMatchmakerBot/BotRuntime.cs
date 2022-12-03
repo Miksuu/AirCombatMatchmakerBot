@@ -55,7 +55,7 @@ public class BotRuntime
 
             BotReference.clientRef.UserJoined += PlayerManager.HandleUserJoin;
 
-            BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
+            BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress; 
 
             //BotReference.clientRef.MessageUpdated += PlayerManager.MessageUpdated;
 
