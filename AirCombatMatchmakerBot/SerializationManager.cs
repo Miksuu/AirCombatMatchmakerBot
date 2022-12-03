@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using Newtonsoft.Json;
 
 public static class SerializationManager
@@ -38,7 +39,7 @@ public static class SerializationManager
 
     public static async Task SerializeUsersOnTheServer()
     {
-        Log.WriteLine("Serializing user on the server", LogLevel.VERBOSE);
+        Log.WriteLine("Serializing users on the server", LogLevel.VERBOSE);
 
         if (BotReference.clientRef != null)
         {
@@ -56,17 +57,7 @@ public static class SerializationManager
 
                         if (!user.IsBot)
                         {
-                            if (!Database.Instance.cachedUserIDs.Contains(user.Id))
-                            {
-                                Log.WriteLine("Added " + userString +
-                                    " to cached users list.", LogLevel.DEBUG);
-                                Database.Instance.cachedUserIDs.Add(user.Id);
-                            }
-                            else
-                            {
-                                Log.WriteLine("User " + userString + " is already on the list",
-                                    LogLevel.VERBOSE);
-                            }
+                            AddUserIdToCachedList(userString, user.Id);
                         }
                         else
                         {
@@ -104,5 +95,41 @@ public static class SerializationManager
         Log.WriteLine("DE-SERIALIZING JSON: " + jsonString, LogLevel.VERBOSE);
         
         return Task.CompletedTask;
+    }
+
+    public static void AddUserIdToCachedList(string _userString, ulong _userId)
+    {
+        Log.WriteLine("Adding " + _userString + " to the cache list", LogLevel.VERBOSE);
+
+        if (!Database.Instance.cachedUserIDs.Contains(_userId))
+        {
+            Database.Instance.cachedUserIDs.Add(_userId);
+            Log.WriteLine("Added " + _userString +
+                " to cached users list.", LogLevel.DEBUG);
+        }
+        else
+        {
+            Log.WriteLine("User " + _userString + " is already on the list", LogLevel.WARNING);
+        }
+    }
+
+    public static async void RemoveUserFromTheCachedList(string _userString, ulong _userId)
+    {
+        Log.WriteLine("Removing " + _userString + "from the cache list", LogLevel.VERBOSE);
+
+        if (Database.Instance.cachedUserIDs.Contains(_userId))
+        {
+            Database.Instance.cachedUserIDs.Remove(_userId);
+            Log.WriteLine("Removed " + _userString +
+                 "from the cached users list.", LogLevel.DEBUG);
+        }
+        else
+        {
+            Log.WriteLine("User " + _userString + " is not present on the list!", LogLevel.WARNING);
+        }
+
+        await SerializeDB();
+
+        Log.WriteLine("Done with removing " + _userString + " from the cached users list", LogLevel.VERBOSE);
     }
 }
