@@ -160,9 +160,9 @@ public static class PlayerManager
 
         if (BotReference.clientRef != null)
         {
-            if (BotReference.guildRef != null)
+            if (BotReference.GetGuildRef() != null)
             {
-                return BotReference.guildRef.GetUser(_id);
+                return BotReference.GetGuildRef().GetUser(_id);
             }
             else Exceptions.BotClientRefNull();
         }

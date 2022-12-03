@@ -12,10 +12,10 @@ public static class DowntimeManager
 
         if (BotReference.clientRef != null)
         {
-            if (BotReference.guildRef != null)
+            if (BotReference.GetGuildRef() != null)
             {
                 // Loop through the users
-                foreach (var user in BotReference.guildRef.Users)
+                foreach (var user in BotReference.GetGuildRef().Users)
                 {
                     if (user != null)
                     {

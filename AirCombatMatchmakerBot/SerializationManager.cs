@@ -37,9 +37,9 @@ public static class SerializationManager
     {
         if (BotReference.clientRef != null)
         {
-            if (BotReference.guildRef != null)
+            if (BotReference.GetGuildRef() != null)
             {
-                foreach (SocketGuildUser user in BotReference.guildRef.Users)
+                foreach (SocketGuildUser user in BotReference.GetGuildRef().Users)
                 {
                     // Move to method
                     string userString = user.Username + " (" + user.Id + ")";

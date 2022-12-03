@@ -35,7 +35,7 @@ public static class ChannelManager
             {
                 if (BotReference.guildRef != null)
                 {
-                    var channel = BotReference.guildRef.GetTextChannel(_newChannel.Id) as ITextChannel;
+                    var channel = BotReference.GetGuildRef().GetTextChannel(_newChannel.Id) as ITextChannel;
 
                     // Place the newly created id to the object of non registered user
                     PlayerRegisteration.channelQueue[_newChannel.Id].discordRegisterationChannelId = _newChannel.Id;
@@ -82,10 +82,10 @@ public static class ChannelManager
         {
             Log.WriteLine("FOUND CHANNEL TO SET PERMISSIONS ON: " + _channel.Id, LogLevel.DEBUG);
 
-            if (BotReference.guildRef != null)
+            if (BotReference.GetGuildRef() != null)
             {
                 // Allow the channell access to the new user
-                await _channel.AddPermissionOverwriteAsync(BotReference.guildRef.GetUser(_userId), permissionOverridesUser);
+                await _channel.AddPermissionOverwriteAsync(BotReference.GetGuildRef().GetUser(_userId), permissionOverridesUser);
             }
             else Exceptions.BotGuildRefNull();
         }

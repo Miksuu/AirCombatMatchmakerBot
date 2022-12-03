@@ -26,9 +26,9 @@ public static class PlayerRegisteration
 
             Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
 
-            if (BotReference.guildRef != null)
+            if (BotReference.GetGuildRef() != null)
             {
-                var newChannel = await BotReference.guildRef.CreateTextChannelAsync(
+                var newChannel = await BotReference.GetGuildRef().CreateTextChannelAsync(
                     channelName, tcp => tcp.CategoryId = 1047529896735428638);
 
                 // Make the program wait that the channel is done
