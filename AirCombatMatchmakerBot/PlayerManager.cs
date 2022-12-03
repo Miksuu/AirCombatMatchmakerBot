@@ -31,7 +31,6 @@ public static class PlayerManager
                     if (nonRegisteredUser != null)
                     {
                         await PlayerRegisteration.CreateANewRegisterationChannel(nonRegisteredUser);
-                        //await ChannelManager.HandleChannelCreationManually(nonRegisteredUser);
                     }
                     else
                     {
