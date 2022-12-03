@@ -1,7 +1,7 @@
 using Discord;
 using Discord.WebSocket;
 
-public static class PlayerManager
+public static class UserManager
 {
     // For the new users that join the discord, need to add them to the cache too
     public static async Task HandleUserJoin(SocketGuildUser _user)
@@ -10,12 +10,12 @@ public static class PlayerManager
             + CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
             " (" + _user.Id + ")";
 
-        await CreateARegisterationProfileForThePlayer(_user, userNameWithNickName);
-        await AddPlayerToCache(userNameWithNickName, _user.Id);
+        await CreateARegisterationProfileForTheUser(_user, userNameWithNickName);
+        await AddUserToCache(userNameWithNickName, _user.Id);
     }
 
     // For the new users and the terminated users
-    private static async Task CreateARegisterationProfileForThePlayer(
+    private static async Task CreateARegisterationProfileForTheUser(
         SocketGuildUser _user, string _userNameWithNickName)
     {
         if (!_user.IsBot)
@@ -61,19 +61,19 @@ public static class PlayerManager
     }
 
     // Add the user to the cached users list, this doesn't happen to the terminated users as they are already in the server
-    private static async Task AddPlayerToCache(string userNameWithNickName, ulong _userId)
+    private static async Task AddUserToCache(string userNameWithNickName, ulong _userId)
     {
         SerializationManager.AddUserIdToCachedList(userNameWithNickName, _userId);
         await SerializationManager.SerializeDB();
     }
 
 
-    public static async Task HandlePlayerLeaveDelegate(SocketGuild _guild, SocketUser _user)
+    public static async Task HandleUserLeaveDelegate(SocketGuild _guild, SocketUser _user)
     {
-        await HandlePlayerLeave(_user.Username, _user.Id);
+        await HandleUserLeave(_user.Username, _user.Id);
     }
 
-    public static async Task HandlePlayerLeave(
+    public static async Task HandleUserLeave(
         string _userName, // Just for printing purposes right now 
         ulong _userId)
     {
@@ -184,7 +184,7 @@ public static class PlayerManager
                 string userNameWithNickName = user.Username + " aka "
                     + CheckIfNickNameIsEmptyAndReturnUsername(user.Id) +
                     " (" + user.Id + ")";
-                CreateARegisterationProfileForThePlayer(user, userNameWithNickName);
+                CreateARegisterationProfileForTheUser(user, userNameWithNickName);
             }
             else Log.WriteLine("User with id: " + id + " was null!!", LogLevel.CRITICAL);
 

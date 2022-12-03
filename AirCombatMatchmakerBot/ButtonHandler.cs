@@ -23,7 +23,7 @@ public static class ButtonHandler
                 if (_component.User.Id.ToString() == splitString[1])
                 {
                     // Checks that the player does not exist in the database already, true if this is not the case
-                    if (PlayerManager.AddNewPlayerToTheDatabaseById(_component.User.Id))
+                    if (UserManager.AddNewPlayerToTheDatabaseById(_component.User.Id))
                     {
                         response = _component.User.Mention + ", " +
                             BotMessaging.GetMessageResponse(

@@ -54,7 +54,7 @@ public static class DowntimeManager
         {
             Log.WriteLine(user.Username + "(" + user.Id + ")" + "was not found!" +
                 " handling user join during downtime.", LogLevel.DEBUG);
-            await PlayerManager.HandleUserJoin(user);
+            await UserManager.HandleUserJoin(user);
         }
 
         useWaitingChannels = false;
@@ -148,7 +148,7 @@ public static class DowntimeManager
             if (BotReference.clientRef != null)
             {
                 //var user = BotReference.clientRef.GetUserAsync(userId).Result;
-                await PlayerManager.HandlePlayerLeave(
+                await UserManager.HandleUserLeave(
                    "during downtime: userId: " + userId.ToString(), userId);
             }
         }

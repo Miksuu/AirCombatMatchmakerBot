@@ -57,15 +57,15 @@ public class BotRuntime
 
             await SerializationManager.SerializeUsersOnTheServer();
 
-            BotReference.clientRef.UserJoined += PlayerManager.HandleUserJoin;
+            BotReference.clientRef.UserJoined += UserManager.HandleUserJoin;
 
             BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress; 
 
-            //BotReference.clientRef.MessageUpdated += PlayerManager.MessageUpdated;
+            //BotReference.clientRef.MessageUpdated += UserManager.MessageUpdated;
 
-            BotReference.clientRef.GuildMemberUpdated += PlayerManager.HandleGuildMemberUpdated;
+            BotReference.clientRef.GuildMemberUpdated += UserManager.HandleGuildMemberUpdated;
 
-            BotReference.clientRef.UserLeft += PlayerManager.HandlePlayerLeaveDelegate;
+            BotReference.clientRef.UserLeft += UserManager.HandleUserLeaveDelegate;
 
             BotReference.clientRef.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
 
