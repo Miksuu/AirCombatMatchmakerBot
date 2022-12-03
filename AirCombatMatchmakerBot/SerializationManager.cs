@@ -1,20 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using Discord.WebSocket;
+using Newtonsoft.Json;
 
 public static class SerializationManager
 {
     static string dbPath = @"C:\AirCombatMatchmakerBot\Data\database.json";
 
     // Run this everytime when relevant data needs to be saved to the database
-    public static Task SerializeDB()
+    public static async Task SerializeDB()
     {
         Log.WriteLine("SERIALIZING DB", LogLevel.VERBOSE);
+
+        await SerializeUsersOnTheServer();
 
         Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
         //serializer.Converters.Add(new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter());
         //serializer.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
         serializer.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
         serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
-        serializer.MaxDepth= 64;
+        serializer.MaxDepth = 64;
 
         //Console.WriteLine("SERIALIZATION, STARTING for " + Database.Instance.Tournaments.Count);
 
@@ -28,6 +31,44 @@ public static class SerializationManager
         };
 
         Log.WriteLine("DB SERIALIZATION DONE!", LogLevel.VERBOSE);
+    }
+
+    private static Task SerializeUsersOnTheServer()
+    {
+        if (BotReference.clientRef != null)
+        {
+            var guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+            foreach (SocketGuildUser user in guild.Users)
+            {
+                // Move to method
+                string userString = user.Username + " (" + user.Id + ")";
+                Log.WriteLine("Looping on: " + userString, LogLevel.VERBOSE);
+
+                if (!user.IsBot)
+                {
+                    if (!Database.Instance.cachedUserIDs.Contains(user.Id))
+                    {
+                        Log.WriteLine("Added " + userString +
+                            " to cached users list.", LogLevel.DEBUG);
+                        Database.Instance.cachedUserIDs.Add(user.Id);
+                    }
+                    else
+                    {
+                        Log.WriteLine("User " + userString + " is already on the list",
+                            LogLevel.VERBOSE);
+                    }
+                }
+                else 
+                {
+                    Log.WriteLine(userString + " is a bot, disregarding.", LogLevel.VERBOSE);
+                }
+            }
+            Log.WriteLine("Done looping through current users.", LogLevel.VERBOSE);
+        }
+        else
+        {
+            Exceptions.BotClientRefNull();
+        }
         return Task.CompletedTask;
     }
 

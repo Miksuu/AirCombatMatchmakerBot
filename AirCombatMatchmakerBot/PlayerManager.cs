@@ -12,13 +12,13 @@ public static class PlayerManager
 
             if (BotReference.clientRef != null)
             {
-                SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+                //SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
 
                 Log.WriteLine("Checking " + _user.Username + " aka "
                     + PlayerManager.CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
                     " (" + _user.Id + ")", LogLevel.DEBUG);
 
-                if (CheckIfUserIdExistsInTheDatabase(_user.Id))
+                if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_user.Id))
                 {
                     Log.WriteLine(_user.Username + " found in the database", LogLevel.DEBUG);
 
@@ -69,7 +69,7 @@ public static class PlayerManager
         Log.WriteLine("Adding a new player: " + nickName + " (" + _playerId + ").", LogLevel.DEBUG);
 
         // Checks if the player is already in the database, just in case
-        if (!CheckIfUserIdExistsInTheDatabase(_playerId))
+        if (!DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_playerId))
         {
             // Add to the profile
             Database.Instance.PlayerData.PlayerIDs.Add(_playerId, new Player(_playerId, nickName));
@@ -104,7 +104,7 @@ public static class PlayerManager
         else Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username + "'s profile, no valid player found (not registed?) ", LogLevel.DEBUG);
     }
 
-    public static string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
+    public static string? CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
     {
         Log.WriteLine("Checking if nickname is empty and return username with ID: " + _id, LogLevel.VERBOSE);
 
@@ -141,7 +141,7 @@ public static class PlayerManager
     public static bool DeletePlayerProfile(string _dataValue)
     {
         ulong id = UInt64.Parse(_dataValue);
-        if (CheckIfUserIdExistsInTheDatabase(id))
+        if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(id))
         {
             Log.WriteLine("Deleting a player profile " + _dataValue, LogLevel.DEBUG);
             Database.Instance.PlayerData.PlayerIDs.Remove(id);
@@ -154,11 +154,6 @@ public static class PlayerManager
         }
     }
 
-    // Just checks if the User discord ID profile exists in the database file
-    public static bool CheckIfUserIdExistsInTheDatabase(ulong _id)
-    {
-        return Database.Instance.PlayerData.PlayerIDs.ContainsKey(_id);
-    }
 
     // Gets the user by the discord UserId. This may not be present in the Database.
     public static SocketGuildUser? GetSocketGuildUserById(ulong _id)

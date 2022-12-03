@@ -23,6 +23,8 @@ public class Database
     // Users not registered, more simple class for them without any player data.
     public List<NonRegisteredUser> NonRegisteredUsers { get; set; }
 
+    public List<ulong> cachedUserIDs { get; set; }
+
     public int channelTournamentIndex { get; set; }
     public int channelMatchIndex { get; set; }
 
@@ -30,6 +32,7 @@ public class Database
     {
         PlayerData = new PlayerData();
         NonRegisteredUsers = new List<NonRegisteredUser>();
+        cachedUserIDs = new List<ulong>();
 
         // Load this from json
         adminIDs = new List<ulong> { 

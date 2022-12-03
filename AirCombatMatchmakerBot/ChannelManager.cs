@@ -7,9 +7,9 @@ public static class ChannelManager
     static List<SocketChannel> waitingChannels = new();
     public static async Task FinishChannelCreationFromDelegate(SocketChannel _newChannel)
     {
-        Log.WriteLine("Delegate fired. " + nameof(PlayerRegisteration.useWaitingChannels) +
-            ": " + PlayerRegisteration.useWaitingChannels, LogLevel.DEBUG); ;
-        if (PlayerRegisteration.useWaitingChannels)
+        Log.WriteLine("Delegate fired. " + nameof(DowntimeManager.useWaitingChannels) +
+            ": " + DowntimeManager.useWaitingChannels, LogLevel.DEBUG); ;
+        if (DowntimeManager.useWaitingChannels)
         {
             waitingChannels.Add(_newChannel);
         }
