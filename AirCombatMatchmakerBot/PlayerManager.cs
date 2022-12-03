@@ -10,12 +10,12 @@ public static class PlayerManager
             + CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
             " (" + _user.Id + ")";
 
-        CreateARegisterationProfileForThePlayer(_user, userNameWithNickName);
+        await CreateARegisterationProfileForThePlayer(_user, userNameWithNickName);
         await AddPlayerToCache(userNameWithNickName, _user.Id);
     }
 
     // For the new users and the terminated users
-    private static async void CreateARegisterationProfileForThePlayer(
+    private static async Task CreateARegisterationProfileForThePlayer(
         SocketGuildUser _user, string _userNameWithNickName)
     {
         if (!_user.IsBot)
