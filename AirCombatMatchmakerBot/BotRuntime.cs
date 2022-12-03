@@ -65,7 +65,7 @@ public class BotRuntime
 
             BotReference.clientRef.GuildMemberUpdated += PlayerManager.HandleGuildMemberUpdated;
 
-            BotReference.clientRef.UserLeft += PlayerManager.HandlePlayerLeave;
+            BotReference.clientRef.UserLeft += PlayerManager.HandlePlayerLeaveDelegate;
 
             BotReference.clientRef.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
 

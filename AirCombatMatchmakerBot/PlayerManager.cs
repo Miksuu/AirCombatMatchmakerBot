@@ -49,12 +49,21 @@ public static class PlayerManager
         }
     }
 
-    public static async Task HandlePlayerLeave(SocketGuild _guild, SocketUser _user)
+    public static async Task HandlePlayerLeaveDelegate(SocketGuild _guild, SocketUser _user)
     {
-        Log.WriteLine(_user.Username + " (" + _user.Id +
+        await HandlePlayerLeave(_user.Username, _user.Id);
+    }
+
+    public static async Task HandlePlayerLeave(
+        string _userName, // Just for printing purposes right now 
+        ulong _userId)
+    {
+        Log.WriteLine(_userName + " (" + _userId +
             ") bailed out! Handling deleting registeration channels etc.", LogLevel.DEBUG);
 
-        await ChannelManager.DeleteUsersChannelsOnLeave(_guild, _user);
+        await ChannelManager.DeleteUsersChannelsOnLeave(_userId);
+
+
     }
 
     public static bool AddNewPlayerToTheDatabaseById(ulong _playerId)
