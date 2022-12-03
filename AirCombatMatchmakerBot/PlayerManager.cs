@@ -63,7 +63,11 @@ public static class PlayerManager
 
         await ChannelManager.DeleteUsersChannelsOnLeave(_userId);
 
+        Log.WriteLine("Done deleting user's " + _userId + "channels.", LogLevel.VERBOSE);
 
+        SerializationManager.RemoveUserFromTheCachedList(_userName, _userId);
+
+        //Log.WriteLine("Done removing " + _userName + "(" + _userId + ") from the cache list", LogLevel.VERBOSE);
     }
 
     public static bool AddNewPlayerToTheDatabaseById(ulong _playerId)

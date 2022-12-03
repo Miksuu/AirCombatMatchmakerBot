@@ -113,23 +113,23 @@ public static class SerializationManager
         }
     }
 
-    public static async void RemoveUserFromTheCachedList(string _userString, ulong _userId)
+    public static async void RemoveUserFromTheCachedList(string _userName, ulong _userId)
     {
-        Log.WriteLine("Removing " + _userString + "from the cache list", LogLevel.VERBOSE);
+        Log.WriteLine("Removing " + _userName + "(" + _userId + ")" + " from the cache list", LogLevel.VERBOSE);
 
         if (Database.Instance.cachedUserIDs.Contains(_userId))
         {
             Database.Instance.cachedUserIDs.Remove(_userId);
-            Log.WriteLine("Removed " + _userString +
+            Log.WriteLine("Removed " + _userName +
                  "from the cached users list.", LogLevel.DEBUG);
         }
         else
         {
-            Log.WriteLine("User " + _userString + " is not present on the list!", LogLevel.WARNING);
+            Log.WriteLine("User " + _userName + " is not present on the list!", LogLevel.WARNING);
         }
 
         await SerializeDB();
 
-        Log.WriteLine("Done with removing " + _userString + " from the cached users list", LogLevel.VERBOSE);
+        Log.WriteLine("Done with removing " + _userName + " from the cached users list", LogLevel.VERBOSE);
     }
 }
