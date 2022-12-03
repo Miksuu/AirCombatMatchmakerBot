@@ -68,7 +68,6 @@ public static class UserManager
         await SerializationManager.SerializeDB();
     }
 
-
     public static async Task HandleUserLeaveDelegate(SocketGuild _guild, SocketUser _user)
     {
         await HandleUserLeave(_user.Username, _user.Id);
@@ -81,9 +80,13 @@ public static class UserManager
         Log.WriteLine(_userName + " (" + _userId +
             ") bailed out! Handling deleting registeration channels etc.", LogLevel.DEBUG);
 
-        await ChannelManager.DeleteUsersRegisterationChannel(_userId);
-
-        Log.WriteLine("Done deleting user's " + _userId + "channels.", LogLevel.VERBOSE);
+        // Avoid trying to delete the channel if user has registered already (because it should not exist)
+        if (!DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_userId))
+        {
+            Log.WriteLine("The didn't have a player profile, deleting registeration channel", LogLevel.VERBOSE);
+            await ChannelManager.DeleteUsersRegisterationChannel(_userId);
+            Log.WriteLine("Done deleting user's " + _userId + "channel.", LogLevel.VERBOSE);
+        }
 
         SerializationManager.RemoveUserFromTheCachedList(_userName, _userId);
 
