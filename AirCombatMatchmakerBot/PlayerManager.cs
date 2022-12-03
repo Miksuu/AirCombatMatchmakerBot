@@ -3,7 +3,20 @@ using Discord.WebSocket;
 
 public static class PlayerManager
 {
+    // For the new users that join the discord, need to add them to the cache too
     public static async Task HandleUserJoin(SocketGuildUser _user)
+    {
+        string userNameWithNickName = _user.Username + " aka "
+            + CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
+            " (" + _user.Id + ")";
+
+        CreateARegisterationProfileForThePlayer(_user, userNameWithNickName);
+        await AddPlayerToCache(userNameWithNickName, _user.Id);
+    }
+
+    // For the new users and the terminated users
+    private static async void CreateARegisterationProfileForThePlayer(
+        SocketGuildUser _user, string _userNameWithNickName)
     {
         if (!_user.IsBot)
         {
@@ -12,15 +25,14 @@ public static class PlayerManager
 
             if (BotReference.clientRef != null)
             {
-                Log.WriteLine("Checking " + _user.Username + " aka "
-                    + CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
-                    " (" + _user.Id + ")", LogLevel.DEBUG);
+                Log.WriteLine("Checking " + _userNameWithNickName, LogLevel.DEBUG);
 
                 if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_user.Id))
                 {
                     Log.WriteLine(_user.Username + " found in the database", LogLevel.DEBUG);
 
                     // TODO: Handle recovery of the access to the user.
+                    // Add a role(s) here
                 }
                 else
                 {
@@ -28,6 +40,7 @@ public static class PlayerManager
                     NonRegisteredUser nonRegisteredUser =
                         PlayerRegisteration.CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(_user.Id);
 
+                    // Creates a private channel for the user to proceed with the registeration 
                     if (nonRegisteredUser != null)
                     {
                         await PlayerRegisteration.CreateANewRegisterationChannel(nonRegisteredUser);
@@ -37,8 +50,6 @@ public static class PlayerManager
                         Log.WriteLine(nameof(nonRegisteredUser) + " was null!", LogLevel.ERROR);
                     }
                 }
-                // Creates a private channel for the user to proceed with the registeration 
-                
             }
             else Exceptions.BotClientRefNull();
         }
@@ -48,6 +59,14 @@ public static class PlayerManager
                 " joined the discord, disregarding the registeration process", LogLevel.WARNING);
         }
     }
+
+    // Add the user to the cached users list, this doesn't happen to the terminated users as they are already in the server
+    private static async Task AddPlayerToCache(string userNameWithNickName, ulong _userId)
+    {
+        SerializationManager.AddUserIdToCachedList(userNameWithNickName, _userId);
+        await SerializationManager.SerializeDB();
+    }
+
 
     public static async Task HandlePlayerLeaveDelegate(SocketGuild _guild, SocketUser _user)
     {
@@ -156,6 +175,19 @@ public static class PlayerManager
         {
             Log.WriteLine("Deleting a player profile " + _dataValue, LogLevel.DEBUG);
             Database.Instance.PlayerData.PlayerIDs.Remove(id);
+
+            var user = GetSocketGuildUserById(id);
+
+            if (user != null)
+            {
+                // After termination, create a regiteration profile for that player
+                string userNameWithNickName = user.Username + " aka "
+                    + CheckIfNickNameIsEmptyAndReturnUsername(user.Id) +
+                    " (" + user.Id + ")";
+                CreateARegisterationProfileForThePlayer(user, userNameWithNickName);
+            }
+            else Log.WriteLine("User with id: " + id + " was null!!", LogLevel.CRITICAL);
+
             return true;
         }
         else
@@ -164,7 +196,6 @@ public static class PlayerManager
             return false;
         }
     }
-
 
     // Gets the user by the discord UserId. This may not be present in the Database.
     public static SocketGuildUser? GetSocketGuildUserById(ulong _id)

@@ -19,7 +19,9 @@ public static class DatabaseMethods
         }
         else
         {
-            Log.WriteLine("User id: " + _discordId + " was not found!", LogLevel.ERROR);
+            Log.WriteLine("User id: " + _discordId + " was not found!" +
+                " This seems to happen when a user has registered," +
+                " and leaves the discord with the channel open", LogLevel.ERROR);
         }
 
         await SerializationManager.SerializeDB();

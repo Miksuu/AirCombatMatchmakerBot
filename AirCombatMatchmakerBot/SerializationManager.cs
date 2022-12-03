@@ -109,7 +109,7 @@ public static class SerializationManager
         }
         else
         {
-            Log.WriteLine("User " + _userString + " is already on the list", LogLevel.WARNING);
+            Log.WriteLine("User " + _userString + " is already on the list", LogLevel.VERBOSE);
         }
     }
 
@@ -121,7 +121,7 @@ public static class SerializationManager
         {
             Database.Instance.cachedUserIDs.Remove(_userId);
             Log.WriteLine("Removed " + _userName +
-                 "from the cached users list.", LogLevel.DEBUG);
+                 " from the cached users list.", LogLevel.DEBUG);
         }
         else
         {
