@@ -53,6 +53,8 @@ public class BotRuntime
             BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
+            BotReference.guildRef = BotReference.clientRef.GetGuild(BotReference.GuildID);
+
             await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
 
             BotReference.clientRef.UserJoined += PlayerManager.HandleUserJoin;

@@ -12,10 +12,8 @@ public static class PlayerManager
 
             if (BotReference.clientRef != null)
             {
-                //SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-
                 Log.WriteLine("Checking " + _user.Username + " aka "
-                    + PlayerManager.CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
+                    + CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
                     " (" + _user.Id + ")", LogLevel.DEBUG);
 
                 if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_user.Id))
@@ -162,14 +160,14 @@ public static class PlayerManager
 
         if (BotReference.clientRef != null)
         {
-            return BotReference.clientRef.GetGuild(BotReference.GuildID).GetUser(_id);
+            if (BotReference.guildRef != null)
+            {
+                return BotReference.guildRef.GetUser(_id);
+            }
+            else Exceptions.BotClientRefNull();
         }
-
-        else
-        {
-            Exceptions.BotClientRefNull();
-            return null;
-        }
+        else Exceptions.BotClientRefNull();
+        return null;
     }
 
     /*

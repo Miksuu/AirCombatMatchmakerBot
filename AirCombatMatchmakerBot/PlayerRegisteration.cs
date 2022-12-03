@@ -22,18 +22,20 @@ public static class PlayerRegisteration
 
         if (BotReference.clientRef != null)
         {
-            SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-
             string channelName = _nonRegisteredUser.ConstructChannelName();
 
             Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
 
-            var newChannel = await guild.CreateTextChannelAsync(
-                channelName, tcp => tcp.CategoryId = 1047529896735428638);
+            if (BotReference.guildRef != null)
+            {
+                var newChannel = await BotReference.guildRef.CreateTextChannelAsync(
+                    channelName, tcp => tcp.CategoryId = 1047529896735428638);
 
-            // Make the program wait that the channel is done
-            channelQueue.Add(newChannel.Id, _nonRegisteredUser);
-            Log.WriteLine("Added to the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
+                // Make the program wait that the channel is done
+                channelQueue.Add(newChannel.Id, _nonRegisteredUser);
+                Log.WriteLine("Added to the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
+            }
+            else Exceptions.BotGuildRefNull();
         }
         else Exceptions.BotClientRefNull();
     }

@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using System.Threading.Channels;
 
 public static class BotMessaging
 {
@@ -34,10 +35,13 @@ public static class BotMessaging
 
         if (BotReference.clientRef != null && BotReference.connected)
         {
-            await BotReference.clientRef.
-                GetGuild(BotReference.GuildID).
-                GetTextChannel(1047179975805128724).
-                SendMessageAsync(completeLogString);
+            if (BotReference.guildRef != null)
+            {
+                await BotReference.guildRef.
+                    GetTextChannel(1047179975805128724).
+                    SendMessageAsync(completeLogString);
+            }
+            else Exceptions.BotGuildRefNull();
         }
     }
 
@@ -57,16 +61,20 @@ public static class BotMessaging
 
         if (BotReference.clientRef != null)
         {
-            var textChannel = BotReference.clientRef.GetGuild(BotReference.GuildID).GetTextChannel(_channel.Id);
+            if (BotReference.guildRef != null)
+            {
+                var textChannel = BotReference.guildRef.GetTextChannel(_channel.Id);
 
-            if (textChannel != null) 
-            {
-                await textChannel.SendMessageAsync(_textOnTheSameMessage, components: builder.Build());
+                if (textChannel != null)
+                {
+                    await textChannel.SendMessageAsync(_textOnTheSameMessage, components: builder.Build());
+                }
+                else
+                {
+                    Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
+                }
             }
-            else
-            {
-                Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
-            }
+            else Exceptions.BotGuildRefNull();
         }
         else Exceptions.BotClientRefNull();
     }

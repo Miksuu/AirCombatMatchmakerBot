@@ -12,36 +12,36 @@ public static class DowntimeManager
 
         if (BotReference.clientRef != null)
         {
-            var guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-            Log.WriteLine("USERS COUNT: " + guild.Users.Count(), LogLevel.DEBUG);
-
-            // Loop through the users
-            foreach (var user in guild.Users)
+            if (BotReference.guildRef != null)
             {
-                if (user != null)
+                // Loop through the users
+                foreach (var user in BotReference.guildRef.Users)
                 {
-                    if (!user.IsBot)
+                    if (user != null)
                     {
-                        // Profile found, disregard
-                        if (DatabaseMethods.CheckIfUserHasANonRegisterdUserProfile(user.Id) ||
-                            DatabaseMethods.CheckIfUserIdExistsInTheDatabase(user.Id))
+                        if (!user.IsBot)
                         {
-                            Log.WriteLine(
-                                user.Username + "(" + user.Id + ") was found, disregarding", LogLevel.VERBOSE);
+                            // Profile found, disregard
+                            if (DatabaseMethods.CheckIfUserHasANonRegisterdUserProfile(user.Id) ||
+                                DatabaseMethods.CheckIfUserIdExistsInTheDatabase(user.Id))
+                            {
+                                Log.WriteLine(
+                                    user.Username + "(" + user.Id + ") was found, disregarding", LogLevel.VERBOSE);
+                            }
+                            // Run handle user join that will server the same purpose than the new player joining
+                            // when the bot is up
+                            else
+                            {
+                                Log.WriteLine(user.Username + "(" + user.Id + ")" + "was not found!" +
+                                    " adding user to the list!", LogLevel.VERBOSE);
+                                foundUsers.Add(user);
+                            }
                         }
-                        // Run handle user join that will server the same purpose than the new player joining
-                        // when the bot is up
-                        else
-                        {
-                            Log.WriteLine(user.Username + "(" + user.Id + ")" + "was not found!" +
-                                " adding user to the list!", LogLevel.VERBOSE);
-                            foundUsers.Add(user);
-                        }
+                        else Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);
                     }
-                    else Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);
+                    else Log.WriteLine("User is null!", LogLevel.CRITICAL);
                 }
-                else Log.WriteLine("User is null!", LogLevel.CRITICAL);
-            }
+            } else Exceptions.BotGuildRefNull();
         }
         else Exceptions.BotClientRefNull();
 
@@ -63,6 +63,8 @@ public static class DowntimeManager
 
     public static async Task CheckForUsersThatLeftDuringDowntime()
     {
+        //BotReference
+
         await SerializationManager.SerializeDB();
     }
 }

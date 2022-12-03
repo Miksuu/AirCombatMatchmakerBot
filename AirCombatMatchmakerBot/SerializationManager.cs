@@ -37,38 +37,39 @@ public static class SerializationManager
     {
         if (BotReference.clientRef != null)
         {
-            var guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
-            foreach (SocketGuildUser user in guild.Users)
+            if (BotReference.guildRef != null)
             {
-                // Move to method
-                string userString = user.Username + " (" + user.Id + ")";
-                Log.WriteLine("Looping on: " + userString, LogLevel.VERBOSE);
-
-                if (!user.IsBot)
+                foreach (SocketGuildUser user in BotReference.guildRef.Users)
                 {
-                    if (!Database.Instance.cachedUserIDs.Contains(user.Id))
+                    // Move to method
+                    string userString = user.Username + " (" + user.Id + ")";
+                    Log.WriteLine("Looping on: " + userString, LogLevel.VERBOSE);
+
+                    if (!user.IsBot)
                     {
-                        Log.WriteLine("Added " + userString +
-                            " to cached users list.", LogLevel.DEBUG);
-                        Database.Instance.cachedUserIDs.Add(user.Id);
+                        if (!Database.Instance.cachedUserIDs.Contains(user.Id))
+                        {
+                            Log.WriteLine("Added " + userString +
+                                " to cached users list.", LogLevel.DEBUG);
+                            Database.Instance.cachedUserIDs.Add(user.Id);
+                        }
+                        else
+                        {
+                            Log.WriteLine("User " + userString + " is already on the list",
+                                LogLevel.VERBOSE);
+                        }
                     }
                     else
                     {
-                        Log.WriteLine("User " + userString + " is already on the list",
-                            LogLevel.VERBOSE);
+                        Log.WriteLine(userString + " is a bot, disregarding.", LogLevel.VERBOSE);
                     }
                 }
-                else 
-                {
-                    Log.WriteLine(userString + " is a bot, disregarding.", LogLevel.VERBOSE);
-                }
-            }
-            Log.WriteLine("Done looping through current users.", LogLevel.VERBOSE);
+                Log.WriteLine("Done looping through current users.", LogLevel.VERBOSE);
+
+            } else Exceptions.BotGuildRefNull();
         }
-        else
-        {
-            Exceptions.BotClientRefNull();
-        }
+        else Exceptions.BotClientRefNull();
+
         return Task.CompletedTask;
     }
 
