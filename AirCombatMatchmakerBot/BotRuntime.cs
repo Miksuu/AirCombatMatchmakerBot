@@ -55,6 +55,8 @@ public class BotRuntime
 
             await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
 
+            await SerializationManager.SerializeUsersOnTheServer();
+
             BotReference.clientRef.UserJoined += PlayerManager.HandleUserJoin;
 
             BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress; 

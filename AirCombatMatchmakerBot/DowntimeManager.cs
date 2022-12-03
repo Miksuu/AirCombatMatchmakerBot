@@ -1,4 +1,6 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
+using System.Collections.Generic;
 
 public static class DowntimeManager
 {
@@ -10,42 +12,39 @@ public static class DowntimeManager
         Log.WriteLine("Checking for Users that entered the discord during " +
             "the bot's downtime and that are not on the registeration list", LogLevel.DEBUG);
 
-        if (BotReference.clientRef != null)
-        {
-            var guild = BotReference.GetGuildRef();
+        var guild = BotReference.GetGuildRef();
 
-            if (guild != null)
+        if (guild != null)
+        {
+            // Loop through the users
+            foreach (var user in guild.Users)
             {
-                // Loop through the users
-                foreach (var user in guild.Users)
+                if (user != null)
                 {
-                    if (user != null)
+                    if (!user.IsBot)
                     {
-                        if (!user.IsBot)
+                        // Profile found, disregard
+                        if (DatabaseMethods.CheckIfUserHasANonRegisterdUserProfile(user.Id) ||
+                            DatabaseMethods.CheckIfUserIdExistsInTheDatabase(user.Id))
                         {
-                            // Profile found, disregard
-                            if (DatabaseMethods.CheckIfUserHasANonRegisterdUserProfile(user.Id) ||
-                                DatabaseMethods.CheckIfUserIdExistsInTheDatabase(user.Id))
-                            {
-                                Log.WriteLine(
-                                    user.Username + "(" + user.Id + ") was found, disregarding", LogLevel.VERBOSE);
-                            }
-                            // Run handle user join that will server the same purpose than the new player joining
-                            // when the bot is up
-                            else
-                            {
-                                Log.WriteLine(user.Username + "(" + user.Id + ")" + "was not found!" +
-                                    " adding user to the list!", LogLevel.VERBOSE);
-                                foundUsers.Add(user);
-                            }
+                            Log.WriteLine(
+                                user.Username + "(" + user.Id + ") was found, disregarding", LogLevel.VERBOSE);
                         }
-                        else Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);
+                        // Run handle user join that will server the same purpose than the new player joining
+                        // when the bot is up
+                        else
+                        {
+                            Log.WriteLine(user.Username + "(" + user.Id + ")" + "was not found!" +
+                                " adding user to the list!", LogLevel.VERBOSE);
+                            foundUsers.Add(user);
+                        }
                     }
-                    else Log.WriteLine("User is null!", LogLevel.CRITICAL);
+                    else Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);
                 }
-            } else Exceptions.BotGuildRefNull();
+                else Log.WriteLine("User is null!", LogLevel.CRITICAL);
+            }
         }
-        else Exceptions.BotClientRefNull();
+        else Exceptions.BotGuildRefNull();
 
         Log.WriteLine("Starting to go through foundUsers: " + foundUsers.Count, LogLevel.DEBUG);
 
@@ -63,10 +62,72 @@ public static class DowntimeManager
         await ChannelManager.CreateChannelsFromWaitingChannels();
     }
 
-    public static async Task CheckForUsersThatLeftDuringDowntime()
+    public static Task CheckForUsersThatLeftDuringDowntime()
     {
-        //BotReference
+        Log.WriteLine("Starting to check for users that left during the downtime.", LogLevel.DEBUG);
 
-        await SerializationManager.SerializeDB();
+        List<ulong> usersOnTheServerAfterDowntime = new List<ulong>();
+
+        var guild = BotReference.GetGuildRef();
+
+        if (guild != null)
+        {
+            foreach (SocketGuildUser user in guild.Users)
+            {
+                if (user != null)
+                {
+                    string userNameWithId = user.Username + " (" + user.Id + ")";
+
+                    Log.WriteLine("Looping on: " + userNameWithId, LogLevel.VERBOSE);
+
+                    if (!user.IsBot)
+                    {
+                        Log.WriteLine("Found user: " + userNameWithId +
+                            " adding it to list.", LogLevel.VERBOSE);
+
+                        usersOnTheServerAfterDowntime.Add(user.Id);
+
+                        Log.WriteLine("The list count is now: " +
+                            usersOnTheServerAfterDowntime.Count, LogLevel.VERBOSE);
+                    }
+                    else Log.WriteLine("User " + user.Username + " was a bot, diregarding", LogLevel.VERBOSE);
+                }
+                else { Log.WriteLine("User was null!", LogLevel.CRITICAL); }
+            }
+        }
+        Log.WriteLine("Looping done with: " + usersOnTheServerAfterDowntime.Count +
+            " users on the temp list", LogLevel.DEBUG);
+
+        GetDifferenceBetweenTheCurrentAndCachedUsers(
+            Database.Instance.cachedUserIDs, usersOnTheServerAfterDowntime);
+
+        return Task.CompletedTask;
+    }
+
+    private static List<ulong> GetDifferenceBetweenTheCurrentAndCachedUsers(
+        List<ulong> _currentUsers, List<ulong> _databaseUsers)
+    {
+        PrintUlongListOfUsers(
+            "Printing a list of CURRENT user's ID's count of: " , _currentUsers, LogLevel.VERBOSE);
+
+        PrintUlongListOfUsers(
+            "Printing a list of DATABASE user's ID's count of: ", _databaseUsers, LogLevel.VERBOSE);
+        List<ulong> difference = _currentUsers.Except(_databaseUsers).ToList();
+
+        if (difference.Count > 0)
+        {
+            PrintUlongListOfUsers("Here's the difference results: ", difference, LogLevel.DEBUG);
+        }
+        else Log.WriteLine("No difference detected.", LogLevel.VERBOSE);
+
+        return difference;
+    }
+
+    private static void PrintUlongListOfUsers(
+        string _printMessage, List<ulong> _users, LogLevel _logLevel)
+    {
+        Log.WriteLine(_printMessage + _users.Count, _logLevel);
+        foreach (ulong userId in _users) { Log.WriteLine("UserId: " + userId, _logLevel); }
+        Log.WriteLine("End of print.", _logLevel);
     }
 }

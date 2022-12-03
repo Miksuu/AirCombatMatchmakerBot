@@ -6,12 +6,15 @@ public static class SerializationManager
     static string dbPath = @"C:\AirCombatMatchmakerBot\Data\database.json";
 
     // Run this everytime when relevant data needs to be saved to the database
-    public static async Task SerializeDB()
+    public static async Task SerializeDB(bool _circularDependency = false)
     {
         Log.WriteLine("SERIALIZING DB", LogLevel.VERBOSE);
 
-        await SerializeUsersOnTheServer();
-
+        if (!_circularDependency)
+        {
+            await SerializeUsersOnTheServer();
+        }
+        
         Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
         //serializer.Converters.Add(new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter());
         //serializer.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
@@ -33,8 +36,10 @@ public static class SerializationManager
         Log.WriteLine("DB SERIALIZATION DONE!", LogLevel.VERBOSE);
     }
 
-    private static Task SerializeUsersOnTheServer()
+    public static async Task SerializeUsersOnTheServer()
     {
+        Log.WriteLine("Serializing user on the server", LogLevel.VERBOSE);
+
         if (BotReference.clientRef != null)
         {
             var guild = BotReference.GetGuildRef();
@@ -43,28 +48,32 @@ public static class SerializationManager
             {
                 foreach (SocketGuildUser user in guild.Users)
                 {
-                    // Move to method
-                    string userString = user.Username + " (" + user.Id + ")";
-                    Log.WriteLine("Looping on: " + userString, LogLevel.VERBOSE);
-
-                    if (!user.IsBot)
+                    if (user != null)
                     {
-                        if (!Database.Instance.cachedUserIDs.Contains(user.Id))
+                        // Move to method
+                        string userString = user.Username + " (" + user.Id + ")";
+                        Log.WriteLine("Looping on: " + userString, LogLevel.VERBOSE);
+
+                        if (!user.IsBot)
                         {
-                            Log.WriteLine("Added " + userString +
-                                " to cached users list.", LogLevel.DEBUG);
-                            Database.Instance.cachedUserIDs.Add(user.Id);
+                            if (!Database.Instance.cachedUserIDs.Contains(user.Id))
+                            {
+                                Log.WriteLine("Added " + userString +
+                                    " to cached users list.", LogLevel.DEBUG);
+                                Database.Instance.cachedUserIDs.Add(user.Id);
+                            }
+                            else
+                            {
+                                Log.WriteLine("User " + userString + " is already on the list",
+                                    LogLevel.VERBOSE);
+                            }
                         }
                         else
                         {
-                            Log.WriteLine("User " + userString + " is already on the list",
-                                LogLevel.VERBOSE);
+                            Log.WriteLine(userString + " is a bot, disregarding.", LogLevel.VERBOSE);
                         }
                     }
-                    else
-                    {
-                        Log.WriteLine(userString + " is a bot, disregarding.", LogLevel.VERBOSE);
-                    }
+                    else Log.WriteLine("User was null!", LogLevel.CRITICAL);
                 }
                 Log.WriteLine("Done looping through current users.", LogLevel.VERBOSE);
 
@@ -72,7 +81,9 @@ public static class SerializationManager
         }
         else Exceptions.BotClientRefNull();
 
-        return Task.CompletedTask;
+        await SerializeDB(true);
+
+        Log.WriteLine("User serialization done on the server", LogLevel.VERBOSE);
     }
 
     public static Task DeSerializeDB()
