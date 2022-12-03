@@ -123,7 +123,7 @@ public static class ChannelManager
                 // Remove the player's channel
                 foundChannel.DeleteAsync();
                 // Remove the players user registeration from the database
-                DatabaseMethods.RemoveUserRegisterationFromDatabase(_userId);
+                //DatabaseMethods.RemoveUserRegisterationFromDatabase(_userId);
             }
             // If the registering channel is removed afterwards, maybe handle this better way.
             else
