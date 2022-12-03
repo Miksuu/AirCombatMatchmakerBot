@@ -1,16 +1,4 @@
-﻿using Discord;
-using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Security.Authentication.ExtendedProtection;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-
-public static class PlayerRegisteration
+﻿public static class PlayerRegisteration
 {
     public static Dictionary<ulong, NonRegisteredUser> channelQueue = new();
 

@@ -91,7 +91,7 @@ public static class PlayerManager
 
         string socketGuildUserAfterNickName = CheckIfNickNameIsEmptyAndReturnUsername(_socketGuildUserAfter.Id);
 
-        Log.WriteLine("Updating user: " + _socketGuildUserAfter.Username + " (" + _socketGuildUserAfter.Id + ")" + 
+        Log.WriteLine("Updating user: " + _socketGuildUserAfter.Username + " (" + _socketGuildUserAfter.Id + ")" +
             " | name: " + playerValueNickName + " -> " + socketGuildUserAfterNickName, LogLevel.DEBUG);
 
         if (playerValue != null)
@@ -99,10 +99,11 @@ public static class PlayerManager
             playerValue.playerNickName = socketGuildUserAfterNickName;
             await SerializationManager.SerializeDB();
         }
-        else Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username + "'s profile, no valid player found (not registed?) ", LogLevel.DEBUG);
+        else Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username +
+            "'s profile, no valid player found (not registed?) ", LogLevel.DEBUG);
     }
 
-    public static string? CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
+    public static string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
     {
         Log.WriteLine("Checking if nickname is empty and return username with ID: " + _id, LogLevel.VERBOSE);
 
@@ -132,7 +133,7 @@ public static class PlayerManager
         else
         {
             Log.WriteLine("SocketGuildUser by ID: " + _id + " is null!", LogLevel.ERROR);
-            return null;
+            return "null";
         }
     }
 
