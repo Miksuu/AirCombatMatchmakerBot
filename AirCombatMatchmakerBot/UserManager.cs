@@ -33,6 +33,7 @@ public static class UserManager
 
                     // TODO: Handle recovery of the access to the user.
                     // Add a role(s) here
+                    RoleManagement.GrantUserAccess(_user.Id, "Member");
                 }
                 else
                 {
@@ -80,7 +81,7 @@ public static class UserManager
         Log.WriteLine(_userName + " (" + _userId +
             ") bailed out! Handling deleting registeration channels etc.", LogLevel.DEBUG);
 
-        await ChannelManager.DeleteUsersChannelsOnLeave(_userId);
+        await ChannelManager.DeleteUsersRegisterationChannel(_userId);
 
         Log.WriteLine("Done deleting user's " + _userId + "channels.", LogLevel.VERBOSE);
 
@@ -89,7 +90,7 @@ public static class UserManager
         //Log.WriteLine("Done removing " + _userName + "(" + _userId + ") from the cache list", LogLevel.VERBOSE);
     }
 
-    public static bool AddNewPlayerToTheDatabaseById(ulong _playerId)
+    public static async Task<bool> AddNewPlayerToTheDatabaseById(ulong _playerId)
     {
         Log.WriteLine("Start of the addnewplayer with: " + _playerId, LogLevel.VERBOSE);
 
@@ -100,18 +101,28 @@ public static class UserManager
         // Checks if the player is already in the database, just in case
         if (!DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_playerId))
         {
+            Log.WriteLine("Player doesn't exist in the database: " + _playerId, LogLevel.VERBOSE);
+
             // Add to the profile
             Database.Instance.PlayerData.PlayerIDs.Add(_playerId, new Player(_playerId, nickName));
-            // Remove player registeration object
-            DatabaseMethods.RemoveUserRegisterationFromDatabase(_playerId);
+            // Add the member role for access.
+            if (BotReference.clientRef != null)
+            {
+                RoleManagement.GrantUserAccess(_playerId, "Member");
 
-            return true;
+                // Remove player registeration object
+                DatabaseMethods.RemoveUserRegisterationFromDatabase(_playerId);
+
+                return true;
+            }
+            else Exceptions.BotGuildRefNull();
         }
         else
         {
             Log.WriteLine("Tried to add a player that was already in the database!", LogLevel.WARNING);
             return false;
         }
+        return false;
     }
     public static async Task HandleGuildMemberUpdated(Cacheable<SocketGuildUser, ulong> before, SocketGuildUser _socketGuildUserAfter)
     {
@@ -168,26 +179,37 @@ public static class UserManager
         }
     }
 
-    public static bool DeletePlayerProfile(string _dataValue)
+    public static async Task<bool> DeletePlayerProfile(string _dataValue)
     {
+        Log.WriteLine("Starting to remove the player profile", LogLevel.VERBOSE);
+
         ulong id = UInt64.Parse(_dataValue);
         if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(id))
         {
-            Log.WriteLine("Deleting a player profile " + _dataValue, LogLevel.DEBUG);
+            Log.WriteLine("Deleting a player profile " + id, LogLevel.DEBUG);
             Database.Instance.PlayerData.PlayerIDs.Remove(id);
 
             var user = GetSocketGuildUserById(id);
 
+            // If the user is in the server
             if (user != null)
             {
+                Log.WriteLine("User found in the server", LogLevel.VERBOSE);
+
+                // Remove user's access (back to the registeration...)
+                RoleManagement.RevokeUserAccess(id, "Member");
+
                 // After termination, create a regiteration profile for that player
                 string userNameWithNickName = user.Username + " aka "
                     + CheckIfNickNameIsEmptyAndReturnUsername(user.Id) +
                     " (" + user.Id + ")";
-                CreateARegisterationProfileForTheUser(user, userNameWithNickName);
+                await CreateARegisterationProfileForTheUser(user, userNameWithNickName);
             }
-            else Log.WriteLine("User with id: " + id + " was null!!", LogLevel.CRITICAL);
-
+            else
+            {
+                Log.WriteLine("User with id: " + id + " was null!!" +
+                    " Was not found in the server?", LogLevel.DEBUG);
+            }
             return true;
         }
         else
@@ -215,6 +237,7 @@ public static class UserManager
         else Exceptions.BotClientRefNull();
         return null;
     }
+
 
     /*
     public static async Task MessageUpdated(Cacheable<IMessage, ulong> before, SocketMessage after, ISocketMessageChannel channel)

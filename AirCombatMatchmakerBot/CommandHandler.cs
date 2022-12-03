@@ -93,7 +93,7 @@ public static class CommandHandler
                         // Registers the player profile and returns a bool as task if if was succesful,
                         // otherwise inform the user the user that he tried to register in to the database was already in it
 
-                        if (UserManager.AddNewPlayerToTheDatabaseById(UInt64.Parse(firstOptionValue)))
+                        if (UserManager.AddNewPlayerToTheDatabaseById(UInt64.Parse(firstOptionValue)).Result)
                         {
                             response = "Added: " + firstOptionValue + " to the database.";
                         }
@@ -124,7 +124,7 @@ public static class CommandHandler
                     {
                         // Deletes the player profile and returns a bool as task if if was succesful,
                         // otherwise inform the user that it didn't exist in the database
-                        if (UserManager.DeletePlayerProfile(firstOptionValue))
+                        if (UserManager.DeletePlayerProfile(firstOptionValue).Result)
                         {
                             response = "Deleted: " + firstOptionValue + " from the database.";
                         }

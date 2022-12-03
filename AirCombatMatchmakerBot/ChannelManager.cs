@@ -95,25 +95,37 @@ public static class ChannelManager
         }
     }
 
-    public static Task DeleteUsersChannelsOnLeave(ulong _userId)
+    public static Task DeleteUsersRegisterationChannel(ulong _userId)
     {
         var guild = BotReference.GetGuildRef();
 
         if (guild != null)
         {
-            var channelToBeDeleted = guild.Channels.First(x => x.Name.Contains("registeration_" + _userId));
+            string channelToLookFor = "registeration_" + _userId;
+            SocketGuildChannel? foundChannel = null;
 
-            Log.WriteLine("Deleting channel: " + channelToBeDeleted.Name +
-                " with ID: " + channelToBeDeleted.Id, LogLevel.DEBUG);
-
-            if (channelToBeDeleted != null)
+            foreach (SocketGuildChannel channel in guild.Channels)
             {
+                if (channel.Name == channelToLookFor)
+                {
+                    foundChannel = channel;
+                    break;
+                }
+            }
+
+            //var channelToBeDeleted = guild.Channels.First(x => x.Name.Contains("registeration_" + _userId));
+
+            if (foundChannel != null)
+            {
+                Log.WriteLine("Deleting channel: " + foundChannel.Name +
+                    " with ID: " + foundChannel.Id, LogLevel.DEBUG);
+
                 // Remove the player's channel
-                channelToBeDeleted.DeleteAsync();
+                foundChannel.DeleteAsync();
                 // Remove the players user registeration from the database
                 DatabaseMethods.RemoveUserRegisterationFromDatabase(_userId);
             }
-            // If the registeing channel is removed afterwards, maybe handle this better way.
+            // If the registering channel is removed afterwards, maybe handle this better way.
             else
             {
                 Log.WriteLine("Channel was not found, perhaps the user had registered " +
