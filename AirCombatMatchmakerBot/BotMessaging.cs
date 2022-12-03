@@ -35,9 +35,11 @@ public static class BotMessaging
 
         if (BotReference.clientRef != null && BotReference.connected)
         {
-            if (BotReference.GetGuildRef() != null)
+            var guild = BotReference.GetGuildRef();
+
+            if (guild != null)
             {
-                await BotReference.GetGuildRef().
+                await guild.
                     GetTextChannel(1047179975805128724).
                     SendMessageAsync(completeLogString);
             }
@@ -61,9 +63,11 @@ public static class BotMessaging
 
         if (BotReference.clientRef != null)
         {
-            if (BotReference.GetGuildRef() != null)
+            var guild = BotReference.GetGuildRef();
+
+            if (guild != null)
             {
-                var textChannel = BotReference.GetGuildRef().GetTextChannel(_channel.Id);
+                var textChannel = guild.GetTextChannel(_channel.Id);
 
                 if (textChannel != null)
                 {
