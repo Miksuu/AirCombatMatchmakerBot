@@ -12,7 +12,10 @@ using System.Xml.Linq;
 
 public static class PlayerRegisteration
 {
-    public static async Task<ulong> CreateANewRegisterationChannel(
+    public static Dictionary<ulong, NonRegisteredUser> channelQueue = new();
+    //public static bool delayWhile = true;
+    
+    public static async Task CreateANewRegisterationChannel(
         NonRegisteredUser _nonRegisteredUser)
     {
         Log.WriteLine("HANDING CHANNEL CREATION FOR CHANNEL: " + _nonRegisteredUser.discordRegisterationChannelId +
@@ -21,6 +24,7 @@ public static class PlayerRegisteration
         if (BotReference.clientRef != null)
         {
             SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+
             string channelName = _nonRegisteredUser.ConstructChannelName();
 
             Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
@@ -28,30 +32,11 @@ public static class PlayerRegisteration
             var newChannel = await guild.CreateTextChannelAsync(
                 channelName, tcp => tcp.CategoryId = 1047529896735428638);
 
-            var channel = guild.GetChannel(newChannel.Id);
-
-            // Place the newly created id to the object of non registered user
-            _nonRegisteredUser.discordRegisterationChannelId = newChannel.Id;
-
-            // Sets the players permissions to be accessible
-            // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
-            await ChannelManager.SetRegisterationChannelPermissions(_nonRegisteredUser.discordUserId, guild, channel);
-            // Creates the registeration button
-            BotMessaging.CreateButton(channel,
-                "Click this button to register [verification process with DCS" +
-                " account linking will be included later here]",
-                "Register", channelName);
-
-            Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
-
-            //channelCreationQueue.Add(nonRegisteredUser, _userId);
-            //Log.WriteLine("Added to the queue done: " + channelCreationQueue.Count, LogLevel.DEBUG);
-
-            return newChannel.Id;
+            // Make the program wait that the channel is done
+            channelQueue.Add(newChannel.Id, _nonRegisteredUser);
+            Log.WriteLine("Added to the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
         }
         else Exceptions.BotClientRefNull();
-
-        return 0;
     }
 
     /*
@@ -109,6 +94,8 @@ public static class PlayerRegisteration
         else Exceptions.BotClientRefNull();
 
         await SerializationManager.SerializeDB();
+
+        //delayWhile = false;
 
         Log.WriteLine("Done checking.", LogLevel.DEBUG);
     }

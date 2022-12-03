@@ -53,11 +53,7 @@ public class BotRuntime
             BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
-            await PlayerRegisteration.CheckForUsersThatAreNotRegisteredAfterDowntime();
-
             BotReference.clientRef.UserJoined += PlayerManager.HandleUserJoin;
-
-            //BotReference.clientRef.ChannelCreated += ChannelManager.HandleChannelCreationFromDelegate;
 
             BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
 
@@ -66,6 +62,10 @@ public class BotRuntime
             BotReference.clientRef.GuildMemberUpdated += PlayerManager.HandleGuildMemberUpdated;
 
             BotReference.clientRef.UserLeft += PlayerManager.HandlePlayerLeave;
+
+            BotReference.clientRef.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
+
+            await PlayerRegisteration.CheckForUsersThatAreNotRegisteredAfterDowntime();
         };
 
         // Listens for the commandService

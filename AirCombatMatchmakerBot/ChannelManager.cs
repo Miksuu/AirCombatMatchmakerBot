@@ -1,10 +1,52 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using System;
 
 public static class ChannelManager
 {
+    public static async Task FinishChannelCreationFromDelegate(SocketChannel _newChannel)
+    {
+        Log.WriteLine("invoked", LogLevel.DEBUG);
+        if (PlayerRegisteration.channelQueue.ContainsKey(_newChannel.Id))
+        {
+            SocketGuild guild = BotReference.clientRef.GetGuild(BotReference.GuildID);
+
+            var channel = guild.GetTextChannel(_newChannel.Id) as ITextChannel;
+
+            // Place the newly created id to the object of non registered user
+            PlayerRegisteration.channelQueue[_newChannel.Id].discordRegisterationChannelId = _newChannel.Id;
+
+            string channelName = PlayerRegisteration.channelQueue[_newChannel.Id].ConstructChannelName();
+
+            // Sets the players permissions to be accessible
+            // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
+            await ChannelManager.SetRegisterationChannelPermissions(
+                PlayerRegisteration.channelQueue[_newChannel.Id].discordUserId, guild, channel);
+            // Creates the registeration button
+            BotMessaging.CreateButton(channel,
+                "Click this button to register [verification process with DCS" +
+                " account linking will be included later here]",
+                "Register", channelName);
+
+            Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
+
+            PlayerRegisteration.channelQueue.Remove(_newChannel.Id);
+            Log.WriteLine("Removed from the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
+        }
+        else
+        {
+            Log.WriteLine("Does not contain key for: " + _newChannel.Id, LogLevel.WARNING);
+            while (!PlayerRegisteration.channelQueue.ContainsKey(_newChannel.Id))
+            {
+                await Task.Delay(100);
+            }
+            await FinishChannelCreationFromDelegate(_newChannel);
+        }
+        await SerializationManager.SerializeDB();
+    }
+
     public static async Task SetRegisterationChannelPermissions(
-        ulong _userId, SocketGuild _guild, SocketGuildChannel _channel)
+        ulong _userId, SocketGuild _guild, ITextChannel _channel)
     {
         // Sets permission overrides
         var permissionOverridesUser = new OverwritePermissions(viewChannel: PermValue.Allow);
@@ -44,6 +86,8 @@ public static class ChannelManager
         }
         return Task.CompletedTask;
     }
+
+
 
 
     /*
