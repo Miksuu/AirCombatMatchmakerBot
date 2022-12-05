@@ -5,6 +5,12 @@ using System.Text.Json.Serialization;
 [DataContract]
 public class BaseLeague : ILeague
 {
+    LeagueName ILeague.LeagueName
+    {
+        get => leagueName;
+        set => leagueName = value;
+    }
+
     LeagueType ILeague.LeagueType
     {
         get => leagueType;
@@ -17,14 +23,23 @@ public class BaseLeague : ILeague
         set => leagueEra = value;
     }
 
+    int ILeague.LeaguePlayerCountPerTeam
+    {
+        get => leaguePlayerCountPerTeam;
+        set => leaguePlayerCountPerTeam = value;
+    }
+
     List<IUnit> ILeague.LeagueUnits
     {
         get => leagueUnits;
         set => leagueUnits = value;
     }
 
+    public LeagueName leagueName;
     public LeagueType leagueType;
     public Era leagueEra;
+    public int leaguePlayerCountPerTeam;
+
     public List<IUnit> leagueUnits;
 
     public BaseLeague() { }
