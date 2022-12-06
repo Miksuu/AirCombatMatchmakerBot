@@ -17,6 +17,7 @@ public enum LeagueName
     [EnumMember(Value = "1v1 Modern BFM Fox2")]
     ONE_MODERNBFMFOXTWO,
 
+    /*
     [EnumMember(Value = "2v2 Modern BVR")]
-    TWO_MODERNBVR,
+    TWO_MODERNBVR,*/
 }

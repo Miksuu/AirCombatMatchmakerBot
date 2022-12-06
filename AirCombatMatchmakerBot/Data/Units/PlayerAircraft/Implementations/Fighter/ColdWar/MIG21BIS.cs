@@ -6,13 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 [DataContract]
-public class F5E3 : PlayerAircraft
+public class MIG21BIS : PlayerAircraft
 {
-    public F5E3()
+    public MIG21BIS()
     {
-        unitName = UnitName.F5E3;
-        unitEras = new List<Era> {
-            Era.COLD_WAR,
-        };
+        unitName = UnitName.MIG21BIS;
     }
 }

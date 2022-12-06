@@ -29,7 +29,7 @@ public class BaseLeague : ILeague
         set => leaguePlayerCountPerTeam = value;
     }
 
-    List<IUnit> ILeague.LeagueUnits
+    List<UnitName> ILeague.LeagueUnits
     {
         get => leagueUnits;
         set => leagueUnits = value;
@@ -41,7 +41,7 @@ public class BaseLeague : ILeague
     public Era leagueEra;
     public int leaguePlayerCountPerTeam;
 
-    public List<IUnit> leagueUnits;
+    public List<UnitName> leagueUnits;
 
     public LeagueData LeagueData;
 

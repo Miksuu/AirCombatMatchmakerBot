@@ -6,13 +6,13 @@ using System.Runtime.Serialization;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum Era
 {
-    [EnumMember(Value = "WorldWarTwo")]
+    [EnumMember(Value = "World War Two")]
     WORLD_WAR_TWO = 0,
 
-    [EnumMember(Value = "Eighties")]
+    [EnumMember(Value = "Korean War")]
     KOREAN_WAR = 1,
 
-    [EnumMember(Value = "ColdWar")]
+    [EnumMember(Value = "Cold War")]
     COLD_WAR = 2,
 
     [EnumMember(Value = "Modern")]

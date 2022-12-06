@@ -11,5 +11,5 @@ public interface ILeague
     public Era LeagueEra { get; set; }
     public int LeaguePlayerCountPerTeam { get; set; }
 
-    public List<IUnit> LeagueUnits { get; set; }
+    public List<UnitName> LeagueUnits { get; set; }
 }

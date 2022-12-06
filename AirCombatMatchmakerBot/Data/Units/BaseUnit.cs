@@ -14,14 +14,7 @@ public abstract class BaseUnit : IUnit
         set => unitName = value;
     }
 
-    List<Era> IUnit.UnitEras
-    {
-        get => unitEras;
-        set => unitEras = value;
-    }
-
     public UnitName unitName;
-    public List<Era> unitEras;
 
     public BaseUnit()
     {

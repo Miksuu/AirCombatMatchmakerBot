@@ -14,34 +14,23 @@ public enum UnitName
     [EnumMember(Value = "F-5E-3")]
     F5E3,
 
-    /*
-    [EnumMember(Value = "A-10A")]
-    A10A,*/
-
-    /*
-    [EnumMember(Value = "UH-1H")]
-    UH1H,*/
-
     [EnumMember(Value = "MiG-21Bis")]
     MIG21BIS,
-
-    /*
-    [EnumMember(Value = "Su-25")]
-    SU25,*/
-
-    /*
-    [EnumMember(Value = "Mi-8MT")]
-    MI8MT,*/
 
     [EnumMember(Value = "AJS37")]
     AJS37,
 
-    /*
-    [EnumMember(Value = "Mi-24P")]
-    MI24P,*/
-
     [EnumMember(Value = "Mirage-F1CE")]
     MIRAGEF1CE,
+
+    [EnumMember(Value = "F/A-18C")]
+    FA18C,
+
+    [EnumMember(Value = "F-16C")]
+    F16C,
+
+    [EnumMember(Value = "Mirage 2000C")]
+    M2000C,
 
     /*
     [EnumMember(Value = "SA342L")]
@@ -52,4 +41,23 @@ public enum UnitName
 
     [EnumMember(Value = "SA342Mistral")]
     SA342MISTRAL, */
+    /*
+    [EnumMember(Value = "A-10A")]
+    A10A,*/
+
+    /*
+    [EnumMember(Value = "UH-1H")]
+    UH1H,*/
+
+    /*
+    [EnumMember(Value = "Su-25")]
+    SU25,*/
+
+    /*
+    [EnumMember(Value = "Mi-8MT")]
+    MI8MT,*/
+
+    /*
+    [EnumMember(Value = "Mi-24P")]
+    MI24P,*/
 }

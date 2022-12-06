@@ -9,5 +9,11 @@ public class ONE_MODERNBFMGUNS : BaseLeague
         leagueType = LeagueType.BFM_GUNS;
         leagueEra = Era.MODERN;
         leaguePlayerCountPerTeam = 1;
+
+        leagueUnits = new List<UnitName> {
+            UnitName.FA18C,
+            UnitName.F16C,
+            UnitName.M2000C
+        };
     }
 }
