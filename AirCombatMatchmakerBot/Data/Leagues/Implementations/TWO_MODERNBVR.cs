@@ -1,11 +1,11 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class TWOvTWO_MODERNBVR : BaseLeague
+public class TWO_MODERNBVR : BaseLeague
 {
-    public TWOvTWO_MODERNBVR()
+    public TWO_MODERNBVR()
     {
-        leagueName = LeagueName.MODERNBFMGUNS;
+        leagueName = LeagueName.TWO_MODERNBVR;
         leagueType = LeagueType.BFM_FOXTWO;
         leagueEra = Era.MODERN;
         leaguePlayerCountPerTeam = 2;

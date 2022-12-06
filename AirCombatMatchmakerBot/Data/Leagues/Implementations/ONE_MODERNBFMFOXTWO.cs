@@ -1,11 +1,11 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class ONEvONE_MODERNBFMFOXTWO : BaseLeague
+public class ONE_MODERNBFMFOXTWO : BaseLeague
 {
-    public ONEvONE_MODERNBFMFOXTWO()
+    public ONE_MODERNBFMFOXTWO()
     {
-        leagueName = LeagueName.MODERNBFMGUNS;
+        leagueName = LeagueName.ONE_MODERNBFMGUNS;
         leagueType = LeagueType.BFM_FOXTWO;
         leagueEra = Era.MODERN;
         leaguePlayerCountPerTeam = 1;

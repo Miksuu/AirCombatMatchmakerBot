@@ -8,7 +8,7 @@ public class Player
 {
     public int skillRating { get; set; }
     public string playerNickName { get; set; }
-    public ulong playerId { get; set; }
+    public ulong playerDiscordId { get; set; }
 
     public Player()
     {
@@ -19,6 +19,6 @@ public class Player
     {
         skillRating = 1600;
         playerNickName = _playerNickName;
-        playerId = _playerID;
+        playerDiscordId = _playerID;
     }
 }

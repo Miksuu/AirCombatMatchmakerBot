@@ -11,12 +11,12 @@ using System.Runtime.Serialization;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum LeagueName
 {
-    [EnumMember(Value = "Modern BFM Guns")]
-    MODERNBFMGUNS,
+    [EnumMember(Value = "1v1 Modern BFM Guns")]
+    ONE_MODERNBFMGUNS,
 
-    [EnumMember(Value = "Modern BFM Fox2")]
-    MODERNBFMFOXTWO,
+    [EnumMember(Value = "1v1 Modern BFM Fox2")]
+    ONE_MODERNBFMFOXTWO,
 
-    [EnumMember(Value = "Modern BVR")]
-    MODERNBVR,
+    [EnumMember(Value = "2v2 Modern BVR")]
+    TWO_MODERNBVR,
 }
