@@ -35,12 +35,15 @@ public class BaseLeague : ILeague
         set => leagueUnits = value;
     }
 
+    // Generated based on the implementation
     public LeagueName leagueName;
     public LeagueType leagueType;
     public Era leagueEra;
     public int leaguePlayerCountPerTeam;
 
     public List<IUnit> leagueUnits;
+
+    public LeagueData LeagueData;
 
     public BaseLeague() { }
 }
