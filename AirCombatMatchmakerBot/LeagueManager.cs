@@ -4,7 +4,7 @@ using System.Threading.Channels;
 
 public static class LeagueManager
 {
-    public static async Task CreateLeaguesOnStartup()
+    public static Task CreateLeaguesOnStartup()
     {
         var guild = BotReference.GetGuildRef();
 
@@ -27,20 +27,41 @@ public static class LeagueManager
 
 
         } else Exceptions.BotGuildRefNull();
+
+        return Task.CompletedTask;
     }
 
     public static void CreateALeague(ITextChannel _channel, LeagueName _leagueName)
     {
         Log.WriteLine("Looping on leagueName: " + _leagueName.ToString(), LogLevel.VERBOSE);
 
-        ILeague leagueInterface = MakeInterfaceFromAEnumName(_leagueName);
+        var leagueInstance = ClassExtensions.GetInstance(_leagueName.ToString());
+        ILeague leagueInterface = (ILeague)leagueInstance;
 
         Log.WriteLine("Made a " + nameof(leagueInterface) + " named: " +
             leagueInterface.LeagueName, LogLevel.VERBOSE);
 
-        leagueInterface = CreateALeagueJoinButton(_channel, leagueInterface).Result;
+        if (Database.Instance.StoredLeagues != null)
+        {
+            if (Database.Instance.StoredLeagues.Any(l => l.LeagueName == _leagueName))
+            {
+                Log.WriteLine("name: " + _leagueName.ToString() +
+                    " was already in the list, returning", LogLevel.VERBOSE);
+                return;
+            }
+            else
+            {
+                Log.WriteLine("name: " + _leagueName.ToString() +
+                    " was not found, a League for it", LogLevel.VERBOSE);
 
-        StoreTheLeague(leagueInterface);
+                leagueInterface = CreateALeagueJoinButton(_channel, leagueInterface).Result;
+
+                StoreTheLeague(leagueInterface);
+            }
+
+        }
+        else Log.WriteLine(nameof(Database.Instance.StoredLeagues) +
+            " was null!", LogLevel.CRITICAL);
     }
 
     public static async Task<ILeague> CreateALeagueJoinButton(
@@ -76,7 +97,7 @@ public static class LeagueManager
         {
             if (Database.Instance.StoredLeagues != null)
             {
-                //Database.Instance.StoredLeagues.Add(_leagueInterface);
+                Database.Instance.StoredLeagues.Add(_leagueInterface);
             }
             else Log.WriteLine(nameof(Database.Instance.StoredLeagues) +
                 " was null!", LogLevel.CRITICAL);
@@ -85,8 +106,9 @@ public static class LeagueManager
             " was 0, channel not created succesfully?", LogLevel.CRITICAL);
     }
 
+    /*
     public static ILeague MakeInterfaceFromAEnumName<T> (T _enumInput)
     {
-        return (ILeague)ClassExtensions.GetInstance(_enumInput.ToString());
-    }
+        return (ILeague)ClassExtensions.GetInstance(_enumInput).ToString();
+    }*/
 }
