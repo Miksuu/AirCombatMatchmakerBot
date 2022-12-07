@@ -85,6 +85,7 @@ public static class SerializationManager
                 {
                     TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto,
                     NullValueHandling = Newtonsoft.Json.NullValueHandling.Include,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace
                 });
         }
         else

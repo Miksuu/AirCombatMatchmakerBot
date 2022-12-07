@@ -45,7 +45,7 @@ public class BaseLeague : ILeague
     public Era leagueEra;
     public int leaguePlayerCountPerTeam;
 
-    public List<UnitName> leagueUnits;
+    public List<UnitName> leagueUnits = new List<UnitName>();
 
     public LeagueData leagueData;
 
