@@ -67,12 +67,6 @@ public static class LeagueManager
     public static async Task<ILeague> CreateALeagueJoinButton(
         ITextChannel _channel, ILeague _leagueInterface)
     {
-        string leagueEnumAttrValue =
-            ClassExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName);
-
-        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
-            leagueEnumAttrValue, LogLevel.VERBOSE);
-
         string leagueButtonRegisterationCustomId =
             _leagueInterface.LeagueName.ToString() + "_register";
 
@@ -84,11 +78,58 @@ public static class LeagueManager
         _leagueInterface.LeagueData.leagueChannelMessageId =
             await BotMessaging.CreateButton(
                 _channel,
-                "Click this button to register to: " + leagueEnumAttrValue,
+                GenerateALeagueJoinButtonMessage(_leagueInterface),
                 "Join",
                 leagueButtonRegisterationCustomId); // Maybe replace this with some other system
 
         return _leagueInterface;
+    }
+
+    public static string GenerateALeagueJoinButtonMessage(ILeague _leagueInterface)
+    {
+        string leagueEnumAttrValue =
+            ClassExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName);
+
+        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
+            leagueEnumAttrValue, LogLevel.VERBOSE);
+
+
+        return " " + "\n" + leagueEnumAttrValue + "\n" +
+            GetAllowedUnitsAsString(_leagueInterface) + "\n" +
+            GetIfTheLeagueHasPlayersOrTeamsAndCount(_leagueInterface);
+             
+    }
+
+    private static string GetIfTheLeagueHasPlayersOrTeamsAndCount(ILeague _leagueInterface)
+    {
+        int count = _leagueInterface.LeagueData.Teams.Count;
+
+        if (_leagueInterface.LeaguePlayerCountPerTeam > 1)
+        {
+            return "Teams: " + count;
+        }
+        else
+        {
+            return "Players: " + count;
+        }
+    }
+
+    private static string GetAllowedUnitsAsString(ILeague _leagueInterface)
+    {
+        string allowedUnits = string.Empty;
+
+        for (int u = 0; u < _leagueInterface.LeagueUnits.Count; ++u)
+        {
+            allowedUnits += ClassExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueUnits[u]);
+
+            // Is not the last index
+            if (u != _leagueInterface.LeagueUnits.Count - 1)
+            {
+                allowedUnits += ", ";
+            }
+        }
+
+        return allowedUnits;
     }
 
     public static void StoreTheLeague(ILeague _leagueInterface)
@@ -105,6 +146,7 @@ public static class LeagueManager
         else Log.WriteLine(nameof(_leagueInterface.LeagueData.leagueChannelMessageId) +
             " was 0, channel not created succesfully?", LogLevel.CRITICAL);
     }
+
 
     /*
     public static ILeague MakeInterfaceFromAEnumName<T> (T _enumInput)
