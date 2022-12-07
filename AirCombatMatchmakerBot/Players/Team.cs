@@ -10,6 +10,8 @@ public class Team
     public string teamName { get; set; }
     public List<Player> players { get; set; }
 
+    public bool active { get; set; }
+
     public Team()
     {
         skillRating = 1600;

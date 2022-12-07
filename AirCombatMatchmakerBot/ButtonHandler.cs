@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using System.ComponentModel;
+using System.Linq;
 
 public static class ButtonHandler
 {
@@ -58,6 +59,70 @@ public static class ButtonHandler
                             _component.Channel.Name);
                 }
                 break;
+            case "leagueRegisteration":
+                var leagueInstance = ClassExtensions.GetInstance(splitString[1]);
+                ILeague leagueInterface = (ILeague)leagueInstance;
+
+                Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueName, LogLevel.VERBOSE);
+
+                ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+
+                if (dbLeagueInstance != null)
+                {
+                    Player player = Database.Instance.PlayerData.PlayerIDs[_component.User.Id];
+
+                    if (player.playerDiscordId == 0)
+                    {
+                        Log.WriteLine("Player's: " + player.playerNickName + " id was 0!", LogLevel.CRITICAL);
+                        return;
+                    }
+
+                    Log.WriteLine("Found player: " + player.playerNickName + " (" + player.playerDiscordId + ")", LogLevel.VERBOSE);
+
+                    if (!LeagueManager.CheckIfPlayerIsAlreadyInATeamById(dbLeagueInstance.LeagueData.Teams, _component.User.Id))
+                    {
+                        Log.WriteLine("The player was not found in any team in the league", LogLevel.VERBOSE);
+
+                        Team newTeam = new Team(new List<Player> { player }, player.playerNickName);
+                        newTeam.active = true;
+
+                        if (dbLeagueInstance.LeaguePlayerCountPerTeam < 2)
+                        {
+                            Log.WriteLine("This league is solo", LogLevel.VERBOSE);
+
+                            dbLeagueInstance.LeagueData.Teams.Add(newTeam);
+
+                            Log.WriteLine("Done adding the team. Count is now: " +
+                                dbLeagueInstance.LeagueData.Teams.Count,LogLevel.VERBOSE);
+
+
+                            // Modify the message to have the new player count
+                            await BotMessaging.ModifyMessage(1049555859656671232,
+                                dbLeagueInstance.LeagueData.leagueChannelMessageId, 
+                                LeagueManager.GenerateALeagueJoinButtonMessage(dbLeagueInstance));
+                        }
+                        else
+                        {
+                            // Not implemented yet
+                            Log.WriteLine("This league is team based with number of players per team: " +
+                                dbLeagueInstance.LeaguePlayerCountPerTeam, LogLevel.ERROR);
+                        }
+
+                        Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
+                            dbLeagueInstance.LeagueData.Teams.Count, LogLevel.DEBUG);
+                    }
+                    else
+                    {
+                        Log.WriteLine("The player was already in a team in that league!", LogLevel.VERBOSE);
+
+                        // Do some answer to the player
+                    }
+                }
+                else Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
+
+                await _component.RespondAsync();
+
+                break;
             default:
                 response = "Something went wrong with the button press!";
                 logLevel = LogLevel.ERROR;
@@ -66,13 +131,10 @@ public static class ButtonHandler
 
         await SerializationManager.SerializeDB();
 
-        Log.WriteLine(response, logLevel);
-        if (response != "EMPTY") await _component.RespondAsync(response);
-    }
-
-    private static async Task InformThatButtonDoesntBelongToAUser(SocketMessageComponent _component)
-    {
-        await _component.RespondAsync(
-           );
+        if (splitString[0] != "leagueRegisteration")
+        {
+            Log.WriteLine(response, logLevel);
+            if (response != "EMPTY") await _component.RespondAsync(response);
+        }
     }
 }

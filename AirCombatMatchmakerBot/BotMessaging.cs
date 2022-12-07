@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using System;
 using System.Threading.Channels;
 
 public static class BotMessaging
@@ -48,7 +49,7 @@ public static class BotMessaging
     }
 
     // Creates a button to a specific channel
-    public static async Task<ulong> CreateButton(
+    public static async Task<ulong> CreateButtonMessage(
         ITextChannel _channel,
         string _textOnTheSameMessage,
         string _label,
@@ -88,5 +89,19 @@ public static class BotMessaging
         else Exceptions.BotClientRefNull();
 
         return 0;
+    }
+
+    public static async Task ModifyMessage(
+        ulong _channelId, ulong _messageId, string _content)
+    {
+        var guild = BotReference.GetGuildRef();
+
+        if (guild != null)
+        {
+            var channel = guild.GetTextChannel(_channelId) as ITextChannel;
+
+            await channel.ModifyMessageAsync(_messageId, m => m.Content = _content);
+        }
+        else Exceptions.BotGuildRefNull();
     }
 }

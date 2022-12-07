@@ -47,7 +47,7 @@ public static class ChannelManager
                 await SetRegisterationChannelPermissions(
                     PlayerRegisteration.channelQueue[_newChannel.Id].discordUserId, channel);
                 // Creates the registeration button
-                await BotMessaging.CreateButton(channel,
+                await BotMessaging.CreateButtonMessage(channel,
                     "Click this button to register [verification process with DCS" +
                     " account linking will be included later here]",
                     "Register", channelName);

@@ -67,7 +67,7 @@ public static class LeagueManager
         ITextChannel _channel, ILeague _leagueInterface)
     {
         string leagueButtonRegisterationCustomId =
-            _leagueInterface.LeagueName.ToString() + "_register";
+           "leagueRegisteration_" + _leagueInterface.LeagueName.ToString(); 
 
         Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
             leagueButtonRegisterationCustomId, LogLevel.VERBOSE);
@@ -75,7 +75,7 @@ public static class LeagueManager
         _leagueInterface.LeagueData = new();
 
         _leagueInterface.LeagueData.leagueChannelMessageId =
-            await BotMessaging.CreateButton(
+            await BotMessaging.CreateButtonMessage(
                 _channel,
                 GenerateALeagueJoinButtonMessage(_leagueInterface),
                 "Join",
@@ -92,16 +92,31 @@ public static class LeagueManager
         Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
             leagueEnumAttrValue, LogLevel.VERBOSE);
 
-
-        return " " + "\n" + leagueEnumAttrValue + "\n" +
+        return "\\" + "\n" + leagueEnumAttrValue + "\n" +
             GetAllowedUnitsAsString(_leagueInterface) + "\n" +
-            GetIfTheLeagueHasPlayersOrTeamsAndCount(_leagueInterface);
+            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
              
     }
 
-    private static string GetIfTheLeagueHasPlayersOrTeamsAndCount(ILeague _leagueInterface)
+    private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(ILeague _leagueInterface)
     {
-        int count = _leagueInterface.LeagueData.Teams.Count;
+        int count = 0;
+
+        foreach (Team team in _leagueInterface.LeagueData.Teams)
+        {
+            if (team.active)
+            {
+                count++;
+                Log.WriteLine("team: " + team.teamName +
+                    " is active, increased count to: " + count, LogLevel.VERBOSE);
+            }
+            else
+            {
+                Log.WriteLine("team: " + team.teamName + " is not active", LogLevel.VERBOSE);
+            }
+        }
+
+        Log.WriteLine("Total count: " + count, LogLevel.VERBOSE);
 
         if (_leagueInterface.LeaguePlayerCountPerTeam > 1)
         {
@@ -111,6 +126,27 @@ public static class LeagueManager
         {
             return "Players: " + count;
         }
+    }
+
+    public static ILeague? FindLeagueAndReturnInterfaceFromDatabase(ILeague _interfaceToSearchFor)
+    {
+        if (Database.Instance.StoredLeagues != null)
+        {
+            var dbLeagueInstance = Database.Instance.StoredLeagues.Find(l => l.LeagueName == _interfaceToSearchFor.LeagueName);
+
+            if (dbLeagueInstance != null)
+            {
+                Log.WriteLine("Found " + nameof(dbLeagueInstance) + ": " + dbLeagueInstance.LeagueName, LogLevel.VERBOSE);
+
+                return dbLeagueInstance;
+            }
+            else Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
+
+
+        }
+        else Log.WriteLine(nameof(Database.Instance.StoredLeagues) + " was null!", LogLevel.CRITICAL);
+
+        return null;
     }
 
     private static string GetAllowedUnitsAsString(ILeague _leagueInterface)
@@ -144,6 +180,30 @@ public static class LeagueManager
         }
         else Log.WriteLine(nameof(_leagueInterface.LeagueData.leagueChannelMessageId) +
             " was 0, channel not created succesfully?", LogLevel.CRITICAL);
+    }
+
+    public static bool CheckIfPlayerIsAlreadyInATeamById(List<Team> _leagueTeams, ulong _idToSearchFor)
+    {
+        foreach (Team team in _leagueTeams)
+        {
+            Log.WriteLine("Searching team: " + team.teamName +
+                " with " + team.players.Count, LogLevel.VERBOSE);
+
+            foreach (Player teamPlayer in team.players)
+            {
+                Log.WriteLine("Checking player: " +teamPlayer.playerNickName +
+                    " (" + teamPlayer.playerDiscordId + ")", LogLevel.VERBOSE);
+
+                if (teamPlayer.playerDiscordId == _idToSearchFor)
+                {
+                    return true;
+                }
+            }
+        }
+
+        Log.WriteLine("Did not find any teams that the player was in the league", LogLevel.VERBOSE);
+
+        return false;
     }
 
 

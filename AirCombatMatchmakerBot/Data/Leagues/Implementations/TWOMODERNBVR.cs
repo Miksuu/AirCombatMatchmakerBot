@@ -1,19 +1,20 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class ONE_MODERNBFMFOXTWO : BaseLeague
+public class TWOMODERNBVR : BaseLeague
 {
-    public ONE_MODERNBFMFOXTWO()
+    /*
+    public TWO_MODERNBVR()
     {
-        leagueName = LeagueName.ONE_MODERNBFMFOXTWO;
+        leagueName = LeagueName.TWOMODERNBVR;
         leagueType = LeagueType.BFM_FOXTWO;
         leagueEra = Era.MODERN;
-        leaguePlayerCountPerTeam = 1;
+        LeaguePlayerCountPerTeam = 2;
 
-        leagueUnits = new List<UnitName> {
+                leagueUnits = new List<UnitName> {
             UnitName.FA18C,
             UnitName.F16C,
             UnitName.M2000C
         };
-    }
+    } */
 }
