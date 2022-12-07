@@ -31,36 +31,33 @@ public static class ChannelManager
         Log.WriteLine("Invoked newChannel creation", LogLevel.DEBUG);
         if (PlayerRegisteration.channelQueue.ContainsKey(_newChannel.Id))
         {
-            if (BotReference.clientRef != null)
+            var guild = BotReference.GetGuildRef();
+
+            if (guild != null)
             {
-                var guild = BotReference.GetGuildRef();
+                var channel = guild.GetTextChannel(_newChannel.Id) as ITextChannel;
 
-                if (guild != null)
-                {
-                    var channel = guild.GetTextChannel(_newChannel.Id) as ITextChannel;
+                // Place the newly created id to the object of non registered user
+                PlayerRegisteration.channelQueue[_newChannel.Id].discordRegisterationChannelId = _newChannel.Id;
 
-                    // Place the newly created id to the object of non registered user
-                    PlayerRegisteration.channelQueue[_newChannel.Id].discordRegisterationChannelId = _newChannel.Id;
+                string channelName = PlayerRegisteration.channelQueue[_newChannel.Id].ConstructChannelName();
 
-                    string channelName = PlayerRegisteration.channelQueue[_newChannel.Id].ConstructChannelName();
+                // Sets the players permissions to be accessible
+                // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
+                await SetRegisterationChannelPermissions(
+                    PlayerRegisteration.channelQueue[_newChannel.Id].discordUserId, channel);
+                // Creates the registeration button
+                await BotMessaging.CreateButton(channel,
+                    "Click this button to register [verification process with DCS" +
+                    " account linking will be included later here]",
+                    "Register", channelName);
 
-                    // Sets the players permissions to be accessible
-                    // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
-                    await SetRegisterationChannelPermissions(
-                        PlayerRegisteration.channelQueue[_newChannel.Id].discordUserId, channel);
-                    // Creates the registeration button
-                    BotMessaging.CreateButton(channel,
-                        "Click this button to register [verification process with DCS" +
-                        " account linking will be included later here]",
-                        "Register", channelName);
+                Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
 
-                    Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
-
-                    PlayerRegisteration.channelQueue.Remove(_newChannel.Id);
-                    Log.WriteLine("Removed from the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
-                } else Exceptions.BotGuildRefNull();
+                PlayerRegisteration.channelQueue.Remove(_newChannel.Id);
+                Log.WriteLine("Removed from the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
             }
-            else Exceptions.BotClientRefNull();
+            else Exceptions.BotGuildRefNull();
         }
         else
         {

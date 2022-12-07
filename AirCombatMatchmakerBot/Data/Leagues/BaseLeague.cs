@@ -35,6 +35,12 @@ public class BaseLeague : ILeague
         set => leagueUnits = value;
     }
 
+    LeagueData ILeague.LeagueData
+    {
+        get => leagueData;
+        set => leagueData = value;
+    }
+
     // Generated based on the implementation
     public LeagueName leagueName;
     public LeagueType leagueType;
@@ -43,7 +49,7 @@ public class BaseLeague : ILeague
 
     public List<UnitName> leagueUnits;
 
-    public LeagueData LeagueData;
+    public LeagueData leagueData;
 
     public BaseLeague() { }
 }

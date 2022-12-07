@@ -12,4 +12,6 @@ public interface ILeague
     public int LeaguePlayerCountPerTeam { get; set; }
 
     public List<UnitName> LeagueUnits { get; set; }
+
+    public LeagueData LeagueData { get; set; }
 }

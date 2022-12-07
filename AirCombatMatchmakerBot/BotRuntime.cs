@@ -53,6 +53,8 @@ public class BotRuntime
             BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
+            await LeagueManager.CreateLeaguesOnStartup();
+
             await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
 
             await SerializationManager.SerializeUsersOnTheServer();

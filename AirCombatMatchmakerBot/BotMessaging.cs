@@ -48,7 +48,7 @@ public static class BotMessaging
     }
 
     // Creates a button to a specific channel
-    public static async void CreateButton(
+    public static async Task<ulong> CreateButton(
         ITextChannel _channel,
         string _textOnTheSameMessage,
         string _label,
@@ -71,7 +71,12 @@ public static class BotMessaging
 
                 if (textChannel != null)
                 {
-                    await textChannel.SendMessageAsync(_textOnTheSameMessage, components: builder.Build());
+                    var message = await textChannel.SendMessageAsync(
+                        _textOnTheSameMessage, components: builder.Build());
+
+                    ulong messageId = message.Id;
+                    Log.WriteLine("Created a button message with id:" + messageId, LogLevel.VERBOSE);
+                    return messageId;
                 }
                 else
                 {
@@ -81,5 +86,7 @@ public static class BotMessaging
             else Exceptions.BotGuildRefNull();
         }
         else Exceptions.BotClientRefNull();
+
+        return 0;
     }
 }

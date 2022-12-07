@@ -23,6 +23,9 @@ public class Database
     // Users not registered, more simple class for them without any player data.
     public List<NonRegisteredUser> NonRegisteredUsers { get; set; }
 
+    // The stored leagues that implement the ILeague interface
+    public List<ILeague>? StoredLeagues { get; set; }
+
     public List<ulong> cachedUserIDs { get; set; }
 
     public int channelTournamentIndex { get; set; }
@@ -40,6 +43,8 @@ public class Database
         };
 
         cantRegisterIDs = new List<ulong>();
+
+        StoredLeagues = new();
     }
 
     public static Database Instance

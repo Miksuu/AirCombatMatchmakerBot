@@ -9,7 +9,7 @@ public class TWO_MODERNBVR : BaseLeague
         leagueName = LeagueName.TWO_MODERNBVR;
         leagueType = LeagueType.BFM_FOXTWO;
         leagueEra = Era.MODERN;
-        leaguePlayerCountPerTeam = 2;
+        LeaguePlayerCountPerTeam = 2;
 
                 leagueUnits = new List<UnitName> {
             UnitName.FA18C,
