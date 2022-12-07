@@ -20,9 +20,10 @@ public static class SerializationManager
         serializer.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
         serializer.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
         serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
+        serializer.ObjectCreationHandling = ObjectCreationHandling.Replace;
 
         using (StreamWriter sw = new StreamWriter(dbPath))
-        using (Newtonsoft.Json.JsonWriter writer = new Newtonsoft.Json.JsonTextWriter(sw))
+        using (JsonWriter writer = new JsonTextWriter(sw))
         {
             serializer.Serialize(writer, Database.Instance, typeof(Database));
             writer.Close();

@@ -25,7 +25,6 @@ public static class LeagueManager
             }
             else Log.WriteLine("Channel was null, wrong id in the code?", LogLevel.CRITICAL);
 
-
         } else Exceptions.BotGuildRefNull();
 
         return Task.CompletedTask;

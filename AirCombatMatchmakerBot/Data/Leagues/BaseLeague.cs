@@ -1,6 +1,4 @@
-﻿using System.Reactive;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
 
 [DataContract]
 public class BaseLeague : ILeague
@@ -51,5 +49,7 @@ public class BaseLeague : ILeague
 
     public LeagueData leagueData;
 
-    public BaseLeague() { }
+    public BaseLeague()
+    {
+    }
 }

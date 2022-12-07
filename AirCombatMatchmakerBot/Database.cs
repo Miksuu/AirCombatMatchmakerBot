@@ -38,9 +38,10 @@ public class Database
         cachedUserIDs = new List<ulong>();
 
         // Load this from json
+        /*
         adminIDs = new List<ulong> { 
             111788167195033600
-        };
+        }; */
 
         cantRegisterIDs = new List<ulong>();
 
