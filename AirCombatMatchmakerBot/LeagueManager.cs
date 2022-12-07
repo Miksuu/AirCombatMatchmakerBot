@@ -52,7 +52,7 @@ public static class LeagueManager
             else
             {
                 Log.WriteLine("name: " + _leagueName.ToString() +
-                    " was not found, a League for it", LogLevel.VERBOSE);
+                    " was not found, creating a League for it", LogLevel.VERBOSE);
 
                 leagueInterface = CreateALeagueJoinButton(_channel, leagueInterface).Result;
 
