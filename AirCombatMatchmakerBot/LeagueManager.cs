@@ -34,10 +34,9 @@ public static class LeagueManager
     {
         Log.WriteLine("Looping on leagueName: " + _leagueName.ToString(), LogLevel.VERBOSE);
 
-        var leagueInstance = ClassExtensions.GetInstance(_leagueName.ToString());
-        ILeague leagueInterface = (ILeague)leagueInstance;
+        ILeague leagueInterface = LeagueManager.GetLeagueInstance(_leagueName.ToString());
 
-        Log.WriteLine("Made a " + nameof(leagueInterface) + " named: " +
+       Log.WriteLine("Made a " + nameof(leagueInterface) + " named: " +
             leagueInterface.LeagueName, LogLevel.VERBOSE);
 
         if (Database.Instance.StoredLeagues != null)
@@ -128,23 +127,22 @@ public static class LeagueManager
         }
     }
 
+    public static ILeague GetLeagueInstance(string _leagueName)
+    {
+        return (ILeague)ClassExtensions.GetInstance(_leagueName);
+    }
+
     public static ILeague? FindLeagueAndReturnInterfaceFromDatabase(ILeague _interfaceToSearchFor)
     {
-        if (Database.Instance.StoredLeagues != null)
+        var dbLeagueInstance = Database.Instance.StoredLeagues.Find(l => l.LeagueName == _interfaceToSearchFor.LeagueName);
+
+        if (dbLeagueInstance != null)
         {
-            var dbLeagueInstance = Database.Instance.StoredLeagues.Find(l => l.LeagueName == _interfaceToSearchFor.LeagueName);
+            Log.WriteLine("Found " + nameof(dbLeagueInstance) + ": " + dbLeagueInstance.LeagueName, LogLevel.VERBOSE);
 
-            if (dbLeagueInstance != null)
-            {
-                Log.WriteLine("Found " + nameof(dbLeagueInstance) + ": " + dbLeagueInstance.LeagueName, LogLevel.VERBOSE);
-
-                return dbLeagueInstance;
-            }
-            else Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
-
-
+            return dbLeagueInstance;
         }
-        else Log.WriteLine(nameof(Database.Instance.StoredLeagues) + " was null!", LogLevel.CRITICAL);
+        else Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
 
         return null;
     }
@@ -191,7 +189,7 @@ public static class LeagueManager
 
             foreach (Player teamPlayer in team.players)
             {
-                Log.WriteLine("Checking player: " +teamPlayer.playerNickName +
+                Log.WriteLine("Checking player: " + teamPlayer.playerNickName +
                     " (" + teamPlayer.playerDiscordId + ")", LogLevel.VERBOSE);
 
                 if (teamPlayer.playerDiscordId == _idToSearchFor)

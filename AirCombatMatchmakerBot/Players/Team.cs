@@ -15,6 +15,9 @@ public class Team
     public Team()
     {
         skillRating = 1600;
+        teamName = string.Empty;
+        players = new List<Player>();
+        active = false;
     }
 
     public Team(List<Player> _players, string _teamName)

@@ -60,8 +60,7 @@ public static class ButtonHandler
                 }
                 break;
             case "leagueRegisteration":
-                var leagueInstance = ClassExtensions.GetInstance(splitString[1]);
-                ILeague leagueInterface = (ILeague)leagueInstance;
+                ILeague leagueInterface = LeagueManager.GetLeagueInstance(splitString[1]);
 
                 Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueName, LogLevel.VERBOSE);
 
@@ -95,11 +94,8 @@ public static class ButtonHandler
                             Log.WriteLine("Done adding the team. Count is now: " +
                                 dbLeagueInstance.LeagueData.Teams.Count,LogLevel.VERBOSE);
 
-
                             // Modify the message to have the new player count
-                            await BotMessaging.ModifyMessage(1049555859656671232,
-                                dbLeagueInstance.LeagueData.leagueChannelMessageId, 
-                                LeagueManager.GenerateALeagueJoinButtonMessage(dbLeagueInstance));
+                            await BotMessaging.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
                         }
                         else
                         {

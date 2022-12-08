@@ -33,7 +33,7 @@ public static class UserManager
 
                     // TODO: Handle recovery of the access to the user.
                     // Add a role(s) here
-                    RoleManagement.GrantUserAccess(_user.Id, "Member");
+                    await RoleManagement.GrantUserAccess(_user.Id, "Member");
                 }
                 else
                 {
@@ -85,12 +85,67 @@ public static class UserManager
         {
             Log.WriteLine("The didn't have a player profile, deleting registeration channel", LogLevel.VERBOSE);
             await ChannelManager.DeleteUsersRegisterationChannel(_userId);
+            await HandleSettingTeamsInactiveThatUserWasIn(_userId);
+
             Log.WriteLine("Done deleting user's " + _userId + "channel.", LogLevel.VERBOSE);
         }
 
         SerializationManager.RemoveUserFromTheCachedList(_userName, _userId);
 
         //Log.WriteLine("Done removing " + _userName + "(" + _userId + ") from the cache list", LogLevel.VERBOSE);
+    }
+
+    private static async Task HandleSettingTeamsInactiveThatUserWasIn(ulong _userId)
+    {
+        Log.WriteLine("Starting to set teams inactive that " + _userId + " was in.", LogLevel.VERBOSE);
+
+        foreach (ILeague storedLeague in Database.Instance.StoredLeagues)
+        {
+            Log.WriteLine("Looping through league: " + storedLeague.LeagueName, LogLevel.VERBOSE);
+
+            bool teamFound = false;
+
+            foreach (Team team in storedLeague.LeagueData.Teams)
+            {
+                if (!teamFound)
+                {
+                    foreach (Player player in team.players)
+                    {
+                        Log.WriteLine("Looping through player: " + player.playerNickName + " (" +
+                            player.playerDiscordId + ")", LogLevel.VERBOSE);
+                        if (player.playerDiscordId == _userId)
+                        {
+                            team.active = false;
+
+                            teamFound = true;
+                            Log.WriteLine("Set team: " + team.teamName + " deactive in league: " +
+                                storedLeague.LeagueName + " because " + player.playerNickName +
+                                " left", LogLevel.DEBUG);
+
+                            ILeague leagueInterface = LeagueManager.GetLeagueInstance(storedLeague.ToString());
+
+                            Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueName, LogLevel.VERBOSE);
+
+                            ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+
+                            if (dbLeagueInstance != null)
+                            {
+                                await BotMessaging.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
+                            }
+                            else Log.WriteLine("dbLeagueInstance was null!", LogLevel.CRITICAL);
+
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Log.WriteLine("The team was already found in the league, breaking and proceeding" +
+                        " to the next one.", LogLevel.VERBOSE);
+                    break;
+                }
+            }
+        }
     }
 
     public static async Task<bool> AddNewPlayerToTheDatabaseById(ulong _playerId)
@@ -111,7 +166,7 @@ public static class UserManager
             // Add the member role for access.
             if (BotReference.clientRef != null)
             {
-                RoleManagement.GrantUserAccess(_playerId, "Member");
+                await RoleManagement.GrantUserAccess(_playerId, "Member");
 
                 // Remove player registeration object
                 DatabaseMethods.RemoveUserRegisterationFromDatabase(_playerId);
@@ -166,12 +221,12 @@ public static class UserManager
 
             if (nickName == "" || nickName == userName || nickName == null)
             {
-                Log.WriteLine("returning userName", LogLevel.VERBOSE);
+                Log.WriteLine("returning userName: " + userName, LogLevel.VERBOSE);
                 return userName;
             }
             else
             {
-                Log.WriteLine("returning nickName", LogLevel.VERBOSE);
+                Log.WriteLine("returning nickName " + nickName, LogLevel.VERBOSE);
                 return nickName;
             }
         }
@@ -200,7 +255,7 @@ public static class UserManager
                 Log.WriteLine("User found in the server", LogLevel.VERBOSE);
 
                 // Remove user's access (back to the registeration...)
-                RoleManagement.RevokeUserAccess(id, "Member");
+                await RoleManagement.RevokeUserAccess(id, "Member");
 
                 // After termination, create a regiteration profile for that player
                 string userNameWithNickName = user.Username + " aka "

@@ -3,7 +3,7 @@ using System;
 
 public static class RoleManagement
 {
-    public static async void GrantUserAccess(ulong _playerId, string _roleName)
+    public static async Task GrantUserAccess(ulong _playerId, string _roleName)
     {
         Log.WriteLine("Granting role " + _roleName + " from: " + _playerId, LogLevel.DEBUG);
 
@@ -28,7 +28,7 @@ public static class RoleManagement
         else { Exceptions.BotGuildRefNull(); }
     }
 
-    public static async void RevokeUserAccess(ulong _playerId, string _roleName)
+    public static async Task RevokeUserAccess(ulong _playerId, string _roleName)
     {
         Log.WriteLine("Revoking role " + _roleName + " from: " + _playerId, LogLevel.DEBUG);
 
