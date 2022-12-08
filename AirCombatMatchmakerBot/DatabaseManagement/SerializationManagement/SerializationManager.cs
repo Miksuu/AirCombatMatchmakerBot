@@ -7,7 +7,7 @@ public static class SerializationManager
 
     public static async Task SerializeDB(bool _circularDependency = false)
     {
-        Log.WriteLine("SERIALIZING DB", LogLevel.VERBOSE);
+        Log.WriteLine("SERIALIZING DB", LogLevel.SERIALIZATION);
 
         if (!_circularDependency)
         {
@@ -29,12 +29,12 @@ public static class SerializationManager
             sw.Close();
         };
 
-        Log.WriteLine("DB SERIALIZATION DONE!", LogLevel.VERBOSE);
+        Log.WriteLine("DB SERIALIZATION DONE!", LogLevel.SERIALIZATION);
     }
 
     public static async Task SerializeUsersOnTheServer()
     {
-        Log.WriteLine("Serializing users on the server", LogLevel.VERBOSE);
+        Log.WriteLine("Serializing users on the server", LogLevel.SERIALIZATION);
 
         if (BotReference.clientRef != null)
         {
@@ -69,10 +69,8 @@ public static class SerializationManager
 
         await SerializeDB(true);
 
-        Log.WriteLine("User serialization done on the server", LogLevel.VERBOSE);
+        Log.WriteLine("User serialization done on the server", LogLevel.SERIALIZATION);
     }
-
-
 
     public static async Task DeSerializeDB()
     {
