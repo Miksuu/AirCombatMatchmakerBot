@@ -5,29 +5,27 @@
     public static async Task CreateANewRegisterationChannel(
         NonRegisteredUser _nonRegisteredUser)
     {
-        Log.WriteLine("HANDING CHANNEL CREATION FOR CHANNEL: " + _nonRegisteredUser.discordRegisterationChannelId +
+        var guild = BotReference.GetGuildRef();
+
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
+        Log.WriteLine("HANDLING CHANNEL CREATION FOR CHANNEL: " + _nonRegisteredUser.discordRegisterationChannelId +
             "discordUserId: " + _nonRegisteredUser.discordUserId, LogLevel.DEBUG);
 
-        if (BotReference.clientRef != null)
-        {
-            string channelName = _nonRegisteredUser.ConstructChannelName();
+        string channelName = _nonRegisteredUser.ConstructChannelName();
 
-            Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
+        Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
 
-            var guild = BotReference.GetGuildRef();
+        var newChannel = await guild.CreateTextChannelAsync(
+            channelName, tcp => tcp.CategoryId = 1047529896735428638);
 
-            if (guild != null)
-            {
-                var newChannel = await guild.CreateTextChannelAsync(
-                    channelName, tcp => tcp.CategoryId = 1047529896735428638);
-
-                // Make the program wait that the channel is done
-                channelQueue.Add(newChannel.Id, _nonRegisteredUser);
-                Log.WriteLine("Added to the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
-            }
-            else Exceptions.BotGuildRefNull();
-        }
-        else Exceptions.BotClientRefNull();
+        // Make the program wait that the channel is done
+        channelQueue.Add(newChannel.Id, _nonRegisteredUser);
+        Log.WriteLine("Added to the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
     }
 
     /*

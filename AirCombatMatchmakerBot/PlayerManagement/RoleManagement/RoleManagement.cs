@@ -7,24 +7,30 @@ public static class RoleManagement
         Log.WriteLine("Granting role " + _roleName + " from: " + _playerId, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
-
-        if (guild != null)
+        if (guild == null)
         {
-            var user = guild.GetUser(_playerId) as IGuildUser;
-
-            if (user != null)
-            {
-                var role = guild.Roles.First(x => x.Name == _roleName);
-                if (role != null)
-                {
-                    // Add the role to the user
-                    await user.AddRoleAsync(role);
-                }
-                else { Log.WriteLine("Role " + _roleName + "was null!", LogLevel.CRITICAL); }
-            }
-            else { Log.WriteLine("User with id: " + _playerId + " was null!", LogLevel.CRITICAL); }
+            Exceptions.BotGuildRefNull();
+            return;
         }
-        else { Exceptions.BotGuildRefNull(); }
+
+        var user = guild.GetUser(_playerId) as IGuildUser;
+        if (user == null)
+        {
+            Log.WriteLine("User with id: " + _playerId + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        var role = guild.Roles.First(x => x.Name == _roleName);
+        if (role == null)
+        {
+            Log.WriteLine("Role " + _roleName + "was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        // Add the role to the user
+        await user.AddRoleAsync(role);
+
+        Log.WriteLine("Done granting role " + _roleName + " from: " + _playerId, LogLevel.VERBOSE);
     }
 
     public static async Task RevokeUserAccess(ulong _playerId, string _roleName)
@@ -32,23 +38,29 @@ public static class RoleManagement
         Log.WriteLine("Revoking role " + _roleName + " from: " + _playerId, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
-
-        if (guild != null)
+        if (guild == null)
         {
-            var user = guild.GetUser(_playerId) as IGuildUser;
-
-            if (user != null)
-            {
-                var role = guild.Roles.First(x => x.Name == _roleName);
-                if (role != null)
-                {
-                    // Add the role to the user
-                    await user.RemoveRoleAsync(role);
-                }
-                else { Log.WriteLine("Role " + _roleName + "was null!", LogLevel.CRITICAL); }
-            }
-            else { Log.WriteLine("User with id: " + _playerId + " was null!", LogLevel.CRITICAL); }
+            Exceptions.BotGuildRefNull();
+            return;
         }
-        else { Exceptions.BotGuildRefNull(); }
+
+        var user = guild.GetUser(_playerId) as IGuildUser;
+        if (user == null)
+        {
+            Log.WriteLine("User with id: " + _playerId + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        var role = guild.Roles.First(x => x.Name == _roleName);
+        if (role == null)
+        {
+            Log.WriteLine("Role " + _roleName + "was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        // Add the role to the user
+        await user.RemoveRoleAsync(role);
+
+        Log.WriteLine("Done revoking role " + _roleName + " from: " + _playerId, LogLevel.VERBOSE);
     }
 }

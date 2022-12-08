@@ -7,16 +7,14 @@
 
         var userToBeRemoved = 
             Database.Instance.NonRegisteredUsers.Find(x => x.discordUserId == _discordId);
-        if (userToBeRemoved != null) 
+
+        if (userToBeRemoved == null) 
         {
-            Database.Instance.NonRegisteredUsers.Remove(userToBeRemoved);
+            Log.WriteLine("User id: " + _discordId + " was not found!", LogLevel.ERROR);
+            return;
         }
-        else
-        {
-            Log.WriteLine("User id: " + _discordId + " was not found!" +
-                " This seems to happen when a user has registered," +
-                " and leaves the discord with the channel open", LogLevel.ERROR);
-        }
+
+        Database.Instance.NonRegisteredUsers.Remove(userToBeRemoved);
 
         await SerializationManager.SerializeDB();
     }

@@ -36,36 +36,37 @@ public static class SerializationManager
     {
         Log.WriteLine("Serializing users on the server", LogLevel.SERIALIZATION);
 
-        if (BotReference.clientRef != null)
+        var guild = BotReference.GetGuildRef();
+
+        if (guild == null)
         {
-            var guild = BotReference.GetGuildRef();
-
-            if (guild != null)
-            {
-                foreach (SocketGuildUser user in guild.Users)
-                {
-                    if (user != null)
-                    {
-                        // Move to method
-                        string userString = user.Username + " (" + user.Id + ")";
-                        Log.WriteLine("Looping on: " + userString, LogLevel.VERBOSE);
-
-                        if (!user.IsBot)
-                        {
-                            AddUserIdToCachedList(userString, user.Id);
-                        }
-                        else
-                        {
-                            Log.WriteLine(userString + " is a bot, disregarding.", LogLevel.VERBOSE);
-                        }
-                    }
-                    else Log.WriteLine("User was null!", LogLevel.CRITICAL);
-                }
-                Log.WriteLine("Done looping through current users.", LogLevel.VERBOSE);
-
-            } else Exceptions.BotGuildRefNull();
+            Exceptions.BotGuildRefNull();
+            return;
         }
-        else Exceptions.BotClientRefNull();
+
+        foreach (SocketGuildUser user in guild.Users)
+        {
+            if (user == null)
+            {
+                Log.WriteLine("User was null!", LogLevel.ERROR);
+            }
+            else
+            {
+                // Move to method
+                string userString = user.Username + " (" + user.Id + ")";
+                Log.WriteLine("Looping on: " + userString, LogLevel.VERBOSE);
+
+                if (!user.IsBot)
+                {
+                    AddUserIdToCachedList(userString, user.Id);
+                }
+                else
+                {
+                    Log.WriteLine(userString + " is a bot, disregarding.", LogLevel.VERBOSE);
+                }
+            }
+        }
+        Log.WriteLine("Done looping through current users.", LogLevel.VERBOSE);
 
         await SerializeDB(true);
 
@@ -115,19 +116,16 @@ public static class SerializationManager
     {
         Log.WriteLine("Removing " + _userName + "(" + _userId + ")" + " from the cache list", LogLevel.VERBOSE);
 
-        if (Database.Instance.cachedUserIDs.Contains(_userId))
-        {
-            Database.Instance.cachedUserIDs.Remove(_userId);
-            Log.WriteLine("Removed " + _userName +
-                 " from the cached users list.", LogLevel.DEBUG);
-        }
-        else
+        if (!Database.Instance.cachedUserIDs.Contains(_userId))
         {
             Log.WriteLine("User " + _userName + " is not present on the list!", LogLevel.WARNING);
+            return;
         }
 
-        await SerializeDB();
+        Database.Instance.cachedUserIDs.Remove(_userId);
 
-        Log.WriteLine("Done with removing " + _userName + " from the cached users list", LogLevel.VERBOSE);
+        Log.WriteLine("Removed " + _userName + " from the cached users list.", LogLevel.DEBUG);
+
+        await SerializeDB();
     }
 }

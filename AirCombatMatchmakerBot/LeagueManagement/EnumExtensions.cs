@@ -14,10 +14,11 @@ public static class EnumExtensions
     {
         var memInfo = enumVal.GetType().GetMember(enumVal.ToString());
         var attr = memInfo[0].GetCustomAttributes(false).OfType<EnumMemberAttribute>().FirstOrDefault();
-        if (attr != null)
+        if (attr == null)
         {
-            return attr.Value;
+            Log.WriteLine(nameof(attr) + " was null!", LogLevel.CRITICAL);
+            return null;
         }
-        return null;
+        return attr.Value;
     }
 }

@@ -6,24 +6,28 @@ public static class LeagueManager
     {
         var guild = BotReference.GetGuildRef();
 
-        if (guild != null)
+        if (guild == null)
         {
-            // Hardcoded channel id for now
-            var channel = guild.GetTextChannel(1049555859656671232) as ITextChannel;
+            Exceptions.BotGuildRefNull();
+            return Task.CompletedTask;
+        }
 
-            if (channel != null)
-            {
-                Log.WriteLine("Channel found: " + channel.Name +
-                    "(" + channel.Id + ")", LogLevel.VERBOSE);
+        // Hardcoded channel id for now
+        var channel = guild.GetTextChannel(1049555859656671232) as ITextChannel;
 
-                foreach (LeagueName leagueName in Enum.GetValues(typeof(LeagueName)))
-                {
-                    CreateALeague(channel, leagueName);
-                }
-            }
-            else Log.WriteLine("Channel was null, wrong id in the code?", LogLevel.CRITICAL);
+        if (channel == null)
+        {
+            Log.WriteLine("Channel was null, wrong id in the code?", LogLevel.CRITICAL);
+            return Task.CompletedTask;
+        }
 
-        } else Exceptions.BotGuildRefNull();
+        Log.WriteLine("Channel found: " + channel.Name +
+            "(" + channel.Id + ")", LogLevel.VERBOSE);
+
+        foreach (LeagueName leagueName in Enum.GetValues(typeof(LeagueName)))
+        {
+            CreateALeague(channel, leagueName);
+        }
 
         return Task.CompletedTask;
     }
@@ -47,11 +51,14 @@ public static class LeagueManager
             var newILeague = Database.Instance.StoredLeagues.Find(
                 l => l.LeagueName == _leagueInterface.LeagueName);
 
-            if (newILeague != null)
+            if (newILeague == null)
             {
-                Log.WriteLine("found result: " + newILeague.LeagueName, LogLevel.DEBUG);
-                return newILeague;
+                Log.WriteLine(nameof(newILeague) + " was null!", LogLevel.CRITICAL);
+                return null;
             }
+
+            Log.WriteLine("found result: " + newILeague.LeagueName, LogLevel.DEBUG);
+            return newILeague;
         }
         else
         {
@@ -63,8 +70,6 @@ public static class LeagueManager
 
             return _leagueInterface;
         }
-
-        return _leagueInterface;
     }
 
     private static bool CheckIfALeagueNameExistsInDatabase(LeagueName _leagueName)
@@ -76,30 +81,33 @@ public static class LeagueManager
     {
         Log.WriteLine("Checking if _leagueInterface registeration message exists", LogLevel.VERBOSE);
 
-        if (_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId != 0)
+        if (_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId == 0)
         {
-            Log.WriteLine("Found: " + _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId, LogLevel.DEBUG);
+            Log.WriteLine("leagueData.leagueChannelMessageId was 0!", LogLevel.CRITICAL);
+            return false;
+        }
 
-            var guild = BotReference.GetGuildRef();
+        Log.WriteLine("Found: " + _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId, LogLevel.DEBUG);
 
-            if (guild != null)
-            {
-                var channel = guild.GetTextChannel(1049555859656671232) as ITextChannel;
+        var guild = BotReference.GetGuildRef();
 
-                var message = channel.GetMessageAsync(_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId);
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return false;
+        }
 
-                if (message.Result != null)
-                {
-                    Log.WriteLine("message: " + message.Result.ToString() + " found.", LogLevel.DEBUG);
-                    return true;
-                }
-                // Returns false otherwise
-            }
-            else { Exceptions.BotGuildRefNull(); }
-        } else Log.WriteLine("leagueData.leagueChannelMessageId was 0!", LogLevel.CRITICAL);
+        var channel = guild.GetTextChannel(1049555859656671232) as ITextChannel;
 
+        var message = channel.GetMessageAsync(_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId);
+
+        if (message.Result != null)
+        {
+            Log.WriteLine("message: " + message.Result.ToString() + " found.", LogLevel.DEBUG);
+            return true;
+        }
+        // Returns false otherwise
         Log.WriteLine("returning false", LogLevel.DEBUG);
-
         return false;
     }
 
@@ -244,15 +252,15 @@ public static class LeagueManager
     {
         var dbLeagueInstance = Database.Instance.StoredLeagues.Find(l => l.LeagueName == _interfaceToSearchFor.LeagueName);
 
-        if (dbLeagueInstance != null)
+        if (dbLeagueInstance == null)
         {
-            Log.WriteLine("Found " + nameof(dbLeagueInstance) + ": " + dbLeagueInstance.LeagueName, LogLevel.VERBOSE);
-
-            return dbLeagueInstance;
+            Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
+            return _interfaceToSearchFor;
         }
-        else Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
 
-        return _interfaceToSearchFor;
+        Log.WriteLine("Found " + nameof(dbLeagueInstance) + ": " + dbLeagueInstance.LeagueName, LogLevel.DEBUG);
+
+        return dbLeagueInstance;
     }
 
     private static string GetAllowedUnitsAsString(ILeague _leagueInterface)
@@ -275,17 +283,23 @@ public static class LeagueManager
 
     public static void StoreTheLeague(ILeague _leagueInterface)
     {
-        if (_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId != 0)
+        Log.WriteLine("Starting to store league: " + _leagueInterface.LeagueName, LogLevel.VERBOSE);
+
+        if (_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId == 0)
         {
-            if (Database.Instance.StoredLeagues != null)
-            {
-                Database.Instance.StoredLeagues.Add(_leagueInterface);
-            }
-            else Log.WriteLine(nameof(Database.Instance.StoredLeagues) +
-                " was null!", LogLevel.CRITICAL);
-        }
-        else Log.WriteLine(nameof(_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId) +
+            Log.WriteLine(nameof(_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId) +
             " was 0, channel not created succesfully?", LogLevel.CRITICAL);
+            return;
+        }
+
+        if (Database.Instance.StoredLeagues == null)
+        {
+            Log.WriteLine(nameof(Database.Instance.StoredLeagues) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        Database.Instance.StoredLeagues.Add(_leagueInterface);
+        Log.WriteLine("Done storing a league: " + _leagueInterface.LeagueName, LogLevel.DEBUG);
     }
 
     public static bool CheckIfPlayerIsAlreadyInATeamById(List<Team> _leagueTeams, ulong _idToSearchFor)

@@ -18,44 +18,37 @@ public static class UserManager
     private static async Task CreateARegisterationProfileForTheUser(
         SocketGuildUser _user, string _userNameWithNickName)
     {
-        if (!_user.IsBot)
+        if (_user.IsBot)
         {
-            Log.WriteLine("User: " + _user + " has joined the discord with id: " + _user.Id +
-                " starting the registation process", LogLevel.DEBUG);
+            Log.WriteLine("A bot: " + _user.Username +
+                " joined the discord, disregarding the registeration process", LogLevel.DEBUG);
+            return;
+        }
 
-            if (BotReference.clientRef != null)
-            {
-                Log.WriteLine("Checking " + _userNameWithNickName, LogLevel.DEBUG);
+        Log.WriteLine("User: " + _user + " has joined the discord with id: " + _user.Id +
+            " starting the registation process. Checking " + _userNameWithNickName, LogLevel.DEBUG);
 
-                if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_user.Id))
-                {
-                    Log.WriteLine(_user.Username + " found in the database", LogLevel.DEBUG);
+        if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_user.Id))
+        {
+            Log.WriteLine(_user.Username + " found in the database", LogLevel.DEBUG);
 
-                    await RoleManagement.GrantUserAccess(_user.Id, "Member");
-                }
-                else
-                {
-                    Log.WriteLine(_user.Username + " not found in the database", LogLevel.DEBUG);
-                    NonRegisteredUser nonRegisteredUser =
-                        PlayerRegisteration.CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(_user.Id);
-
-                    // Creates a private channel for the user to proceed with the registeration 
-                    if (nonRegisteredUser != null)
-                    {
-                        await PlayerRegisteration.CreateANewRegisterationChannel(nonRegisteredUser);
-                    }
-                    else
-                    {
-                        Log.WriteLine(nameof(nonRegisteredUser) + " was null!", LogLevel.ERROR);
-                    }
-                }
-            }
-            else Exceptions.BotClientRefNull();
+            await RoleManagement.GrantUserAccess(_user.Id, "Member");
         }
         else
         {
-            Log.WriteLine("A bot: " + _user.Username +
-                " joined the discord, disregarding the registeration process", LogLevel.WARNING);
+            Log.WriteLine(_user.Username + " not found in the database", LogLevel.DEBUG);
+
+            NonRegisteredUser nonRegisteredUser =
+                PlayerRegisteration.CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(_user.Id);
+
+            // Creates a private channel for the user to proceed with the registeration 
+            if (nonRegisteredUser == null)
+            {
+                Log.WriteLine(nameof(nonRegisteredUser) + " was null!", LogLevel.ERROR);
+                return;
+            }
+
+            await PlayerRegisteration.CreateANewRegisterationChannel(nonRegisteredUser);
         }
     }
 
@@ -126,11 +119,13 @@ public static class UserManager
 
                             ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
 
-                            if (dbLeagueInstance != null)
+                            if (dbLeagueInstance == null)
                             {
-                                await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
+                                Log.WriteLine("dbLeagueInstance was null!", LogLevel.CRITICAL);
+                                continue;
                             }
-                            else Log.WriteLine("dbLeagueInstance was null!", LogLevel.CRITICAL);
+
+                            await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
 
                             break;
                         }
@@ -161,17 +156,14 @@ public static class UserManager
 
             // Add to the profile
             Database.Instance.PlayerData.PlayerIDs.Add(_playerId, new Player(_playerId, nickName));
+
             // Add the member role for access.
-            if (BotReference.clientRef != null)
-            {
-                await RoleManagement.GrantUserAccess(_playerId, "Member");
+            await RoleManagement.GrantUserAccess(_playerId, "Member");
 
-                // Remove player registeration object
-                DatabaseMethods.RemoveUserRegisterationFromDatabase(_playerId);
+            // Remove player registeration object
+            DatabaseMethods.RemoveUserRegisterationFromDatabase(_playerId);
 
-                return true;
-            }
-            else Exceptions.BotClientRefNull();
+            return true;
         }
         else
         {
@@ -184,6 +176,13 @@ public static class UserManager
     {
         var playerValue = Database.Instance.PlayerData.PlayerIDs.First(x => x.Key == _socketGuildUserAfter.Id).Value;
 
+        if (playerValue == null)
+        {
+            Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username +
+            "'s profile, no valid player found (not registered?) ", LogLevel.DEBUG);
+            return;
+        }
+
         // This should not be empty, since it's being looked up from the database
         string playerValueNickName = playerValue.playerNickName;
 
@@ -192,13 +191,8 @@ public static class UserManager
         Log.WriteLine("Updating user: " + _socketGuildUserAfter.Username + " (" + _socketGuildUserAfter.Id + ")" +
             " | name: " + playerValueNickName + " -> " + socketGuildUserAfterNickName, LogLevel.DEBUG);
 
-        if (playerValue != null)
-        {
-            playerValue.playerNickName = socketGuildUserAfterNickName;
-            await SerializationManager.SerializeDB();
-        }
-        else Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username +
-            "'s profile, no valid player found (not registered?) ", LogLevel.DEBUG);
+        playerValue.playerNickName = socketGuildUserAfterNickName;
+        await SerializationManager.SerializeDB();
     }
 
     public static string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
@@ -207,72 +201,70 @@ public static class UserManager
 
         var SocketGuildUser = GetSocketGuildUserById(_id);
 
-        if (SocketGuildUser != null)
-        {
-            Log.WriteLine("SocketGuildUser " + _id + " is not null", LogLevel.VERBOSE);
-
-            string userName = SocketGuildUser.Username;
-            string nickName = SocketGuildUser.Nickname;
-
-            Log.WriteLine("Checking if " + userName + "'s (" + _id + ")" +
-                " nickName: " + nickName + " | " + " is the same", LogLevel.VERBOSE);
-
-            if (nickName == "" || nickName == userName || nickName == null)
-            {
-                Log.WriteLine("returning userName: " + userName, LogLevel.VERBOSE);
-                return userName;
-            }
-            else
-            {
-                Log.WriteLine("returning nickName " + nickName, LogLevel.VERBOSE);
-                return nickName;
-            }
-        }
-        else
+        if (SocketGuildUser == null)
         {
             Log.WriteLine("SocketGuildUser by ID: " + _id + " is null!", LogLevel.ERROR);
             return "null";
+        }
+
+        Log.WriteLine("SocketGuildUser " + _id + " is not null", LogLevel.VERBOSE);
+
+        string userName = SocketGuildUser.Username;
+        string nickName = SocketGuildUser.Nickname;
+
+        Log.WriteLine("Checking if " + userName + "'s (" + _id + ")" +
+            " nickName: " + nickName + " | " + " is the same", LogLevel.VERBOSE);
+
+        if (nickName == "" || nickName == userName || nickName == null)
+        {
+            Log.WriteLine("returning userName: " + userName, LogLevel.VERBOSE);
+            return userName;
+        }
+        else
+        {
+            Log.WriteLine("returning nickName " + nickName, LogLevel.VERBOSE);
+            return nickName;
         }
     }
 
     public static async Task<bool> DeletePlayerProfile(string _dataValue)
     {
-        Log.WriteLine("Starting to remove the player profile", LogLevel.VERBOSE);
-
         ulong id = UInt64.Parse(_dataValue);
-        if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(id))
-        {
-            Log.WriteLine("Deleting a player profile " + id, LogLevel.DEBUG);
-            Database.Instance.PlayerData.PlayerIDs.Remove(id);
 
-            var user = GetSocketGuildUserById(id);
-
-            // If the user is in the server
-            if (user != null)
-            {
-                Log.WriteLine("User found in the server", LogLevel.VERBOSE);
-
-                // Remove user's access (back to the registeration...)
-                await RoleManagement.RevokeUserAccess(id, "Member");
-
-                // After termination, create a regiteration profile for that player
-                string userNameWithNickName = user.Username + " aka "
-                    + CheckIfNickNameIsEmptyAndReturnUsername(user.Id) +
-                    " (" + user.Id + ")";
-                await CreateARegisterationProfileForTheUser(user, userNameWithNickName);
-            }
-            else
-            {
-                Log.WriteLine("User with id: " + id + " was null!!" +
-                    " Was not found in the server?", LogLevel.DEBUG);
-            }
-            return true;
-        }
-        else
+        Log.WriteLine("Starting to remove the player profile: " + id, LogLevel.VERBOSE);
+        if (!DatabaseMethods.CheckIfUserIdExistsInTheDatabase(id))
         {
             Log.WriteLine("Did not find ID: " + id + "in the local database.", LogLevel.DEBUG);
             return false;
         }
+
+        Log.WriteLine("Deleting a player profile " + id, LogLevel.DEBUG);
+        Database.Instance.PlayerData.PlayerIDs.Remove(id);
+
+        var user = GetSocketGuildUserById(id);
+
+        // If the user is in the server
+        if (user == null)
+        {
+            Log.WriteLine("User with id: " + id + " was null!!" +
+                " Was not found in the server?", LogLevel.DEBUG);
+            return false;
+        }
+
+        Log.WriteLine("User found in the server", LogLevel.VERBOSE);
+
+        // Remove user's access (back to the registeration...)
+        await RoleManagement.RevokeUserAccess(id, "Member");
+
+        // After termination, create a regiteration profile for that player
+        string userNameWithNickName = user.Username + " aka "
+            + CheckIfNickNameIsEmptyAndReturnUsername(user.Id) +
+            " (" + user.Id + ")";
+        await CreateARegisterationProfileForTheUser(user, userNameWithNickName);
+
+        Log.WriteLine("Done removing the player profile: " + id, LogLevel.DEBUG);
+
+        return true;
     }
 
     // Gets the user by the discord UserId. This may not be present in the Database.
@@ -280,18 +272,15 @@ public static class UserManager
     {
         Log.WriteLine("Getting SocketGuildUser by id: " + _id, LogLevel.DEBUG);
 
-        if (BotReference.clientRef != null)
-        {
-            var guild = BotReference.GetGuildRef();
+        var guild = BotReference.GetGuildRef();
 
-            if (guild != null)
-            {
-                return guild.GetUser(_id);
-            }
-            else Exceptions.BotClientRefNull();
+        if (guild == null)
+        {
+            Exceptions.BotClientRefNull();
+            return null;
         }
-        else Exceptions.BotClientRefNull();
-        return null;
+
+        return guild.GetUser(_id);
     }
 
     public static async void HandleQuitUsersDuringDowntimeFromIdList(List<ulong> _userIds)
@@ -303,17 +292,13 @@ public static class UserManager
         foreach (ulong userId in _userIds)
         {
             Log.WriteLine("On userId:" + userId, LogLevel.VERBOSE);
-            if (BotReference.clientRef != null)
-            {
-                //var user = BotReference.clientRef.GetUserAsync(userId).Result;
-                await UserManager.HandleUserLeave(
-                   "during downtime: userId: " + userId.ToString(), userId);
-            }
+
+            await HandleUserLeave(
+               "during downtime: userId: " + userId.ToString(), userId);
         }
 
         await SerializationManager.SerializeDB();
     }
-
 
     /*
     public static async Task MessageUpdated(Cacheable<IMessage, ulong> before, SocketMessage after, ISocketMessageChannel channel)

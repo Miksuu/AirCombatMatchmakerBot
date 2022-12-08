@@ -19,32 +19,27 @@ public static class ButtonComponents
         var builder = new ComponentBuilder()
             .WithButton(_label, _customId);
 
-        if (BotReference.clientRef != null)
+
+        var guild = BotReference.GetGuildRef();
+        if (guild == null)
         {
-            var guild = BotReference.GetGuildRef();
-
-            if (guild != null)
-            {
-                var textChannel = guild.GetTextChannel(_channel.Id);
-
-                if (textChannel != null)
-                {
-                    var message = await textChannel.SendMessageAsync(
-                        _textOnTheSameMessage, components: builder.Build());
-
-                    ulong messageId = message.Id;
-                    Log.WriteLine("Created a button message with id:" + messageId, LogLevel.VERBOSE);
-                    return messageId;
-                }
-                else
-                {
-                    Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
-                }
-            }
-            else Exceptions.BotGuildRefNull();
+            Exceptions.BotGuildRefNull();
+            return 0;
         }
-        else Exceptions.BotClientRefNull();
 
-        return 0;
+        var textChannel = guild.GetTextChannel(_channel.Id);
+
+        if (textChannel == null)
+        {
+            Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
+            return 0;
+        }
+
+        var message = await textChannel.SendMessageAsync(
+            _textOnTheSameMessage, components: builder.Build());
+
+        ulong messageId = message.Id;
+        Log.WriteLine("Created a button message with id:" + messageId, LogLevel.VERBOSE);
+        return messageId;
     }
 }

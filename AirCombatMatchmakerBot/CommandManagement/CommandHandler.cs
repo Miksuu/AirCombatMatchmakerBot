@@ -6,16 +6,15 @@ public static class CommandHandler
     {
         Log.WriteLine("Starting to install the commands.", LogLevel.VERBOSE);
 
-        if (BotReference.clientRef != null)
-        {
-            Log.WriteLine("clientRef is not null.", LogLevel.VERBOSE);
-            BotReference.clientRef.Ready += CommandBuilder.PrepareCommands;
-            BotReference.clientRef.SlashCommandExecuted += SlashCommandHandler;
-        }
-        else
+        if (BotReference.clientRef == null)
         {
             Exceptions.BotClientRefNull();
+            return Task.CompletedTask;
         }
+
+        BotReference.clientRef.Ready += CommandBuilder.PrepareCommands;
+        BotReference.clientRef.SlashCommandExecuted += SlashCommandHandler;
+
         return Task.CompletedTask;
     }
 

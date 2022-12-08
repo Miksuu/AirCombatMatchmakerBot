@@ -51,7 +51,6 @@ public class BotRuntimeManager
 
     private static async Task PrepareCheckupsAndEventHandlers()
     {
-
         await LeagueManager.CreateLeaguesOnStartup();
 
         await DowntimeManager.CheckForUsersThatLeftDuringDowntime();

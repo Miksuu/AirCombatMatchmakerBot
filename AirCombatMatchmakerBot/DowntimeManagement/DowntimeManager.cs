@@ -12,41 +12,46 @@ public static class DowntimeManager
 
         var guild = BotReference.GetGuildRef();
 
-        if (guild != null)
+        if (guild == null)
         {
-            // Loop through the users
-            foreach (var user in guild.Users)
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
+        // Loop through the users
+        foreach (var user in guild.Users)
+        {
+            if (user == null)
             {
-                if (user != null)
+                Log.WriteLine("User is null!", LogLevel.CRITICAL);
+                return;
+            }
+
+            if (user.IsBot)
+            {
+                Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);
+            }
+            else
+            {
+                // Profile found, disregard
+                if (DatabaseMethods.CheckIfUserHasANonRegisterdUserProfile(user.Id) ||
+                    DatabaseMethods.CheckIfUserIdExistsInTheDatabase(user.Id))
                 {
-                    if (!user.IsBot)
-                    {
-                        // Profile found, disregard
-                        if (DatabaseMethods.CheckIfUserHasANonRegisterdUserProfile(user.Id) ||
-                            DatabaseMethods.CheckIfUserIdExistsInTheDatabase(user.Id))
-                        {
-                            Log.WriteLine(
-                                user.Username + "(" + user.Id + ") was found, disregarding", LogLevel.VERBOSE);
-                        }
-                        // Run handle user join that will server the same purpose than the new player joining
-                        // when the bot is up
-                        else
-                        {
-                            Log.WriteLine(user.Username + "(" + user.Id + ")" + "was not found!" +
-                                " adding user to the list!", LogLevel.VERBOSE);
-                            foundUsers.Add(user);
-                        }
-                    }
-                    else Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);
+                    Log.WriteLine(
+                        user.Username + "(" + user.Id + ") was found, disregarding", LogLevel.VERBOSE);
                 }
-                else Log.WriteLine("User is null!", LogLevel.CRITICAL);
+                // Run handle user join that will server the same purpose than the new player joining
+                // when the bot is up
+                else
+                {
+                    Log.WriteLine(user.Username + "(" + user.Id + ")" + "was not found!" +
+                        " adding user to the list!", LogLevel.DEBUG);
+                    foundUsers.Add(user);
+                }
             }
         }
-        else Exceptions.BotGuildRefNull();
 
-        Log.WriteLine("Starting to go through foundUsers: " + foundUsers.Count, LogLevel.DEBUG);
-
-        Log.WriteLine("Done checking", LogLevel.DEBUG);
+        Log.WriteLine("Starting to go through foundUsers: " + foundUsers.Count, LogLevel.VERBOSE);
 
         foreach (SocketGuildUser user in foundUsers)
         {
@@ -62,37 +67,43 @@ public static class DowntimeManager
 
     public static Task CheckForUsersThatLeftDuringDowntime()
     {
-        Log.WriteLine("Starting to check for users that left during the downtime.", LogLevel.DEBUG);
+        Log.WriteLine("Starting to check for users that left during the downtime.", LogLevel.VERBOSE);
 
         List<ulong> usersOnTheServerAfterDowntime = new List<ulong>();
 
         var guild = BotReference.GetGuildRef();
 
-        if (guild != null)
+        if (guild == null)
         {
-            foreach (SocketGuildUser user in guild.Users)
-            {
-                if (user != null)
-                {
-                    string userNameWithId = user.Username + " (" + user.Id + ")";
-
-                    Log.WriteLine("Looping on: " + userNameWithId, LogLevel.VERBOSE);
-
-                    if (!user.IsBot)
-                    {
-                        Log.WriteLine("Found user: " + userNameWithId +
-                            " adding it to list.", LogLevel.VERBOSE);
-
-                        usersOnTheServerAfterDowntime.Add(user.Id);
-
-                        Log.WriteLine("The list count is now: " +
-                            usersOnTheServerAfterDowntime.Count, LogLevel.VERBOSE);
-                    }
-                    else Log.WriteLine("User " + user.Username + " was a bot, diregarding", LogLevel.VERBOSE);
-                }
-                else { Log.WriteLine("User was null!", LogLevel.CRITICAL); }
-            }
+            Exceptions.BotGuildRefNull();
+            return Task.CompletedTask;
         }
+
+        foreach (SocketGuildUser user in guild.Users)
+        {
+            if (user == null)
+            {
+                Log.WriteLine("User was null!", LogLevel.CRITICAL);
+                return Task.CompletedTask;
+            }
+
+            string userNameWithId = user.Username + " (" + user.Id + ")";
+
+            Log.WriteLine("Looping on: " + userNameWithId, LogLevel.VERBOSE);
+
+            if (!user.IsBot)
+            {
+                Log.WriteLine("Found user: " + userNameWithId +
+                    " adding it to list.", LogLevel.VERBOSE);
+
+                usersOnTheServerAfterDowntime.Add(user.Id);
+
+                Log.WriteLine("The list count is now: " +
+                    usersOnTheServerAfterDowntime.Count, LogLevel.VERBOSE);
+            }
+            else Log.WriteLine("User " + user.Username + " was a bot, diregarding", LogLevel.VERBOSE);
+        }
+
         Log.WriteLine("Looping done with: " + usersOnTheServerAfterDowntime.Count +
             " users on the temp list", LogLevel.DEBUG);
 
@@ -103,6 +114,8 @@ public static class DowntimeManager
         {
             UserManager.HandleQuitUsersDuringDowntimeFromIdList(difference);
         }
+
+        Log.WriteLine("Done checking for users that left during the downtime.", LogLevel.DEBUG);
 
         return Task.CompletedTask;
     }

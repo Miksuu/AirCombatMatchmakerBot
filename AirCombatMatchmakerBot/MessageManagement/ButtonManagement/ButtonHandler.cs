@@ -66,61 +66,63 @@ public static class ButtonHandler
 
                 ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
 
-                if (dbLeagueInstance != null)
+                if (dbLeagueInstance == null)
                 {
-                    Player player = Database.Instance.PlayerData.PlayerIDs[_component.User.Id];
+                    Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
+                    return;
+                }
 
-                    if (player.playerDiscordId == 0)
+                Player player = Database.Instance.PlayerData.PlayerIDs[_component.User.Id];
+
+                if (player.playerDiscordId == 0)
+                {
+                    Log.WriteLine("Player's: " + player.playerNickName + " id was 0!", LogLevel.CRITICAL);
+                    return;
+                }
+
+                Log.WriteLine("Found player: " + player.playerNickName + " (" + player.playerDiscordId + ")", LogLevel.VERBOSE);
+
+                if (!LeagueManager.CheckIfPlayerIsAlreadyInATeamById(dbLeagueInstance.LeagueData.Teams, _component.User.Id))
+                {
+                    Log.WriteLine("The player was not found in any team in the league", LogLevel.VERBOSE);
+
+                    Team newTeam = new Team(new List<Player> { player }, player.playerNickName);
+                    newTeam.active = true;
+
+                    if (dbLeagueInstance.LeaguePlayerCountPerTeam < 2)
                     {
-                        Log.WriteLine("Player's: " + player.playerNickName + " id was 0!", LogLevel.CRITICAL);
-                        return;
-                    }
+                        Log.WriteLine("This league is solo", LogLevel.VERBOSE);
 
-                    Log.WriteLine("Found player: " + player.playerNickName + " (" + player.playerDiscordId + ")", LogLevel.VERBOSE);
+                        dbLeagueInstance.LeagueData.Teams.Add(newTeam);
 
-                    if (!LeagueManager.CheckIfPlayerIsAlreadyInATeamById(dbLeagueInstance.LeagueData.Teams, _component.User.Id))
-                    {
-                        Log.WriteLine("The player was not found in any team in the league", LogLevel.VERBOSE);
+                        Log.WriteLine("Done adding the team. Count is now: " +
+                            dbLeagueInstance.LeagueData.Teams.Count, LogLevel.VERBOSE);
 
-                        Team newTeam = new Team(new List<Player> { player }, player.playerNickName);
-                        newTeam.active = true;
-
-                        if (dbLeagueInstance.LeaguePlayerCountPerTeam < 2)
-                        {
-                            Log.WriteLine("This league is solo", LogLevel.VERBOSE);
-
-                            dbLeagueInstance.LeagueData.Teams.Add(newTeam);
-
-                            Log.WriteLine("Done adding the team. Count is now: " +
-                                dbLeagueInstance.LeagueData.Teams.Count, LogLevel.VERBOSE);
-
-                            // Modify the message to have the new player count
-                            await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
-                        }
-                        else
-                        {
-                            // Not implemented yet
-                            Log.WriteLine("This league is team based with number of players per team: " +
-                                dbLeagueInstance.LeaguePlayerCountPerTeam, LogLevel.ERROR);
-                        }
-
-                        Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
-                            dbLeagueInstance.LeagueData.Teams.Count, LogLevel.DEBUG);
-
-                        await SerializationManager.SerializeDB();
+                        // Modify the message to have the new player count
+                        await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
                     }
                     else
                     {
-                        // Need to handle team related behaviour better later
-
-                        Log.WriteLine("The player was already in a team in that league! Setting him active", LogLevel.DEBUG);
-
-                        LeagueManager.ReturnTeamThatThePlayerIsIn(dbLeagueInstance.LeagueData.Teams, _component.User.Id).active = true;
-
-                        await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
+                        // Not implemented yet
+                        Log.WriteLine("This league is team based with number of players per team: " +
+                            dbLeagueInstance.LeaguePlayerCountPerTeam, LogLevel.ERROR);
                     }
+
+                    Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
+                        dbLeagueInstance.LeagueData.Teams.Count, LogLevel.DEBUG);
+
+                    await SerializationManager.SerializeDB();
                 }
-                else Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
+                else
+                {
+                    // Need to handle team related behaviour better later
+
+                    Log.WriteLine("The player was already in a team in that league! Setting him active", LogLevel.DEBUG);
+
+                    LeagueManager.ReturnTeamThatThePlayerIsIn(dbLeagueInstance.LeagueData.Teams, _component.User.Id).active = true;
+
+                    await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
+                }
 
                 await _component.RespondAsync();
 

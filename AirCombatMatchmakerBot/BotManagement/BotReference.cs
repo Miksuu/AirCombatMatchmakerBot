@@ -9,16 +9,20 @@ public static class BotReference
 
     public static SocketGuild? GetGuildRef()
     {
-        if (clientRef != null)
+        if (clientRef == null)
         {
-            if (guildRef == null)
-            {
-                guildRef = clientRef.GetGuild(GuildID);
-                return guildRef;
-            }
-            else return guildRef;
+            Exceptions.BotClientRefNull();
+            return null;
+        }
 
-        } else Exceptions.BotClientRefNull();
-        return null;
+        if (guildRef != null)
+        {
+            return guildRef;
+        }
+        else
+        {
+            guildRef = clientRef.GetGuild(GuildID);
+            return guildRef;
+        }
     }
 }

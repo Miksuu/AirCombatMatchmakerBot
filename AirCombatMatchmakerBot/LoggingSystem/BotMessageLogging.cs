@@ -19,17 +19,19 @@ public static class BotMessageLogging
 
         completeLogString += "```" + _logMessage + "```";
 
-        if (BotReference.clientRef != null && BotReference.connected)
+        if (BotReference.connected)
         {
             var guild = BotReference.GetGuildRef();
 
-            if (guild != null)
+            if (guild == null)
             {
-                await guild.
-                    GetTextChannel(1047179975805128724). // Hardcoded
-                    SendMessageAsync(completeLogString);
+                Exceptions.BotGuildRefNull();
+                return; 
             }
-            else Exceptions.BotGuildRefNull();
+
+            await guild.
+                GetTextChannel(1047179975805128724). // Hardcoded
+                SendMessageAsync(completeLogString);
         }
     }
 }
