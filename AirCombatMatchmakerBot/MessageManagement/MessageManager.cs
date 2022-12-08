@@ -8,7 +8,7 @@ public static class MessageManager
             _dbLeagueInstance.LeagueName, LogLevel.VERBOSE);
 
         await ModifyMessage(1049555859656671232, // Hardcoded
-            _dbLeagueInstance.LeagueData.leagueChannelMessageId,
+            _dbLeagueInstance.DiscordLeagueReferences.leagueRegisterationChannelMessageId,
          LeagueManager.GenerateALeagueJoinButtonMessage(_dbLeagueInstance));
     }
 
@@ -20,14 +20,16 @@ public static class MessageManager
 
         var guild = BotReference.GetGuildRef();
 
-        if (guild != null)
+        if (guild == null)
         {
-            var channel = guild.GetTextChannel(_channelId) as ITextChannel;
-
-            await channel.ModifyMessageAsync(_messageId, m => m.Content = _content);
-
-            Log.WriteLine("Modifying the message: " + _messageId + " done.", LogLevel.VERBOSE);
+            Exceptions.BotGuildRefNull();
+            return;
         }
-        else Exceptions.BotGuildRefNull();
+
+        var channel = guild.GetTextChannel(_channelId) as ITextChannel;
+
+        await channel.ModifyMessageAsync(_messageId, m => m.Content = _content);
+
+        Log.WriteLine("Modifying the message: " + _messageId + " done.", LogLevel.VERBOSE);
     }
 }

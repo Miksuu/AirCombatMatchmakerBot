@@ -11,4 +11,5 @@ public interface ILeague
     public List<UnitName> LeagueUnits { get; set; }
 
     public LeagueData LeagueData { get; set; }
+    public DiscordLeagueReferences DiscordLeagueReferences { get; set; } 
 }

@@ -92,7 +92,7 @@ public static class ButtonHandler
                             dbLeagueInstance.LeagueData.Teams.Add(newTeam);
 
                             Log.WriteLine("Done adding the team. Count is now: " +
-                                dbLeagueInstance.LeagueData.Teams.Count,LogLevel.VERBOSE);
+                                dbLeagueInstance.LeagueData.Teams.Count, LogLevel.VERBOSE);
 
                             // Modify the message to have the new player count
                             await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
@@ -106,6 +106,8 @@ public static class ButtonHandler
 
                         Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
                             dbLeagueInstance.LeagueData.Teams.Count, LogLevel.DEBUG);
+
+                        await SerializationManager.SerializeDB();
                     }
                     else
                     {
@@ -128,6 +130,8 @@ public static class ButtonHandler
                 logLevel = LogLevel.ERROR;
                 break;
         }
+
+        Log.WriteLine("Before serialization on ButtonHandler", LogLevel.VERBOSE);
 
         await SerializationManager.SerializeDB();
 

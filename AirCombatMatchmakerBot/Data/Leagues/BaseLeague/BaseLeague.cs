@@ -39,6 +39,12 @@ public class BaseLeague : ILeague
         set => leagueData = value;
     }
 
+    DiscordLeagueReferences ILeague.DiscordLeagueReferences
+    {
+        get => discordleagueReferences;
+        set => discordleagueReferences = value;
+    }
+
     // Generated based on the implementation
     public LeagueName leagueName;
     public LeagueType leagueType;
@@ -48,6 +54,8 @@ public class BaseLeague : ILeague
     public List<UnitName> leagueUnits = new List<UnitName>();
 
     public LeagueData leagueData;
+
+    public DiscordLeagueReferences discordleagueReferences;
 
     public BaseLeague()
     {

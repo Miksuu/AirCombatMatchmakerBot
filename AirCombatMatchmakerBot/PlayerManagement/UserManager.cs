@@ -171,7 +171,7 @@ public static class UserManager
 
                 return true;
             }
-            else Exceptions.BotGuildRefNull();
+            else Exceptions.BotClientRefNull();
         }
         else
         {

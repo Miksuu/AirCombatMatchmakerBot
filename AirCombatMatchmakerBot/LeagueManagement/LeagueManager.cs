@@ -59,6 +59,7 @@ public static class LeagueManager
                 " creating a new LeagueData for it", LogLevel.DEBUG);
 
             _leagueInterface.LeagueData = new LeagueData();
+            _leagueInterface.DiscordLeagueReferences = new DiscordLeagueReferences();
 
             return _leagueInterface;
         }
@@ -75,9 +76,9 @@ public static class LeagueManager
     {
         Log.WriteLine("Checking if _leagueInterface registeration message exists", LogLevel.VERBOSE);
 
-        if (_leagueInterface.LeagueData.leagueChannelMessageId != 0)
+        if (_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId != 0)
         {
-            Log.WriteLine("Found: " + _leagueInterface.LeagueData.leagueChannelMessageId, LogLevel.DEBUG);
+            Log.WriteLine("Found: " + _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId, LogLevel.DEBUG);
 
             var guild = BotReference.GetGuildRef();
 
@@ -85,7 +86,7 @@ public static class LeagueManager
             {
                 var channel = guild.GetTextChannel(1049555859656671232) as ITextChannel;
 
-                var message = channel.GetMessageAsync(_leagueInterface.LeagueData.leagueChannelMessageId);
+                var message = channel.GetMessageAsync(_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId);
 
                 if (message.Result != null)
                 {
@@ -104,6 +105,9 @@ public static class LeagueManager
 
     public static void CreateALeague(ITextChannel _channel, LeagueName _leagueName)
     {
+        bool leagueRegisterationMessageExists = false;
+        bool leagueChannelCategoryExists = false;
+
         Log.WriteLine("Looping on leagueName: " + _leagueName.ToString(), LogLevel.VERBOSE);
 
         ILeague? leagueInterface = GetLeagueInstance(_leagueName.ToString());
@@ -131,16 +135,25 @@ public static class LeagueManager
                 return;
             }
 
-            if (CheckIfLeagueRegisterationMessageExists(leagueInterface))
+            leagueRegisterationMessageExists = CheckIfLeagueRegisterationMessageExists(leagueInterface);
+
+            if (leagueRegisterationMessageExists && leagueChannelCategoryExists)
             {
+                Log.WriteLine(nameof(leagueRegisterationMessageExists) + " and " +
+                    nameof(leagueChannelCategoryExists) + " true, returning.", LogLevel.DEBUG);
                 return;
             }
         }
 
-        Log.WriteLine("name: " + _leagueName.ToString() +
-            " was not found, creating a League button for it", LogLevel.DEBUG);
+        Log.WriteLine(nameof(leagueRegisterationMessageExists) + ": " + leagueRegisterationMessageExists + 
+            " | " + nameof(leagueChannelCategoryExists) + ": " + leagueChannelCategoryExists, LogLevel.DEBUG);
 
-        leagueInterface = CreateALeagueJoinButton(_channel, leagueInterface).Result;
+        if (!leagueRegisterationMessageExists)
+        {
+            Log.WriteLine("name: " + _leagueName.ToString() +
+                " was not found, creating a League button for it", LogLevel.DEBUG);
+            leagueInterface = CreateALeagueJoinButton(_channel, leagueInterface).Result;
+        }
 
         StoreTheLeague(leagueInterface);
     }
@@ -168,7 +181,7 @@ public static class LeagueManager
             return null;
         }
 
-        _leagueInterface.LeagueData.leagueChannelMessageId =
+        _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId =
             await ButtonComponents.CreateButtonMessage(
                 _channel,
                 GenerateALeagueJoinButtonMessage(_leagueInterface),
@@ -262,7 +275,7 @@ public static class LeagueManager
 
     public static void StoreTheLeague(ILeague _leagueInterface)
     {
-        if (_leagueInterface.LeagueData.leagueChannelMessageId != 0)
+        if (_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId != 0)
         {
             if (Database.Instance.StoredLeagues != null)
             {
@@ -271,7 +284,7 @@ public static class LeagueManager
             else Log.WriteLine(nameof(Database.Instance.StoredLeagues) +
                 " was null!", LogLevel.CRITICAL);
         }
-        else Log.WriteLine(nameof(_leagueInterface.LeagueData.leagueChannelMessageId) +
+        else Log.WriteLine(nameof(_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId) +
             " was 0, channel not created succesfully?", LogLevel.CRITICAL);
     }
 
