@@ -5,6 +5,8 @@ public class BotRuntimeManager
 {
     public async Task BotRuntimeTask()
     {
+        LogLevelNormalization.InitLogLevelNormalizationStrings();
+
         await SerializationManager.DeSerializeDB();
 
         // Required after some discord API change

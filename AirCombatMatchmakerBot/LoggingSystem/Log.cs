@@ -17,8 +17,9 @@ public static class Log
         string date = DateTime.Now.Date.ToString("dd.MM.yyyy", culture);
         string time = DateTime.Now.ToString("hh:mm:ss.fff", culture);
 
-        string logMessageRaw = (date + " " + time + " - [LOG | " + _logLevel + "]: "
-            + Path.GetFileName(_filePath) + ": " + _memberName + "()" +
+        string logMessageRaw = (date + " " + time + " - [LOG | " + _logLevel + "] " +
+            LogLevelNormalization.logLevelNormalizationStrings[_logLevel] + " " +
+            Path.GetFileName(_filePath) + ": " + _memberName + "()" +
             ", line " + _lineNumber + ": " + _message);
 
         string logMessageColor = logMessageRaw.Pastel(GetColorCode(_logLevel));

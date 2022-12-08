@@ -74,6 +74,8 @@ public static class SerializationManager
 
     public static async Task DeSerializeDB()
     {
+        Log.WriteLine("DESERIALIZATION DONE!", LogLevel.SERIALIZATION);
+
         string json = File.ReadAllText(dbPath);
         if (json != "0")
         {
@@ -89,6 +91,8 @@ public static class SerializationManager
         {
             Database.Instance = new();
         }
+
+        Log.WriteLine("DB DESERIALIZATION DONE!", LogLevel.SERIALIZATION);
     }
 
     public static void AddUserIdToCachedList(string _userString, ulong _userId)
