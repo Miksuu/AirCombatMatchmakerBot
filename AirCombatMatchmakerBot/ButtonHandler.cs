@@ -109,9 +109,13 @@ public static class ButtonHandler
                     }
                     else
                     {
-                        Log.WriteLine("The player was already in a team in that league!", LogLevel.VERBOSE);
+                        // Need to handle team related behaviour better later
 
-                        // Do some answer to the player
+                        Log.WriteLine("The player was already in a team in that league! Setting him active", LogLevel.DEBUG);
+
+                        LeagueManager.ReturnTeamThatThePlayerIsIn(dbLeagueInstance.LeagueData.Teams, _component.User.Id).active = true;
+
+                        await BotMessaging.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
                     }
                 }
                 else Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);

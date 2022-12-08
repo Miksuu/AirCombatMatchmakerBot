@@ -136,12 +136,11 @@ public static class LeagueManager
             }
 
             Log.WriteLine("name: " + _leagueName.ToString() +
-                " was not found, creating a League for it", LogLevel.DEBUG);
+                " was not found, creating a League button for it", LogLevel.DEBUG);
 
             leagueInterface = CreateALeagueJoinButton(_channel, leagueInterface).Result;
 
             StoreTheLeague(leagueInterface);
-
         }
         else Log.WriteLine(nameof(Database.Instance.StoredLeagues) +
             " was null!", LogLevel.CRITICAL);
@@ -298,10 +297,28 @@ public static class LeagueManager
         return false;
     }
 
-
-    /*
-    public static ILeague MakeInterfaceFromAEnumName<T> (T _enumInput)
+    // Always run CheckIfPlayerIsAlreadyInATeamById() before!
+    public static Team ReturnTeamThatThePlayerIsIn(List<Team> _leagueTeams, ulong _idToSearchFor)
     {
-        return (ILeague)ClassExtensions.GetInstance(_enumInput).ToString();
-    }*/
+        foreach (Team team in _leagueTeams)
+        {
+            Log.WriteLine("Searching team: " + team.teamName +
+                " with " + team.players.Count, LogLevel.VERBOSE);
+
+            foreach (Player teamPlayer in team.players)
+            {
+                Log.WriteLine("Checking player: " + teamPlayer.playerNickName +
+                    " (" + teamPlayer.playerDiscordId + ")", LogLevel.VERBOSE);
+
+                if (teamPlayer.playerDiscordId == _idToSearchFor)
+                {
+                    return team;
+                }
+            }
+        }
+
+        Log.WriteLine("Did not find any teams that the player was in the league", LogLevel.CRITICAL);
+
+        return new Team();
+    }
 }

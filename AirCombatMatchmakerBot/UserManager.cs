@@ -85,10 +85,10 @@ public static class UserManager
         {
             Log.WriteLine("The didn't have a player profile, deleting registeration channel", LogLevel.VERBOSE);
             await ChannelManager.DeleteUsersRegisterationChannel(_userId);
-            await HandleSettingTeamsInactiveThatUserWasIn(_userId);
-
             Log.WriteLine("Done deleting user's " + _userId + "channel.", LogLevel.VERBOSE);
         }
+
+        await HandleSettingTeamsInactiveThatUserWasIn(_userId);
 
         SerializationManager.RemoveUserFromTheCachedList(_userName, _userId);
 
