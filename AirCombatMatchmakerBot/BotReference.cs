@@ -1,5 +1,4 @@
-﻿//using Discord.Commands;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 
 public static class BotReference
 {

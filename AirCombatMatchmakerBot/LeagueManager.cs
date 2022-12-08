@@ -1,7 +1,4 @@
 ﻿using Discord;
-using System;
-using System.Formats.Asn1;
-using System.Threading.Channels;
 
 public static class LeagueManager
 {

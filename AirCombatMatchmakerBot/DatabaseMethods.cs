@@ -1,10 +1,4 @@
-﻿using Discord;
-using Discord.WebSocket;
-using System;
-using System.Numerics;
-using System.Threading.Tasks;
-
-public static class DatabaseMethods
+﻿public static class DatabaseMethods
 {
     public static async void RemoveUserRegisterationFromDatabase(ulong _discordId)
     {

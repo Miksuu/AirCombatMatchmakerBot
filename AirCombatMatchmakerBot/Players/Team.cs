@@ -1,9 +1,4 @@
-﻿using Discord;
-using Discord.WebSocket;
-using System;
-using System.Threading.Tasks;
-
-[Serializable]
+﻿[Serializable]
 public class Team
 {
     public int skillRating { get; set; }

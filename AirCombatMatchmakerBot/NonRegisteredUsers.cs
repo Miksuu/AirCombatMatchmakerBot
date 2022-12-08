@@ -1,10 +1,4 @@
-﻿using Discord;
-using Discord.WebSocket;
-using System;
-using System.Numerics;
-using System.Threading.Tasks;
-
-[Serializable]
+﻿[Serializable]
 public class NonRegisteredUser
 {
     public ulong discordUserId { get; set; }

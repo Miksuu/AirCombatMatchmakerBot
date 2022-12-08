@@ -1,9 +1,4 @@
-﻿using Discord.WebSocket;
-using Discord.Commands;
-using System.Reflection;
-using Discord.Net;
-using Discord;
-using Newtonsoft.Json;
+﻿using Discord;
 
 public class CommandBuilder
 {

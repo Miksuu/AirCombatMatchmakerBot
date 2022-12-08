@@ -200,7 +200,7 @@ public static class UserManager
             await SerializationManager.SerializeDB();
         }
         else Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username +
-            "'s profile, no valid player found (not registed?) ", LogLevel.DEBUG);
+            "'s profile, no valid player found (not registered?) ", LogLevel.DEBUG);
     }
 
     public static string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)

@@ -1,7 +1,4 @@
 ﻿using Discord;
-using Discord.WebSocket;
-using System;
-using System.Threading.Channels;
 
 public static class BotMessaging
 {

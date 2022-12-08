@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
 
 [JsonConverter(typeof(StringEnumConverter))]
