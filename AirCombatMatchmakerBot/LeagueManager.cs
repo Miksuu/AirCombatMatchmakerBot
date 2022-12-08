@@ -1,4 +1,5 @@
 ﻿using Discord;
+using System;
 using System.Formats.Asn1;
 using System.Threading.Channels;
 
@@ -30,32 +31,116 @@ public static class LeagueManager
         return Task.CompletedTask;
     }
 
+    private static bool CheckIfALeagueNameExistsInDatabase(LeagueName _leagueName)
+    {
+        return Database.Instance.StoredLeagues.Any(l => l.LeagueName == _leagueName);
+    }
+
+    private static LeagueData? GetLeagueDataFromTheDatabase(ILeague _leagueInterface)
+    {
+        Log.WriteLine("Checking if " + _leagueInterface.LeagueName +
+            " has LeagueData in the database", LogLevel.VERBOSE);
+
+        if (_leagueInterface != null)
+        {
+            if (CheckIfALeagueNameExistsInDatabase(_leagueInterface.LeagueName))
+            {
+                Log.WriteLine(_leagueInterface.LeagueName +
+                    " exists in the database!", LogLevel.DEBUG);
+
+                var result = Database.Instance.StoredLeagues.Find(
+                    l => l.LeagueName == _leagueInterface.LeagueName);
+
+                if (result != null)
+                {
+                    Log.WriteLine("found result: " + result.LeagueName, LogLevel.DEBUG);
+                    return result.LeagueData;
+                }
+            }
+            else
+            {
+                Log.WriteLine(_leagueInterface.LeagueName + " does not exist in the database," +
+                    " creating a new LeagueData for it", LogLevel.DEBUG);
+                return _leagueInterface.LeagueData = new LeagueData();
+            }
+        }
+        else Log.WriteLine("_leagueInterface was null!", LogLevel.CRITICAL);
+
+        return null;
+    }
+
+    private static bool CheckIfLeagueRegisterationMessageExists(LeagueData _leagueData)
+    {
+        Log.WriteLine("Checking if leagueData registeration message exists", LogLevel.VERBOSE);
+
+        if (_leagueData != null)
+        {
+            if (_leagueData.leagueChannelMessageId != 0)
+            {
+                Log.WriteLine("Found: " + _leagueData.leagueChannelMessageId, LogLevel.DEBUG);
+
+                var guild = BotReference.GetGuildRef();
+
+                if (guild != null)
+                {
+                    var channel = guild.GetTextChannel(1049555859656671232) as ITextChannel;
+
+                    var message = channel.GetMessageAsync(_leagueData.leagueChannelMessageId);
+
+                    if (message.Result != null)
+                    {
+                        Log.WriteLine("message: " + message.Result.ToString() + " found.", LogLevel.DEBUG);
+                        return true;
+                    }
+                    // Returns false otherwise
+                }
+                else { Exceptions.BotGuildRefNull(); } 
+            }
+        }
+        else Log.WriteLine("_leagueData.leagueChannelMessageId was 0!", LogLevel.CRITICAL);
+
+        Log.WriteLine("returning false", LogLevel.DEBUG);
+
+        return false;
+    }
+
     public static void CreateALeague(ITextChannel _channel, LeagueName _leagueName)
     {
         Log.WriteLine("Looping on leagueName: " + _leagueName.ToString(), LogLevel.VERBOSE);
 
-        ILeague leagueInterface = LeagueManager.GetLeagueInstance(_leagueName.ToString());
+        ILeague leagueInterface = GetLeagueInstance(_leagueName.ToString());
 
-       Log.WriteLine("Made a " + nameof(leagueInterface) + " named: " +
-            leagueInterface.LeagueName, LogLevel.VERBOSE);
+        Log.WriteLine("Made a " + nameof(leagueInterface) + " named: " +
+             leagueInterface.LeagueName, LogLevel.VERBOSE);
 
         if (Database.Instance.StoredLeagues != null)
         {
-            if (Database.Instance.StoredLeagues.Any(l => l.LeagueName == _leagueName))
+            if (CheckIfALeagueNameExistsInDatabase(_leagueName))
             {
                 Log.WriteLine("name: " + _leagueName.ToString() +
-                    " was already in the list, returning", LogLevel.VERBOSE);
-                return;
-            }
-            else
-            {
-                Log.WriteLine("name: " + _leagueName.ToString() +
-                    " was not found, creating a League for it", LogLevel.VERBOSE);
+                    " was already in the list", LogLevel.VERBOSE);
 
-                leagueInterface = CreateALeagueJoinButton(_channel, leagueInterface).Result;
+                LeagueData? leagueData = GetLeagueDataFromTheDatabase(leagueInterface);
 
-                StoreTheLeague(leagueInterface);
+                if (leagueData == null)
+                {
+                    Log.WriteLine("LeagueData with " + _leagueName.ToString() +
+                        " was null!", LogLevel.CRITICAL);
+                    return;
+                }
+
+                if (CheckIfLeagueRegisterationMessageExists(leagueData))
+                {
+                    return;
+                }
             }
+
+            Log.WriteLine("name: " + _leagueName.ToString() +
+                " was not found, creating a League for it", LogLevel.DEBUG);
+
+            leagueInterface = CreateALeagueJoinButton(_channel, leagueInterface).Result;
+
+            StoreTheLeague(leagueInterface);
 
         }
         else Log.WriteLine(nameof(Database.Instance.StoredLeagues) +
@@ -66,19 +151,28 @@ public static class LeagueManager
         ITextChannel _channel, ILeague _leagueInterface)
     {
         string leagueButtonRegisterationCustomId =
-           "leagueRegisteration_" + _leagueInterface.LeagueName.ToString(); 
+           "leagueRegisteration_" + _leagueInterface.LeagueName.ToString();
 
         Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
             leagueButtonRegisterationCustomId, LogLevel.VERBOSE);
 
-        _leagueInterface.LeagueData = new();
+        var leagueDataFromDb = GetLeagueDataFromTheDatabase(_leagueInterface);
 
-        _leagueInterface.LeagueData.leagueChannelMessageId =
-            await BotMessaging.CreateButtonMessage(
-                _channel,
-                GenerateALeagueJoinButtonMessage(_leagueInterface),
-                "Join",
-                leagueButtonRegisterationCustomId); // Maybe replace this with some other system
+        if (leagueDataFromDb != null)
+        {
+            _leagueInterface.LeagueData = leagueDataFromDb;
+
+            _leagueInterface.LeagueData.leagueChannelMessageId =
+                await BotMessaging.CreateButtonMessage(
+                    _channel,
+                    GenerateALeagueJoinButtonMessage(_leagueInterface),
+                    "Join",
+                    leagueButtonRegisterationCustomId); // Maybe replace this with some other system
+        }
+        else
+        {
+            Log.WriteLine("leagueDataFromDb was null!", LogLevel.CRITICAL);
+        }
 
         return _leagueInterface;
     }
