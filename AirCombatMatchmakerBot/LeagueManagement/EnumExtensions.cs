@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-public static class ClassExtensions
+public static class EnumExtensions
 {
     public static object GetInstance(string _string)
     {

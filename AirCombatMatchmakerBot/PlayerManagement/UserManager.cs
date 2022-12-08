@@ -31,8 +31,6 @@ public static class UserManager
                 {
                     Log.WriteLine(_user.Username + " found in the database", LogLevel.DEBUG);
 
-                    // TODO: Handle recovery of the access to the user.
-                    // Add a role(s) here
                     await RoleManagement.GrantUserAccess(_user.Id, "Member");
                 }
                 else
@@ -130,7 +128,7 @@ public static class UserManager
 
                             if (dbLeagueInstance != null)
                             {
-                                await BotMessaging.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
+                                await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
                             }
                             else Log.WriteLine("dbLeagueInstance was null!", LogLevel.CRITICAL);
 
@@ -294,6 +292,26 @@ public static class UserManager
         }
         else Exceptions.BotClientRefNull();
         return null;
+    }
+
+    public static async void HandleQuitUsersDuringDowntimeFromIdList(List<ulong> _userIds)
+    {
+        // Maybe make own log level for this
+        Log.WriteLine("Handling " + _userIds.Count +
+            " that left during the downtime", LogLevel.WARNING);
+
+        foreach (ulong userId in _userIds)
+        {
+            Log.WriteLine("On userId:" + userId, LogLevel.VERBOSE);
+            if (BotReference.clientRef != null)
+            {
+                //var user = BotReference.clientRef.GetUserAsync(userId).Result;
+                await UserManager.HandleUserLeave(
+                   "during downtime: userId: " + userId.ToString(), userId);
+            }
+        }
+
+        await SerializationManager.SerializeDB();
     }
 
 

@@ -101,7 +101,7 @@ public static class DowntimeManager
 
         if (difference.Count > 0)
         {
-            HandleQuitUsersDuringDowntimeFromIdList(difference);
+            UserManager.HandleQuitUsersDuringDowntimeFromIdList(difference);
         }
 
         return Task.CompletedTask;
@@ -132,25 +132,5 @@ public static class DowntimeManager
         Log.WriteLine(_printMessage + _users.Count, _logLevel);
         foreach (ulong userId in _users) { Log.WriteLine("UserId: " + userId, _logLevel); }
         Log.WriteLine("End of print.", _logLevel);
-    }
-
-    private static async void HandleQuitUsersDuringDowntimeFromIdList(List<ulong> _userIds)
-    {
-        // Maybe make own log level for this
-        Log.WriteLine("Handling " + _userIds.Count +
-            " that left during the downtime", LogLevel.WARNING);
-
-        foreach (ulong userId in _userIds)
-        {
-            Log.WriteLine("On userId:" + userId, LogLevel.VERBOSE);
-            if (BotReference.clientRef != null)
-            {
-                //var user = BotReference.clientRef.GetUserAsync(userId).Result;
-                await UserManager.HandleUserLeave(
-                   "during downtime: userId: " + userId.ToString(), userId);
-            }
-        }
-
-        await SerializationManager.SerializeDB();
     }
 }

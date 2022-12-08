@@ -9,40 +9,13 @@ public static class CommandHandler
         if (BotReference.clientRef != null)
         {
             Log.WriteLine("clientRef is not null.", LogLevel.VERBOSE);
-            BotReference.clientRef.Ready += PrepareCommands;
+            BotReference.clientRef.Ready += CommandBuilder.PrepareCommands;
             BotReference.clientRef.SlashCommandExecuted += SlashCommandHandler;
         }
         else
         {
             Exceptions.BotClientRefNull();
         }
-        return Task.CompletedTask;
-    }
-
-    private static Task PrepareCommands()
-    {
-        Log.WriteLine("Starting to prepare the commands.", LogLevel.VERBOSE);
-
-        // TO DO: Move these in the some CommandLibrary that loads from JSON?
-
-        // Command for showing a test gif
-        CommandBuilder.AddNewCommand("cats", "Prints a cute cat!");
-
-        CommandBuilder.AddNewCommandWithOption("register",
-            "registers an user profile manually",
-            "userid",
-            "what discord ID do you want to register?"
-            );
-
-        // Command for eliminating a player's profile
-        CommandBuilder.AddNewCommandWithOption("terminate",
-            "deletes a player profile, completely",
-            "userid",
-            "which user do you want to terminate?"
-            );
-
-        Log.WriteLine("Done preparing the commands.", LogLevel.VERBOSE);
-
         return Task.CompletedTask;
     }
 

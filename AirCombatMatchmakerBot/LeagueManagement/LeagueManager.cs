@@ -159,7 +159,7 @@ public static class LeagueManager
             _leagueInterface.LeagueData = leagueDataFromDb;
 
             _leagueInterface.LeagueData.leagueChannelMessageId =
-                await BotMessaging.CreateButtonMessage(
+                await ButtonComponents.CreateButtonMessage(
                     _channel,
                     GenerateALeagueJoinButtonMessage(_leagueInterface),
                     "Join",
@@ -176,7 +176,7 @@ public static class LeagueManager
     public static string GenerateALeagueJoinButtonMessage(ILeague _leagueInterface)
     {
         string leagueEnumAttrValue =
-            ClassExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName);
+            EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName);
 
         Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
             leagueEnumAttrValue, LogLevel.VERBOSE);
@@ -219,7 +219,7 @@ public static class LeagueManager
 
     public static ILeague GetLeagueInstance(string _leagueName)
     {
-        return (ILeague)ClassExtensions.GetInstance(_leagueName);
+        return (ILeague)EnumExtensions.GetInstance(_leagueName);
     }
 
     public static ILeague? FindLeagueAndReturnInterfaceFromDatabase(ILeague _interfaceToSearchFor)
@@ -243,7 +243,7 @@ public static class LeagueManager
 
         for (int u = 0; u < _leagueInterface.LeagueUnits.Count; ++u)
         {
-            allowedUnits += ClassExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueUnits[u]);
+            allowedUnits += EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueUnits[u]);
 
             // Is not the last index
             if (u != _leagueInterface.LeagueUnits.Count - 1)

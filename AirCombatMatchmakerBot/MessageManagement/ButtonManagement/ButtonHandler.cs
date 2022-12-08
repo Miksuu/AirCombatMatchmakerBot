@@ -95,7 +95,7 @@ public static class ButtonHandler
                                 dbLeagueInstance.LeagueData.Teams.Count,LogLevel.VERBOSE);
 
                             // Modify the message to have the new player count
-                            await BotMessaging.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
+                            await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
                         }
                         else
                         {
@@ -115,7 +115,7 @@ public static class ButtonHandler
 
                         LeagueManager.ReturnTeamThatThePlayerIsIn(dbLeagueInstance.LeagueData.Teams, _component.User.Id).active = true;
 
-                        await BotMessaging.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
+                        await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
                     }
                 }
                 else Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);

@@ -1,4 +1,4 @@
 ﻿public class Program
 {
-    public static Task Main(string[] args) => new BotRuntime().BotRuntimeTask();
+    public static Task Main(string[] args) => new BotRuntimeManager().BotRuntimeTask();
 }

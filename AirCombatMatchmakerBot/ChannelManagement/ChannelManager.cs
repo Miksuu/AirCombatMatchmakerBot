@@ -43,10 +43,10 @@ public static class ChannelManager
 
                 // Sets the players permissions to be accessible
                 // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
-                await SetRegisterationChannelPermissions(
+                await ChannelPermissionsManager.SetRegisterationChannelPermissions(
                     PlayerRegisteration.channelQueue[_newChannel.Id].discordUserId, channel);
                 // Creates the registeration button
-                await BotMessaging.CreateButtonMessage(channel,
+                await ButtonComponents.CreateButtonMessage(channel,
                     "Click this button to register [verification process with DCS" +
                     " account linking will be included later here]",
                     "Register", channelName);
@@ -64,31 +64,6 @@ public static class ChannelManager
         }
 
         await SerializationManager.SerializeDB();
-    }
-
-    public static async Task SetRegisterationChannelPermissions(
-        ulong _userId, ITextChannel _channel)
-    {
-        // Sets permission overrides
-        var permissionOverridesUser = new OverwritePermissions(viewChannel: PermValue.Allow);
-
-        if (_channel != null)
-        {
-            Log.WriteLine("FOUND CHANNEL TO SET PERMISSIONS ON: " + _channel.Id, LogLevel.DEBUG);
-
-            var guild = BotReference.GetGuildRef();
-
-            if (guild != null)
-            {
-                // Allow the channell access to the new user
-                await _channel.AddPermissionOverwriteAsync(guild.GetUser(_userId), permissionOverridesUser);
-            }
-            else Exceptions.BotGuildRefNull();
-        }
-        else
-        {
-            Log.WriteLine("_Channel was null!", LogLevel.CRITICAL);
-        }
     }
 
     public static Task DeleteUsersRegisterationChannel(ulong _userId)
@@ -109,8 +84,6 @@ public static class ChannelManager
                 }
             }
 
-            //var channelToBeDeleted = guild.Channels.First(x => x.Name.Contains("registeration_" + _userId));
-
             if (foundChannel != null)
             {
                 Log.WriteLine("Deleting channel: " + foundChannel.Name +
@@ -118,8 +91,6 @@ public static class ChannelManager
 
                 // Remove the player's channel
                 foundChannel.DeleteAsync();
-                // Remove the players user registeration from the database
-                //DatabaseMethods.RemoveUserRegisterationFromDatabase(_userId);
             }
             // If the registering channel is removed afterwards, maybe handle this better way.
             else
