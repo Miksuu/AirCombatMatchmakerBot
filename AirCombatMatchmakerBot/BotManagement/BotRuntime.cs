@@ -37,7 +37,7 @@ public class BotRuntimeManager
             BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
-            PrepareCheckupsAndEventHandlers();
+            await PrepareCheckupsAndEventHandlers();
         };
 
         // Listens for the commandService

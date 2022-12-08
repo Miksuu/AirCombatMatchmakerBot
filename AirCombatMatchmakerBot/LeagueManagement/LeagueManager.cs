@@ -28,15 +28,10 @@ public static class LeagueManager
         return Task.CompletedTask;
     }
 
-    private static bool CheckIfALeagueNameExistsInDatabase(LeagueName _leagueName)
-    {
-        return Database.Instance.StoredLeagues.Any(l => l.LeagueName == _leagueName);
-    }
-
-    private static LeagueData? GetLeagueDataFromTheDatabase(ILeague _leagueInterface)
+    private static ILeague? GetILeagueFromTheDatabase(ILeague _leagueInterface)
     {
         Log.WriteLine("Checking if " + _leagueInterface.LeagueName +
-            " has LeagueData in the database", LogLevel.VERBOSE);
+            " has _leagueInterface in the database", LogLevel.VERBOSE);
 
         if (_leagueInterface != null)
         {
@@ -45,56 +40,60 @@ public static class LeagueManager
                 Log.WriteLine(_leagueInterface.LeagueName +
                     " exists in the database!", LogLevel.DEBUG);
 
-                var result = Database.Instance.StoredLeagues.Find(
+                var newILeague = Database.Instance.StoredLeagues.Find(
                     l => l.LeagueName == _leagueInterface.LeagueName);
 
-                if (result != null)
+                if (newILeague != null)
                 {
-                    Log.WriteLine("found result: " + result.LeagueName, LogLevel.DEBUG);
-                    return result.LeagueData;
+                    Log.WriteLine("found result: " + newILeague.LeagueName, LogLevel.DEBUG);
+                    return newILeague;
                 }
             }
             else
             {
                 Log.WriteLine(_leagueInterface.LeagueName + " does not exist in the database," +
                     " creating a new LeagueData for it", LogLevel.DEBUG);
-                return _leagueInterface.LeagueData = new LeagueData();
+
+                _leagueInterface.LeagueData = new LeagueData();
+
+                return _leagueInterface;
             }
         }
         else Log.WriteLine("_leagueInterface was null!", LogLevel.CRITICAL);
 
-        return null;
+        return _leagueInterface;
     }
 
-    private static bool CheckIfLeagueRegisterationMessageExists(LeagueData _leagueData)
+    private static bool CheckIfALeagueNameExistsInDatabase(LeagueName _leagueName)
     {
-        Log.WriteLine("Checking if leagueData registeration message exists", LogLevel.VERBOSE);
+        return Database.Instance.StoredLeagues.Any(l => l.LeagueName == _leagueName);
+    }
 
-        if (_leagueData != null)
+    private static bool CheckIfLeagueRegisterationMessageExists(ILeague _leagueInterface)
+    {
+        Log.WriteLine("Checking if _leagueInterface registeration message exists", LogLevel.VERBOSE);
+
+        if (_leagueInterface.LeagueData.leagueChannelMessageId != 0)
         {
-            if (_leagueData.leagueChannelMessageId != 0)
+            Log.WriteLine("Found: " + _leagueInterface.LeagueData.leagueChannelMessageId, LogLevel.DEBUG);
+
+            var guild = BotReference.GetGuildRef();
+
+            if (guild != null)
             {
-                Log.WriteLine("Found: " + _leagueData.leagueChannelMessageId, LogLevel.DEBUG);
+                var channel = guild.GetTextChannel(1049555859656671232) as ITextChannel;
 
-                var guild = BotReference.GetGuildRef();
+                var message = channel.GetMessageAsync(_leagueInterface.LeagueData.leagueChannelMessageId);
 
-                if (guild != null)
+                if (message.Result != null)
                 {
-                    var channel = guild.GetTextChannel(1049555859656671232) as ITextChannel;
-
-                    var message = channel.GetMessageAsync(_leagueData.leagueChannelMessageId);
-
-                    if (message.Result != null)
-                    {
-                        Log.WriteLine("message: " + message.Result.ToString() + " found.", LogLevel.DEBUG);
-                        return true;
-                    }
-                    // Returns false otherwise
+                    Log.WriteLine("message: " + message.Result.ToString() + " found.", LogLevel.DEBUG);
+                    return true;
                 }
-                else { Exceptions.BotGuildRefNull(); } 
+                // Returns false otherwise
             }
-        }
-        else Log.WriteLine("_leagueData.leagueChannelMessageId was 0!", LogLevel.CRITICAL);
+            else { Exceptions.BotGuildRefNull(); }
+        } else Log.WriteLine("leagueData.leagueChannelMessageId was 0!", LogLevel.CRITICAL);
 
         Log.WriteLine("returning false", LogLevel.DEBUG);
 
@@ -117,16 +116,16 @@ public static class LeagueManager
                 Log.WriteLine("name: " + _leagueName.ToString() +
                     " was already in the list", LogLevel.VERBOSE);
 
-                LeagueData? leagueData = GetLeagueDataFromTheDatabase(leagueInterface);
+                leagueInterface = GetILeagueFromTheDatabase(leagueInterface);
 
-                if (leagueData == null)
+                if (leagueInterface == null)
                 {
-                    Log.WriteLine("LeagueData with " + _leagueName.ToString() +
+                    Log.WriteLine("leagueInterface with " + _leagueName.ToString() +
                         " was null!", LogLevel.CRITICAL);
                     return;
                 }
 
-                if (CheckIfLeagueRegisterationMessageExists(leagueData))
+                if (CheckIfLeagueRegisterationMessageExists(leagueInterface))
                 {
                     return;
                 }
@@ -152,30 +151,27 @@ public static class LeagueManager
         Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
             leagueButtonRegisterationCustomId, LogLevel.VERBOSE);
 
-        var leagueDataFromDb = GetLeagueDataFromTheDatabase(_leagueInterface);
-
-        if (leagueDataFromDb != null)
+        if (_leagueInterface == null)
         {
-            _leagueInterface.LeagueData = leagueDataFromDb;
+            Log.WriteLine("_leagueInterface was null!", LogLevel.CRITICAL);
+            return _leagueInterface;
+        }
 
-            _leagueInterface.LeagueData.leagueChannelMessageId =
-                await ButtonComponents.CreateButtonMessage(
-                    _channel,
-                    GenerateALeagueJoinButtonMessage(_leagueInterface),
-                    "Join",
-                    leagueButtonRegisterationCustomId); // Maybe replace this with some other system
-        }
-        else
-        {
-            Log.WriteLine("leagueDataFromDb was null!", LogLevel.CRITICAL);
-        }
+        _leagueInterface = GetILeagueFromTheDatabase(_leagueInterface);
+
+        _leagueInterface.LeagueData.leagueChannelMessageId =
+            await ButtonComponents.CreateButtonMessage(
+                _channel,
+                GenerateALeagueJoinButtonMessage(_leagueInterface),
+                "Join",
+                leagueButtonRegisterationCustomId); // Maybe replace this with some other system
 
         return _leagueInterface;
     }
 
     public static string GenerateALeagueJoinButtonMessage(ILeague _leagueInterface)
     {
-        string leagueEnumAttrValue =
+        string? leagueEnumAttrValue =
             EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName);
 
         Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
@@ -222,7 +218,7 @@ public static class LeagueManager
         return (ILeague)EnumExtensions.GetInstance(_leagueName);
     }
 
-    public static ILeague? FindLeagueAndReturnInterfaceFromDatabase(ILeague _interfaceToSearchFor)
+    public static ILeague FindLeagueAndReturnInterfaceFromDatabase(ILeague _interfaceToSearchFor)
     {
         var dbLeagueInstance = Database.Instance.StoredLeagues.Find(l => l.LeagueName == _interfaceToSearchFor.LeagueName);
 
@@ -234,7 +230,7 @@ public static class LeagueManager
         }
         else Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
 
-        return null;
+        return _interfaceToSearchFor;
     }
 
     private static string GetAllowedUnitsAsString(ILeague _leagueInterface)

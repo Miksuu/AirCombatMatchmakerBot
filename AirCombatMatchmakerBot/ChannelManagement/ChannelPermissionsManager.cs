@@ -4,10 +4,10 @@ using Discord.WebSocket;
 public static class ChannelPermissionsManager
 {
     public static async Task SetRegisterationChannelPermissions(
-        ulong _userId, ITextChannel _channel)
+        ulong _userId, ITextChannel _channel, PermValue _permValue)
     {
         // Sets permission overrides
-        var permissionOverridesUser = new OverwritePermissions(viewChannel: PermValue.Allow);
+        var permissionOverridesUser = new OverwritePermissions(viewChannel: _permValue);
 
         if (_channel != null)
         {

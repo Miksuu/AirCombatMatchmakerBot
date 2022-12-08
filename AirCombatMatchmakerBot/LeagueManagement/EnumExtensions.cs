@@ -6,12 +6,11 @@ public static class EnumExtensions
     {
         Log.WriteLine("string: " + _string, LogLevel.VERBOSE);
 
-        Type t = Type.GetType(_string.ToUpper());
+        Type? t = Type.GetType(_string.ToUpper());
         return Activator.CreateInstance(t);
     }
 
-
-    public static string GetEnumMemberAttrValue(object enumVal)
+    public static string? GetEnumMemberAttrValue(object enumVal)
     {
         var memInfo = enumVal.GetType().GetMember(enumVal.ToString());
         var attr = memInfo[0].GetCustomAttributes(false).OfType<EnumMemberAttribute>().FirstOrDefault();

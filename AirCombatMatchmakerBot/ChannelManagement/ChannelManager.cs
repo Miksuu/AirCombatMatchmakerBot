@@ -44,7 +44,9 @@ public static class ChannelManager
                 // Sets the players permissions to be accessible
                 // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
                 await ChannelPermissionsManager.SetRegisterationChannelPermissions(
-                    PlayerRegisteration.channelQueue[_newChannel.Id].discordUserId, channel);
+                    PlayerRegisteration.channelQueue[_newChannel.Id].discordUserId,
+                    channel,
+                    PermValue.Allow);
                 // Creates the registeration button
                 await ButtonComponents.CreateButtonMessage(channel,
                     "Click this button to register [verification process with DCS" +
