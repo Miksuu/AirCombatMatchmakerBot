@@ -32,7 +32,7 @@ public class CommandBuilder
 
     // Adds a new command based on parameters
     // TO DO: add support for options such as adding user, for operations such as challenging people 
-    public static Discord.SlashCommandBuilder? AddNewCommand(string _commandName, string _description, bool _optionIncluded = false)
+    public static Discord.SlashCommandBuilder AddNewCommand(string _commandName, string _description, bool _optionIncluded = false)
     {
         var guildCommand = new Discord.SlashCommandBuilder()
             .WithName(_commandName)
@@ -45,7 +45,7 @@ public class CommandBuilder
             if (BotReference.clientRef == null)
             {
                 Exceptions.BotClientRefNull();
-                return null;
+                return guildCommand;
             }
 
             BotReference.clientRef.Rest.CreateGuildCommand(guildCommand.Build(), BotReference.GuildID);

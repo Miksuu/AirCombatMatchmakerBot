@@ -96,6 +96,14 @@ public static class UserManager
 
             bool teamFound = false;
 
+            if (storedLeague == null)
+            {
+                Log.WriteLine("storedLeague was null!", LogLevel.CRITICAL);
+                continue;
+            }
+
+            string? storedLeagueString = storedLeague.ToString();
+
             foreach (Team team in storedLeague.LeagueData.Teams)
             {
                 if (!teamFound)
@@ -113,7 +121,13 @@ public static class UserManager
                                 storedLeague.LeagueName + " because " + player.playerNickName +
                                 " left", LogLevel.DEBUG);
 
-                            ILeague leagueInterface = LeagueManager.GetLeagueInstance(storedLeague.ToString());
+                            if (storedLeagueString == null)
+                            {
+                                Log.WriteLine("storedLeagueString was null!", LogLevel.CRITICAL);
+                                continue;
+                            }
+
+                            ILeague leagueInterface = LeagueManager.GetLeagueInstance(storedLeagueString);
 
                             Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueName, LogLevel.VERBOSE);
 
@@ -170,7 +184,6 @@ public static class UserManager
             Log.WriteLine("Tried to add a player that was already in the database!", LogLevel.WARNING);
             return false;
         }
-        return false;
     }
     public static async Task HandleGuildMemberUpdated(Cacheable<SocketGuildUser, ulong> before, SocketGuildUser _socketGuildUserAfter)
     {

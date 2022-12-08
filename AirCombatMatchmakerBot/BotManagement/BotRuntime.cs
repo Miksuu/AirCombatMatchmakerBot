@@ -39,7 +39,25 @@ public class BotRuntimeManager
             BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
-            await PrepareCheckupsAndEventHandlers();
+            await LeagueManager.CreateLeaguesOnStartup();
+
+            await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
+
+            await SerializationManager.SerializeUsersOnTheServer();
+
+            BotReference.clientRef.UserJoined += UserManager.HandleUserJoin;
+
+            BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
+
+            //BotReference.clientRef.MessageUpdated += UserManager.MessageUpdated;
+
+            BotReference.clientRef.GuildMemberUpdated += UserManager.HandleGuildMemberUpdated;
+
+            BotReference.clientRef.UserLeft += UserManager.HandleUserLeaveDelegate;
+
+            BotReference.clientRef.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
+
+            await DowntimeManager.CheckForUsersThatAreNotRegisteredAfterDowntime();
         };
 
         // Listens for the commandService
@@ -47,28 +65,5 @@ public class BotRuntimeManager
 
         // Block this task until the program is closed.
         await Task.Delay(-1);
-    }
-
-    private static async Task PrepareCheckupsAndEventHandlers()
-    {
-        await LeagueManager.CreateLeaguesOnStartup();
-
-        await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
-
-        await SerializationManager.SerializeUsersOnTheServer();
-
-        BotReference.clientRef.UserJoined += UserManager.HandleUserJoin;
-
-        BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
-
-        //BotReference.clientRef.MessageUpdated += UserManager.MessageUpdated;
-
-        BotReference.clientRef.GuildMemberUpdated += UserManager.HandleGuildMemberUpdated;
-
-        BotReference.clientRef.UserLeft += UserManager.HandleUserLeaveDelegate;
-
-        BotReference.clientRef.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
-
-        await DowntimeManager.CheckForUsersThatAreNotRegisteredAfterDowntime();
     }
 }

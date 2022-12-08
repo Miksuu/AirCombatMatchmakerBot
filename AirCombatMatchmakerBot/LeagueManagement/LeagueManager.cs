@@ -163,6 +163,13 @@ public static class LeagueManager
             leagueInterface = CreateALeagueJoinButton(_channel, leagueInterface).Result;
         }
 
+        if (leagueInterface == null)
+        {
+            Log.WriteLine("leagueInterface for channel: " + _channel.Id + " and _leagueName: " +
+                _leagueName.ToString() + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
         StoreTheLeague(leagueInterface);
     }
 

@@ -28,20 +28,6 @@
         Log.WriteLine("Added to the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
     }
 
-    /*
-    public static async Task CreateANewRegisterationChannelManually(
-        NonRegisteredUser _nonRegisteredUser)
-    {
-        string channelName = _nonRegisteredUser.ConstructChannelName();
-
-        Log.WriteLine("Starting the creation of registration channelName: " + channelName +
-            " for userId: " + _nonRegisteredUser.discordUserId, LogLevel.DEBUG);
-        //var channel = ChannelManager.FindChannel(_guild, channelName);
-        //channelCreationQueue.Add(_nonRegisteredUser, _userId);
-
-        await ChannelManager.HandleChannelCreationManually(_nonRegisteredUser);
-    } */
-
     public static NonRegisteredUser CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(ulong _userId)
     {
         foreach (NonRegisteredUser nonRegisteredUser in Database.Instance.NonRegisteredUsers)

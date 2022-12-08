@@ -73,27 +73,36 @@ public static class SerializationManager
         Log.WriteLine("User serialization done on the server", LogLevel.SERIALIZATION);
     }
 
-    public static async Task DeSerializeDB()
+    public static Task DeSerializeDB()
     {
         Log.WriteLine("DESERIALIZATION DONE!", LogLevel.SERIALIZATION);
 
         string json = File.ReadAllText(dbPath);
-        if (json != "0")
-        {
-            Database.Instance = Newtonsoft.Json.JsonConvert.DeserializeObject<Database>(json,
-                new Newtonsoft.Json.JsonSerializerSettings
-                {
-                    TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto,
-                    NullValueHandling = Newtonsoft.Json.NullValueHandling.Include,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace
-                });
-        }
-        else
+        if (json == "0")
         {
             Database.Instance = new();
+            Log.WriteLine("json was " + json + ", creating a new db instance", LogLevel.DEBUG);
+
+            return Task.CompletedTask;
         }
 
+        JsonSerializerSettings settings = new JsonSerializerSettings();
+        settings.TypeNameHandling = TypeNameHandling.Auto;
+        settings.NullValueHandling = NullValueHandling.Include;
+        settings.ObjectCreationHandling = ObjectCreationHandling.Replace;
+
+        var newDeserializedObject = JsonConvert.DeserializeObject<Database>(json, settings);
+
+        if (newDeserializedObject == null)
+        {
+            return Task.CompletedTask;
+        }
+
+        Database.Instance = newDeserializedObject;
+
         Log.WriteLine("DB DESERIALIZATION DONE!", LogLevel.SERIALIZATION);
+
+        return Task.CompletedTask;
     }
 
     public static void AddUserIdToCachedList(string _userString, ulong _userId)
