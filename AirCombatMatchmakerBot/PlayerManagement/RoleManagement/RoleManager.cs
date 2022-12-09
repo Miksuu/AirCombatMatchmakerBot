@@ -1,6 +1,8 @@
 ﻿using Discord;
+using Discord.WebSocket;
+using System;
 
-public static class RoleManagement
+public static class RoleManager
 {
     public static async Task GrantUserAccess(ulong _playerId, string _roleName)
     {
@@ -62,5 +64,24 @@ public static class RoleManagement
         await user.RemoveRoleAsync(role);
 
         Log.WriteLine("Done revoking role " + _roleName + " from: " + _playerId, LogLevel.VERBOSE);
+    }
+
+    public static async Task<SocketRole> CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt
+        (SocketGuild _guild, string _roleName)
+    {
+        Log.WriteLine("Checking if role exists by name: " + _roleName, LogLevel.VERBOSE);
+
+        foreach (SocketRole role in _guild.Roles)
+        {
+            if (role.Name == _roleName) 
+            {
+                Log.WriteLine("Found role: " + role.Name + " with id:" + role.Id +
+                    " returning it", LogLevel.DEBUG);
+                return role;
+            }
+        }
+
+        var newRole = await _guild.CreateRoleAsync(_roleName);
+        return _guild.GetRole(newRole.Id);
     }
 }

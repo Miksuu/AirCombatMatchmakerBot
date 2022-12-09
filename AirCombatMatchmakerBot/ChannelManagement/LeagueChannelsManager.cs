@@ -5,8 +5,17 @@ public static class LeagueChannelsManager
 {
     public static void CreateCategoryAndChannelsForALeague(ILeague _leagueInterface)
     {
+        string? leagueName = EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName);
+
+        if (leagueName == null)
+        {
+            Log.WriteLine("LeagueName from " + _leagueInterface.LeagueName.ToString() +
+                " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
         Log.WriteLine("Starting to create a category channel for league: " +
-            _leagueInterface.LeagueName.ToString(), LogLevel.DEBUG);
+            leagueName, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
 
@@ -16,16 +25,22 @@ public static class LeagueChannelsManager
             return;
         }
 
+        // Get the role and create it if it already doesn't exist
+        var role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
+            guild, leagueName).Result;
+
         List<Overwrite> permissions = new List<Overwrite>
         {
             new Overwrite(guild.EveryoneRole.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)),
+
+            new Overwrite(role.Id, PermissionTarget.Role,
+                new OverwritePermissions(viewChannel: PermValue.Allow))
         };
 
         SocketCategoryChannel? socketCategoryChannel =
             CategoryManager.CreateANewSocketCategoryChannelAndReturnIt(guild,
-                EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName),
-                permissions).Result;
+                leagueName, permissions).Result;
 
         if (socketCategoryChannel == null)
         {

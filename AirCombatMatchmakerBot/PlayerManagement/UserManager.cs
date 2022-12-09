@@ -32,7 +32,7 @@ public static class UserManager
         {
             Log.WriteLine(_user.Username + " found in the database", LogLevel.DEBUG);
 
-            await RoleManagement.GrantUserAccess(_user.Id, "Member");
+            await RoleManager.GrantUserAccess(_user.Id, "Member");
         }
         else
         {
@@ -172,7 +172,7 @@ public static class UserManager
             Database.Instance.PlayerData.PlayerIDs.Add(_playerId, new Player(_playerId, nickName));
 
             // Add the member role for access.
-            await RoleManagement.GrantUserAccess(_playerId, "Member");
+            await RoleManager.GrantUserAccess(_playerId, "Member");
 
             // Remove player registeration object
             DatabaseMethods.RemoveUserRegisterationFromDatabase(_playerId);
@@ -267,7 +267,7 @@ public static class UserManager
         Log.WriteLine("User found in the server", LogLevel.VERBOSE);
 
         // Remove user's access (back to the registeration...)
-        await RoleManagement.RevokeUserAccess(id, "Member");
+        await RoleManager.RevokeUserAccess(id, "Member");
 
         // After termination, create a regiteration profile for that player
         string userNameWithNickName = user.Username + " aka "
