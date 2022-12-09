@@ -1,5 +1,6 @@
 using Discord;
 using Discord.WebSocket;
+using System.Numerics;
 
 public static class UserManager
 {
@@ -311,6 +312,13 @@ public static class UserManager
         }
 
         await SerializationManager.SerializeDB();
+    }
+
+    public static async void SetPlayerActiveAndGrantHimTheRole(ILeague _dbLeagueInstance, ulong _playerId)
+    {
+        LeagueManager.ReturnTeamThatThePlayerIsIn(_dbLeagueInstance.LeagueData.Teams, _playerId).active = true;
+        await RoleManager.GrantUserAccessWithId(
+            _playerId, _dbLeagueInstance.DiscordLeagueReferences.leagueRoleId);
     }
 
     /*

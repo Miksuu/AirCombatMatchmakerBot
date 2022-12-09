@@ -87,7 +87,7 @@ public static class ButtonHandler
                     Log.WriteLine("The player was not found in any team in the league", LogLevel.VERBOSE);
 
                     Team newTeam = new Team(new List<Player> { player }, player.playerNickName);
-                    newTeam.active = true;
+                    
 
                     if (dbLeagueInstance.LeaguePlayerCountPerTeam < 2)
                     {
@@ -97,9 +97,6 @@ public static class ButtonHandler
 
                         Log.WriteLine("Done adding the team. Count is now: " +
                             dbLeagueInstance.LeagueData.Teams.Count, LogLevel.VERBOSE);
-
-                        // Modify the message to have the new player count
-                        await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
                     }
                     else
                     {
@@ -108,9 +105,11 @@ public static class ButtonHandler
                             dbLeagueInstance.LeaguePlayerCountPerTeam, LogLevel.ERROR);
                     }
 
-                    // Add the role for the player for the specific league
-                    await RoleManager.GrantUserAccessWithId(
-                        player.playerDiscordId, dbLeagueInstance.DiscordLeagueReferences.leagueRoleId);
+                    // Add the role for the player for the specific league and set him active
+                    UserManager.SetPlayerActiveAndGrantHimTheRole(dbLeagueInstance, _component.User.Id);
+
+                    // Modify the message to have the new player count
+                    await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
 
                     Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
                         dbLeagueInstance.LeagueData.Teams.Count, LogLevel.DEBUG);
@@ -123,7 +122,7 @@ public static class ButtonHandler
 
                     Log.WriteLine("The player was already in a team in that league! Setting him active", LogLevel.DEBUG);
 
-                    LeagueManager.ReturnTeamThatThePlayerIsIn(dbLeagueInstance.LeagueData.Teams, _component.User.Id).active = true;
+                    UserManager.SetPlayerActiveAndGrantHimTheRole(dbLeagueInstance, _component.User.Id);
 
                     await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
                 }
