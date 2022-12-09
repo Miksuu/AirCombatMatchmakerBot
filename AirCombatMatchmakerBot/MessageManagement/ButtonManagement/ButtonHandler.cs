@@ -108,6 +108,10 @@ public static class ButtonHandler
                             dbLeagueInstance.LeaguePlayerCountPerTeam, LogLevel.ERROR);
                     }
 
+                    // Add the role for the player for the specific league
+                    await RoleManager.GrantUserAccessWithId(
+                        player.playerDiscordId, dbLeagueInstance.DiscordLeagueReferences.leagueRoleId);
+
                     Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
                         dbLeagueInstance.LeagueData.Teams.Count, LogLevel.DEBUG);
 

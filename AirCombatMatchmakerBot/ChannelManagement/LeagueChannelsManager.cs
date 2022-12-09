@@ -29,6 +29,9 @@ public static class LeagueChannelsManager
         var role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
             guild, leagueName).Result;
 
+        Log.WriteLine("Role is named: " + role.Name + " with ID: " + role.Id, LogLevel.VERBOSE);
+
+        // Set the permissions, by default everyone is denied access except the league role owners
         List<Overwrite> permissions = new List<Overwrite>
         {
             new Overwrite(guild.EveryoneRole.Id, PermissionTarget.Role,
@@ -48,6 +51,7 @@ public static class LeagueChannelsManager
             return;
         }
 
+        _leagueInterface.DiscordLeagueReferences.leagueRoleId = role.Id;
         _leagueInterface.DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
         CreateChannelsForTheCategory(_leagueInterface, guild);
 
