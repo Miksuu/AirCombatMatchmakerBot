@@ -4,8 +4,8 @@ public class Team
     public int skillRating { get; set; }
     public string teamName { get; set; }
     public List<Player> players { get; set; }
-
     public bool active { get; set; }
+    public int teamId { get; set; }
 
     public Team()
     {
@@ -15,10 +15,11 @@ public class Team
         active = false;
     }
 
-    public Team(List<Player> _players, string _teamName)
+    public Team(List<Player> _players, string _teamName, int _teamId)
     {
         skillRating = 1600;
         teamName = _teamName;
         players = _players;
+        teamId = _teamId;
     }
 }

@@ -86,8 +86,11 @@ public static class ButtonHandler
                 {
                     Log.WriteLine("The player was not found in any team in the league", LogLevel.VERBOSE);
 
-                    Team newTeam = new Team(new List<Player> { player }, player.playerNickName);
-                    
+                    // Create a team with unique ID and increment that ID after the data has been serialized
+                    Team newTeam = new Team(
+                        new List<Player> { player },
+                        player.playerNickName,
+                        dbLeagueInstance.LeagueData.currentTeamInt); 
 
                     if (dbLeagueInstance.LeaguePlayerCountPerTeam < 2)
                     {
@@ -103,6 +106,7 @@ public static class ButtonHandler
                         // Not implemented yet
                         Log.WriteLine("This league is team based with number of players per team: " +
                             dbLeagueInstance.LeaguePlayerCountPerTeam, LogLevel.ERROR);
+                        return;
                     }
 
                     // Add the role for the player for the specific league and set him active
@@ -114,6 +118,7 @@ public static class ButtonHandler
                     Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
                         dbLeagueInstance.LeagueData.Teams.Count, LogLevel.DEBUG);
 
+                    dbLeagueInstance.LeagueData.currentTeamInt++;
                     await SerializationManager.SerializeDB();
                 }
                 else

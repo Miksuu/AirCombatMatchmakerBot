@@ -185,7 +185,7 @@ public static class LeagueManager
                     " was not found, creating a category for it", LogLevel.DEBUG);
 
                 leagueInterface.DiscordLeagueReferences.leagueChannels.Clear();
-                LeagueChannelsManager.CreateCategoryAndChannelsForALeague(leagueInterface);
+                LeagueChannelManager.CreateCategoryAndChannelsForALeague(leagueInterface);
             }
             // New channels detected in the code, create them
             else
@@ -200,7 +200,7 @@ public static class LeagueManager
                     return;
                 }
 
-                LeagueChannelsManager.CreateChannelsForTheCategory(leagueInterface, guild);
+                LeagueChannelManager.CreateChannelsForTheCategory(leagueInterface, guild);
             }
         }
 
@@ -260,7 +260,7 @@ public static class LeagueManager
         Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
             leagueEnumAttrValue, LogLevel.VERBOSE);
 
-        return "\\" + "\n" + leagueEnumAttrValue + "\n" +
+        return "." + "\n" + leagueEnumAttrValue + "\n" +
             GetAllowedUnitsAsString(_leagueInterface) + "\n" +
             GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
              

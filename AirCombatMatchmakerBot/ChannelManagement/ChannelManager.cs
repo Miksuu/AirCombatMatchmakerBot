@@ -13,6 +13,8 @@ public static class ChannelManager
             waitingChannels.Add(_newChannel);
         }
         else await HandleOneChannel(_newChannel);
+
+        await SerializationManager.SerializeDB();
     }
 
     public static async Task CreateChannelsFromWaitingChannels()

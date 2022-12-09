@@ -10,4 +10,7 @@ public enum LeagueCategoryChannelType
 
     [EnumMember(Value = "test-channel")]
     TEST = 1,
+
+    [EnumMember(Value = "challenge-channel")]
+    CHALLENGE = 2,
 }
