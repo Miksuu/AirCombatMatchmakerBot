@@ -3,7 +3,7 @@ using Discord.WebSocket;
 
 public static class LeagueChannelsManager
 {
-    public static ILeague? CreateCategoryAndChannelsForALeague(ILeague _leagueInterface)
+    public static void CreateCategoryAndChannelsForALeague(ILeague _leagueInterface)
     {
         Log.WriteLine("Starting to create a category channel for league: " +
             _leagueInterface.LeagueName.ToString(), LogLevel.DEBUG);
@@ -13,7 +13,7 @@ public static class LeagueChannelsManager
         if (guild == null)
         {
             Exceptions.BotGuildRefNull();
-            return _leagueInterface;
+            return;
         }
 
         SocketCategoryChannel? socketCategoryChannel =
@@ -23,19 +23,17 @@ public static class LeagueChannelsManager
         if (socketCategoryChannel == null)
         {
             Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);
-            return null;
+            return;
         }
 
         _leagueInterface.DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
-        _leagueInterface = CreateChannelsForTheCategory(_leagueInterface, guild);
+        CreateChannelsForTheCategory(_leagueInterface, guild);
 
         Log.WriteLine("End of creating a category channel for league: " +
             _leagueInterface.LeagueName.ToString(), LogLevel.DEBUG);
-
-        return _leagueInterface;
     }
 
-    private static ILeague CreateChannelsForTheCategory(
+    public static void CreateChannelsForTheCategory(
         ILeague _leagueInterface, SocketGuild _guild)
     {
         Log.WriteLine("Starting to create categories for: " +
@@ -65,8 +63,6 @@ public static class LeagueChannelsManager
 
             Log.WriteLine("Done looping through: " + channelType.ToString(), LogLevel.VERBOSE);
         }
-
-        return _leagueInterface;
     }
 
     private static async Task<ulong> CreateAChannelForTheCategory(

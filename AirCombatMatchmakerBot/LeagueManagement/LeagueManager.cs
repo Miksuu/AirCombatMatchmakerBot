@@ -1,4 +1,5 @@
 ﻿using Discord;
+using System;
 
 public static class LeagueManager
 {
@@ -118,7 +119,6 @@ public static class LeagueManager
         bool leagueChannelCategoryExists = false;
         bool newTypesOfLeagueChannels = false;
 
-
         Log.WriteLine("Looping on leagueName: " + _leagueName.ToString(), LogLevel.VERBOSE);
 
         ILeague? leagueInterface = GetLeagueInstance(_leagueName.ToString());
@@ -131,8 +131,6 @@ public static class LeagueManager
             Log.WriteLine(nameof(Database.Instance.StoredLeagues) + " was null!", LogLevel.CRITICAL);
             return;
         }
-
-
 
         if (CheckIfALeagueNameExistsInDatabase(_leagueName))
         {
@@ -180,21 +178,30 @@ public static class LeagueManager
 
         if (!leagueChannelCategoryExists || newTypesOfLeagueChannels)
         {
-            // Category was deleted, clear channels in the db and generate a new category
+            // Category was deleted or does not exist, clear channels in the db and generate a new category
             if (!newTypesOfLeagueChannels)
             {
                 Log.WriteLine("name: " + _leagueName.ToString() +
                     " was not found, creating a category for it", LogLevel.DEBUG);
 
                 leagueInterface.DiscordLeagueReferences.leagueChannels.Clear();
+                LeagueChannelsManager.CreateCategoryAndChannelsForALeague(leagueInterface);
             }
+            // New channels detected in the code, create them
             else
             {
                 Log.WriteLine("New types of league channels detected in the code," +
                     " fixing that for league: " + _leagueName.ToString(), LogLevel.DEBUG);
-            }
 
-            LeagueChannelsManager.CreateCategoryAndChannelsForALeague(leagueInterface);
+                var guild = BotReference.GetGuildRef();
+                if (guild == null)
+                {
+                    Exceptions.BotGuildRefNull();
+                    return;
+                }
+
+                LeagueChannelsManager.CreateChannelsForTheCategory(leagueInterface, guild);
+            }
         }
 
         // To avoid duplicates in the db
