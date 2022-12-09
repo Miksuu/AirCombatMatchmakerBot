@@ -6,11 +6,12 @@ using System;
 public static class CategoryManager
 {
     public static async Task<SocketCategoryChannel?> CreateANewSocketCategoryChannelAndReturnIt(
-        SocketGuild _guild, string _categoryName)
+        SocketGuild _guild, string _categoryName, List<Overwrite> _permissions)
     {
         Log.WriteLine("Starting to create a new category with name: " + _categoryName, LogLevel.VERBOSE);
 
-        RestCategoryChannel newCategory = await _guild.CreateCategoryChannelAsync(_categoryName);
+        RestCategoryChannel newCategory = await _guild.CreateCategoryChannelAsync(
+            _categoryName, x => x.PermissionOverwrites = _permissions);
         if (newCategory == null)
         {
             Log.WriteLine(nameof(newCategory) + " was null!", LogLevel.CRITICAL);

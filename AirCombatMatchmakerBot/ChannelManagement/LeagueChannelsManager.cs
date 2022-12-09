@@ -16,9 +16,16 @@ public static class LeagueChannelsManager
             return;
         }
 
+        List<Overwrite> permissions = new List<Overwrite>
+        {
+            new Overwrite(guild.EveryoneRole.Id, PermissionTarget.Role,
+                new OverwritePermissions(viewChannel: PermValue.Deny)),
+        };
+
         SocketCategoryChannel? socketCategoryChannel =
             CategoryManager.CreateANewSocketCategoryChannelAndReturnIt(guild,
-                EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName)).Result;
+                EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName),
+                permissions).Result;
 
         if (socketCategoryChannel == null)
         {
