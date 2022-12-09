@@ -45,18 +45,22 @@ public static class CategoryManager
             return false;
         }
 
-        var category = guild.CategoryChannels.First(cat => cat.Id == _categoryId);
+        foreach (SocketCategoryChannel socketCategoryChannel in guild.CategoryChannels)
+        {
+            Log.WriteLine("Looping on category: " + socketCategoryChannel.Id + " named:" +
+                socketCategoryChannel.Name, LogLevel.VERBOSE);
 
-        if (category == null) 
-        {
-            Log.WriteLine("Category with id: " + _categoryId + " was null, not found", LogLevel.DEBUG);
-            return false;
+            if (socketCategoryChannel.Id == _categoryId)
+            {
+                Log.WriteLine("Category with id: " + _categoryId +
+                    " was found, named: " + socketCategoryChannel.Name, LogLevel.DEBUG);
+                return true;
+            }
         }
-        else
-        {
-            Log.WriteLine("Category with id: " + _categoryId +
-                " was found, named: " + category.Name, LogLevel.DEBUG);
-            return true;
-        }
+
+        // Someone probably deleted the category, the program will regenerate those
+        Log.WriteLine("Category with id: " + _categoryId + " was null, not found. " +
+            "Perhaps someone deleted it manually?", LogLevel.ERROR);
+        return false;
     }
 }
