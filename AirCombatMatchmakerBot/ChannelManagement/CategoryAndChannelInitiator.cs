@@ -21,17 +21,14 @@ public static class CategoryAndChannelInitiator
 
         Log.WriteLine(nameof(categoryEnumValues) + " length: " + categoryEnumValues.Length, LogLevel.VERBOSE);
 
-        // Loop through every category names creating them and the channels for them
+        // Loop through every category names creating them and the channelNames for them
         foreach (CategoryName categoryName in Enum.GetValues(typeof(CategoryName)))
         {
             Log.WriteLine("Looping on category name: " + categoryName.ToString(), LogLevel.VERBOSE);
-            // Check here too if a category is missing channels
+            // Check here too if a category is missing channelNames
             bool categoryExists = false;
 
-            CategoryProperties categoryProperties = new();
-            categoryProperties.interfaceChannels = new();
-
-            if (Database.Instance.CreatedCategoriesWithChannels.Any(x => x.Key.CategoryName == categoryName))
+            if (Database.Instance.CreatedCategoriesWithChannels.Any(x => x.Value.CategoryName == categoryName))
             {
                 Log.WriteLine(nameof(Database.Instance.CreatedCategoriesWithChannels) + " already contains: " +
                     categoryName.ToString(), LogLevel.VERBOSE);
@@ -81,12 +78,12 @@ public static class CategoryAndChannelInitiator
                     " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
 
                 // Insert the id to the interface from the socket channel creation
-                //categoryId = socketCategoryChannel.Id;
+                interfaceCategory.CategoryId = socketCategoryChannel.Id;
 
                 Log.WriteLine("Adding " + nameof(interfaceCategory) + " to " +
                     nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.VERBOSE);
 
-                Database.Instance.CreatedCategoriesWithChannels.Add(interfaceCategory, categoryProperties);
+                Database.Instance.CreatedCategoriesWithChannels.Add(interfaceCategory.CategoryId, interfaceCategory);
 
                 Log.WriteLine("Done adding " + nameof(interfaceCategory) + " to " +
                     nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.DEBUG);
@@ -95,7 +92,7 @@ public static class CategoryAndChannelInitiator
             else
             {
                 var dbCategory = Database.Instance.CreatedCategoriesWithChannels.First(
-                    x => x.Key.CategoryName == interfaceCategory.CategoryName);
+                    x => x.Value.CategoryName == interfaceCategory.CategoryName);
 
                 InterfaceCategory databaseInterfaceCategory = GetCategoryInstance(categoryName);
                 if (databaseInterfaceCategory == null)
@@ -114,8 +111,6 @@ public static class CategoryAndChannelInitiator
                     socketCategoryChannel.Name, LogLevel.DEBUG);
             }
 
-            categoryProperties.categoryId = socketCategoryChannel.Id;
-            interfaceCategory.CategoryId = socketCategoryChannel.Id;
             await CreateChannelsForTheCategory(interfaceCategory, socketCategoryChannel, guild);
         }
         await SerializationManager.SerializeDB();
@@ -128,10 +123,10 @@ public static class CategoryAndChannelInitiator
     {
         Log.WriteLine("Starting to create channels for: " + _socketCategoryChannel.Name +
             " ( " + _socketCategoryChannel.Id + ")" + " Channel count: " +
-            _interfaceCategory.Channels.Count, LogLevel.VERBOSE) ;
+            _interfaceCategory.ChannelNames.Count, LogLevel.VERBOSE) ;
 
         List<InterfaceChannel> channelListForCategory = Database.Instance.CreatedCategoriesWithChannels.First(
-            x => x.Key.CategoryName == _interfaceCategory.CategoryName).Value.interfaceChannels;
+            x => x.Value.CategoryName == _interfaceCategory.CategoryName).Value.InterfaceChannels;
         if (channelListForCategory == null)
         {
             Log.WriteLine(nameof(channelListForCategory) + " was null!", LogLevel.CRITICAL);
@@ -141,7 +136,7 @@ public static class CategoryAndChannelInitiator
         Log.WriteLine("Found " + nameof(channelListForCategory) 
             + " channel count: " + channelListForCategory.Count, LogLevel.VERBOSE);
 
-        foreach (ChannelName channelName in _interfaceCategory.Channels)
+        foreach (ChannelName channelName in _interfaceCategory.ChannelNames)
         {
             if (channelListForCategory.Any(x => x.ChannelName == channelName))
             {

@@ -11,10 +11,10 @@ public abstract class BaseCategory : InterfaceCategory
         set => categoryName = value;
     }
 
-    List<ChannelName> InterfaceCategory.Channels
+    List<ChannelName> InterfaceCategory.ChannelNames
     {
-        get => channels;
-        set => channels = value;
+        get => channelNames;
+        set => channelNames = value;
     }
 
     ulong InterfaceCategory.CategoryId
@@ -23,12 +23,20 @@ public abstract class BaseCategory : InterfaceCategory
         set => categoryId = value;
     }
 
+    List<InterfaceChannel> InterfaceCategory.InterfaceChannels
+    {
+        get => interfaceChannels;
+        set => interfaceChannels = value;
+    }
+
     public CategoryName categoryName;
-    public List<ChannelName> channels;
+    public List<ChannelName> channelNames;
     public ulong categoryId;
+    public List<InterfaceChannel> interfaceChannels;
 
     public BaseCategory()
     {
+        interfaceChannels= new List<InterfaceChannel>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);

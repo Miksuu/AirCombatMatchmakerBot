@@ -6,10 +6,10 @@ public class DiscordLeagueReferences
 
     // The reference to the category created by the system
     public ulong leagueCategoryId { get; set; }
-    // The references for the channels inside the category
+    // The references for the channelNames inside the category
     public Dictionary<LeagueCategoryChannelType, ulong> leagueChannels { get; set; }
 
-    // Id of the role which gives access to the league channels
+    // Id of the role which gives access to the league channelNames
     public ulong leagueRoleId { get; set; }
 
     public DiscordLeagueReferences()

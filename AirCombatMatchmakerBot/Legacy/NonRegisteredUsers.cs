@@ -71,7 +71,7 @@ public static async Task FinishChannelCreationFromDelegate(SocketChannel _newCha
 
 public static async Task CreateChannelsFromWaitingChannels()
 {
-    Log.WriteLine("Creating channels from the waiting channels. Count: " +
+    Log.WriteLine("Creating channelNames from the waiting channelNames. Count: " +
         waitingChannels.Count, LogLevel.DEBUG);
     foreach (SocketChannel _newChannel in waitingChannels)
     {

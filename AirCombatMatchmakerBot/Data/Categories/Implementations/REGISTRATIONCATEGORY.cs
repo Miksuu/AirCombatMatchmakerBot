@@ -8,7 +8,7 @@ public class REGISTRATIONCATEGORY : BaseCategory
     public REGISTRATIONCATEGORY()
     {
         categoryName = CategoryName.REGISTRATIONCATEGORY;
-        channels = new List<ChannelName>()
+        channelNames = new List<ChannelName>()
         {
             ChannelName.REGISTRATIONCHANNEL,
             ChannelName.LEAGUEREGISTRATION

@@ -178,7 +178,7 @@ public static class LeagueManager
 
         if (!leagueChannelCategoryExists || newTypesOfLeagueChannels)
         {
-            // Category was deleted or does not exist, clear channels in the db and generate a new category
+            // Category was deleted or does not exist, clear channelNames in the db and generate a new category
             if (!newTypesOfLeagueChannels)
             {
                 Log.WriteLine("name: " + _leagueName.ToString() +
@@ -187,7 +187,7 @@ public static class LeagueManager
                 leagueInterface.DiscordLeagueReferences.leagueChannels.Clear();
                 LeagueChannelManager.CreateCategoryAndChannelsForALeague(leagueInterface);
             }
-            // New channels detected in the code, create them
+            // New channelNames detected in the code, create them
             else
             {
                 Log.WriteLine("New types of league channels detected in the code," +

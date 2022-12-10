@@ -19,8 +19,8 @@ public class Database
     // The stored leagues that implement the ILeague interface
     public List<ILeague> StoredLeagues { get; set; }
 
-    // Dictionary of channel categories and channels inside them
-    public Dictionary<InterfaceCategory, CategoryProperties> CreatedCategoriesWithChannels { get; set; }
+    // Dictionary of channel categories and channelNames inside them
+    public Dictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels { get; set; }
 
     public List<ulong> cachedUserIDs { get; set; }
 
