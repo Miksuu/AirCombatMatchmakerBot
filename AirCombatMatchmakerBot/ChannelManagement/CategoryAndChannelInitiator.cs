@@ -135,14 +135,7 @@ public static class CategoryAndChannelInitiator
 
         foreach (ChannelName channelName in _interfaceCategory.ChannelNames)
         {
-            if (channelListForCategory.Any(x => x.ChannelName == channelName))
-            {
-                Log.WriteLine(nameof(channelListForCategory) + " already contains channel: " +
-                    channelName.ToString(), LogLevel.VERBOSE);
-                continue;
-            }
-
-            Log.WriteLine("Does not contain: " + channelName.ToString() + " adding it", LogLevel.DEBUG);
+            bool channelExists = false;
 
             InterfaceChannel interfaceChannel = GetChannelInstance(channelName);
             if (interfaceChannel == null)
@@ -151,6 +144,21 @@ public static class CategoryAndChannelInitiator
                 return;
             }
 
+            if (channelListForCategory.Any(x => x.ChannelName == channelName))
+            {
+                Log.WriteLine(nameof(channelListForCategory) + " already contains channel: " +
+                    channelName.ToString(), LogLevel.VERBOSE);
+
+                // Replace interfaceChannel with a one that is from the database
+                interfaceChannel = channelListForCategory.First(x => x.ChannelName == channelName);
+
+                channelExists = true;
+            }
+
+            if (!channelExists)
+            Log.WriteLine("Does not contain: " + channelName.ToString() + " adding it", LogLevel.DEBUG);
+
+
             BaseChannel baseChannel = interfaceChannel as BaseChannel;
             if (baseChannel == null)
             {
@@ -158,35 +166,37 @@ public static class CategoryAndChannelInitiator
                 return;
             }
 
-            List<Overwrite> permissionsList = baseChannel.GetGuildPermissions(_guild);
-
             string? channelNameString = EnumExtensions.GetEnumMemberAttrValue(channelName);
-
-            if (channelNameString == null) 
+            if (channelNameString == null)
             {
                 Log.WriteLine(nameof(channelNameString).ToString() + " was null!", LogLevel.CRITICAL);
                 return;
             }
 
-            ulong categoryId = Database.Instance.CreatedCategoriesWithChannels.First(
-                 x => x.Value.CategoryName == _interfaceCategory.CategoryName).Key;
+            if (!channelExists)
+            {
+                List<Overwrite> permissionsList = baseChannel.GetGuildPermissions(_guild);
 
-            Log.WriteLine("Creating a channel named: " + channelNameString + " for category: " 
-                + _interfaceCategory.CategoryName + " (" + categoryId + ")", LogLevel.VERBOSE);
-            
-            interfaceChannel.ChannelId = await ChannelManager.CreateAChannelForTheCategory(
-                _guild, channelNameString, categoryId, permissionsList);
+                ulong categoryId = Database.Instance.CreatedCategoriesWithChannels.First(
+                     x => x.Value.CategoryName == _interfaceCategory.CategoryName).Key;
 
-            Log.WriteLine("Done creating the channel with id: " + interfaceChannel.ChannelId +
-                " named:" + channelNameString + " adding it to the db.", LogLevel.DEBUG);
+                Log.WriteLine("Creating a channel named: " + channelNameString + " for category: "
+                    + _interfaceCategory.CategoryName + " (" + categoryId + ")", LogLevel.VERBOSE);
 
-            channelListForCategory.Add(interfaceChannel);
+                interfaceChannel.ChannelId = await ChannelManager.CreateAChannelForTheCategory(
+                    _guild, channelNameString, categoryId, permissionsList);
 
-            Log.WriteLine("Done adding to the db. Count is now: " + channelListForCategory.Count +
-                " for the list of category: " + _interfaceCategory.CategoryName.ToString() +
-                " (" + categoryId + ")", LogLevel.VERBOSE);
+                Log.WriteLine("Done creating the channel with id: " + interfaceChannel.ChannelId +
+                    " named:" + channelNameString + " adding it to the db.", LogLevel.DEBUG);
 
-            //LeagueChannelFeatures.ActivateFeatureOfTheChannel(channelId, channelType);
+                channelListForCategory.Add(interfaceChannel);
+
+                Log.WriteLine("Done adding to the db. Count is now: " + channelListForCategory.Count +
+                    " for the list of category: " + _interfaceCategory.CategoryName.ToString() +
+                    " (" + categoryId + ")", LogLevel.VERBOSE);
+            }
+
+            await baseChannel.ActivateChannelFeatures();
 
             Log.WriteLine("Done looping through: " + channelNameString, LogLevel.VERBOSE);
         }

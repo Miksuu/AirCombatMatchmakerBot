@@ -3,27 +3,27 @@ using Discord;
 
 public static class PlayerRegisteration
 {
-    public static async Task CreateMainRegisterationChannel(SocketChannel _newChannel)
+    public static async Task<ulong> CreateMainRegisterationChannelButton(ulong _channelId)
     {
-        Log.WriteLine("Creating the main registration channel", LogLevel.DEBUG);
+        Log.WriteLine("Creating the main registration channel with id: " + _channelId, LogLevel.VERBOSE);
 
         var guild = BotReference.GetGuildRef();
 
         if (guild == null)
         {
             Exceptions.BotGuildRefNull();
-            return;
+            return 0;
         }
 
-        var channel = guild.GetTextChannel(_newChannel.Id) as ITextChannel;
-
         // Creates the registration button
-        await ButtonComponents.CreateButtonMessage(channel,
+        var messageId = await ButtonComponents.CreateButtonMessage(_channelId,
             "Click this button to register [verification process with DCS" +
             " account linking will be included later here]",
             "Register", "mainRegisteration");
 
+        Log.WriteLine("Done creating the main registeration button on " + _channelId +
+            " with messageId: " + messageId, LogLevel.DEBUG);
 
-        await SerializationManager.SerializeDB();
+        return messageId;
     }
 }

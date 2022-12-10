@@ -20,4 +20,8 @@ public class LEAGUEREGISTRATION : BaseChannel
                 new OverwritePermissions(viewChannel: PermValue.Deny)),
         };
     }
+
+    public override async Task ActivateChannelFeatures()
+    {
+    }
 }

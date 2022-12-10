@@ -18,4 +18,8 @@ public class BOTCOMMANDS : BaseChannel
         {
         };
     }
+
+    public override async Task ActivateChannelFeatures()
+    {
+    }
 }

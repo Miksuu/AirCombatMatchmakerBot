@@ -20,8 +20,11 @@ public static class CategoryManager
 
         Log.WriteLine("Created a new RestCategoryChannel with ID: " + newCategory.Id, LogLevel.VERBOSE);
 
-        SocketCategoryChannel socketCategoryChannel = 
+        SocketCategoryChannel socketCategoryChannel =
             _guild.GetCategoryChannel(newCategory.Id);
+
+        Log.WriteLine("socketCategoryId: " + socketCategoryChannel.Id.ToString(),LogLevel.VERBOSE);
+
         if (socketCategoryChannel == null)
         {
             Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);

@@ -16,13 +16,22 @@ public abstract class BaseChannel : InterfaceChannel
         get => channelId;
         set => channelId = value;
     }
+    Dictionary<string, ulong> InterfaceChannel.ChannelFeaturesWithMessageIds
+    {
+        get => channelFeaturesWithMessageIds;
+        set => channelFeaturesWithMessageIds = value;
+    }
 
     public ChannelName channelName;
-
     public ulong channelId;
+
+    public Dictionary<string, ulong> channelFeaturesWithMessageIds;
     public BaseChannel()
     {
+        channelFeaturesWithMessageIds = new Dictionary<string, ulong>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
+
+    public abstract Task ActivateChannelFeatures();
 }

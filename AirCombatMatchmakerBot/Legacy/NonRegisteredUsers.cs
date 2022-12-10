@@ -63,7 +63,7 @@ public static async Task FinishChannelCreationFromDelegate(SocketChannel _newCha
     {
         waitingChannels.Add(_newChannel);
     }
-    else await CreateMainRegisterationChannel(_newChannel);
+    else await CreateMainRegisterationChannelButton(_newChannel);
 
     await SerializationManager.SerializeDB();
 }
@@ -75,7 +75,7 @@ public static async Task CreateChannelsFromWaitingChannels()
         waitingChannels.Count, LogLevel.DEBUG);
     foreach (SocketChannel _newChannel in waitingChannels)
     {
-        await CreateMainRegisterationChannel(_newChannel);
+        await CreateMainRegisterationChannelButton(_newChannel);
     }
 }*/
 
@@ -163,7 +163,7 @@ private static async Task CreateARegisterationProfileForTheUser(
 */
 
 /*
-    public static async Task CreateMainRegisterationChannel(SocketChannel _newChannel)
+    public static async Task CreateMainRegisterationChannelButton(SocketChannel _newChannel)
     {
         Log.WriteLine("Invoked newChannel creation", LogLevel.DEBUG);
 

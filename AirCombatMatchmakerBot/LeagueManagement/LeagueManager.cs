@@ -244,7 +244,7 @@ public static class LeagueManager
 
         _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId =
             await ButtonComponents.CreateButtonMessage(
-                _channel,
+                _channel.Id,
                 GenerateALeagueJoinButtonMessage(_leagueInterface),
                 "Join",
                 leagueButtonRegisterationCustomId); // Maybe replace this with some other system

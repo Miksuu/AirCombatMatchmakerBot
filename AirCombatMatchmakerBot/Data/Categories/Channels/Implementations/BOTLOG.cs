@@ -18,4 +18,8 @@ public class BOTLOG : BaseChannel
         {
         };
     }
+
+    public override async Task ActivateChannelFeatures()
+    {
+    }
 }

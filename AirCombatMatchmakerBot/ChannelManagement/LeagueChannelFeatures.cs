@@ -20,7 +20,7 @@ public static class LeagueChannelFeatures
             case LeagueCategoryChannelType.CHALLENGE:
                 string challengeString = "challenge_" + _channelId;
 
-                await ButtonComponents.CreateButtonMessage(channel,
+                await ButtonComponents.CreateButtonMessage(_channelId,
                     ChallengeSystem.GenerateChallengeQueueMessage(_channelId),
                     "Challenge", challengeString);
                 break;
