@@ -16,6 +16,9 @@ public class REGISTRATIONCHANNEL : BaseChannel
     {
         return new List<Overwrite>
         {
+            new Overwrite(RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
+                _guild, "Member").Result.Id, PermissionTarget.Role,
+                new OverwritePermissions(viewChannel: PermValue.Deny)),
         };
     }
 

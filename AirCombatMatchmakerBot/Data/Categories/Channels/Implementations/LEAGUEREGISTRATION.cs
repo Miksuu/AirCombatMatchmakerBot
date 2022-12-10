@@ -26,5 +26,9 @@ public class LEAGUEREGISTRATION : BaseChannel
 
     public override async Task ActivateChannelFeatures()
     {
+        LeagueManager.leagueRegistrationChannelId = channelId;
+
+        await LeagueManager.CreateLeaguesOnStartup();
+
     }
 }

@@ -140,9 +140,6 @@ public static class UserManager
             // Add the member role for access.
             await RoleManager.GrantUserAccess(_playerId, "Member");
 
-            // Remove player registration object
-            //DatabaseMethods.RemoveUserRegisterationFromDatabase(_playerId);
-
             return true;
         }
         else

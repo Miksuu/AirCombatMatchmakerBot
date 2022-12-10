@@ -53,9 +53,9 @@ public class BaseLeague : ILeague
 
     public List<UnitName> leagueUnits = new List<UnitName>();
 
-    public LeagueData leagueData;
+    public LeagueData leagueData = new LeagueData();
 
-    public DiscordLeagueReferences discordleagueReferences;
+    public DiscordLeagueReferences discordleagueReferences = new DiscordLeagueReferences();
 
     public BaseLeague()
     {

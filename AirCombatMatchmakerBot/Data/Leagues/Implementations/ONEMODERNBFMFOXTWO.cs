@@ -13,7 +13,9 @@ public class ONEMODERNBFMFOXTWO : BaseLeague
         leagueUnits = new List<UnitName> {
             UnitName.FA18C,
             UnitName.F16C,
-            UnitName.M2000C
+            UnitName.M2000C,
+            UnitName.JF17,
+            UnitName.SU27
         };
     }
 }

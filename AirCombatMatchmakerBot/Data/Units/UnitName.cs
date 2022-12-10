@@ -26,6 +26,12 @@ public enum UnitName
     [EnumMember(Value = "Mirage 2000C")]
     M2000C,
 
+    [EnumMember(Value = "JF-17")]
+    JF17,
+
+    [EnumMember(Value = "Su-27")]
+    SU27,
+
     /*
     [EnumMember(Value = "SA342L")]
     SA342L,
