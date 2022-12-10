@@ -3,7 +3,46 @@ using Discord.WebSocket;
 
 public static class LeagueChannelManager
 {
-    public static void CreateCategoryAndChannelsForALeague(ILeague _leagueInterface)
+    public static async Task<ulong> CreateALeagueJoinButton(
+        ITextChannel _leagueRegistrationChannel, ILeague? _leagueInterface, string _leagueNameString)
+    {
+        Log.WriteLine("Starting to create a league join button for: " + _leagueNameString, LogLevel.VERBOSE);
+
+        if (_leagueInterface == null)
+        {
+            Log.WriteLine("_leagueInterface was null!", LogLevel.CRITICAL);
+            return 0;
+        }
+
+        string leagueButtonRegisterationCustomId =
+           "leagueRegisteration_" + _leagueInterface.LeagueName.ToString();
+
+        Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
+            leagueButtonRegisterationCustomId, LogLevel.VERBOSE);
+
+        _leagueInterface = LeagueManager.GetILeagueFromTheDatabase(_leagueInterface);
+
+        if (_leagueInterface == null)
+        {
+            Log.WriteLine("_leagueInterface was null!", LogLevel.CRITICAL);
+            return 0;
+        }
+
+        _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId =
+            await ButtonComponents.CreateButtonMessage(
+                _leagueRegistrationChannel.Id,
+                GenerateALeagueJoinButtonMessage(_leagueInterface),
+                "Join",
+                leagueButtonRegisterationCustomId); // Maybe replace this with some other system
+
+        Log.WriteLine("Done creating a league join button for: " + _leagueNameString, LogLevel.DEBUG);
+
+        return _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId;
+    }
+
+
+    /*
+    public static void CreateCategoryAndChannelsForALeague(SocketGuild _guild, ITextChannel _leagueRegistrationChannel)
     {
         string? leagueName = EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName);
 
@@ -57,6 +96,68 @@ public static class LeagueChannelManager
 
         Log.WriteLine("End of creating a category channel for league: " +
             _leagueInterface.LeagueName.ToString(), LogLevel.DEBUG);
+    } */
+
+
+    public static string GenerateALeagueJoinButtonMessage(ILeague _leagueInterface)
+    {
+        string? leagueEnumAttrValue =
+            EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName);
+
+        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
+            leagueEnumAttrValue, LogLevel.VERBOSE);
+
+        return "." + "\n" + leagueEnumAttrValue + "\n" +
+            GetAllowedUnitsAsString(_leagueInterface) + "\n" +
+            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
+    }
+
+    private static string GetAllowedUnitsAsString(ILeague _leagueInterface)
+    {
+        string allowedUnits = string.Empty;
+
+        for (int u = 0; u < _leagueInterface.LeagueUnits.Count; ++u)
+        {
+            allowedUnits += EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueUnits[u]);
+
+            // Is not the last index
+            if (u != _leagueInterface.LeagueUnits.Count - 1)
+            {
+                allowedUnits += ", ";
+            }
+        }
+
+        return allowedUnits;
+    }
+
+    private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(ILeague _leagueInterface)
+    {
+        int count = 0;
+
+        foreach (Team team in _leagueInterface.LeagueData.Teams)
+        {
+            if (team.active)
+            {
+                count++;
+                Log.WriteLine("team: " + team.teamName +
+                    " is active, increased count to: " + count, LogLevel.VERBOSE);
+            }
+            else
+            {
+                Log.WriteLine("team: " + team.teamName + " is not active", LogLevel.VERBOSE);
+            }
+        }
+
+        Log.WriteLine("Total count: " + count, LogLevel.VERBOSE);
+
+        if (_leagueInterface.LeaguePlayerCountPerTeam > 1)
+        {
+            return "Teams: " + count;
+        }
+        else
+        {
+            return "Players: " + count;
+        }
     }
 
     /*
@@ -100,7 +201,7 @@ public static class LeagueChannelManager
 
             Log.WriteLine("Done looping through: " + channelType.ToString(), LogLevel.VERBOSE);
         }
-    }*/
-
+    }
+    */
 
 }

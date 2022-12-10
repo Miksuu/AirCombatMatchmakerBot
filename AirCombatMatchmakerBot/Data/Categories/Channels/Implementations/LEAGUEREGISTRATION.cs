@@ -28,7 +28,27 @@ public class LEAGUEREGISTRATION : BaseChannel
     {
         LeagueManager.leagueRegistrationChannelId = channelId;
 
-        await LeagueManager.CreateLeaguesOnStartup();
+        var guild = BotReference.GetGuildRef();
 
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
+        // Hardcoded channel id for now
+        var channel = guild.GetTextChannel(channelId) as ITextChannel;
+
+        if (channel == null)
+        {
+            Log.WriteLine("Channel was null with id: " + channelId, LogLevel.CRITICAL);
+            return;
+        }
+        Log.WriteLine("Channel found: " + channel.Name +
+            "(" + channel.Id + ")", LogLevel.VERBOSE);
+
+
+        await LeagueManager.CreateLeaguesOnStartup(guild, channel);
+        await LeagueRegistrationChannelManager.CreateLeagueMessages(this, channel);
     }
 }

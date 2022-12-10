@@ -7,9 +7,9 @@ public static class MessageManager
         Log.WriteLine("Modifying league registration channel message with: " +
             _dbLeagueInstance.LeagueName, LogLevel.VERBOSE);
 
-        await ModifyMessage(1049555859656671232, // Hardcoded
+        await ModifyMessage(LeagueManager.leagueRegistrationChannelId,
             _dbLeagueInstance.DiscordLeagueReferences.leagueRegisterationChannelMessageId,
-         LeagueManager.GenerateALeagueJoinButtonMessage(_dbLeagueInstance));
+         LeagueChannelManager.GenerateALeagueJoinButtonMessage(_dbLeagueInstance));
     }
 
     private static async Task ModifyMessage(
