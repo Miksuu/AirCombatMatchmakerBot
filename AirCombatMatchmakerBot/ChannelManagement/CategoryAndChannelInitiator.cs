@@ -102,10 +102,10 @@ public static class CategoryAndChannelInitiator
                 }
 
                 Log.WriteLine("Found " + nameof(databaseInterfaceCategory) + " with id: " +
-                    databaseInterfaceCategory.CategoryId + " named: " +
+                    dbCategory.Key + " named: " +
                     databaseInterfaceCategory.CategoryName, LogLevel.VERBOSE);
 
-                socketCategoryChannel = guild.GetCategoryChannel(databaseInterfaceCategory.CategoryId);
+                socketCategoryChannel = guild.GetCategoryChannel(dbCategory.Key);
 
                 Log.WriteLine("Found " + nameof(socketCategoryChannel) + " that's named: " +
                     socketCategoryChannel.Name, LogLevel.DEBUG);
