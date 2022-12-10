@@ -77,13 +77,10 @@ public static class CategoryAndChannelInitiator
                 Log.WriteLine("Created a " + nameof(socketCategoryChannel) + " with id: " + socketCategoryChannel.Id +
                     " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
 
-                // Insert the id to the interface from the socket channel creation
-                interfaceCategory.CategoryId = socketCategoryChannel.Id;
-
                 Log.WriteLine("Adding " + nameof(interfaceCategory) + " to " +
                     nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.VERBOSE);
 
-                Database.Instance.CreatedCategoriesWithChannels.Add(interfaceCategory.CategoryId, interfaceCategory);
+                Database.Instance.CreatedCategoriesWithChannels.Add(socketCategoryChannel.Id, interfaceCategory);
 
                 Log.WriteLine("Done adding " + nameof(interfaceCategory) + " to " +
                     nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.DEBUG);
@@ -171,11 +168,14 @@ public static class CategoryAndChannelInitiator
                 return;
             }
 
+            ulong categoryId = Database.Instance.CreatedCategoriesWithChannels.First(
+                 x => x.Value.CategoryName == _interfaceCategory.CategoryName).Key;
+
             Log.WriteLine("Creating a channel named: " + channelNameString + " for category: " 
-                + _interfaceCategory.CategoryId, LogLevel.VERBOSE);
+                + _interfaceCategory.CategoryName + " (" + categoryId + ")", LogLevel.VERBOSE);
             
             interfaceChannel.ChannelId = await ChannelManager.CreateAChannelForTheCategory(
-                _guild, channelNameString, _interfaceCategory.CategoryId, permissionsList);
+                _guild, channelNameString, categoryId, permissionsList);
 
             Log.WriteLine("Done creating the channel with id: " + interfaceChannel.ChannelId +
                 " named:" + channelNameString + " adding it to the db.", LogLevel.DEBUG);
@@ -184,7 +184,7 @@ public static class CategoryAndChannelInitiator
 
             Log.WriteLine("Done adding to the db. Count is now: " + channelListForCategory.Count +
                 " for the list of category: " + _interfaceCategory.CategoryName.ToString() +
-                " (" + _interfaceCategory.CategoryId + ")", LogLevel.VERBOSE);
+                " (" + categoryId + ")", LogLevel.VERBOSE);
 
             //LeagueChannelFeatures.ActivateFeatureOfTheChannel(channelId, channelType);
 

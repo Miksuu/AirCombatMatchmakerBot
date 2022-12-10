@@ -17,12 +17,6 @@ public abstract class BaseCategory : InterfaceCategory
         set => channelNames = value;
     }
 
-    ulong InterfaceCategory.CategoryId
-    {
-        get => categoryId;
-        set => categoryId = value;
-    }
-
     List<InterfaceChannel> InterfaceCategory.InterfaceChannels
     {
         get => interfaceChannels;
@@ -31,7 +25,6 @@ public abstract class BaseCategory : InterfaceCategory
 
     public CategoryName categoryName;
     public List<ChannelName> channelNames;
-    public ulong categoryId;
     public List<InterfaceChannel> interfaceChannels;
 
     public BaseCategory()
