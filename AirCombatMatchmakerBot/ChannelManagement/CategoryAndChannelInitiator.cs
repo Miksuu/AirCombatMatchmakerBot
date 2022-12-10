@@ -28,10 +28,23 @@ public static class CategoryAndChannelInitiator
             // Check here too if a category is missing channelNames
             bool categoryExists = false;
 
+            InterfaceCategory interfaceCategory = GetCategoryInstance(categoryName);
+            if (interfaceCategory == null)
+            {
+                Log.WriteLine(nameof(interfaceCategory).ToString() + " was null!", LogLevel.CRITICAL);
+                return;
+            }
+
             if (Database.Instance.CreatedCategoriesWithChannels.Any(x => x.Value.CategoryName == categoryName))
             {
                 Log.WriteLine(nameof(Database.Instance.CreatedCategoriesWithChannels) + " already contains: " +
                     categoryName.ToString(), LogLevel.VERBOSE);
+
+                // Replace interfaceCategory with a one that is from the database
+                interfaceCategory = Database.Instance.CreatedCategoriesWithChannels.First(x => x.Value.CategoryName == categoryName).Value;
+
+                Log.WriteLine("Replaced with: " + interfaceCategory.CategoryName + " from db", LogLevel.DEBUG);
+
                 categoryExists = true;
             }
 
@@ -43,13 +56,6 @@ public static class CategoryAndChannelInitiator
             }
 
             Log.WriteLine("Creating a category named: " + categoryNameString, LogLevel.VERBOSE);
-
-            InterfaceCategory interfaceCategory = GetCategoryInstance(categoryName);
-            if (interfaceCategory == null)
-            {
-                Log.WriteLine(nameof(interfaceCategory).ToString() + " was null!", LogLevel.CRITICAL);
-                return;
-            }
 
             BaseCategory baseCategory = interfaceCategory as BaseCategory;
             if (baseCategory == null)
@@ -151,6 +157,8 @@ public static class CategoryAndChannelInitiator
 
                 // Replace interfaceChannel with a one that is from the database
                 interfaceChannel = channelListForCategory.First(x => x.ChannelName == channelName);
+
+                Log.WriteLine("Replaced with: " + interfaceChannel.ChannelName + " from db", LogLevel.DEBUG);
 
                 channelExists = true;
             }
