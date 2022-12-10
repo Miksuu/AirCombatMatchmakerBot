@@ -185,7 +185,7 @@ public static class LeagueManager
                     " was not found, creating a category for it", LogLevel.DEBUG);
 
                 leagueInterface.DiscordLeagueReferences.leagueChannels.Clear();
-                LeagueChannelManager.CreateCategoryAndChannelsForALeague(leagueInterface);
+                //LeagueChannelManager.CreateCategoryAndChannelsForALeague(leagueInterface);
             }
             // New channelNames detected in the code, create them
             else

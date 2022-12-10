@@ -5,6 +5,8 @@ using System.Runtime.CompilerServices;
 
 public static class BotMessageLogging
 {
+    public static ulong loggingChannelId;
+
     // Send message to a specific channel in discord with the log information
     public static async void SendLogMessage(string _logMessage, LogLevel _logLevel)
     {
@@ -30,7 +32,7 @@ public static class BotMessageLogging
             }
 
             await guild.
-                GetTextChannel(1047179975805128724). // Hardcoded
+                GetTextChannel(loggingChannelId).
                 SendMessageAsync(completeLogString);
         }
     }

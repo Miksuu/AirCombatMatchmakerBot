@@ -18,6 +18,9 @@ public class LEAGUEREGISTRATION : BaseChannel
         {
             new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)),
+            new Overwrite(RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
+                _guild, "Member").Result.Id, PermissionTarget.Role,
+                new OverwritePermissions(viewChannel: PermValue.Allow)),
         };
     }
 

@@ -181,6 +181,7 @@ public static class CategoryAndChannelInitiator
                 return;
             }
 
+
             if (!channelExists)
             {
                 List<Overwrite> permissionsList = baseChannel.GetGuildPermissions(_guild);

@@ -147,7 +147,8 @@ public static class UserManager
         }
         else
         {
-            Log.WriteLine("Tried to add a player that was already in the database!", LogLevel.WARNING);
+            Log.WriteLine("Tried to add a player that was already in the database: " +
+                _playerId, LogLevel.DEBUG);
             return false;
         }
     }
