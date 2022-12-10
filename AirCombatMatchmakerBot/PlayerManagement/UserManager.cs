@@ -11,47 +11,11 @@ public static class UserManager
             + CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
             " (" + _user.Id + ")";
 
-        await CreateARegisterationProfileForTheUser(_user, userNameWithNickName);
+        //await CreateARegisterationProfileForTheUser(_user, userNameWithNickName);
         await AddUserToCache(userNameWithNickName, _user.Id);
     }
 
-    // For the new users and the terminated users
-    private static async Task CreateARegisterationProfileForTheUser(
-        SocketGuildUser _user, string _userNameWithNickName)
-    {
-        if (_user.IsBot)
-        {
-            Log.WriteLine("A bot: " + _user.Username +
-                " joined the discord, disregarding the registeration process", LogLevel.DEBUG);
-            return;
-        }
 
-        Log.WriteLine("User: " + _user + " has joined the discord with id: " + _user.Id +
-            " starting the registation process. Checking " + _userNameWithNickName, LogLevel.DEBUG);
-
-        if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_user.Id))
-        {
-            Log.WriteLine(_user.Username + " found in the database", LogLevel.DEBUG);
-
-            await RoleManager.GrantUserAccess(_user.Id, "Member");
-        }
-        else
-        {
-            Log.WriteLine(_user.Username + " not found in the database", LogLevel.DEBUG);
-
-            NonRegisteredUser nonRegisteredUser =
-                PlayerRegisteration.CheckIfDiscordUserHasARegisterationProfileAndCreateAndReturnIt(_user.Id);
-
-            // Creates a private channel for the user to proceed with the registeration 
-            if (nonRegisteredUser == null)
-            {
-                Log.WriteLine(nameof(nonRegisteredUser) + " was null!", LogLevel.ERROR);
-                return;
-            }
-
-            await PlayerRegisteration.CreateANewRegisterationChannel(nonRegisteredUser);
-        }
-    }
 
     // Add the user to the cached users list, this doesn't happen to the terminated users as they are already in the server
     private static async Task AddUserToCache(string userNameWithNickName, ulong _userId)
@@ -70,15 +34,16 @@ public static class UserManager
         ulong _userId)
     {
         Log.WriteLine(_userName + " (" + _userId +
-            ") bailed out! Handling deleting registeration channels etc.", LogLevel.DEBUG);
+            ") bailed out! Handling deleting registration channels etc.", LogLevel.DEBUG);
 
+        /*
         // Avoid trying to delete the channel if user has registered already (because it should not exist)
         if (!DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_userId))
         {
-            Log.WriteLine("The didn't have a player profile, deleting registeration channel", LogLevel.VERBOSE);
-            await ChannelManager.DeleteUsersRegisterationChannel(_userId);
-            Log.WriteLine("Done deleting user's " + _userId + "channel.", LogLevel.VERBOSE);
-        }
+            Log.WriteLine("The didn't have a player profile, deleting registration channel", LogLevel.VERBOSE);
+            //await ChannelManager.DeleteUsersRegisterationChannel(_userId);
+            Log.WriteLine("Done deleting user's " + _userId + "channel.", LogLevel.VERBOSE); 
+        }*/
 
         await HandleSettingTeamsInactiveThatUserWasIn(_userId);
 
@@ -175,8 +140,8 @@ public static class UserManager
             // Add the member role for access.
             await RoleManager.GrantUserAccess(_playerId, "Member");
 
-            // Remove player registeration object
-            DatabaseMethods.RemoveUserRegisterationFromDatabase(_playerId);
+            // Remove player registration object
+            //DatabaseMethods.RemoveUserRegisterationFromDatabase(_playerId);
 
             return true;
         }
@@ -267,14 +232,15 @@ public static class UserManager
 
         Log.WriteLine("User found in the server", LogLevel.VERBOSE);
 
-        // Remove user's access (back to the registeration...)
+        // Remove user's access (back to the registration...)
         await RoleManager.RevokeUserAccess(id, "Member");
 
+        /*
         // After termination, create a regiteration profile for that player
         string userNameWithNickName = user.Username + " aka "
             + CheckIfNickNameIsEmptyAndReturnUsername(user.Id) +
             " (" + user.Id + ")";
-        await CreateARegisterationProfileForTheUser(user, userNameWithNickName);
+        //await CreateARegisterationProfileForTheUser(user, userNameWithNickName); */
 
         Log.WriteLine("Done removing the player profile: " + id, LogLevel.DEBUG);
 

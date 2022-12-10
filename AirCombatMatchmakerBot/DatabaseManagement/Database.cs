@@ -14,10 +14,13 @@ public class Database
     public PlayerData PlayerData { get; set; }
 
     // Users not registered, more simple class for them without any player data.
-    public List<NonRegisteredUser> NonRegisteredUsers { get; set; }
+    //public List<NonRegisteredUser> NonRegisteredUsers { get; set; }
 
     // The stored leagues that implement the ILeague interface
     public List<ILeague> StoredLeagues { get; set; }
+
+    // Dictionary of channel categories and channels inside them
+    public Dictionary<CategoryProperties, List<InterfaceChannel>> CreatedCategoriesWithChannels { get; set; }
 
     public List<ulong> cachedUserIDs { get; set; }
 
@@ -27,7 +30,7 @@ public class Database
     public Database()
     {
         PlayerData = new PlayerData();
-        NonRegisteredUsers = new List<NonRegisteredUser>();
+        //NonRegisteredUsers = new List<NonRegisteredUser>();
         cachedUserIDs = new List<ulong>();
 
         // Load this from json
@@ -38,6 +41,8 @@ public class Database
         cantRegisterIDs = new List<ulong>();
 
         StoredLeagues = new();
+
+        CreatedCategoriesWithChannels = new();
     }
 
     public static Database Instance

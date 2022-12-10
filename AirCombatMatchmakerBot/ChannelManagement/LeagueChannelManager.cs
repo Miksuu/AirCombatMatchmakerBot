@@ -52,13 +52,14 @@ public static class LeagueChannelManager
         }
 
         _leagueInterface.DiscordLeagueReferences.leagueRoleId = role.Id;
-        _leagueInterface.DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
-        CreateChannelsForTheCategory(_leagueInterface, guild);
+        //_leagueInterface.DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
+        //CreateChannelsForTheCategory(_leagueInterface, guild);
 
         Log.WriteLine("End of creating a category channel for league: " +
             _leagueInterface.LeagueName.ToString(), LogLevel.DEBUG);
     }
 
+    /*
     public static async void CreateChannelsForTheCategory(
         ILeague _leagueInterface, SocketGuild _guild)
     {
@@ -82,13 +83,14 @@ public static class LeagueChannelManager
                 Log.WriteLine("Does not contain: " + channelType.ToString() +
                     " adding it", LogLevel.DEBUG);
 
+                /*
                 ulong channelId = await CreateAChannelForTheCategory(_guild, channelTypeString,
                         _leagueInterface.DiscordLeagueReferences.leagueCategoryId);
 
                 _leagueInterface.DiscordLeagueReferences.leagueChannels.Add(
                     channelType, channelId);
 
-                LeagueChannelFeatures.ActivateFeatureOfTheChannel(channelId, channelType);
+                LeagueChannelFeatures.ActivateFeatureOfTheChannel(channelId, channelType); 
             }
             else
             {
@@ -98,19 +100,7 @@ public static class LeagueChannelManager
 
             Log.WriteLine("Done looping through: " + channelType.ToString(), LogLevel.VERBOSE);
         }
-    }
+    }*/
 
-    private static async Task<ulong> CreateAChannelForTheCategory(
-        SocketGuild _guild, string _name, ulong _forCategory)
-    {
-        Log.WriteLine("Create a channel named: " + _name +
-            " for category: " + _forCategory, LogLevel.VERBOSE);
 
-        var channel = await _guild.CreateTextChannelAsync(_name, tcp => tcp.CategoryId = _forCategory);
-
-        Log.WriteLine("Done creating a channel named: " + _name + " with ID: " + channel.Id +
-            " for category: " + _forCategory, LogLevel.DEBUG);
-
-        return channel.Id;
-    }
 }

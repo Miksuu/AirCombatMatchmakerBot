@@ -7,6 +7,8 @@ public class BotRuntimeManager
     {
         LogLevelNormalization.InitLogLevelNormalizationStrings();
 
+        // Do not use the logging system before this
+
         await SerializationManager.DeSerializeDB();
 
         // Required after some discord API change
@@ -21,12 +23,6 @@ public class BotRuntimeManager
         //GlobalVariables.clientRef.ReactionAdded += ReactionManager.Instance.HandleReactionAddTask;
         //GlobalVariables.clientRef.ReactionRemoved += ReactionManager.Instance.HandleReactionRemove;
 
-        //_client.Log += Log;
-
-        //  You can assign your bot token to a string, and pass that in to connect.
-        //  This is, however, insecure, particularly if you plan to have your code hosted in a public repository.
-
-        // Some alternative options would be to keep your token in an Environment Variable or a standalone file.
         // var token = Environment.GetEnvironmentVariable("NameOfYourEnvironmentVariable");
         var token = File.ReadAllText("token.txt");
         // var token = JsonConvert.DeserializeObject<AConfigurationClass>(File.ReadAllText("config.json")).Token;
@@ -39,7 +35,9 @@ public class BotRuntimeManager
             BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
-            await LeagueManager.CreateLeaguesOnStartup();
+            await CategoryAndChannelInitiator.CreateCategoriesAndChannelsForTheDiscordServer();
+
+            //await LeagueManager.CreateLeaguesOnStartup();
 
             await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
 
@@ -55,7 +53,7 @@ public class BotRuntimeManager
 
             BotReference.clientRef.UserLeft += UserManager.HandleUserLeaveDelegate;
 
-            BotReference.clientRef.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
+            //BotReference.clientRef.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
 
             await DowntimeManager.CheckForUsersThatAreNotRegisteredAfterDowntime();
         };

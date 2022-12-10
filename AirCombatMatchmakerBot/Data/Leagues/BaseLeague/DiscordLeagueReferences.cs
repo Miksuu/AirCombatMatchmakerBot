@@ -1,7 +1,7 @@
 ﻿[Serializable]
 public class DiscordLeagueReferences
 {
-    // The references to the message in the registeration channel
+    // The references to the message in the registration channel
     public ulong leagueRegisterationChannelMessageId { get; set; }
 
     // The reference to the category created by the system

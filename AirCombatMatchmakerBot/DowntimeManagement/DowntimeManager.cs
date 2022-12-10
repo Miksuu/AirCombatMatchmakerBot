@@ -2,13 +2,13 @@
 
 public static class DowntimeManager
 {
-    public static bool useWaitingChannels = true;
+    //public static bool useWaitingChannels = true;
     public static async Task CheckForUsersThatAreNotRegisteredAfterDowntime()
     {
         List<SocketGuildUser> foundUsers = new List<SocketGuildUser>();
 
         Log.WriteLine("Checking for Users that entered the discord during " +
-            "the bot's downtime and that are not on the registeration list", LogLevel.DEBUG);
+            "the bot's downtime and that are not on the registration list", LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
 
@@ -34,8 +34,7 @@ public static class DowntimeManager
             else
             {
                 // Profile found, disregard
-                if (DatabaseMethods.CheckIfUserHasANonRegisterdUserProfile(user.Id) ||
-                    DatabaseMethods.CheckIfUserIdExistsInTheDatabase(user.Id))
+                if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(user.Id))
                 {
                     Log.WriteLine(
                         user.Username + "(" + user.Id + ") was found, disregarding", LogLevel.VERBOSE);
@@ -60,9 +59,9 @@ public static class DowntimeManager
             await UserManager.HandleUserJoin(user);
         }
 
-        useWaitingChannels = false;
+        //useWaitingChannels = false;
 
-        await ChannelManager.CreateChannelsFromWaitingChannels();
+        //await ChannelManager.CreateChannelsFromWaitingChannels();
     }
 
     public static Task CheckForUsersThatLeftDuringDowntime()

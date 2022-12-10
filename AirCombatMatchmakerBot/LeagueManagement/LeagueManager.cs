@@ -80,7 +80,7 @@ public static class LeagueManager
 
     private static bool CheckIfLeagueRegisterationMessageExists(ILeague _leagueInterface)
     {
-        Log.WriteLine("Checking if _leagueInterface registeration message exists", LogLevel.VERBOSE);
+        Log.WriteLine("Checking if _leagueInterface registration message exists", LogLevel.VERBOSE);
 
         if (_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId == 0)
         {
@@ -200,7 +200,7 @@ public static class LeagueManager
                     return;
                 }
 
-                LeagueChannelManager.CreateChannelsForTheCategory(leagueInterface, guild);
+                //LeagueChannelManager.CreateChannelsForTheCategory(leagueInterface, guild);
             }
         }
 
