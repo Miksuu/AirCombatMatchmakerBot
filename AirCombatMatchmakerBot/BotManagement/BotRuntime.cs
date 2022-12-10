@@ -39,7 +39,7 @@ public class BotRuntimeManager
 
             //await LeagueManager.CreateLeaguesOnStartup();
 
-            await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
+            //await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
 
             await SerializationManager.SerializeUsersOnTheServer();
 

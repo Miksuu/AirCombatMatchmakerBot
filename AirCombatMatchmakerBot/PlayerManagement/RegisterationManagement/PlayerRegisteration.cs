@@ -19,7 +19,7 @@ public static class PlayerRegisteration
         var messageId = await ButtonComponents.CreateButtonMessage(_channelId,
             "Click this button to register [verification process with DCS" +
             " account linking will be included later here]",
-            "Register", "mainRegisteration");
+            "Register", "mainRegistration_t"); // Needed to put something to split the string
 
         Log.WriteLine("Done creating the main registeration button on " + _channelId +
             " with messageId: " + messageId, LogLevel.DEBUG);

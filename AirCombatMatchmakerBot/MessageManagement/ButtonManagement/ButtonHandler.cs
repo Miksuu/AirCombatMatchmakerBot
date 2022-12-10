@@ -7,59 +7,41 @@ public static class ButtonHandler
 {
     public static async Task HandleButtonPress(SocketMessageComponent _component)
     {
+        Log.WriteLine(_component.Data.CustomId, LogLevel.DEBUG);
+
+        
         // Splits the button press action and the user ID
         string[] splitString = _component.Data.CustomId.Split('_');
 
         Log.WriteLine("Button press detected by: " + _component.User.Id + " | splitStrings: " +
             splitString[0] + " | " + splitString[1], LogLevel.DEBUG);
-
+        
         string response = "EMPTY";
         LogLevel logLevel = LogLevel.DEBUG;
         // Checks with first element of the split string (action)
         switch (splitString[0])
         {
-            // Player registration, 2nd part of split string is hes ID
-            case "registration":
-                // Check that the button is the user's one
-                if (_component.User.Id.ToString() == splitString[1])
-                {
-                    // Checks that the player does not exist in the database already, true if this is not the case
-                    if (UserManager.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
-                    {
-                        //await ChannelManager.DeleteUsersRegisterationChannel(_component.User.Id);
-                        /*
-                        response = _component.User.Mention + ", " +
-                            BotMessaging.GetMessageResponse(
-                                _component.Data.CustomId,
-                                " registration complete, welcome! \n" +
-                                "This channel will close soon.",
-                                _component.Channel.Name); */
-                    }
-                    // This should not be the case, the registration channel should not be available for the user
-                    // TO DO: Also remember to remove the button!!
-                    else
-                    {
-                        response = _component.User.Mention + ", " +
-                            BotMessaging.GetMessageResponse(
-                                _component.Data.CustomId,
-                                " You are already registered \n" +
-                                "one of our admins has been informed about a possible bug in the program.",
-                                _component.Channel.Name);
-
-                        // Admin warning
-                        logLevel = LogLevel.WARNING;
-                    }
+            case "mainRegistration":
+                // Checks that the player does not exist in the database already, true if this is not the case
+                if (UserManager.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
+                {                    
+                    response = _component.User.Mention + ", " +
+                        BotMessaging.GetMessageResponse(
+                            _component.Data.CustomId,
+                            " registration complete, welcome!",
+                            _component.Channel.Name);
                 }
                 else
                 {
                     response = _component.User.Mention + ", " +
                         BotMessaging.GetMessageResponse(
                             _component.Data.CustomId,
-                            " that's not your button!",
+                            " You are already registered!",
                             _component.Channel.Name);
                 }
                 break;
-            case "leagueRegisteration":
+            case "leagueRegistration":
+                /*
                 ILeague leagueInterface = LeagueManager.GetLeagueInstance(splitString[1]);
 
                 Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueName, LogLevel.VERBOSE);
@@ -132,9 +114,9 @@ public static class ButtonHandler
                     await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
                 }
 
-                await _component.RespondAsync();
+                await _component.RespondAsync(ephemeral: true);
 
-                break;
+                break; */
             default:
                 response = "Something went wrong with the button press!";
                 logLevel = LogLevel.ERROR;
@@ -145,10 +127,11 @@ public static class ButtonHandler
 
         await SerializationManager.SerializeDB();
 
+        /*
         if (splitString[0] != "leagueRegisteration")
-        {
+        {*/
             Log.WriteLine(response, logLevel);
-            if (response != "EMPTY") await _component.RespondAsync(response);
-        }
+        if (response != "EMPTY") await _component.RespondAsync(response, ephemeral: true);
+        //}
     }
 }
