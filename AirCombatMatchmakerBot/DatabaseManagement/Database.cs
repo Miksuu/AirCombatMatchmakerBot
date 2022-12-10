@@ -20,7 +20,7 @@ public class Database
     public List<ILeague> StoredLeagues { get; set; }
 
     // Dictionary of channel categories and channels inside them
-    public Dictionary<CategoryProperties, List<InterfaceChannel>> CreatedCategoriesWithChannels { get; set; }
+    public Dictionary<InterfaceCategory, CategoryProperties> CreatedCategoriesWithChannels { get; set; }
 
     public List<ulong> cachedUserIDs { get; set; }
 
