@@ -39,7 +39,7 @@ public class BotRuntimeManager
 
             //await LeagueManager.CreateLeaguesOnStartup();
 
-            //await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
+            await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
 
             await SerializationManager.SerializeUsersOnTheServer();
 
@@ -55,7 +55,7 @@ public class BotRuntimeManager
 
             //BotReference.clientRef.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
 
-            await DowntimeManager.CheckForUsersThatAreNotRegisteredAfterDowntime();
+            await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
         };
 
         // Listens for the commandService

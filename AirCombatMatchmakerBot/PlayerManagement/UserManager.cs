@@ -4,22 +4,56 @@ using System.Numerics;
 
 public static class UserManager
 {
+
     // For the new users that join the discord, need to add them to the cache too
     public static async Task HandleUserJoin(SocketGuildUser _user)
     {
-        string userNameWithNickName = _user.Username + " aka "
-            + CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
-            " (" + _user.Id + ")";
+        Log.WriteLine("User " + _user.Username +
+            " has joined the discord with id: " + _user.Id, LogLevel.VERBOSE);
 
         //await CreateARegisterationProfileForTheUser(_user, userNameWithNickName);
-        await AddUserToCache(userNameWithNickName, _user.Id);
+        //await AddUserToCache(userNameWithNickName, _user.Id);
+
+        // Check if the user is already in the database
+        if (!CheckIfUserHasPlayerProfile(_user.Id))
+        {
+            Log.WriteLine("User is not in the PlayerID's list," +
+                " disregarding any further action", LogLevel.VERBOSE);
+            return;
+        }
+
+        Log.WriteLine("User: " + _user.Username + " (" + _user.Id + ")" +
+            " joined with previous profile, adding him to the cache.", LogLevel.DEBUG);
+
+        await HandleUserRegisterationToCache(_user.Id);
+
+        await RoleManager.GrantUserAccess(_user.Id, "Member");
+
+        Log.WriteLine("Adding " + _user.Id + " to the cache done.", LogLevel.VERBOSE);
+    }
+
+    public static bool CheckIfUserHasPlayerProfile(ulong _userId)
+    {
+        return Database.Instance.PlayerData.PlayerIDs.Any(x => x.Key == _userId);
+    }
+
+    // For the new users that join the discord, need to add them to the cache too
+    public static async Task HandleUserRegisterationToCache(ulong _userId)
+    {
+        /*
+        string userNameWithNickName = _user.Username + " aka "
+            + CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
+            " (" + _user.Id + ")";*/
+
+        //await CreateARegisterationProfileForTheUser(_user, userNameWithNickName);
+        await AddUserToCache(_userId);
     }
 
     // Add the user to the cached users list,
     // this doesn't happen to the terminated users as they are already in the server
-    private static async Task AddUserToCache(string userNameWithNickName, ulong _userId)
+    private static async Task AddUserToCache(ulong _userId)
     {
-        SerializationManager.AddUserIdToCachedList(userNameWithNickName, _userId);
+        SerializationManager.AddUserIdToCachedList(_userId);
         await SerializationManager.SerializeDB();
     }
 
@@ -93,10 +127,12 @@ public static class UserManager
                                 continue;
                             }
 
-                            LeagueCategoryName lcn = (LeagueCategoryName)EnumExtensions.GetInstance(storedLeagueString);
+                            var findLeagueCategoryType
+                                = Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.First(
+                                    x => x.Value.LeagueCategoryName.ToString() == storedLeagueString);
+                            LeagueCategoryName leagueCategoryName = findLeagueCategoryType.Value.LeagueCategoryName;
 
-                            InterfaceLeagueCategory leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(lcn);
-
+                            var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
                             Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
                             InterfaceLeagueCategory? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
@@ -132,7 +168,7 @@ public static class UserManager
         Log.WriteLine("Adding a new player: " + nickName + " (" + _playerId + ").", LogLevel.DEBUG);
 
         // Checks if the player is already in the database, just in case
-        if (!DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_playerId))
+        if (!UserManager.CheckIfUserHasPlayerProfile(_playerId))
         {
             Log.WriteLine("Player doesn't exist in the database: " + _playerId, LogLevel.VERBOSE);
 
@@ -208,24 +244,24 @@ public static class UserManager
 
     public static async Task<bool> DeletePlayerProfile(string _dataValue)
     {
-        ulong id = UInt64.Parse(_dataValue);
+        ulong userId = UInt64.Parse(_dataValue);
 
-        Log.WriteLine("Starting to remove the player profile: " + id, LogLevel.VERBOSE);
-        if (!DatabaseMethods.CheckIfUserIdExistsInTheDatabase(id))
+        Log.WriteLine("Starting to remove the player profile: " + userId, LogLevel.VERBOSE);
+        if (!UserManager.CheckIfUserHasPlayerProfile(userId))
         {
-            Log.WriteLine("Did not find ID: " + id + "in the local database.", LogLevel.DEBUG);
+            Log.WriteLine("Did not find ID: " + userId + "in the local database.", LogLevel.DEBUG);
             return false;
         }
 
-        Log.WriteLine("Deleting a player profile " + id, LogLevel.DEBUG);
-        Database.Instance.PlayerData.PlayerIDs.Remove(id);
+        Log.WriteLine("Deleting a player profile " + userId, LogLevel.DEBUG);
+        Database.Instance.PlayerData.PlayerIDs.Remove(userId);
 
-        var user = GetSocketGuildUserById(id);
+        var user = GetSocketGuildUserById(userId);
 
         // If the user is in the server
         if (user == null)
         {
-            Log.WriteLine("User with id: " + id + " was null!!" +
+            Log.WriteLine("User with id: " + userId + " was null!!" +
                 " Was not found in the server?", LogLevel.DEBUG);
             return false;
         }
@@ -233,7 +269,7 @@ public static class UserManager
         Log.WriteLine("User found in the server", LogLevel.VERBOSE);
 
         // Remove user's access (back to the registration...)
-        await RoleManager.RevokeUserAccess(id, "Member");
+        await RoleManager.RevokeUserAccess(userId, "Member");
 
         /*
         // After termination, create a regiteration profile for that player
@@ -242,7 +278,7 @@ public static class UserManager
             " (" + user.Id + ")";
         //await CreateARegisterationProfileForTheUser(user, userNameWithNickName); */
 
-        Log.WriteLine("Done removing the player profile: " + id, LogLevel.DEBUG);
+        Log.WriteLine("Done removing the player profile: " + userId, LogLevel.DEBUG);
 
         return true;
     }

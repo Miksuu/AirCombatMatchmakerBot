@@ -3,12 +3,12 @@
 public static class DowntimeManager
 {
     //public static bool useWaitingChannels = true;
-    public static async Task CheckForUsersThatAreNotRegisteredAfterDowntime()
+    public static async Task CheckForUsersThatJoinedAfterDowntime()
     {
-        List<SocketGuildUser> foundUsers = new List<SocketGuildUser>();
-
         Log.WriteLine("Checking for Users that entered the discord during " +
-            "the bot's downtime and that are not on the registration list", LogLevel.DEBUG);
+            "the bot's downtime and that are not on the registration list", LogLevel.VERBOSE);
+
+        List<SocketGuildUser> foundUsers = new List<SocketGuildUser>();
 
         var guild = BotReference.GetGuildRef();
 
@@ -33,20 +33,17 @@ public static class DowntimeManager
             }
             else
             {
-                // Profile found, disregard
-                if (DatabaseMethods.CheckIfUserIdExistsInTheDatabase(user.Id))
+                if (!UserManager.CheckIfUserHasPlayerProfile(user.Id))
                 {
                     Log.WriteLine(
-                        user.Username + "(" + user.Id + ") was found, disregarding", LogLevel.VERBOSE);
+                        user.Username + "(" + user.Id + ") was not found, disregarding", LogLevel.VERBOSE);
                 }
                 // Run handle user join that will server the same purpose than the new player joining
-                // when the bot is up
+                // when the bot is up (if he was registered)
                 else
-                {
-                    Log.WriteLine(user.Username + "(" + user.Id + ")" + "was not found!" +
+                    Log.WriteLine(user.Username + " (" + user.Id + ") " + "was not found!" +
                         " adding user to the list!", LogLevel.DEBUG);
-                    foundUsers.Add(user);
-                }
+                foundUsers.Add(user);
             }
         }
 
@@ -58,10 +55,6 @@ public static class DowntimeManager
                 " handling user join during downtime.", LogLevel.DEBUG);
             await UserManager.HandleUserJoin(user);
         }
-
-        //useWaitingChannels = false;
-
-        //await ChannelManager.CreateChannelsFromWaitingChannels();
     }
 
     public static Task CheckForUsersThatLeftDuringDowntime()

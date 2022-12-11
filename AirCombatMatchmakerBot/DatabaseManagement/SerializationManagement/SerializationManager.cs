@@ -58,7 +58,15 @@ public static class SerializationManager
 
                 if (!user.IsBot)
                 {
-                    AddUserIdToCachedList(userString, user.Id);
+                    if (!UserManager.CheckIfUserHasPlayerProfile(user.Id))
+                    {
+                        Log.WriteLine("User: " + user.Id +
+                            " does not have a profile, disregarding", LogLevel.VERBOSE);
+
+                        continue;
+                    }
+
+                    AddUserIdToCachedList(user.Id);
                 }
                 else
                 {
@@ -105,19 +113,19 @@ public static class SerializationManager
         return Task.CompletedTask;
     }
 
-    public static void AddUserIdToCachedList(string _userString, ulong _userId)
+    public static void AddUserIdToCachedList(ulong _userId)
     {
-        Log.WriteLine("Adding " + _userString + " to the cache list", LogLevel.VERBOSE);
+        Log.WriteLine("Adding " + _userId + " to the cache list", LogLevel.VERBOSE);
 
         if (!Database.Instance.cachedUserIDs.Contains(_userId))
         {
             Database.Instance.cachedUserIDs.Add(_userId);
-            Log.WriteLine("Added " + _userString +
+            Log.WriteLine("Added " + _userId +
                 " to cached users list.", LogLevel.DEBUG);
         }
         else
         {
-            Log.WriteLine("User " + _userString + " is already on the list", LogLevel.VERBOSE);
+            Log.WriteLine("User " + _userId + " is already on the list", LogLevel.VERBOSE);
         }
     }
 
