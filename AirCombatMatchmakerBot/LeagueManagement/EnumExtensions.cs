@@ -4,9 +4,11 @@ public static class EnumExtensions
 {
     public static object GetInstance(string _string)
     {
-        Log.WriteLine("string: " + _string, LogLevel.VERBOSE);
+        Log.WriteLine("GetInstance string: " + _string, LogLevel.VERBOSE);
 
         Type? t = Type.GetType(_string.ToUpper());
+
+        Log.WriteLine("Generated type: " + t, LogLevel.VERBOSE);
         if (t == null)
         {
             Log.WriteLine("type was null for: " + _string.ToUpper(), LogLevel.CRITICAL);
@@ -14,6 +16,9 @@ public static class EnumExtensions
         }
 
         var instance = Activator.CreateInstance(t);
+
+        Log.WriteLine("Generated instance: " + instance, LogLevel.VERBOSE);
+
         if (instance == null) 
         {
             Log.WriteLine("instance was null for: " + _string.ToUpper(), LogLevel.CRITICAL);

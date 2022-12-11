@@ -41,10 +41,15 @@ public static class ButtonHandler
                 }
                 break;
             case "leagueRegistration":
+                Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
-                LeagueCategoryName lcn = (LeagueCategoryName)EnumExtensions.GetInstance(splitString[1]);
+                var findLeagueCategoryType
+                    = Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.First(x => x.Value.LeagueCategoryName.ToString() == splitString[1]);
+                LeagueCategoryName leagueCategoryName = findLeagueCategoryType.Value.LeagueCategoryName;
 
-                InterfaceLeagueCategory leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(lcn);
+                var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
+
+                Log.WriteLine("leagueInterface: " + leagueInterface,LogLevel.VERBOSE);
 
                 Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
