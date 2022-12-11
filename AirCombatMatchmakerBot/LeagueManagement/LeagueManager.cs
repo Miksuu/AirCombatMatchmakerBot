@@ -125,8 +125,8 @@ public static class LeagueManager
     {
         Log.WriteLine("Looping on leagueName: " + _leagueName.ToString(), LogLevel.VERBOSE);
 
-        InterfaceLeagueCategory? leagueInterface = GetLeagueInstance(_leagueName.ToString());
-        InterfaceLeagueCategory? databaseLeagueInterface = GetLeagueInstance(_leagueName.ToString());
+        InterfaceLeagueCategory? leagueInterface = GetLeagueInstanceWithLeagueCategoryName(_leagueName);
+        InterfaceLeagueCategory? databaseLeagueInterface = GetLeagueInstanceWithLeagueCategoryName(_leagueName);
 
         Log.WriteLine("Made a " + nameof(leagueInterface) + " named: " +
              leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
@@ -193,14 +193,25 @@ public static class LeagueManager
     }
 
 
-
-
-
-
-
-    public static InterfaceLeagueCategory GetLeagueInstance(string _leagueName)
+    /*
+    public static InterfaceLeagueCategory GetLeagueInstanceWithString(string _leagueCategoryName)
     {
-        return (InterfaceLeagueCategory)EnumExtensions.GetInstance(_leagueName);
+        Log.WriteLine("Getting a league instance with string: " + _leagueCategoryName, LogLevel.VERBOSE);
+
+        var leagueInstance = (InterfaceLeagueCategory)EnumExtensions.GetInstance(_leagueCategoryName);
+        leagueInstance.LeagueCategoryName = _leagueCategoryName;
+        Log.WriteLine(nameof(leagueInstance) + ": " + leagueInstance.ToString(), LogLevel.VERBOSE);
+        return leagueInstance;
+    }*/
+
+    public static InterfaceLeagueCategory GetLeagueInstanceWithLeagueCategoryName(LeagueCategoryName _leagueCategoryName)
+    {
+        Log.WriteLine("Getting a league instance with LeagueCategoryName: " + _leagueCategoryName, LogLevel.VERBOSE);
+
+        var leagueInstance = (InterfaceLeagueCategory)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
+        leagueInstance.LeagueCategoryName = _leagueCategoryName;
+        Log.WriteLine(nameof(leagueInstance) + ": " + leagueInstance.ToString(),LogLevel.VERBOSE);
+        return leagueInstance;
     }
 
     public static InterfaceLeagueCategory FindLeagueAndReturnInterfaceFromDatabase(InterfaceLeagueCategory _interfaceToSearchFor)

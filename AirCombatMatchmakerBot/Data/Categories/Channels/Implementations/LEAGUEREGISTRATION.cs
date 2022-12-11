@@ -47,10 +47,6 @@ public class LEAGUEREGISTRATION : BaseChannel
             "(" + channel.Id + ")", LogLevel.VERBOSE);
 
         await LeagueCategoryAndChannelInitiator.CreateLeagueCategoriesAndChannelsForTheDiscordServer();
-        //await LeagueManager.CreateLeaguesOnStartup(guild, channel);
-        await LeagueRegistrationChannelManager.CreateLeagueMessages(this, channel);
-        //await SerializationManager.SerializeDB();
-
-        
+        await LeagueRegistrationChannelManager.CreateLeagueMessages(this, channel);        
     }
 }

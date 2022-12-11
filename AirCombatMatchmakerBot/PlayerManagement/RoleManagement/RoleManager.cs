@@ -16,9 +16,10 @@ public static class RoleManager
         return guild.Roles.First(r => r.Id == _roleId).Name;
     }
 
-    public static async Task GrantUserAccessWithId(ulong _playerId, ulong _roleId)
+    public static async Task GrantUserAccessWithId(ulong _userId, ulong _roleId)
     {
-        await GrantUserAccess(_playerId, FindRoleNameById(_roleId).Result);
+        Log.WriteLine("Granting player + " + _userId + " access with id: " + _roleId,LogLevel.VERBOSE);
+        await GrantUserAccess(_userId, FindRoleNameById(_roleId).Result);
     }
 
     public static async Task GrantUserAccess(ulong _playerId, string _roleName)

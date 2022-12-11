@@ -83,5 +83,5 @@ public abstract class BaseLeagueCategory : InterfaceLeagueCategory
         leagueChannelNames = new();
     }
 
-    public abstract List<Overwrite> GetLeagueGuildPermissions(SocketGuild _guild);
+    public abstract List<Overwrite> GetLeagueGuildPermissions(SocketGuild _guild, SocketRole _role);
 }

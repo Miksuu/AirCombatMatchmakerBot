@@ -14,6 +14,9 @@ public static class LeagueChannelManager
             return 0;
         }
 
+        Log.WriteLine(nameof(_leagueInterface) + " before creating leagueButtonRegisterationCustomId: "
+            + _leagueInterface.ToString(), LogLevel.VERBOSE);
+
         string leagueButtonRegisterationCustomId =
            "leagueRegistration_" + _leagueInterface.LeagueCategoryName.ToString();
 
@@ -39,6 +42,7 @@ public static class LeagueChannelManager
 
         return _leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId;
     }
+    /*
     public static void CreateCategoryAndChannelsForALeague(SocketGuild _guild, InterfaceLeagueCategory _leagueInterface)
     {
         string? leagueNameString = EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
@@ -93,7 +97,7 @@ public static class LeagueChannelManager
 
         Log.WriteLine("End of creating a category channel for league: " +
             _leagueInterface.LeagueCategoryName.ToString(), LogLevel.DEBUG);
-    }
+    }*/
 
 
     public static string GenerateALeagueJoinButtonMessage(InterfaceLeagueCategory _leagueInterface)

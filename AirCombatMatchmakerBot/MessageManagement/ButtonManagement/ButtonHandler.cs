@@ -41,8 +41,10 @@ public static class ButtonHandler
                 }
                 break;
             case "leagueRegistration":
-                
-                InterfaceLeagueCategory leagueInterface = LeagueManager.GetLeagueInstance(splitString[1]);
+
+                LeagueCategoryName lcn = (LeagueCategoryName)EnumExtensions.GetInstance(splitString[1]);
+
+                InterfaceLeagueCategory leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(lcn);
 
                 Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 

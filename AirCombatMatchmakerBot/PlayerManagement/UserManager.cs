@@ -93,7 +93,9 @@ public static class UserManager
                                 continue;
                             }
 
-                            InterfaceLeagueCategory leagueInterface = LeagueManager.GetLeagueInstance(storedLeagueString);
+                            LeagueCategoryName lcn = (LeagueCategoryName)EnumExtensions.GetInstance(storedLeagueString);
+
+                            InterfaceLeagueCategory leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(lcn);
 
                             Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 

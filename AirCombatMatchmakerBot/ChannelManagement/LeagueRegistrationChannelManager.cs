@@ -29,7 +29,7 @@ public static class LeagueRegistrationChannelManager
                 continue;
             }
 
-            var leagueInterface = LeagueManager.GetLeagueInstance(leagueName.ToString());
+            var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
             if (leagueInterface == null)
             {
                 Log.WriteLine("leagueInterface was null!", LogLevel.CRITICAL);

@@ -384,7 +384,7 @@ bool newTypesOfLeagueChannels = false;
 
 Log.WriteLine("Looping on leagueName: " + _leagueName.ToString(), LogLevel.VERBOSE);
 
-InterfaceLeagueCategory? leagueInterface = GetLeagueInstance(_leagueName.ToString());
+InterfaceLeagueCategory? leagueInterface = GetLeagueInstanceWithLeagueCategoryName(_leagueName.ToString());
 
 Log.WriteLine("Made a " + nameof(leagueInterface) + " named: " +
  leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);

@@ -73,8 +73,14 @@ public static class LeagueCategoryAndChannelInitiator
                 return;
             }
 
-            List<Overwrite> permissionsList = baseLeagueCategory.GetLeagueGuildPermissions(guild);
+            // Get the role and create it if it already doesn't exist
+            SocketRole role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
+                guild, leagueCategoryNameString).Result;
 
+            Log.WriteLine("Role is named: " + role.Name + " with ID: " + role.Id, LogLevel.VERBOSE);
+
+            interfaceLeagueCategory.DiscordLeagueReferences.leagueRoleId = role.Id;
+            
             SocketCategoryChannel? socketCategoryChannel = null;
 
             // If the category doesn't exist at all, create it and add it to the database
@@ -82,12 +88,14 @@ public static class LeagueCategoryAndChannelInitiator
             {
                 socketCategoryChannel =
                     await CategoryManager.CreateANewSocketCategoryChannelAndReturnIt(
-                        guild, leagueCategoryNameString, permissionsList);
+                        guild, leagueCategoryNameString, baseLeagueCategory.GetLeagueGuildPermissions(guild, role));
                 if (socketCategoryChannel == null)
                 {
                     Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);
                     return;
                 }
+
+                interfaceLeagueCategory.DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
 
                 Log.WriteLine("Created a " + nameof(socketCategoryChannel) + " with id: " + socketCategoryChannel.Id +
                     " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
@@ -140,7 +148,7 @@ public static class LeagueCategoryAndChannelInitiator
             " ( " + _socketCategoryChannel.Id + ")" + " Channel count: " +
             _InterfaceLeagueCategory.LeagueChannelNames.Count, LogLevel.VERBOSE) ;
 
-        foreach (LeagueChannelName LeagueChannelName in Enum.GetValues(typeof(LeagueChannelName)))
+        foreach (LeagueChannelName leagueChannelName in Enum.GetValues(typeof(LeagueChannelName)))
         {
             bool channelExists = false;
 
@@ -156,43 +164,45 @@ public static class LeagueCategoryAndChannelInitiator
             Log.WriteLine("Found " + nameof(channelListForCategory)
                 + " channel count: " + channelListForCategory.Count, LogLevel.VERBOSE);
 
-            InterfaceLeagueChannel InterfaceLeagueChannel = GetLeagueChannelInstance(LeagueChannelName);
-            if (InterfaceLeagueChannel == null)
+            InterfaceLeagueChannel interfaceLeagueChannel = GetLeagueChannelInstance(leagueChannelName);
+            if (interfaceLeagueChannel == null)
             {
-                Log.WriteLine(nameof(InterfaceLeagueChannel).ToString() + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(interfaceLeagueChannel).ToString() + " was null!", LogLevel.CRITICAL);
                 return;
             }
 
-            if (channelListForCategory.Any(x => x.LeagueChannelName == LeagueChannelName))
+            if (channelListForCategory.Any(x => x.LeagueChannelName == leagueChannelName))
             {
                 Log.WriteLine(nameof(channelListForCategory) + " already contains channel: " +
-                    LeagueChannelName.ToString(), LogLevel.VERBOSE);
+                    leagueChannelName.ToString(), LogLevel.VERBOSE);
 
-                // Replace InterfaceLeagueChannel with a one that is from the database
-                InterfaceLeagueChannel = channelListForCategory.First(x => x.LeagueChannelName == LeagueChannelName);
+                // Replace interfaceLeagueChannel with a one that is from the database
+                interfaceLeagueChannel = channelListForCategory.First(x => x.LeagueChannelName == leagueChannelName);
 
-                Log.WriteLine("Replaced with: " + InterfaceLeagueChannel.LeagueChannelName + " from db", LogLevel.DEBUG);
+                Log.WriteLine("Replaced with: " + interfaceLeagueChannel.LeagueChannelName + " from db", LogLevel.DEBUG);
 
                 channelExists = true;
             }
 
+            interfaceLeagueChannel.LeagueChannelName = leagueChannelName;
+
             if (!channelExists)
-            Log.WriteLine("Does not contain: " + LeagueChannelName.ToString() + " adding it", LogLevel.DEBUG);
+            Log.WriteLine("Does not contain: " + leagueChannelName.ToString() + " adding it", LogLevel.DEBUG);
 
 
-            BaseLeagueChannel baseLeagueChannel = InterfaceLeagueChannel as BaseLeagueChannel;
+            BaseLeagueChannel baseLeagueChannel = interfaceLeagueChannel as BaseLeagueChannel;
             if (baseLeagueChannel == null)
             {
                 Log.WriteLine(nameof(baseLeagueChannel).ToString() + " was null!", LogLevel.CRITICAL);
                 return;
             }
 
-            string? channelNameString = EnumExtensions.GetEnumMemberAttrValue(LeagueChannelName);
-            if (channelNameString == null)
+            string? leagueChannelString = EnumExtensions.GetEnumMemberAttrValue(leagueChannelName);
+            if (leagueChannelString == null)
             {
-                Log.WriteLine(nameof(channelNameString).ToString() + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(leagueChannelString).ToString() + " was null!", LogLevel.CRITICAL);
                 return;
-            }
+            };
 
             if (!channelExists)
             {
@@ -201,16 +211,16 @@ public static class LeagueCategoryAndChannelInitiator
                 ulong leagueCategoryId = Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.First(
                      x => x.Value.LeagueCategoryName == _InterfaceLeagueCategory.LeagueCategoryName).Key;
 
-                Log.WriteLine("Creating a channel named: " + channelNameString + " for category: "
+                Log.WriteLine("Creating a channel named: " + leagueChannelString + " for category: "
                     + _InterfaceLeagueCategory.LeagueCategoryName + " (" + leagueCategoryId + ")", LogLevel.VERBOSE);
 
-                InterfaceLeagueChannel.LeagueChannelId = await ChannelManager.CreateAChannelForTheCategory(
-                    _guild, channelNameString, _socketCategoryChannel.Id, permissionsList);
+                interfaceLeagueChannel.LeagueChannelId = await ChannelManager.CreateAChannelForTheCategory(
+                    _guild, leagueChannelString, _socketCategoryChannel.Id, permissionsList);
 
-                Log.WriteLine("Done creating the channel with id: " + InterfaceLeagueChannel.LeagueChannelId +
-                    " named:" + channelNameString + " adding it to the db.", LogLevel.DEBUG);
+                Log.WriteLine("Done creating the channel with id: " + interfaceLeagueChannel.LeagueChannelId +
+                    " named:" + leagueChannelString + " adding it to the db.", LogLevel.DEBUG);
 
-                channelListForCategory.Add(InterfaceLeagueChannel);
+                channelListForCategory.Add(interfaceLeagueChannel);
 
                 Log.WriteLine("Done adding to the db. Count is now: " + channelListForCategory.Count +
                     " for the list of category: " + _InterfaceLeagueCategory.LeagueCategoryName.ToString() +
@@ -219,7 +229,7 @@ public static class LeagueCategoryAndChannelInitiator
 
             await baseLeagueChannel.ActivateLeagueChannelFeatures();
 
-            Log.WriteLine("Done looping through: " + channelNameString, LogLevel.VERBOSE);
+            Log.WriteLine("Done looping through: " + leagueChannelString, LogLevel.VERBOSE);
         }
     }
 
