@@ -36,12 +36,12 @@ public static class LeagueRegistrationChannelManager
                 return;
             }
 
-            ulong leagueRegisterationChannelMessageId = 
+            ulong leagueRegistrationChannelMessageId = 
                 await LeagueChannelManager.CreateALeagueJoinButton(
                     _leagueRegistrationChannel, leagueInterface, leagueNameString);
 
             _LEAGUEREGISTRATION.channelFeaturesWithMessageIds.Add(
-                leagueNameString, leagueRegisterationChannelMessageId);
+                leagueNameString, leagueRegistrationChannelMessageId);
 
             Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
 

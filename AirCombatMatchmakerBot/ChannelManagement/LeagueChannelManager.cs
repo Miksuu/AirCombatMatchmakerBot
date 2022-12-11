@@ -15,7 +15,7 @@ public static class LeagueChannelManager
         }
 
         string leagueButtonRegisterationCustomId =
-           "leagueRegisteration_" + _leagueInterface.LeagueCategoryName.ToString();
+           "leagueRegistration_" + _leagueInterface.LeagueCategoryName.ToString();
 
         Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
             leagueButtonRegisterationCustomId, LogLevel.VERBOSE);
@@ -28,7 +28,7 @@ public static class LeagueChannelManager
             return 0;
         }
 
-        _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId =
+        _leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId =
             await ButtonComponents.CreateButtonMessage(
                 _leagueRegistrationChannel.Id,
                 GenerateALeagueJoinButtonMessage(_leagueInterface),
@@ -37,7 +37,7 @@ public static class LeagueChannelManager
 
         Log.WriteLine("Done creating a league join button for: " + _leagueNameString, LogLevel.DEBUG);
 
-        return _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId;
+        return _leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId;
     }
     public static void CreateCategoryAndChannelsForALeague(SocketGuild _guild, InterfaceLeagueCategory _leagueInterface)
     {

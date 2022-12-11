@@ -15,9 +15,8 @@ public static class UserManager
         await AddUserToCache(userNameWithNickName, _user.Id);
     }
 
-
-
-    // Add the user to the cached users list, this doesn't happen to the terminated users as they are already in the server
+    // Add the user to the cached users list,
+    // this doesn't happen to the terminated users as they are already in the server
     private static async Task AddUserToCache(string userNameWithNickName, ulong _userId)
     {
         SerializationManager.AddUserIdToCachedList(userNameWithNickName, _userId);

@@ -36,14 +36,12 @@ public static class LeagueCategoryAndChannelInitiator
                 return;
             }
 
-            Log.WriteLine("after nullcheck " + nameof(Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels) +
-                " count: " + Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Count, LogLevel.VERBOSE);
-
-            if (Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Any(x => x.Value.LeagueCategoryName == leagueCategoryName))
+            if (Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Any(
+                x => x.Value.LeagueCategoryName == leagueCategoryName))
             {
                 Log.WriteLine("after alreadycontains", LogLevel.VERBOSE);
-                Log.WriteLine(nameof(Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels) + " already contains: " +
-                    leagueCategoryName.ToString(), LogLevel.VERBOSE);
+                Log.WriteLine(nameof(Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels) +
+                    " already contains: " + leagueCategoryName.ToString(), LogLevel.VERBOSE);
 
                 // Replace InterfaceLeagueCategoryCategory with a one that is from the database
                 interfaceLeagueCategory =

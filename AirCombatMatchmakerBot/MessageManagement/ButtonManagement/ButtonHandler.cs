@@ -128,7 +128,7 @@ public static class ButtonHandler
         await SerializationManager.SerializeDB();
 
 
-        if (splitString[0] != "leagueRegisteration")
+        if (splitString[0] != "leagueRegistration")
         {
             Log.WriteLine(response, logLevel);
         }

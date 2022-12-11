@@ -295,7 +295,7 @@ public static NonRegisteredUser CheckIfDiscordUserHasARegisterationProfileAndCre
 
 
 
-//leagueRegisterationMessageExists = CheckIfLeagueRegisterationMessageExists(leagueInterface);
+//leagueRegistrationMessageExists = CheckIfLeagueRegisterationMessageExists(leagueInterface);
 
 /*
 leagueChannelCategoryExists = CategoryManager.CheckIfLeagueCategoryExists(
@@ -306,23 +306,23 @@ newTypesOfLeagueChannels = Enum.GetValues(typeof(LeagueChannelName)).Length >
 
 Log.WriteLine(nameof(newTypesOfLeagueChannels) + ": " + newTypesOfLeagueChannels, LogLevel.VERBOSE);
 
-if (leagueRegisterationMessageExists && leagueChannelCategoryExists && !newTypesOfLeagueChannels)
+if (leagueRegistrationMessageExists && leagueChannelCategoryExists && !newTypesOfLeagueChannels)
 {
-    Log.WriteLine(nameof(leagueRegisterationMessageExists) + " and " +
+    Log.WriteLine(nameof(leagueRegistrationMessageExists) + " and " +
         nameof(leagueChannelCategoryExists) + " true, returning.", LogLevel.DEBUG);
     return;
 }*/
 
 /*
-if (_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId == 0)
+if (_leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId == 0)
 {
-    Log.WriteLine(nameof(_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId) +
+    Log.WriteLine(nameof(_leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId) +
     " was 0, channel not created succesfully?", LogLevel.CRITICAL);
     return;
 }*/
 
 /*
-Log.WriteLine(nameof(leagueRegisterationMessageExists) + ": " + leagueRegisterationMessageExists +
+Log.WriteLine(nameof(leagueRegistrationMessageExists) + ": " + leagueRegistrationMessageExists +
     " | " + nameof(leagueChannelCategoryExists) + ": " + leagueChannelCategoryExists, LogLevel.DEBUG);*/
 
 //leagueInterface = CreateALeagueJoinButton(_channel, leagueInterface).Result;
@@ -378,7 +378,7 @@ if (!leagueChannelCategoryExists || newTypesOfLeagueChannels)
 public static void CreateALeague(ITextChannel _channel, LeagueCategoryName _leagueName)
 {
 bool leagueExistsInTheDatabase = false;
-bool leagueRegisterationMessageExists = false;
+bool leagueRegistrationMessageExists = false;
 bool leagueChannelCategoryExists = false;
 bool newTypesOfLeagueChannels = false;
 
@@ -411,7 +411,7 @@ if (leagueInterface == null)
     return;
 }
 
-leagueRegisterationMessageExists = CheckIfLeagueRegisterationMessageExists(leagueInterface);
+leagueRegistrationMessageExists = CheckIfLeagueRegisterationMessageExists(leagueInterface);
 
 leagueChannelCategoryExists = CategoryManager.CheckIfLeagueCategoryExists(
     leagueInterface.DiscordLeagueReferences.leagueCategoryId).Result;
@@ -421,18 +421,18 @@ newTypesOfLeagueChannels = Enum.GetValues(typeof(LeagueChannelName)).Length >
 
 Log.WriteLine(nameof(newTypesOfLeagueChannels) + ": " + newTypesOfLeagueChannels, LogLevel.VERBOSE);
 
-if (leagueRegisterationMessageExists && leagueChannelCategoryExists && !newTypesOfLeagueChannels)
+if (leagueRegistrationMessageExists && leagueChannelCategoryExists && !newTypesOfLeagueChannels)
 {
-    Log.WriteLine(nameof(leagueRegisterationMessageExists) + " and " +
+    Log.WriteLine(nameof(leagueRegistrationMessageExists) + " and " +
         nameof(leagueChannelCategoryExists) + " true, returning.", LogLevel.DEBUG);
     return;
 }
 }
 
-Log.WriteLine(nameof(leagueRegisterationMessageExists) + ": " + leagueRegisterationMessageExists + 
+Log.WriteLine(nameof(leagueRegistrationMessageExists) + ": " + leagueRegistrationMessageExists + 
 " | " + nameof(leagueChannelCategoryExists) + ": " + leagueChannelCategoryExists, LogLevel.DEBUG);
 
-if (!leagueRegisterationMessageExists)
+if (!leagueRegistrationMessageExists)
 {
 Log.WriteLine("name: " + _leagueName.ToString() +
     " was not found, creating a button for it", LogLevel.DEBUG);

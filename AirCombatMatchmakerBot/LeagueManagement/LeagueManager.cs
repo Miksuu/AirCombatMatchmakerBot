@@ -91,13 +91,13 @@ public static class LeagueManager
     {
         Log.WriteLine("Checking if _leagueInterface registration message exists", LogLevel.VERBOSE);
 
-        if (_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId == 0)
+        if (_leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId == 0)
         {
             Log.WriteLine("leagueData.leagueChannelMessageId was 0!", LogLevel.CRITICAL);
             return false;
         }
 
-        Log.WriteLine("Found: " + _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId, LogLevel.DEBUG);
+        Log.WriteLine("Found: " + _leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
 
@@ -109,7 +109,7 @@ public static class LeagueManager
 
         var channel = guild.GetTextChannel(1049555859656671232) as ITextChannel;
 
-        var message = channel.GetMessageAsync(_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId);
+        var message = channel.GetMessageAsync(_leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId);
 
         if (message.Result != null)
         {
@@ -226,9 +226,9 @@ public static class LeagueManager
         Log.WriteLine("Starting to store league: " + _leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
         /*
-        if (_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId == 0)
+        if (_leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId == 0)
         {
-            Log.WriteLine(nameof(_leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId) +
+            Log.WriteLine(nameof(_leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId) +
             " was 0, channel not created succesfully?", LogLevel.CRITICAL);
             return;
         }

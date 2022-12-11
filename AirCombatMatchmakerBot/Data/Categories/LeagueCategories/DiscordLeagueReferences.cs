@@ -2,7 +2,7 @@
 public class DiscordLeagueReferences
 {
     // The references to the message in the registration channel
-    public ulong leagueRegisterationChannelMessageId { get; set; }
+    public ulong leagueRegistrationChannelMessageId { get; set; }
 
     // The reference to the category created by the system
     public ulong leagueCategoryId { get; set; }
