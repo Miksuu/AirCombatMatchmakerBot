@@ -160,7 +160,8 @@ public static class CategoryAndChannelInitiator
 
                 Log.WriteLine("Replaced with: " + interfaceChannel.ChannelName + " from db", LogLevel.DEBUG);
 
-                channelExists = true;
+                channelExists = await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestore(
+                    _socketCategoryChannel.Id, _guild, interfaceChannel);
             }
 
             if (!channelExists)
@@ -180,7 +181,6 @@ public static class CategoryAndChannelInitiator
                 Log.WriteLine(nameof(channelNameString).ToString() + " was null!", LogLevel.CRITICAL);
                 return;
             }
-
 
             if (!channelExists)
             {
@@ -220,4 +220,6 @@ public static class CategoryAndChannelInitiator
     {
         return (InterfaceChannel)EnumExtensions.GetInstance(_channelName.ToString());
     }
+
+
 }

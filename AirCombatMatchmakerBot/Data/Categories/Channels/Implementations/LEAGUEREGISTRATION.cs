@@ -40,7 +40,7 @@ public class LEAGUEREGISTRATION : BaseChannel
 
         if (channel == null)
         {
-            Log.WriteLine("Channel was null with id: " + channelId, LogLevel.CRITICAL);
+            Log.WriteLine("Channel was null with id: " + channelId, LogLevel.ERROR);
             return;
         }
         Log.WriteLine("Channel found: " + channel.Name +
