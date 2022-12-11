@@ -3,6 +3,8 @@ using Discord;
 
 public class BotRuntimeManager
 {
+    bool initDone = false;
+
     public async Task BotRuntimeTask()
     {
         LogLevelNormalization.InitLogLevelNormalizationStrings();
@@ -35,27 +37,32 @@ public class BotRuntimeManager
             BotReference.connected = true;
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
-            await CategoryAndChannelInitiator.CreateCategoriesAndChannelsForTheDiscordServer();
+            if (!initDone)
+            {
+                await CategoryAndChannelInitiator.CreateCategoriesAndChannelsForTheDiscordServer();
 
-            //await LeagueManager.CreateLeaguesOnStartup();
+                //await LeagueManager.CreateLeaguesOnStartup();
 
-            await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
+                await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
 
-            await SerializationManager.SerializeUsersOnTheServer();
+                await SerializationManager.SerializeUsersOnTheServer();
 
-            BotReference.clientRef.UserJoined += UserManager.HandleUserJoin;
+                BotReference.clientRef.UserJoined += UserManager.HandleUserJoin;
 
-            BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
+                BotReference.clientRef.ButtonExecuted += ButtonHandler.HandleButtonPress;
 
-            //BotReference.clientRef.MessageUpdated += UserManager.MessageUpdated;
+                //BotReference.clientRef.MessageUpdated += UserManager.MessageUpdated;
 
-            BotReference.clientRef.GuildMemberUpdated += UserManager.HandleGuildMemberUpdated;
+                BotReference.clientRef.GuildMemberUpdated += UserManager.HandleGuildMemberUpdated;
 
-            BotReference.clientRef.UserLeft += UserManager.HandleUserLeaveDelegate;
+                BotReference.clientRef.UserLeft += UserManager.HandleUserLeaveDelegate;
 
-            //BotReference.clientRef.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
+                //BotReference.clientRef.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
 
-            await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
+                await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
+
+                initDone = true; 
+            }
         };
 
         // Listens for the commandService
