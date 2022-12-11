@@ -9,7 +9,7 @@ public static class MessageManager
 
         await ModifyMessage(LeagueManager.leagueRegistrationChannelId,
             _dbLeagueInstance.DiscordLeagueReferences.leagueRegistrationChannelMessageId,
-         LeagueChannelManager.GenerateALeagueJoinButtonMessage(_dbLeagueInstance));
+         GenerateALeagueJoinButtonMessage(_dbLeagueInstance));
     }
 
     private static async Task ModifyMessage(
@@ -31,5 +31,67 @@ public static class MessageManager
         await channel.ModifyMessageAsync(_messageId, m => m.Content = _content);
 
         Log.WriteLine("Modifying the message: " + _messageId + " done.", LogLevel.VERBOSE);
+    }
+
+    public static string GenerateALeagueJoinButtonMessage(InterfaceLeagueCategory _leagueInterface)
+    {
+        string? leagueEnumAttrValue =
+            EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
+
+        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
+            leagueEnumAttrValue, LogLevel.VERBOSE);
+
+        return "." + "\n" + leagueEnumAttrValue + "\n" +
+            GetAllowedUnitsAsString(_leagueInterface) + "\n" +
+            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
+    }
+
+
+    private static string GetAllowedUnitsAsString(InterfaceLeagueCategory _leagueInterface)
+    {
+        string allowedUnits = string.Empty;
+
+        for (int u = 0; u < _leagueInterface.LeagueUnits.Count; ++u)
+        {
+            allowedUnits += EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueUnits[u]);
+
+            // Is not the last index
+            if (u != _leagueInterface.LeagueUnits.Count - 1)
+            {
+                allowedUnits += ", ";
+            }
+        }
+
+        return allowedUnits;
+    }
+
+    private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(InterfaceLeagueCategory _leagueInterface)
+    {
+        int count = 0;
+
+        foreach (Team team in _leagueInterface.LeagueData.Teams)
+        {
+            if (team.active)
+            {
+                count++;
+                Log.WriteLine("team: " + team.teamName +
+                    " is active, increased count to: " + count, LogLevel.VERBOSE);
+            }
+            else
+            {
+                Log.WriteLine("team: " + team.teamName + " is not active", LogLevel.VERBOSE);
+            }
+        }
+
+        Log.WriteLine("Total count: " + count, LogLevel.VERBOSE);
+
+        if (_leagueInterface.LeaguePlayerCountPerTeam > 1)
+        {
+            return "Teams: " + count;
+        }
+        else
+        {
+            return "Players: " + count;
+        }
     }
 }

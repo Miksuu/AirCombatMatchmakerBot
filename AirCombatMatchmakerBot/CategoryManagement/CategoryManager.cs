@@ -36,35 +36,4 @@ public static class CategoryManager
 
         return socketCategoryChannel;
     }
-
-    public static async Task<bool> CheckIfLeagueCategoryExists(ulong _categoryId)
-    {
-        Log.WriteLine("Checking if category with id: " + _categoryId + " exists", LogLevel.VERBOSE);
-
-        var guild = BotReference.GetGuildRef();
-
-        if (guild == null)
-        {
-            Exceptions.BotGuildRefNull();
-            return false;
-        }
-
-        foreach (SocketCategoryChannel socketCategoryChannel in guild.CategoryChannels)
-        {
-            Log.WriteLine("Looping on category: " + socketCategoryChannel.Id + " named:" +
-                socketCategoryChannel.Name, LogLevel.VERBOSE);
-
-            if (socketCategoryChannel.Id == _categoryId)
-            {
-                Log.WriteLine("Category with id: " + _categoryId +
-                    " was found, named: " + socketCategoryChannel.Name, LogLevel.DEBUG);
-                return true;
-            }
-        }
-
-        // Someone probably deleted the category, the program will regenerate those
-        Log.WriteLine("Category with id: " + _categoryId + " was null, not found. " +
-            "Perhaps someone deleted it manually?", LogLevel.ERROR);
-        return false;
-    }
 }

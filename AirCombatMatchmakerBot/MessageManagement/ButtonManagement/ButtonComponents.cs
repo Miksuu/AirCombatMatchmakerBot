@@ -18,7 +18,6 @@ public static class ButtonComponents
 
         var builder = new ComponentBuilder()
             .WithButton(_label, _customId);
-
         
         var guild = BotReference.GetGuildRef();
         if (guild == null)
@@ -26,15 +25,6 @@ public static class ButtonComponents
             Exceptions.BotGuildRefNull();
             return 0;
         }
-
-        /*
-        if (BotReference.clientRef == null)
-        {
-            Exceptions.BotClientRefNull();
-            return 0;
-        }*/
-
-        //var textChannel = await BotReference.clientRef.GetChannelAsync(_channelId) as SocketTextChannel;
 
         var textChannel = guild.GetChannel(_channelId) as ITextChannel;
 

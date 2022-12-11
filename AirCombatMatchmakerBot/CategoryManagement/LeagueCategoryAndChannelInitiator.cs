@@ -36,16 +36,16 @@ public static class LeagueCategoryAndChannelInitiator
                 return;
             }
 
-            if (Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Any(
+            if (Database.Instance.StoredLeagueCategoriesWithChannels.Any(
                 x => x.Value.LeagueCategoryName == leagueCategoryName))
             {
                 Log.WriteLine("after alreadycontains", LogLevel.VERBOSE);
-                Log.WriteLine(nameof(Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels) +
+                Log.WriteLine(nameof(Database.Instance.StoredLeagueCategoriesWithChannels) +
                     " already contains: " + leagueCategoryName.ToString(), LogLevel.VERBOSE);
 
                 // Replace InterfaceLeagueCategoryCategory with a one that is from the database
                 interfaceLeagueCategory =
-                    Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.First(
+                    Database.Instance.StoredLeagueCategoriesWithChannels.First(
                         x => x.Value.LeagueCategoryName == leagueCategoryName).Value;
 
                 Log.WriteLine("Replaced with: " + interfaceLeagueCategory.LeagueCategoryName + " from db", LogLevel.DEBUG);
@@ -101,17 +101,17 @@ public static class LeagueCategoryAndChannelInitiator
                     " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
 
                 Log.WriteLine("Adding " + nameof(interfaceLeagueCategory) + " to " +
-                    nameof(Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels), LogLevel.VERBOSE);
+                    nameof(Database.Instance.StoredLeagueCategoriesWithChannels), LogLevel.VERBOSE);
 
-                Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Add(socketCategoryChannel.Id, interfaceLeagueCategory);
+                Database.Instance.StoredLeagueCategoriesWithChannels.Add(socketCategoryChannel.Id, interfaceLeagueCategory);
 
                 Log.WriteLine("Done adding " + nameof(interfaceLeagueCategory) + " to " +
-                    nameof(Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels), LogLevel.DEBUG);
+                    nameof(Database.Instance.StoredLeagueCategoriesWithChannels), LogLevel.DEBUG);
             }
             // The category exists, just find it from the database and then get the id of the socketchannel
             else
             {
-                var dbCategory = Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.First(
+                var dbCategory = Database.Instance.StoredLeagueCategoriesWithChannels.First(
                     x => x.Value.LeagueCategoryName == interfaceLeagueCategory.LeagueCategoryName);
 
                 InterfaceLeagueCategory databaseInterfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
@@ -152,7 +152,7 @@ public static class LeagueCategoryAndChannelInitiator
         {
             bool channelExists = false;
 
-            List<InterfaceLeagueChannel> channelListForCategory = Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.First(
+            List<InterfaceLeagueChannel> channelListForCategory = Database.Instance.StoredLeagueCategoriesWithChannels.First(
                 x => x.Key == _socketCategoryChannel.Id).Value.InterfaceLeagueChannels;
 
             if (channelListForCategory == null)
@@ -208,7 +208,7 @@ public static class LeagueCategoryAndChannelInitiator
             {
                 List<Overwrite> permissionsList = baseLeagueChannel.GetGuildLeaguePermissions(_guild);
 
-                ulong leagueCategoryId = Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.First(
+                ulong leagueCategoryId = Database.Instance.StoredLeagueCategoriesWithChannels.First(
                      x => x.Value.LeagueCategoryName == _InterfaceLeagueCategory.LeagueCategoryName).Key;
 
                 Log.WriteLine("Creating a channel named: " + leagueChannelString + " for category: "

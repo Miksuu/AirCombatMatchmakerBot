@@ -8,7 +8,7 @@ public static class ChallengeSystem
         Log.WriteLine("Generating a challenge queue message with _channelId: " + _channelId, LogLevel.VERBOSE);
 
         foreach (InterfaceLeagueCategory storedLeague in
-            Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Values)
+            Database.Instance.StoredLeagueCategoriesWithChannels.Values)
         {
             string? leagueName = EnumExtensions.GetEnumMemberAttrValue(storedLeague.LeagueCategoryName);
 

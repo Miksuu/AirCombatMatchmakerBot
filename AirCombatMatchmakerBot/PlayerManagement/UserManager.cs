@@ -40,12 +40,6 @@ public static class UserManager
     // For the new users that join the discord, need to add them to the cache too
     public static async Task HandleUserRegisterationToCache(ulong _userId)
     {
-        /*
-        string userNameWithNickName = _user.Username + " aka "
-            + CheckIfNickNameIsEmptyAndReturnUsername(_user.Id) +
-            " (" + _user.Id + ")";*/
-
-        //await CreateARegisterationProfileForTheUser(_user, userNameWithNickName);
         await AddUserToCache(_userId);
     }
 
@@ -69,20 +63,9 @@ public static class UserManager
         Log.WriteLine(_userName + " (" + _userId +
             ") bailed out! Handling deleting registration channels etc.", LogLevel.DEBUG);
 
-        /*
-        // Avoid trying to delete the channel if user has registered already (because it should not exist)
-        if (!DatabaseMethods.CheckIfUserIdExistsInTheDatabase(_userId))
-        {
-            Log.WriteLine("The didn't have a player profile, deleting registration channel", LogLevel.VERBOSE);
-            //await ChannelManager.DeleteUsersRegisterationChannel(_userId);
-            Log.WriteLine("Done deleting user's " + _userId + "channel.", LogLevel.VERBOSE); 
-        }*/
-
         await HandleSettingTeamsInactiveThatUserWasIn(_userId);
 
         SerializationManager.RemoveUserFromTheCachedList(_userName, _userId);
-
-        //Log.WriteLine("Done removing " + _userName + "(" + _userId + ") from the cache list", LogLevel.VERBOSE);
     }
 
     private static async Task HandleSettingTeamsInactiveThatUserWasIn(ulong _userId)
@@ -90,7 +73,7 @@ public static class UserManager
         Log.WriteLine("Starting to set teams inactive that " + _userId + " was in.", LogLevel.VERBOSE);
 
         foreach (InterfaceLeagueCategory storedLeague in
-            Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Values)
+            Database.Instance.StoredLeagueCategoriesWithChannels.Values)
         {
             Log.WriteLine("Looping through league: " + storedLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
@@ -128,7 +111,7 @@ public static class UserManager
                             }
 
                             var findLeagueCategoryType
-                                = Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.First(
+                                = Database.Instance.StoredLeagueCategoriesWithChannels.First(
                                     x => x.Value.LeagueCategoryName.ToString() == storedLeagueString);
                             LeagueCategoryName leagueCategoryName = findLeagueCategoryType.Value.LeagueCategoryName;
 
@@ -303,7 +286,7 @@ public static class UserManager
     {
         // Maybe make own log level for this
         Log.WriteLine("Handling " + _userIds.Count +
-            " that left during the downtime", LogLevel.WARNING);
+            " that left during the downtime", LogLevel.DEBUG);
 
         foreach (ulong userId in _userIds)
         {

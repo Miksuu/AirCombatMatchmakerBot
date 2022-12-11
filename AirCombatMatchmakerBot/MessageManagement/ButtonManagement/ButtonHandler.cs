@@ -9,7 +9,6 @@ public static class ButtonHandler
     {
         Log.WriteLine(_component.Data.CustomId, LogLevel.DEBUG);
 
-        
         // Splits the button press action and the user ID
         string[] splitString = _component.Data.CustomId.Split('_');
 
@@ -46,7 +45,7 @@ public static class ButtonHandler
                 Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
                 var findLeagueCategoryType
-                    = Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.First(x => x.Value.LeagueCategoryName.ToString() == splitString[1]);
+                    = Database.Instance.StoredLeagueCategoriesWithChannels.First(x => x.Value.LeagueCategoryName.ToString() == splitString[1]);
                 LeagueCategoryName leagueCategoryName = findLeagueCategoryType.Value.LeagueCategoryName;
 
                 var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);

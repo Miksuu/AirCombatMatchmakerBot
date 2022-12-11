@@ -19,7 +19,7 @@ public class Database
     // Dictionary of channel categories and channelNames inside them
     public Dictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels { get; set; }
 
-    public Dictionary<ulong, InterfaceLeagueCategory> StoredLeagueCategoriesWithChannelsCategoriesWithChannels { get; set; }
+    public Dictionary<ulong, InterfaceLeagueCategory> StoredLeagueCategoriesWithChannels { get; set; }
 
     public List<ulong> cachedUserIDs { get; set; }
 
@@ -40,7 +40,7 @@ public class Database
         cantRegisterIDs = new List<ulong>();
 
         CreatedCategoriesWithChannels = new();
-        StoredLeagueCategoriesWithChannelsCategoriesWithChannels = new();
+        StoredLeagueCategoriesWithChannels = new();
     }
 
     public static Database Instance
