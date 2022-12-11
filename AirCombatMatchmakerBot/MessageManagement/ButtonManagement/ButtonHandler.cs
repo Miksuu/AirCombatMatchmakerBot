@@ -41,12 +41,12 @@ public static class ButtonHandler
                 }
                 break;
             case "leagueRegistration":
-                /*
-                ILeague leagueInterface = LeagueManager.GetLeagueInstance(splitString[1]);
+                
+                InterfaceLeagueCategory leagueInterface = LeagueManager.GetLeagueInstance(splitString[1]);
 
-                Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueName, LogLevel.VERBOSE);
+                Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-                ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+                InterfaceLeagueCategory? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
 
                 if (dbLeagueInstance == null)
                 {
@@ -116,7 +116,7 @@ public static class ButtonHandler
 
                 await _component.RespondAsync(ephemeral: true);
 
-                break; */
+                break;
             default:
                 response = "Something went wrong with the button press!";
                 logLevel = LogLevel.ERROR;
@@ -127,11 +127,12 @@ public static class ButtonHandler
 
         await SerializationManager.SerializeDB();
 
-        /*
+
         if (splitString[0] != "leagueRegisteration")
-        {*/
+        {
             Log.WriteLine(response, logLevel);
+        }
         if (response != "EMPTY") await _component.RespondAsync(response, ephemeral: true);
-        //}
+        else { Log.WriteLine("the response was: " + response, LogLevel.CRITICAL); }
     }
 }

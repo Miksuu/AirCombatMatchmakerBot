@@ -36,7 +36,6 @@ public class LEAGUEREGISTRATION : BaseChannel
             return;
         }
 
-        // Hardcoded channel id for now
         var channel = guild.GetTextChannel(channelId) as ITextChannel;
 
         if (channel == null)
@@ -47,8 +46,11 @@ public class LEAGUEREGISTRATION : BaseChannel
         Log.WriteLine("Channel found: " + channel.Name +
             "(" + channel.Id + ")", LogLevel.VERBOSE);
 
-
-        await LeagueManager.CreateLeaguesOnStartup(guild, channel);
+        await LeagueCategoryAndChannelInitiator.CreateLeagueCategoriesAndChannelsForTheDiscordServer();
+        //await LeagueManager.CreateLeaguesOnStartup(guild, channel);
         await LeagueRegistrationChannelManager.CreateLeagueMessages(this, channel);
+        //await SerializationManager.SerializeDB();
+
+        
     }
 }

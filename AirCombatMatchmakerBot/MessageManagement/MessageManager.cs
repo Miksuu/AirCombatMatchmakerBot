@@ -2,10 +2,10 @@
 
 public static class MessageManager
 {
-    public static async Task ModifyLeagueRegisterationChannelMessage(ILeague _dbLeagueInstance)
+    public static async Task ModifyLeagueRegisterationChannelMessage(InterfaceLeagueCategory _dbLeagueInstance)
     {
         Log.WriteLine("Modifying league registration channel message with: " +
-            _dbLeagueInstance.LeagueName, LogLevel.VERBOSE);
+            _dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
 
         await ModifyMessage(LeagueManager.leagueRegistrationChannelId,
             _dbLeagueInstance.DiscordLeagueReferences.leagueRegisterationChannelMessageId,

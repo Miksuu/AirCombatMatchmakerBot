@@ -3,14 +3,11 @@ using Newtonsoft.Json.Converters;
 using System.Runtime.Serialization;
 
 [JsonConverter(typeof(StringEnumConverter))]
-public enum LeagueCategoryChannelType
+public enum LeagueChannelName
 {
-    [EnumMember(Value = "main-channel")]
-    MAIN = 0,
-
-    [EnumMember(Value = "test-channel")]
-    TEST = 1,
+    [EnumMember(Value = "league-status")]
+    LEAGUESTATUS = 0,
 
     [EnumMember(Value = "challenge-channel")]
-    CHALLENGE = 2,
+    CHALLENGE = 1,
 }

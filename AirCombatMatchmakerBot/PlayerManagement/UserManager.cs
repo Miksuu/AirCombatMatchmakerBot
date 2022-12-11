@@ -56,9 +56,10 @@ public static class UserManager
     {
         Log.WriteLine("Starting to set teams inactive that " + _userId + " was in.", LogLevel.VERBOSE);
 
-        foreach (ILeague storedLeague in Database.Instance.StoredLeagues)
+        foreach (InterfaceLeagueCategory storedLeague in
+            Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Values)
         {
-            Log.WriteLine("Looping through league: " + storedLeague.LeagueName, LogLevel.VERBOSE);
+            Log.WriteLine("Looping through league: " + storedLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
             bool teamFound = false;
 
@@ -84,7 +85,7 @@ public static class UserManager
 
                             teamFound = true;
                             Log.WriteLine("Set team: " + team.teamName + " deactive in league: " +
-                                storedLeague.LeagueName + " because " + player.playerNickName +
+                                storedLeague.LeagueCategoryName + " because " + player.playerNickName +
                                 " left", LogLevel.DEBUG);
 
                             if (storedLeagueString == null)
@@ -93,11 +94,11 @@ public static class UserManager
                                 continue;
                             }
 
-                            ILeague leagueInterface = LeagueManager.GetLeagueInstance(storedLeagueString);
+                            InterfaceLeagueCategory leagueInterface = LeagueManager.GetLeagueInstance(storedLeagueString);
 
-                            Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueName, LogLevel.VERBOSE);
+                            Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-                            ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+                            InterfaceLeagueCategory? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
 
                             if (dbLeagueInstance == null)
                             {
@@ -278,7 +279,7 @@ public static class UserManager
         await SerializationManager.SerializeDB();
     }
 
-    public static async void SetPlayerActiveAndGrantHimTheRole(ILeague _dbLeagueInstance, ulong _playerId)
+    public static async void SetPlayerActiveAndGrantHimTheRole(InterfaceLeagueCategory _dbLeagueInstance, ulong _playerId)
     {
         LeagueManager.ReturnTeamThatThePlayerIsIn(_dbLeagueInstance.LeagueData.Teams, _playerId).active = true;
         await RoleManager.GrantUserAccessWithId(

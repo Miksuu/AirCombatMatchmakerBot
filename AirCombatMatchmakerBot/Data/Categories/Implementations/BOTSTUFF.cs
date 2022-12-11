@@ -12,8 +12,9 @@ public class BOTSTUFF : BaseCategory
         categoryName = CategoryName.BOTSTUFF;
         channelNames = new List<ChannelName>()
         {
-            ChannelName.BOTCOMMANDS,
-            ChannelName.BOTLOG
+            ChannelName.BOTLOG,
+            ChannelName.BOTCOMMANDS
+
         };
     }
 

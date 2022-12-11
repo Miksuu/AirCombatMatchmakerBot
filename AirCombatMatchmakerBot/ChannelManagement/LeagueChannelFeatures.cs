@@ -4,7 +4,7 @@ using Discord.WebSocket;
 public static class LeagueChannelFeatures
 {
     public static async void ActivateFeatureOfTheChannel(
-        ulong _channelId, LeagueCategoryChannelType _leagueCategoryChannelType)
+        ulong _channelId, LeagueChannelName _leagueCategoryChannelType)
     {
         var guild = BotReference.GetGuildRef();
         if (guild == null)
@@ -17,7 +17,7 @@ public static class LeagueChannelFeatures
 
         switch ( _leagueCategoryChannelType ) 
         {
-            case LeagueCategoryChannelType.CHALLENGE:
+            case LeagueChannelName.CHALLENGE:
                 string challengeString = "challenge_" + _channelId;
 
                 await ButtonComponents.CreateButtonMessage(_channelId,

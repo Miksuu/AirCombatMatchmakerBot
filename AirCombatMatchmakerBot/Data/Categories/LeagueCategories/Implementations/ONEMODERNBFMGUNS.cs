@@ -1,11 +1,13 @@
-﻿using System.Runtime.Serialization;
+﻿using Discord;
+using Discord.WebSocket;
+using System.Runtime.Serialization;
 
 [DataContract]
-public class ONEMODERNBFMGUNS : BaseLeague
+public class ONEMODERNBFMGUNS : BaseLeagueCategory
 {
     public ONEMODERNBFMGUNS()
     {
-        leagueName = LeagueName.ONEMODERNBFMGUNS;
+        leagueName = LeagueCategoryName.ONEMODERNBFMGUNS;
         leagueType = LeagueType.BFM_GUNS;
         leagueEra = Era.MODERN;
         leaguePlayerCountPerTeam = 1;
@@ -17,5 +19,10 @@ public class ONEMODERNBFMGUNS : BaseLeague
             UnitName.JF17,
             UnitName.SU27
         };
+    }
+
+    public override List<Overwrite> GetLeagueGuildPermissions(SocketGuild _guild)
+    {
+        return new List<Overwrite> { };
     }
 }

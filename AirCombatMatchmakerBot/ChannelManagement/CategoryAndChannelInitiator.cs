@@ -40,7 +40,7 @@ public static class CategoryAndChannelInitiator
                 Log.WriteLine(nameof(Database.Instance.CreatedCategoriesWithChannels) + " already contains: " +
                     categoryName.ToString(), LogLevel.VERBOSE);
 
-                // Replace interfaceCategory with a one that is from the database
+                // Replace InterfaceLeagueCategoryCategory with a one that is from the database
                 interfaceCategory = Database.Instance.CreatedCategoriesWithChannels.First(x => x.Value.CategoryName == categoryName).Value;
 
                 Log.WriteLine("Replaced with: " + interfaceCategory.CategoryName + " from db", LogLevel.DEBUG);

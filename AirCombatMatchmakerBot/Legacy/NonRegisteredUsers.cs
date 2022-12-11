@@ -189,7 +189,7 @@ private static async Task CreateARegisterationProfileForTheUser(
 // Place the newly created id to the object of non registered user
 //PlayerRegisteration.channelQueue[_newChannel.Id].discordRegisterationChannelId = _newChannel.Id;
 
-//string channelName = PlayerRegisteration.channelQueue[_newChannel.Id].ConstructChannelName();
+//string leagueChannelName = PlayerRegisteration.channelQueue[_newChannel.Id].ConstructChannelName();
 
 // Sets the players permissions to be accessible
 // (ASSUMES THAT THE CHANNEL GROUP IS PRIVATE BY DEFAULT)
@@ -204,7 +204,7 @@ await ButtonComponents.CreateButtonMessage(channel,
     " account linking will be included later here]",
     "Register", "mainRegisteration");*/
 
-//Log.WriteLine("Channel creation for: " + channelName + " done", LogLevel.VERBOSE);
+//Log.WriteLine("Channel creation for: " + leagueChannelName + " done", LogLevel.VERBOSE);
 
 //PlayerRegisteration.channelQueue.Remove(_newChannel.Id);
 //Log.WriteLine("Removed from the queue done: " + PlayerRegisteration.channelQueue.Count, LogLevel.DEBUG);
@@ -229,12 +229,12 @@ public static async Task CreateANewRegisterationChannel(
     Log.WriteLine("HANDLING CHANNEL CREATION FOR CHANNEL: " + _nonRegisteredUser.discordRegisterationChannelId +
         "discordUserId: " + _nonRegisteredUser.discordUserId, LogLevel.DEBUG);
 
-    string channelName = _nonRegisteredUser.ConstructChannelName();
+    string leagueChannelName = _nonRegisteredUser.ConstructChannelName();
 
-    Log.WriteLine("Creating a channel named: " + channelName, LogLevel.DEBUG);
+    Log.WriteLine("Creating a channel named: " + leagueChannelName, LogLevel.DEBUG);
 
     var newChannel = await guild.CreateTextChannelAsync(
-        channelName, tcp => tcp.CategoryId = 1047529896735428638);
+        leagueChannelName, tcp => tcp.CategoryId = 1047529896735428638);
 
     // Make the program wait that the channel is done
     channelQueue.Add(newChannel.Id, _nonRegisteredUser);
@@ -301,7 +301,7 @@ public static NonRegisteredUser CheckIfDiscordUserHasARegisterationProfileAndCre
 leagueChannelCategoryExists = CategoryManager.CheckIfLeagueCategoryExists(
     leagueInterface.DiscordLeagueReferences.leagueCategoryId).Result;
 
-newTypesOfLeagueChannels = Enum.GetValues(typeof(LeagueCategoryChannelType)).Length >
+newTypesOfLeagueChannels = Enum.GetValues(typeof(LeagueChannelName)).Length >
     leagueInterface.DiscordLeagueReferences.leagueChannels.Count ? true : false; 
 
 Log.WriteLine(nameof(newTypesOfLeagueChannels) + ": " + newTypesOfLeagueChannels, LogLevel.VERBOSE);
@@ -353,7 +353,7 @@ if (!leagueChannelCategoryExists || newTypesOfLeagueChannels)
             return;
         }
 
-        //LeagueChannelManager.CreateChannelsForTheCategory(leagueInterface, guild);
+        //LeagueChannelManager.CreateChannelsForTheLeagueCategory(leagueInterface, guild);
     } 
 }*/
 
@@ -375,7 +375,7 @@ if (!leagueChannelCategoryExists || newTypesOfLeagueChannels)
 //StoreTheLeague(leagueInterface);
 
 /*
-public static void CreateALeague(ITextChannel _channel, LeagueName _leagueName)
+public static void CreateALeague(ITextChannel _channel, LeagueCategoryName _leagueName)
 {
 bool leagueExistsInTheDatabase = false;
 bool leagueRegisterationMessageExists = false;
@@ -384,25 +384,25 @@ bool newTypesOfLeagueChannels = false;
 
 Log.WriteLine("Looping on leagueName: " + _leagueName.ToString(), LogLevel.VERBOSE);
 
-ILeague? leagueInterface = GetLeagueInstance(_leagueName.ToString());
+InterfaceLeagueCategory? leagueInterface = GetLeagueInstance(_leagueName.ToString());
 
 Log.WriteLine("Made a " + nameof(leagueInterface) + " named: " +
- leagueInterface.LeagueName, LogLevel.VERBOSE);
+ leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-if (Database.Instance.StoredLeagues == null)
+if (Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Values == null)
 {
-Log.WriteLine(nameof(Database.Instance.StoredLeagues) + " was null!", LogLevel.CRITICAL);
+Log.WriteLine(nameof(Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Values) + " was null!", LogLevel.CRITICAL);
 return;
 }
 
-if (CheckIfALeagueNameExistsInDatabase(_leagueName))
+if (CheckIfALeagueCategoryNameExistsInDatabase(_leagueName))
 {
 Log.WriteLine("name: " + _leagueName.ToString() +
     " was already in the database list", LogLevel.VERBOSE);
 
 leagueExistsInTheDatabase = true;
 
-leagueInterface = GetILeagueFromTheDatabase(leagueInterface);
+leagueInterface = GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
 
 if (leagueInterface == null)
 {
@@ -416,7 +416,7 @@ leagueRegisterationMessageExists = CheckIfLeagueRegisterationMessageExists(leagu
 leagueChannelCategoryExists = CategoryManager.CheckIfLeagueCategoryExists(
     leagueInterface.DiscordLeagueReferences.leagueCategoryId).Result;
 
-newTypesOfLeagueChannels = Enum.GetValues(typeof(LeagueCategoryChannelType)).Length >
+newTypesOfLeagueChannels = Enum.GetValues(typeof(LeagueChannelName)).Length >
     leagueInterface.DiscordLeagueReferences.leagueChannels.Count ? true : false;
 
 Log.WriteLine(nameof(newTypesOfLeagueChannels) + ": " + newTypesOfLeagueChannels, LogLevel.VERBOSE);
@@ -463,7 +463,7 @@ else
         return;
     }
 
-    //LeagueChannelManager.CreateChannelsForTheCategory(leagueInterface, guild);
+    //LeagueChannelManager.CreateChannelsForTheLeagueCategory(leagueInterface, guild);
 }
 }
 

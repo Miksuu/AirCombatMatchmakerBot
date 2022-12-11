@@ -4,7 +4,7 @@ using Discord.WebSocket;
 public static class LeagueChannelManager
 {
     public static async Task<ulong> CreateALeagueJoinButton(
-        ITextChannel _leagueRegistrationChannel, ILeague? _leagueInterface, string _leagueNameString)
+        ITextChannel _leagueRegistrationChannel, InterfaceLeagueCategory? _leagueInterface, string _leagueNameString)
     {
         Log.WriteLine("Starting to create a league join button for: " + _leagueNameString, LogLevel.VERBOSE);
 
@@ -15,12 +15,12 @@ public static class LeagueChannelManager
         }
 
         string leagueButtonRegisterationCustomId =
-           "leagueRegisteration_" + _leagueInterface.LeagueName.ToString();
+           "leagueRegisteration_" + _leagueInterface.LeagueCategoryName.ToString();
 
         Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
             leagueButtonRegisterationCustomId, LogLevel.VERBOSE);
 
-        _leagueInterface = LeagueManager.GetILeagueFromTheDatabase(_leagueInterface);
+        _leagueInterface = LeagueManager.GetInterfaceLeagueCategoryFromTheDatabase(_leagueInterface);
 
         if (_leagueInterface == null)
         {
@@ -39,22 +39,19 @@ public static class LeagueChannelManager
 
         return _leagueInterface.DiscordLeagueReferences.leagueRegisterationChannelMessageId;
     }
-
-
-    /*
-    public static void CreateCategoryAndChannelsForALeague(SocketGuild _guild, ITextChannel _leagueRegistrationChannel)
+    public static void CreateCategoryAndChannelsForALeague(SocketGuild _guild, InterfaceLeagueCategory _leagueInterface)
     {
-        string? leagueName = EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName);
+        string? leagueNameString = EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
 
-        if (leagueName == null)
+        if (leagueNameString == null)
         {
-            Log.WriteLine("LeagueName from " + _leagueInterface.LeagueName.ToString() +
+            Log.WriteLine("LeagueCategoryName from " + _leagueInterface.LeagueCategoryName.ToString() +
                 " was null!", LogLevel.CRITICAL);
             return;
         }
 
         Log.WriteLine("Starting to create a category channel for league: " +
-            leagueName, LogLevel.DEBUG);
+            leagueNameString, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
 
@@ -66,7 +63,7 @@ public static class LeagueChannelManager
 
         // Get the role and create it if it already doesn't exist
         var role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
-            guild, leagueName).Result;
+            guild, leagueNameString).Result;
 
         Log.WriteLine("Role is named: " + role.Name + " with ID: " + role.Id, LogLevel.VERBOSE);
 
@@ -82,7 +79,7 @@ public static class LeagueChannelManager
 
         SocketCategoryChannel? socketCategoryChannel =
             CategoryManager.CreateANewSocketCategoryChannelAndReturnIt(guild,
-                leagueName, permissions).Result;
+                leagueNameString, permissions).Result;
 
         if (socketCategoryChannel == null)
         {
@@ -92,17 +89,17 @@ public static class LeagueChannelManager
 
         _leagueInterface.DiscordLeagueReferences.leagueRoleId = role.Id;
         //_leagueInterface.DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
-        //CreateChannelsForTheCategory(_leagueInterface, guild);
+        //CreateChannelsForTheLeagueCategory(_leagueInterface, guild);
 
         Log.WriteLine("End of creating a category channel for league: " +
-            _leagueInterface.LeagueName.ToString(), LogLevel.DEBUG);
-    } */
+            _leagueInterface.LeagueCategoryName.ToString(), LogLevel.DEBUG);
+    }
 
 
-    public static string GenerateALeagueJoinButtonMessage(ILeague _leagueInterface)
+    public static string GenerateALeagueJoinButtonMessage(InterfaceLeagueCategory _leagueInterface)
     {
         string? leagueEnumAttrValue =
-            EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueName);
+            EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
 
         Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
             leagueEnumAttrValue, LogLevel.VERBOSE);
@@ -112,7 +109,7 @@ public static class LeagueChannelManager
             GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
     }
 
-    private static string GetAllowedUnitsAsString(ILeague _leagueInterface)
+    private static string GetAllowedUnitsAsString(InterfaceLeagueCategory _leagueInterface)
     {
         string allowedUnits = string.Empty;
 
@@ -130,7 +127,7 @@ public static class LeagueChannelManager
         return allowedUnits;
     }
 
-    private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(ILeague _leagueInterface)
+    private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(InterfaceLeagueCategory _leagueInterface)
     {
         int count = 0;
 
@@ -161,14 +158,14 @@ public static class LeagueChannelManager
     }
 
     /*
-    public static async void CreateChannelsForTheCategory(
-        ILeague _leagueInterface, SocketGuild _guild)
+    public static async void CreateChannelsForTheLeagueCategory(
+        InterfaceLeagueCategory _leagueInterface, SocketGuild _guild)
     {
         Log.WriteLine("Starting to create categories for: " +
-            _leagueInterface.LeagueName.ToString(), LogLevel.VERBOSE);
+            _leagueInterface.LeagueCategoryName.ToString(), LogLevel.VERBOSE);
 
-        foreach (LeagueCategoryChannelType channelType in
-            Enum.GetValues(typeof(LeagueCategoryChannelType)))
+        foreach (LeagueChannelName channelType in
+            Enum.GetValues(typeof(LeagueChannelName)))
         {
             Log.WriteLine("Looping through: " + channelType.ToString(), LogLevel.VERBOSE);
 
@@ -185,13 +182,13 @@ public static class LeagueChannelManager
                     " adding it", LogLevel.DEBUG);
 
                 /*
-                ulong channelId = await CreateAChannelForTheCategory(_guild, channelTypeString,
+                ulong leagueChannelId = await CreateAChannelForTheCategory(_guild, channelTypeString,
                         _leagueInterface.DiscordLeagueReferences.leagueCategoryId);
 
                 _leagueInterface.DiscordLeagueReferences.leagueChannels.Add(
-                    channelType, channelId);
+                    channelType, leagueChannelId);
 
-                LeagueChannelFeatures.ActivateFeatureOfTheChannel(channelId, channelType); 
+                LeagueChannelFeatures.ActivateFeatureOfTheChannel(leagueChannelId, channelType); 
             }
             else
             {

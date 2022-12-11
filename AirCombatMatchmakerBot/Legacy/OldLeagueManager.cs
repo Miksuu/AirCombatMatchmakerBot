@@ -4,7 +4,7 @@
 leagueChannelCategoryExists = CategoryManager.CheckIfLeagueCategoryExists(
     leagueInterface.DiscordLeagueReferences.leagueCategoryId).Result;
 
-newTypesOfLeagueChannels = Enum.GetValues(typeof(LeagueCategoryChannelType)).Length >
+newTypesOfLeagueChannels = Enum.GetValues(typeof(LeagueChannelName)).Length >
     leagueInterface.DiscordLeagueReferences.leagueChannels.Count ? true : false; 
 
 Log.WriteLine(nameof(newTypesOfLeagueChannels) + ": " + newTypesOfLeagueChannels, LogLevel.VERBOSE);
@@ -56,7 +56,7 @@ if (!leagueChannelCategoryExists || newTypesOfLeagueChannels)
             return;
         }
 
-        //LeagueChannelManager.CreateChannelsForTheCategory(leagueInterface, guild);
+        //LeagueChannelManager.CreateChannelsForTheLeagueCategory(leagueInterface, guild);
     } 
 }*/
 
@@ -78,7 +78,7 @@ if (!leagueChannelCategoryExists || newTypesOfLeagueChannels)
 //StoreTheLeague(leagueInterface);
 
 /*
-public static void CreateALeague(ITextChannel _channel, LeagueName _leagueName)
+public static void CreateALeague(ITextChannel _channel, LeagueCategoryName _leagueName)
 {
 bool leagueExistsInTheDatabase = false;
 bool leagueRegisterationMessageExists = false;
@@ -87,25 +87,25 @@ bool newTypesOfLeagueChannels = false;
 
 Log.WriteLine("Looping on leagueName: " + _leagueName.ToString(), LogLevel.VERBOSE);
 
-ILeague? leagueInterface = GetLeagueInstance(_leagueName.ToString());
+InterfaceLeagueCategory? leagueInterface = GetLeagueInstance(_leagueName.ToString());
 
 Log.WriteLine("Made a " + nameof(leagueInterface) + " named: " +
- leagueInterface.LeagueName, LogLevel.VERBOSE);
+ leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-if (Database.Instance.StoredLeagues == null)
+if (Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Values == null)
 {
-Log.WriteLine(nameof(Database.Instance.StoredLeagues) + " was null!", LogLevel.CRITICAL);
+Log.WriteLine(nameof(Database.Instance.StoredLeagueCategoriesWithChannelsCategoriesWithChannels.Values) + " was null!", LogLevel.CRITICAL);
 return;
 }
 
-if (CheckIfALeagueNameExistsInDatabase(_leagueName))
+if (CheckIfALeagueCategoryNameExistsInDatabase(_leagueName))
 {
 Log.WriteLine("name: " + _leagueName.ToString() +
     " was already in the database list", LogLevel.VERBOSE);
 
 leagueExistsInTheDatabase = true;
 
-leagueInterface = GetILeagueFromTheDatabase(leagueInterface);
+leagueInterface = GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
 
 if (leagueInterface == null)
 {
@@ -119,7 +119,7 @@ leagueRegisterationMessageExists = CheckIfLeagueRegisterationMessageExists(leagu
 leagueChannelCategoryExists = CategoryManager.CheckIfLeagueCategoryExists(
     leagueInterface.DiscordLeagueReferences.leagueCategoryId).Result;
 
-newTypesOfLeagueChannels = Enum.GetValues(typeof(LeagueCategoryChannelType)).Length >
+newTypesOfLeagueChannels = Enum.GetValues(typeof(LeagueChannelName)).Length >
     leagueInterface.DiscordLeagueReferences.leagueChannels.Count ? true : false;
 
 Log.WriteLine(nameof(newTypesOfLeagueChannels) + ": " + newTypesOfLeagueChannels, LogLevel.VERBOSE);
@@ -166,7 +166,7 @@ else
         return;
     }
 
-    //LeagueChannelManager.CreateChannelsForTheCategory(leagueInterface, guild);
+    //LeagueChannelManager.CreateChannelsForTheLeagueCategory(leagueInterface, guild);
 }
 }
 
