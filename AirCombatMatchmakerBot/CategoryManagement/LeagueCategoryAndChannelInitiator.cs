@@ -43,6 +43,10 @@ public static class LeagueCategoryAndChannelInitiator
                 Log.WriteLine(nameof(Database.Instance.StoredLeagueCategoriesWithChannels) +
                     " already contains: " + leagueCategoryName.ToString(), LogLevel.VERBOSE);
 
+                // Update the units and to the database (before interfaceLeagueCategory is replaced by it)
+                Database.Instance.StoredLeagueCategoriesWithChannels.First(
+                    x => x.Value.LeagueCategoryName == leagueCategoryName).Value.LeagueUnits = interfaceLeagueCategory.LeagueUnits;
+
                 // Replace InterfaceLeagueCategoryCategory with a one that is from the database
                 interfaceLeagueCategory =
                     Database.Instance.StoredLeagueCategoriesWithChannels.First(
@@ -54,8 +58,6 @@ public static class LeagueCategoryAndChannelInitiator
             }
 
             interfaceLeagueCategory.LeagueCategoryName = leagueCategoryName;
-
-            Log.WriteLine("after contains check", LogLevel.VERBOSE);
 
             string? leagueCategoryNameString = EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName);
             if (leagueCategoryNameString == null)

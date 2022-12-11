@@ -32,6 +32,9 @@ public enum UnitName
     [EnumMember(Value = "Su-27")]
     SU27,
 
+    [EnumMember(Value = "F-14B")]
+    F14B,
+
     /*
     [EnumMember(Value = "SA342L")]
     SA342L,

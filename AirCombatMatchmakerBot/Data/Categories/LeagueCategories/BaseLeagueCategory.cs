@@ -24,12 +24,6 @@ public abstract class BaseLeagueCategory : InterfaceLeagueCategory
         set => interfaceLeagueChannels = value;
     }
 
-    LeagueType InterfaceLeagueCategory.LeagueType
-    {
-        get => leagueType;
-        set => leagueType = value;
-    }
-
     Era InterfaceLeagueCategory.LeagueEra
     {
         get => leagueEra;
@@ -66,7 +60,6 @@ public abstract class BaseLeagueCategory : InterfaceLeagueCategory
 
     // Generated based on the implementation
     public LeagueCategoryName leagueName;
-    public LeagueType leagueType;
     public Era leagueEra;
     public int leaguePlayerCountPerTeam;
 

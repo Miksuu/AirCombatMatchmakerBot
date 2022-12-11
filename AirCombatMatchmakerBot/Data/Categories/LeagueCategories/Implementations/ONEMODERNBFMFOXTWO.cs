@@ -10,7 +10,6 @@ public class ONEMODERNBFMFOXTWO : BaseLeagueCategory
     public ONEMODERNBFMFOXTWO()
     {
         leagueName = LeagueCategoryName.ONEMODERNBFMFOXTWO;
-        leagueType = LeagueType.BFM_FOXTWO;
         leagueEra = Era.MODERN;
         leaguePlayerCountPerTeam = 1;
 
@@ -19,7 +18,8 @@ public class ONEMODERNBFMFOXTWO : BaseLeagueCategory
             UnitName.F16C,
             UnitName.M2000C,
             UnitName.JF17,
-            UnitName.SU27
+            UnitName.SU27,
+            UnitName.F14B
         };
     }
 

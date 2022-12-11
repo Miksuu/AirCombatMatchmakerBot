@@ -8,7 +8,6 @@ public class ONEMODERNBFMGUNS : BaseLeagueCategory
     public ONEMODERNBFMGUNS()
     {
         leagueName = LeagueCategoryName.ONEMODERNBFMGUNS;
-        leagueType = LeagueType.BFM_GUNS;
         leagueEra = Era.MODERN;
         leaguePlayerCountPerTeam = 1;
 
@@ -17,7 +16,8 @@ public class ONEMODERNBFMGUNS : BaseLeagueCategory
             UnitName.F16C,
             UnitName.M2000C,
             UnitName.JF17,
-            UnitName.SU27
+            UnitName.SU27,
+            UnitName.F14B
         };
     }
 

@@ -7,7 +7,6 @@ public interface InterfaceLeagueCategory
     public List<LeagueChannelName> LeagueChannelNames { get; set; }
     public List<InterfaceLeagueChannel> InterfaceLeagueChannels { get; set; }
 
-    public LeagueType LeagueType { get; set; }
     public Era LeagueEra { get; set; }
     public int LeaguePlayerCountPerTeam { get; set; }
 
