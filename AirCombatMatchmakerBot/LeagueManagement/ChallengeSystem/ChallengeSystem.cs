@@ -7,6 +7,8 @@ public static class ChallengeSystem
     {
         Log.WriteLine("Generating a challenge queue message with _channelId: " + _channelId, LogLevel.VERBOSE);
 
+        Log.WriteLine("count: " + Database.Instance.StoredLeagueCategoriesWithChannels.Count, LogLevel.VERBOSE);
+
         foreach (InterfaceLeagueCategory storedLeague in
             Database.Instance.StoredLeagueCategoriesWithChannels.Values)
         {

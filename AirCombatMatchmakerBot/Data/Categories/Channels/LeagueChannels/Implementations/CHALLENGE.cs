@@ -19,7 +19,10 @@ public class CHALLENGE : BaseLeagueChannel
         };
     }
 
-    public override async Task ActivateLeagueChannelFeatures()
+    public override Task ActivateLeagueChannelFeatures()
     {
+        Log.WriteLine("Activating challenge system on channel: " + leagueChannelId, LogLevel.VERBOSE);
+        ChallengeSystem.GenerateChallengeQueueMessage(leagueChannelId);
+        return Task.CompletedTask;
     }
 }

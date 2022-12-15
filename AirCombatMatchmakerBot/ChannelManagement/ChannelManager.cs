@@ -9,10 +9,6 @@ public static class ChannelManager
         Log.WriteLine("Create a channel named: " + _name +
             " for category: " + _forCategory, LogLevel.VERBOSE);
 
-        TextChannelProperties guildChannelProperties = new TextChannelProperties();
-        guildChannelProperties.PermissionOverwrites= _permissions;
-        guildChannelProperties.CategoryId = _forCategory;
-
         var channel = await _guild.CreateTextChannelAsync(_name, x => {
             x.PermissionOverwrites = _permissions;
             x.CategoryId = _forCategory;
