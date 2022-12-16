@@ -39,13 +39,15 @@ public static class CategoryAndChannelInitiator
             {
                 Log.WriteLine(nameof(Database.Instance.CreatedCategoriesWithChannels) + " already contains: " +
                     categoryName.ToString(), LogLevel.VERBOSE);
-
                 // Replace InterfaceLeagueCategoryCategory with a one that is from the database
-                interfaceCategory = Database.Instance.CreatedCategoriesWithChannels.First(x => x.Value.CategoryName == categoryName).Value;
+                var interfaceCategoryKvp = Database.Instance.CreatedCategoriesWithChannels.First(
+                    x => x.Value.CategoryName == categoryName);
+                interfaceCategory = interfaceCategoryKvp.Value;
 
                 Log.WriteLine("Replaced with: " + interfaceCategory.CategoryName + " from db", LogLevel.DEBUG);
 
-                categoryExists = true;
+                categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestore(
+                    interfaceCategoryKvp.Key, guild, interfaceCategory);
             }
 
             string? categoryNameString = EnumExtensions.GetEnumMemberAttrValue(categoryName);
@@ -186,14 +188,15 @@ public static class CategoryAndChannelInitiator
             {
                 List<Overwrite> permissionsList = baseChannel.GetGuildPermissions(_guild);
 
+                /*
                 ulong categoryId = Database.Instance.CreatedCategoriesWithChannels.First(
-                     x => x.Value.CategoryName == _interfaceCategory.CategoryName).Key;
+                     x => x.Value.CategoryName == _interfaceCategory.CategoryName).Key; */
 
                 Log.WriteLine("Creating a channel named: " + channelNameString + " for category: "
-                    + _interfaceCategory.CategoryName + " (" + categoryId + ")", LogLevel.VERBOSE);
+                    + _interfaceCategory.CategoryName + " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
 
                 interfaceChannel.ChannelId = await ChannelManager.CreateAChannelForTheCategory(
-                    _guild, channelNameString, categoryId, permissionsList);
+                    _guild, channelNameString, _socketCategoryChannel.Id, permissionsList);
 
                 Log.WriteLine("Done creating the channel with id: " + interfaceChannel.ChannelId +
                     " named:" + channelNameString + " adding it to the db.", LogLevel.DEBUG);
@@ -202,7 +205,7 @@ public static class CategoryAndChannelInitiator
 
                 Log.WriteLine("Done adding to the db. Count is now: " + channelListForCategory.Count +
                     " for the list of category: " + _interfaceCategory.CategoryName.ToString() +
-                    " (" + categoryId + ")", LogLevel.VERBOSE);
+                    " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
             }
 
             await baseChannel.ActivateChannelFeatures();

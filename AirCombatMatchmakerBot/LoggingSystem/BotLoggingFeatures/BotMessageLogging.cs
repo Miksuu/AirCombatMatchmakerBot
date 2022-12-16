@@ -31,9 +31,18 @@ public static class BotMessageLogging
                 return; 
             }
 
-            await guild.
-                GetTextChannel(loggingChannelId).
-                SendMessageAsync(completeLogString);
+            var textChannel = guild.
+                GetTextChannel(loggingChannelId);
+
+            if (textChannel != null)
+            {
+                await guild.
+                    GetTextChannel(loggingChannelId).
+                    SendMessageAsync(completeLogString);
+            }
+
+            // Do not print anything here, might end up in circular dependency 
+            // (or need to handle it, which might be unnecessary)
         }
     }
 }

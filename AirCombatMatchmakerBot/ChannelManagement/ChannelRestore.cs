@@ -7,7 +7,7 @@ public static class ChannelRestore
     public static async Task<bool> CheckIfChannelHasBeenDeletedAndRestore(
         ulong _categoryId, SocketGuild _guild, InterfaceChannel _interfaceChannel)
     {
-        Log.WriteLine("Checking if channelId: " + _categoryId + " has been deleted.", LogLevel.VERBOSE);
+        Log.WriteLine("Checking if channel in " + _categoryId + " has been deleted.", LogLevel.VERBOSE);
 
         if (_guild.GetCategoryChannel(_categoryId).Channels.Any(
             x => x.Name == EnumExtensions.GetEnumMemberAttrValue(
