@@ -12,17 +12,17 @@ public class CHALLENGE : BaseLeagueChannel
         leagueChannelName = LeagueChannelName.CHALLENGE;
     }
 
-    public override List<Overwrite> GetGuildLeaguePermissions(SocketGuild _guild)
+    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
     {
         return new List<Overwrite>
         {
         };
     }
 
-    public override Task ActivateLeagueChannelFeatures()
+    public override Task ActivateChannelFeatures()
     {
-        Log.WriteLine("Activating challenge system on channel: " + leagueChannelId, LogLevel.VERBOSE);
-        ChallengeSystem.GenerateChallengeQueueMessage(leagueChannelId);
+        //Log.WriteLine("Activating challenge system on channel: " + leagueChannelId, LogLevel.VERBOSE);
+        //ChallengeSystem.GenerateChallengeQueueMessage(leagueChannelId);
         return Task.CompletedTask;
     }
 }

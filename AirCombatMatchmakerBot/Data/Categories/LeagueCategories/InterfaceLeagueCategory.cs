@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 [JsonObjectAttribute]
-public interface InterfaceLeagueCategory
+public interface InterfaceLeagueCategory : InterfaceCategory
 {
     public LeagueCategoryName LeagueCategoryName { get; set; }
     public List<LeagueChannelName> LeagueChannelNames { get; set; }

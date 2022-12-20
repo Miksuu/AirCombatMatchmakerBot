@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Net.Http.Headers;
 
 [DataContract]
-public abstract class BaseLeagueCategory : InterfaceLeagueCategory
+public abstract class BaseLeagueCategory : BaseCategory, InterfaceLeagueCategory
 {
     LeagueCategoryName InterfaceLeagueCategory.LeagueCategoryName
     {
@@ -76,5 +76,5 @@ public abstract class BaseLeagueCategory : InterfaceLeagueCategory
         leagueChannelNames = new();
     }
 
-    public abstract List<Overwrite> GetLeagueGuildPermissions(SocketGuild _guild, SocketRole _role);
+    public abstract override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 }

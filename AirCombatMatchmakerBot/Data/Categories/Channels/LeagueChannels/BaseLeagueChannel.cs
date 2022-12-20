@@ -3,7 +3,7 @@ using Discord;
 using System.Runtime.Serialization;
 
 [DataContract]
-public abstract class BaseLeagueChannel : InterfaceLeagueChannel
+public abstract class BaseLeagueChannel : BaseChannel, InterfaceLeagueChannel
 {
     LeagueChannelName InterfaceLeagueChannel.LeagueChannelName
     {
@@ -31,7 +31,7 @@ public abstract class BaseLeagueChannel : InterfaceLeagueChannel
         leagueChannelFeaturesWithMessageIds = new Dictionary<string, ulong>();
     }
 
-    public abstract List<Overwrite> GetGuildLeaguePermissions(SocketGuild _guild);
+    public abstract override List<Overwrite> GetGuildPermissions(SocketGuild _guild);
 
-    public abstract Task ActivateLeagueChannelFeatures();
+    public abstract override Task ActivateChannelFeatures();
 }

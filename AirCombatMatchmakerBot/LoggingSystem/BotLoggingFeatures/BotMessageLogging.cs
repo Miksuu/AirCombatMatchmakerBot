@@ -31,16 +31,12 @@ public static class BotMessageLogging
                 return; 
             }
 
-            var textChannel = guild.
-                GetTextChannel(loggingChannelId);
-
-            if (textChannel != null)
+            if (guild.GetTextChannel(loggingChannelId) != null)
             {
                 await guild.
                     GetTextChannel(loggingChannelId).
                     SendMessageAsync(completeLogString);
             }
-
             // Do not print anything here, might end up in circular dependency 
             // (or need to handle it, which might be unnecessary)
         }

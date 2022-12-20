@@ -21,7 +21,7 @@ public class ONEMODERNBFMGUNS : BaseLeagueCategory
         };
     }
 
-    public override List<Overwrite> GetLeagueGuildPermissions(SocketGuild _guild, SocketRole _role)
+    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
     {
         return new List<Overwrite> {
             new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,

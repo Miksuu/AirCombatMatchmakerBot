@@ -4,6 +4,8 @@ using System;
 
 public static class CategoryAndChannelInitiator
 {
+    private static enum[] enums;
+
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
     {
         Log.WriteLine("Starting to create categories and channels for" +
@@ -16,6 +18,16 @@ public static class CategoryAndChannelInitiator
             Exceptions.BotGuildRefNull();
             return;
         }
+
+        
+    }
+
+    // Setups a CategoryChannel, or LeagueCategory channel in the same method
+    public static async Task SetupATypeOfACategoriesAndChannels(SocketGuild _guild)
+    {
+
+
+ 
 
         var categoryEnumValues = Enum.GetValues(typeof(CategoryName));
 
@@ -46,8 +58,8 @@ public static class CategoryAndChannelInitiator
 
                 Log.WriteLine("Replaced with: " + interfaceCategory.CategoryName + " from db", LogLevel.DEBUG);
 
-                categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestore(
-                    interfaceCategoryKvp.Key, guild, interfaceCategory);
+                categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
+                    interfaceCategoryKvp, _guild);
             }
 
             string? categoryNameString = EnumExtensions.GetEnumMemberAttrValue(categoryName);
@@ -66,7 +78,7 @@ public static class CategoryAndChannelInitiator
                 return;
             }
 
-            List<Overwrite> permissionsList = baseCategory.GetGuildPermissions(guild);
+            List<Overwrite> permissionsList = baseCategory.GetGuildPermissions(_guild, null);
 
             SocketCategoryChannel? socketCategoryChannel = null;
 
@@ -75,7 +87,7 @@ public static class CategoryAndChannelInitiator
             {
                 socketCategoryChannel =
                     await CategoryManager.CreateANewSocketCategoryChannelAndReturnIt(
-                        guild, categoryNameString, permissionsList);
+                        _guild, categoryNameString, permissionsList);
                 if (socketCategoryChannel == null)
                 {
                     Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);
@@ -110,13 +122,13 @@ public static class CategoryAndChannelInitiator
                     dbCategory.Key + " named: " +
                     databaseInterfaceCategory.CategoryName, LogLevel.VERBOSE);
 
-                socketCategoryChannel = guild.GetCategoryChannel(dbCategory.Key);
+                socketCategoryChannel = _guild.GetCategoryChannel(dbCategory.Key);
 
                 Log.WriteLine("Found " + nameof(socketCategoryChannel) + " that's named: " +
                     socketCategoryChannel.Name, LogLevel.DEBUG);
             }
 
-            await CreateChannelsForTheCategory(interfaceCategory, socketCategoryChannel, guild);
+            await CreateChannelsForTheCategory(interfaceCategory, socketCategoryChannel, _guild);
         }
         await SerializationManager.SerializeDB();
     }
@@ -162,13 +174,12 @@ public static class CategoryAndChannelInitiator
 
                 Log.WriteLine("Replaced with: " + interfaceChannel.ChannelName + " from db", LogLevel.DEBUG);
 
-                channelExists = await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestore(
-                    _socketCategoryChannel.Id, _guild, interfaceChannel);
+                channelExists = await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
+                    _socketCategoryChannel.Id, interfaceChannel, _guild);
             }
 
             if (!channelExists)
             Log.WriteLine("Does not contain: " + channelName.ToString() + " adding it", LogLevel.DEBUG);
-
 
             BaseChannel baseChannel = interfaceChannel as BaseChannel;
             if (baseChannel == null)

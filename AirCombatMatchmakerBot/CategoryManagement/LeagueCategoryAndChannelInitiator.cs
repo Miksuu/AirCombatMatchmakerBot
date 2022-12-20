@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using System;
 
+
 public static class LeagueCategoryAndChannelInitiator
 {
     public static async Task CreateLeagueCategoriesAndChannelsForTheDiscordServer()
@@ -48,13 +49,15 @@ public static class LeagueCategoryAndChannelInitiator
                     x => x.Value.LeagueCategoryName == leagueCategoryName).Value.LeagueUnits = interfaceLeagueCategory.LeagueUnits;
 
                 // Replace InterfaceLeagueCategoryCategory with a one that is from the database
-                interfaceLeagueCategory =
+                var interfaceLeagueCategorykvp =
                     Database.Instance.StoredLeagueCategoriesWithChannels.First(
-                        x => x.Value.LeagueCategoryName == leagueCategoryName).Value;
+                        x => x.Value.LeagueCategoryName == leagueCategoryName);
+                interfaceLeagueCategory = interfaceLeagueCategorykvp.Value;
 
                 Log.WriteLine("Replaced with: " + interfaceLeagueCategory.LeagueCategoryName + " from db", LogLevel.DEBUG);
 
-                categoryExists = true;
+                categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForLeagueCategory(
+                    interfaceLeagueCategorykvp, guild);
             }
 
             interfaceLeagueCategory.LeagueCategoryName = leagueCategoryName;
@@ -90,7 +93,7 @@ public static class LeagueCategoryAndChannelInitiator
             {
                 socketCategoryChannel =
                     await CategoryManager.CreateANewSocketCategoryChannelAndReturnIt(
-                        guild, leagueCategoryNameString, baseLeagueCategory.GetLeagueGuildPermissions(guild, role));
+                        guild, leagueCategoryNameString, baseLeagueCategory.GetGuildPermissions(guild, role));
                 if (socketCategoryChannel == null)
                 {
                     Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);
@@ -183,7 +186,8 @@ public static class LeagueCategoryAndChannelInitiator
 
                 Log.WriteLine("Replaced with: " + interfaceLeagueChannel.LeagueChannelName + " from db", LogLevel.DEBUG);
 
-                channelExists = true;
+                channelExists = await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForeagueCategory(
+                    _socketCategoryChannel.Id, interfaceLeagueChannel, _guild);
             }
 
             interfaceLeagueChannel.LeagueChannelName = leagueChannelName;
@@ -208,7 +212,7 @@ public static class LeagueCategoryAndChannelInitiator
 
             if (!channelExists)
             {
-                List<Overwrite> permissionsList = baseLeagueChannel.GetGuildLeaguePermissions(_guild);
+                List<Overwrite> permissionsList = baseLeagueChannel.GetGuildPermissions(_guild);
 
                 ulong leagueCategoryId = Database.Instance.StoredLeagueCategoriesWithChannels.First(
                      x => x.Value.LeagueCategoryName == _InterfaceLeagueCategory.LeagueCategoryName).Key;
@@ -229,7 +233,7 @@ public static class LeagueCategoryAndChannelInitiator
                     " (" + leagueCategoryId + ")", LogLevel.VERBOSE);
             }
 
-            await baseLeagueChannel.ActivateLeagueChannelFeatures();
+            await baseLeagueChannel.ActivateChannelFeatures();
 
             Log.WriteLine("Done looping through: " + leagueChannelString, LogLevel.VERBOSE);
         }

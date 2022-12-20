@@ -18,7 +18,7 @@ public class BOTSTUFF : BaseCategory
         };
     }
 
-    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
+    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
     {
         Log.WriteLine("executing permissions from BOTSTUFF", LogLevel.SERIALIZATION);
         return new List<Overwrite>

@@ -8,7 +8,6 @@ public class BotRuntimeManager
     public async Task BotRuntimeTask()
     {
         LogLevelNormalization.InitLogLevelNormalizationStrings();
-
         // Do not use the logging system before this
 
         await SerializationManager.DeSerializeDB();
@@ -39,6 +38,23 @@ public class BotRuntimeManager
 
             if (!initDone)
             {
+
+                /*
+                //ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
+                var guild = BotReference.GetGuildRef();
+                foreach (var ch in guild.Channels)
+                {
+                    if (ch.Name == "info") continue;
+
+                    Log.WriteLine("Deleting " + ch.Name, LogLevel.DEBUG);
+                    await ch.DeleteAsync();
+                }
+                foreach (var cat in guild.CategoryChannels)
+                {
+                    Log.WriteLine("Deleting category: " + cat.Name, LogLevel.DEBUG);
+                    await cat.DeleteAsync();
+                }*/
+
                 await CategoryAndChannelInitiator.CreateCategoriesAndChannelsForTheDiscordServer();
 
                 //await LeagueManager.CreateLeaguesOnStartup();
@@ -61,7 +77,7 @@ public class BotRuntimeManager
 
                 await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
 
-                initDone = true; 
+                initDone = true;
             }
         };
 

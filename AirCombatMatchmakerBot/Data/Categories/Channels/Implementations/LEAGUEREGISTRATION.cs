@@ -46,7 +46,7 @@ public class LEAGUEREGISTRATION : BaseChannel
         Log.WriteLine("Channel found: " + channel.Name +
             "(" + channel.Id + ")", LogLevel.VERBOSE);
 
-        await LeagueCategoryAndChannelInitiator.CreateLeagueCategoriesAndChannelsForTheDiscordServer();
+        //await LeagueCategoryAndChannelInitiator.CreateLeagueCategoriesAndChannelsForTheDiscordServer();
         await LeagueRegistrationChannelManager.CreateLeagueMessages(this, channel);        
     }
 }

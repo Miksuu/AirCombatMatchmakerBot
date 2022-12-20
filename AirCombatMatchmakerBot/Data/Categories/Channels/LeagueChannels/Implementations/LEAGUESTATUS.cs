@@ -12,14 +12,14 @@ public class LEAGUESTATUS : BaseLeagueChannel
         leagueChannelName = LeagueChannelName.LEAGUESTATUS;
     }
 
-    public override List<Overwrite> GetGuildLeaguePermissions(SocketGuild _guild)
+    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
     {
         return new List<Overwrite>
         {
         };
     }
 
-    public override async Task ActivateLeagueChannelFeatures()
+    public override async Task ActivateChannelFeatures()
     {
     }
 }

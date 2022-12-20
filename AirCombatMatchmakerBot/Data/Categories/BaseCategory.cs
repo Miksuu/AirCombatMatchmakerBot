@@ -29,8 +29,8 @@ public abstract class BaseCategory : InterfaceCategory
 
     public BaseCategory()
     {
-        interfaceChannels= new List<InterfaceChannel>();
+        interfaceChannels = new List<InterfaceChannel>();
     }
 
-    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
+    public extern virtual List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 }
