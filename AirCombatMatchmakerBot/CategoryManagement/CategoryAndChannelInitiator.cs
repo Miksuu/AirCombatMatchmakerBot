@@ -15,9 +15,8 @@ public static class CategoryAndChannelInitiator
             return;
         }
 
-        await SettingUpChannels<CategoryName>(guild, typeof(ChannelName));
-
-
+        await SettingUpChannels<CategoryName>(guild, typeof(CategoryName));
+        //await SettingUpChannels<LeagueCategoryName>(guild, typeof(LeagueCategoryName));
 
         //await SetupATypeOfACategoriesAndChannels();
     }
@@ -31,7 +30,7 @@ public static class CategoryAndChannelInitiator
         // Loop through every category names creating them and the channelNames for them
         foreach (T GenericCategoryNametest in Enum.GetValues(_type))
         {
-            Log.WriteLine("DOESN'T REACH HERE", LogLevel.VERBOSE);
+            //Log.WriteLine("DOESN'T REACH HERE", LogLevel.VERBOSE);
 
             if (GenericCategoryNametest == null)
             {
