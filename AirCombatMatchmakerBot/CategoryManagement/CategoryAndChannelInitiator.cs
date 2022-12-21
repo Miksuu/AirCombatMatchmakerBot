@@ -15,15 +15,30 @@ public static class CategoryAndChannelInitiator
             return;
         }
 
-        await SettingUpChannels(guild);
+        await SettingUpChannels<CategoryName>(guild, typeof(ChannelName));
+
 
 
         //await SetupATypeOfACategoriesAndChannels();
     }
 
-    public static async Task SettingUpChannels(SocketGuild _guild)
+    public static async Task SettingUpChannels<T>(SocketGuild _guild, Type _type)
     {
-        Log.WriteLine("testwqae" + _guild.Name, LogLevel.SERIALIZATION);
+        Log.WriteLine("Starting to create categories and channels with type: " + _type.GetType(), LogLevel.DEBUG);
+
+        Log.WriteLine(Enum.GetValues(_type).Length.ToString(), LogLevel.VERBOSE);
+
+        // Loop through every category names creating them and the channelNames for them
+        foreach (T GenericCategoryNametest in Enum.GetValues(_type))
+        {
+            Log.WriteLine("DOESN'T REACH HERE", LogLevel.VERBOSE);
+
+            if (GenericCategoryNametest == null)
+            {
+                Log.WriteLine(nameof(GenericCategoryNametest) + " was null!", LogLevel.CRITICAL);
+                return;
+            }
+        }
     }
 
     // BUGGED, DOESNT GET CALLED AT ALL
