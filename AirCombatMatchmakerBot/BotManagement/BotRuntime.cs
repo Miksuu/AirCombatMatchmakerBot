@@ -38,7 +38,6 @@ public class BotRuntimeManager
 
             if (!initDone)
             {
-
                 /*
                 //ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 var guild = BotReference.GetGuildRef();

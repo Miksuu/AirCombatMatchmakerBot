@@ -1,68 +1,106 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using System;
 
 public static class CategoryAndChannelInitiator
 {
-    private static enum[] enums;
-
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
     {
-        Log.WriteLine("Starting to create categories and channels for" +
+        Log.WriteLine("SSStarting to create categories and channels for" +
             " the discord server", LogLevel.VERBOSE);
 
         var guild = BotReference.GetGuildRef();
-        Log.WriteLine("guild valid", LogLevel.VERBOSE);
         if (guild == null)
         {
             Exceptions.BotGuildRefNull();
             return;
         }
 
-        
+        await SettingUpChannels(guild);
+
+
+        //await SetupATypeOfACategoriesAndChannels();
     }
 
-    // Setups a CategoryChannel, or LeagueCategory channel in the same method
-    public static async Task SetupATypeOfACategoriesAndChannels(SocketGuild _guild)
+    public static async Task SettingUpChannels(SocketGuild _guild)
     {
+        Log.WriteLine("testwqae" + _guild.Name, LogLevel.SERIALIZATION);
+    }
+
+    // BUGGED, DOESNT GET CALLED AT ALL
+    public static async Task SetupATypeOfACategoriesAndChannels()
+    {
+        Log.WriteLine("test", LogLevel.DEBUG);
 
 
- 
+        var guild = BotReference.GetGuildRef();
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+        Log.WriteLine("guild valid", LogLevel.VERBOSE);
 
-        var categoryEnumValues = Enum.GetValues(typeof(CategoryName));
+        Type _type= typeof(CategoryName);  
 
-        Log.WriteLine(nameof(categoryEnumValues) + " length: " + categoryEnumValues.Length, LogLevel.VERBOSE);
+        if (_type == null)
+        {
+            Log.WriteLine("Types was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        Log.WriteLine("Starting to create categories and channels with type: " + _type.GetType().ToString(), LogLevel.DEBUG);
 
         // Loop through every category names creating them and the channelNames for them
-        foreach (CategoryName categoryName in Enum.GetValues(typeof(CategoryName)))
+        foreach (Type GenericCategoryNametest in Enum.GetValues(_type))
         {
-            Log.WriteLine("Looping on category name: " + categoryName.ToString(), LogLevel.VERBOSE);
-            // Check here too if a category is missing channelNames
-            bool categoryExists = false;
+            Log.WriteLine("DOESN'T REACH HERE", LogLevel.VERBOSE);
 
-            InterfaceCategory interfaceCategory = GetCategoryInstance(categoryName);
-            if (interfaceCategory == null)
+            if (GenericCategoryNametest == null)
             {
-                Log.WriteLine(nameof(interfaceCategory).ToString() + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(GenericCategoryNametest) + " was null!", LogLevel.CRITICAL);
                 return;
             }
 
-            if (Database.Instance.CreatedCategoriesWithChannels.Any(x => x.Value.CategoryName == categoryName))
+            // Check here too if a category is missing channelNames
+            bool categoryExists = false;
+
+            InterfaceCategory interfaceCategory;
+            object categoryName;
+
+            InterfaceLeagueCategory interfaceLeagueCategory;
+            object leagueCategoryName;
+
+
+            Log.WriteLine("Looping on category name: " + GenericCategoryNametest.ToString() +
+                " that has type of: " + GenericCategoryNametest.GetType(), LogLevel.VERBOSE);
+
+            // Setup normal categories
+            if (GenericCategoryNametest.GetType() == typeof(CategoryName))
             {
-                Log.WriteLine(nameof(Database.Instance.CreatedCategoriesWithChannels) + " already contains: " +
-                    categoryName.ToString(), LogLevel.VERBOSE);
-                // Replace InterfaceLeagueCategoryCategory with a one that is from the database
-                var interfaceCategoryKvp = Database.Instance.CreatedCategoriesWithChannels.First(
-                    x => x.Value.CategoryName == categoryName);
-                interfaceCategory = interfaceCategoryKvp.Value;
+                //categoryName = (T)Convert.ChangeType(GenericCategoryNametest, typeof(T));
+                interfaceCategory = (InterfaceCategory)EnumExtensions.GetInstance(GenericCategoryNametest.ToString());
 
-                Log.WriteLine("Replaced with: " + interfaceCategory.CategoryName + " from db", LogLevel.DEBUG);
+                if (interfaceCategory == null)
+                {
+                    Log.WriteLine(nameof(interfaceCategory).ToString() + " was null!", LogLevel.CRITICAL);
+                    return;
+                }
 
-                categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
-                    interfaceCategoryKvp, _guild);
-            }
+                if (Database.Instance.CreatedCategoriesWithChannels.Any(x => x.Value.CategoryName == interfaceCategory.CategoryName))
+                {
+                    //Log.WriteLine(nameof(Database.Instance.CreatedCategoriesWithChannels) + " already contains: " +
+                        //categoryName.ToString(), LogLevel.VERBOSE);
+                    // Replace InterfaceLeagueCategoryCategory with a one that is from the database
+                    var interfaceCategoryKvp = Database.Instance.CreatedCategoriesWithChannels.First(
+                        x => x.Value.CategoryName == interfaceCategory.CategoryName);
+                    interfaceCategory = interfaceCategoryKvp.Value;
 
-            string? categoryNameString = EnumExtensions.GetEnumMemberAttrValue(categoryName);
+                    Log.WriteLine("Replaced with: " + interfaceCategory.CategoryName + " from db", LogLevel.DEBUG);
+
+                    categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
+                        interfaceCategoryKvp, guild);
+
+                                string? categoryNameString = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryName.ToString());
             if (categoryNameString == null)
             {
                 Log.WriteLine(nameof(categoryName).ToString() + " was null!", LogLevel.CRITICAL);
@@ -78,7 +116,7 @@ public static class CategoryAndChannelInitiator
                 return;
             }
 
-            List<Overwrite> permissionsList = baseCategory.GetGuildPermissions(_guild, null);
+            List<Overwrite> permissionsList = baseCategory.GetGuildPermissions(guild, null);
 
             SocketCategoryChannel? socketCategoryChannel = null;
 
@@ -87,7 +125,7 @@ public static class CategoryAndChannelInitiator
             {
                 socketCategoryChannel =
                     await CategoryManager.CreateANewSocketCategoryChannelAndReturnIt(
-                        _guild, categoryNameString, permissionsList);
+                        guild, categoryNameString, permissionsList);
                 if (socketCategoryChannel == null)
                 {
                     Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);
@@ -111,26 +149,47 @@ public static class CategoryAndChannelInitiator
                 var dbCategory = Database.Instance.CreatedCategoriesWithChannels.First(
                     x => x.Value.CategoryName == interfaceCategory.CategoryName);
 
-                InterfaceCategory databaseInterfaceCategory = GetCategoryInstance(categoryName);
+                        /*
+                //InterfaceCategory databaseInterfaceCategory = GetCategoryInstance(categoryName);
                 if (databaseInterfaceCategory == null)
                 {
                     Log.WriteLine(nameof(databaseInterfaceCategory).ToString() + " was null!", LogLevel.CRITICAL);
                     return;
                 }
 
+
                 Log.WriteLine("Found " + nameof(databaseInterfaceCategory) + " with id: " +
                     dbCategory.Key + " named: " +
                     databaseInterfaceCategory.CategoryName, LogLevel.VERBOSE);
-
-                socketCategoryChannel = _guild.GetCategoryChannel(dbCategory.Key);
+                        */
+                socketCategoryChannel = guild.GetCategoryChannel(dbCategory.Key);
 
                 Log.WriteLine("Found " + nameof(socketCategoryChannel) + " that's named: " +
                     socketCategoryChannel.Name, LogLevel.DEBUG);
             }
 
-            await CreateChannelsForTheCategory(interfaceCategory, socketCategoryChannel, _guild);
+            await CreateChannelsForTheCategory(interfaceCategory, socketCategoryChannel, guild);
+
+                }
+            }
+            // Setup league categories
+            else if (GenericCategoryNametest.GetType() == typeof(LeagueCategoryName))
+            {
+
+            }
+            else
+            {
+                Log.WriteLine("Unknown type: " + GenericCategoryNametest.GetType(), LogLevel.CRITICAL);
+                return;
+            }
+
+
+
+
+
+            
         }
-        await SerializationManager.SerializeDB();
+        //await SerializationManager.SerializeDB();
     }
 
     public static async Task CreateChannelsForTheCategory(
@@ -225,10 +284,11 @@ public static class CategoryAndChannelInitiator
         }
     }
 
+    /*
     public static InterfaceCategory GetCategoryInstance(CategoryName _categoryName)
     {
         return (InterfaceCategory)EnumExtensions.GetInstance(_categoryName.ToString());
-    }
+    }*/
 
     public static InterfaceChannel GetChannelInstance(ChannelName _channelName)
     {
