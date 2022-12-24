@@ -51,17 +51,19 @@ public static class LeagueManager
                 Database.Instance.StoredLeagueCategoriesWithChannels.First(
                     x => x.Value.LeagueCategoryName == leagueCategoryName).Value.LeagueUnits = interfaceLeagueCategory.LeagueUnits;
 
+                /*
                 // Replace InterfaceLeagueCategoryCategory with a one that is from the database
-                var interfaceLeagueCategorykvp =
+                System.Collections.Generic.KeyValuePair<
+                    ulong, InterfaceCategory> interfaceLeagueCategorykvp =
                     Database.Instance.StoredLeagueCategoriesWithChannels.First(
                         x => x.Value.LeagueCategoryName == leagueCategoryName);
                 interfaceLeagueCategory = interfaceLeagueCategorykvp.Value;
 
-                Log.WriteLine("Replaced with: " + interfaceLeagueCategory.LeagueCategoryName + " from db", LogLevel.DEBUG);
 
+                Log.WriteLine("Replaced with: " + interfaceLeagueCategory.LeagueCategoryName + " from db", LogLevel.DEBUG);
                 
-                categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForLeagueCategory(
-                    interfaceLeagueCategorykvp.Value, guild);
+                categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
+                    interfaceLeagueCategorykvp, guild);                */
             }
 
             interfaceLeagueCategory.LeagueCategoryName = leagueCategoryName;

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 
+/*
 [JsonObjectAttribute]
 public interface InterfaceLeagueCategory : InterfaceCategory
 {
@@ -14,4 +15,4 @@ public interface InterfaceLeagueCategory : InterfaceCategory
 
     public LeagueData LeagueData { get; set; }
     public DiscordLeagueReferences DiscordLeagueReferences { get; set; }
-}
+}*/

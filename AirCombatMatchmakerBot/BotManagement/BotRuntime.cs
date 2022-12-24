@@ -55,7 +55,7 @@ public class BotRuntimeManager
 
                 await LeagueManager.CreateLeaguesOnStartupIfNecessary();
 
-                await CategoryAndChannelInitiator.CreateCategoriesAndChannelsForTheDiscordServer();
+                //await CategoryAndChannelInitiator.CreateCategoriesAndChannelsForTheDiscordServer();
 
                 await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
 
