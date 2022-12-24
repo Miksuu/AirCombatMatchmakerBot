@@ -71,7 +71,6 @@ public abstract class BaseLeague : ILeague
 
     public DiscordLeagueReferences discordleagueReferences = new DiscordLeagueReferences();
 
-
     public BaseLeague()
     {
         interfaceLeagueChannels = new List<InterfaceChannel>();

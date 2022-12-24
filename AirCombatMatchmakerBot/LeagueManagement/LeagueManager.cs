@@ -30,7 +30,7 @@ public static class LeagueManager
         {
             Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString(), LogLevel.VERBOSE);
             // Check here too if a category is missing channelNames
-            bool categoryExists = false;
+            //bool categoryExists = false;
 
             ILeague interfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
             Log.WriteLine("after setting interface", LogLevel.VERBOSE);
@@ -40,16 +40,17 @@ public static class LeagueManager
                 return;
             }
 
+            // Add the new newly from the interface implementations added units here
             if (Database.Instance.StoredLeagues.Any(
-                x => x.LeagueCategoryName == leagueCategoryName))
+                x => x.LeagueCategoryName == interfaceLeagueCategory.LeagueCategoryName))
             {
-                Log.WriteLine("after alreadycontains", LogLevel.VERBOSE);
                 Log.WriteLine(nameof(Database.Instance.StoredLeagues) +
-                    " already contains: " + leagueCategoryName.ToString(), LogLevel.VERBOSE);
+                    " already contains: " + interfaceLeagueCategory.ToString() +
+                    " adding new units to the league", LogLevel.VERBOSE);
 
                 // Update the units and to the database (before interfaceLeagueCategory is replaced by it)
                 Database.Instance.StoredLeagues.First(
-                    x => x.LeagueCategoryName == leagueCategoryName).LeagueUnits = interfaceLeagueCategory.LeagueUnits;
+                    x => x.LeagueCategoryName == interfaceLeagueCategory.LeagueCategoryName).LeagueUnits = interfaceLeagueCategory.LeagueUnits;
 
                 /*
                 // Replace InterfaceLeagueCategoryCategory with a one that is from the database
@@ -61,11 +62,27 @@ public static class LeagueManager
 
 
                 Log.WriteLine("Replaced with: " + interfaceLeagueCategory.LeagueCategoryName + " from db", LogLevel.DEBUG);
-                
+                */
+
+                //categoryExists = true;
+
+                /*
                 categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
                     interfaceLeagueCategorykvp, guild);                */
+
+                continue;
             }
 
+            Log.WriteLine("Adding to the stored leagues...", LogLevel.VERBOSE);
+
+            Database.Instance.StoredLeagues.Add(interfaceLeagueCategory);
+
+            Log.WriteLine("Done adding " + nameof(interfaceLeagueCategory) + " to " +
+                nameof(Database.Instance.StoredLeagues) +
+                " count: " + Database.Instance.StoredLeagues, LogLevel.DEBUG);
+
+
+            /*
             interfaceLeagueCategory.LeagueCategoryName = leagueCategoryName;
 
             string? leagueCategoryNameString = EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName);
@@ -93,60 +110,60 @@ public static class LeagueManager
             interfaceLeagueCategory.DiscordLeagueReferences.leagueRoleId = role.Id;
 
             SocketCategoryChannel? socketCategoryChannel = null;
-
+            */
             // If the category doesn't exist at all, create it and add it to the database
-            if (!categoryExists)
+            //if (!categoryExists)
+            //{
+            /*
+            socketCategoryChannel =
+                await CategoryManager.CreateANewSocketCategoryChannelAndReturnIt(
+                    guild, leagueCategoryNameString, baseLeagueCategory.GetGuildPermissions(guild, role));
+            if (socketCategoryChannel == null)
             {
-                socketCategoryChannel =
-                    await CategoryManager.CreateANewSocketCategoryChannelAndReturnIt(
-                        guild, leagueCategoryNameString, baseLeagueCategory.GetGuildPermissions(guild, role));
-                if (socketCategoryChannel == null)
-                {
-                    Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);
-                    return;
-                }
-
-                interfaceLeagueCategory.DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
-
-                Log.WriteLine("Created a " + nameof(socketCategoryChannel) + " with id: " + socketCategoryChannel.Id +
-                    " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
-
-                Log.WriteLine("Adding " + nameof(interfaceLeagueCategory) + " to " +
-                    nameof(Database.Instance.StoredLeagues), LogLevel.VERBOSE);
-
-                Database.Instance.StoredLeagues.Add(interfaceLeagueCategory);
-
-                Log.WriteLine("Done adding " + nameof(interfaceLeagueCategory) + " to " +
-                    nameof(Database.Instance.StoredLeagues), LogLevel.DEBUG);
-            }
-            // The category exists, just find it from the database and then get the id of the socketchannel
-            else
-            {
-                var dbCategory = Database.Instance.StoredLeagues.First(
-                    x => x.LeagueCategoryName == interfaceLeagueCategory.LeagueCategoryName);
-
-                ILeague databaseInterfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
-                if (databaseInterfaceLeagueCategory == null)
-                {
-                    Log.WriteLine(nameof(databaseInterfaceLeagueCategory).ToString() + " was null!", LogLevel.CRITICAL);
-                    return;
-                }
-
-                Log.WriteLine("Found " + nameof(databaseInterfaceLeagueCategory) + " with id: " +
-                    dbCategory + " named: " +
-                    databaseInterfaceLeagueCategory.LeagueCategoryName, LogLevel.VERBOSE);
-
-                //socketCategoryChannel = guild.GetCategoryChannel(dbCategory);
-
-                Log.WriteLine("Found " + nameof(socketCategoryChannel) + " that's named: " +
-                    socketCategoryChannel.Name, LogLevel.DEBUG);
+                Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);
+                return;
             }
 
-            Log.WriteLine("FINAL " + nameof(interfaceLeagueCategory) + " for " + leagueCategoryName.ToString() +
-                  "::" + interfaceLeagueCategory.LeagueCategoryName + " beforing creating channels", LogLevel.DEBUG);
+            interfaceLeagueCategory.DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
 
-            //await CreateChannelsForTheLeagueCategory(interfaceLeagueCategory, socketCategoryChannel, guild);
+            Log.WriteLine("Created a " + nameof(socketCategoryChannel) + " with id: " + socketCategoryChannel.Id +
+                " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
+
+            Log.WriteLine("Adding " + nameof(interfaceLeagueCategory) + " to " +
+                nameof(Database.Instance.StoredLeagues), LogLevel.VERBOSE); */
+
+
         }
+        /*
+        // The category exists, just find it from the database and then get the id of the socketchannel
+        else
+        {
+            var dbCategory = Database.Instance.StoredLeagues.First(
+                x => x.LeagueCategoryName == interfaceLeagueCategory.LeagueCategoryName);
+
+            ILeague databaseInterfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
+            if (databaseInterfaceLeagueCategory == null)
+            {
+                Log.WriteLine(nameof(databaseInterfaceLeagueCategory).ToString() + " was null!", LogLevel.CRITICAL);
+                return;
+            }
+
+            Log.WriteLine("Found " + nameof(databaseInterfaceLeagueCategory) + " with id: " +
+                dbCategory + " named: " +
+                databaseInterfaceLeagueCategory.LeagueCategoryName, LogLevel.VERBOSE);
+
+            //socketCategoryChannel = guild.GetCategoryChannel(dbCategory);
+
+            /*
+            Log.WriteLine("Found " + nameof(socketCategoryChannel) + " that's named: " +
+                socketCategoryChannel.Name, LogLevel.DEBUG); */
+        //}
+
+        //Log.WriteLine("FINAL " + nameof(interfaceLeagueCategory) + " for " + leagueCategoryName.ToString() +
+        //      "::" + interfaceLeagueCategory.LeagueCategoryName + " beforing creating channels", LogLevel.DEBUG);
+
+        //await CreateChannelsForTheLeagueCategory(interfaceLeagueCategory, socketCategoryChannel, guild);
+        //}
     }
 
     public static ILeague? GetInterfaceLeagueCategoryFromTheDatabase(ILeague _leagueInterface)
