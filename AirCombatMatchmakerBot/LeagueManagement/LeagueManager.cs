@@ -6,7 +6,7 @@ public static class LeagueManager
 {
     public static ulong leagueRegistrationChannelId;
 
-    public static InterfaceLeagueCategory? GetInterfaceLeagueCategoryFromTheDatabase(InterfaceLeagueCategory _leagueInterface)
+    public static ILeague? GetInterfaceLeagueCategoryFromTheDatabase(ILeague _leagueInterface)
     {
         if (_leagueInterface == null)
         {
@@ -52,17 +52,17 @@ public static class LeagueManager
         return Database.Instance.StoredLeagueCategoriesWithChannels.Values.Any(l => l.LeagueCategoryName == _leagueName);
     }
 
-    public static InterfaceLeagueCategory GetLeagueInstanceWithLeagueCategoryName(LeagueCategoryName _leagueCategoryName)
+    public static ILeague GetLeagueInstanceWithLeagueCategoryName(LeagueCategoryName _leagueCategoryName)
     {
         Log.WriteLine("Getting a league instance with LeagueCategoryName: " + _leagueCategoryName, LogLevel.VERBOSE);
 
-        var leagueInstance = (InterfaceLeagueCategory)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
+        var leagueInstance = (ILeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
         leagueInstance.LeagueCategoryName = _leagueCategoryName;
         Log.WriteLine(nameof(leagueInstance) + ": " + leagueInstance.ToString(),LogLevel.VERBOSE);
         return leagueInstance;
     }
 
-    public static InterfaceLeagueCategory FindLeagueAndReturnInterfaceFromDatabase(InterfaceLeagueCategory _interfaceToSearchFor)
+    public static ILeague FindLeagueAndReturnInterfaceFromDatabase(ILeague _interfaceToSearchFor)
     {
         var dbLeagueInstance = GetInterfaceLeagueCategoryFromTheDatabase(_interfaceToSearchFor);
 

@@ -2,21 +2,22 @@
 using Discord;
 using System.Runtime.Serialization;
 
+/*
 [DataContract]
-public abstract class BaseLeagueChannel : BaseChannel, InterfaceLeagueChannel
+public abstract class BaseLeagueChannel : InterfaceChannel
 {
-    LeagueChannelName InterfaceLeagueChannel.LeagueChannelName
+    ChannelName InterfaceChannel.ChannelName
     {
         get => leagueChannelName;
         set => leagueChannelName = value;
     }
 
-    ulong InterfaceLeagueChannel.LeagueChannelId
+    ulong InterfaceChannel.ChannelId
     {
         get => leagueChannelId;
         set => leagueChannelId = value;
     }
-    Dictionary<string, ulong> InterfaceLeagueChannel.LeagueChannelFeaturesWithMessageIds
+    Dictionary<string, ulong> InterfaceChannel.ChannelFeaturesWithMessageIds
     {
         get => leagueChannelFeaturesWithMessageIds;
         set => leagueChannelFeaturesWithMessageIds = value;
@@ -33,5 +34,5 @@ public abstract class BaseLeagueChannel : BaseChannel, InterfaceLeagueChannel
 
     public abstract override List<Overwrite> GetGuildPermissions(SocketGuild _guild);
 
-    public abstract override Task ActivateChannelFeatures();
-}
+    public abstract Task ActivateLeagueChannelFeatures();
+}*/

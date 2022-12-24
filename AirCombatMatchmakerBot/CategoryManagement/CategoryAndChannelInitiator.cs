@@ -242,12 +242,19 @@ public static class CategoryAndChannelInitiator
         {
             bool channelExists = false;
 
+            if (channelName ==  null)
+            {
+
+                return;
+            }
+
             InterfaceChannel interfaceChannel = GetChannelInstance(channelName);
             if (interfaceChannel == null)
             {
                 Log.WriteLine(nameof(interfaceChannel).ToString() + " was null!", LogLevel.CRITICAL);
                 return;
             }
+            else { }
 
             if (channelListForCategory.Any(x => x.ChannelName == channelName))
             {

@@ -2,7 +2,7 @@
 using Discord.WebSocket;
 using System;
 
-
+/*
 public static class LeagueCategoryAndChannelInitiator
 {
     public static async Task CreateLeagueCategoriesAndChannelsForTheDiscordServer()
@@ -29,7 +29,7 @@ public static class LeagueCategoryAndChannelInitiator
             // Check here too if a category is missing channelNames
             bool categoryExists = false;
 
-            InterfaceLeagueCategory interfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
+            ILeague interfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
             Log.WriteLine("after setting interface", LogLevel.VERBOSE);
             if (interfaceLeagueCategory == null)
             {
@@ -71,7 +71,7 @@ public static class LeagueCategoryAndChannelInitiator
 
             Log.WriteLine("Creating a category named: " + leagueCategoryNameString, LogLevel.VERBOSE);
 
-            BaseLeagueCategory baseLeagueCategory = interfaceLeagueCategory as BaseLeagueCategory;
+            BaseLeague baseLeagueCategory = interfaceLeagueCategory as BaseLeague;
             if (baseLeagueCategory == null)
             {
                 Log.WriteLine(nameof(baseLeagueCategory).ToString() + " was null!", LogLevel.CRITICAL);
@@ -119,7 +119,7 @@ public static class LeagueCategoryAndChannelInitiator
                 var dbCategory = Database.Instance.StoredLeagueCategoriesWithChannels.First(
                     x => x.Value.LeagueCategoryName == interfaceLeagueCategory.LeagueCategoryName);
 
-                InterfaceLeagueCategory databaseInterfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
+                ILeague databaseInterfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
                 if (databaseInterfaceLeagueCategory == null)
                 {
                     Log.WriteLine(nameof(databaseInterfaceLeagueCategory).ToString() + " was null!", LogLevel.CRITICAL);
@@ -145,7 +145,7 @@ public static class LeagueCategoryAndChannelInitiator
     }
 
     public static async Task CreateChannelsForTheLeagueCategory(
-        InterfaceLeagueCategory _InterfaceLeagueCategory,
+        ILeague _InterfaceLeagueCategory,
         SocketCategoryChannel _socketCategoryChannel,
         SocketGuild _guild)
     {
@@ -153,7 +153,7 @@ public static class LeagueCategoryAndChannelInitiator
             " ( " + _socketCategoryChannel.Id + ")" + " Channel count: " +
             _InterfaceLeagueCategory.LeagueChannelNames.Count, LogLevel.VERBOSE) ;
 
-        foreach (LeagueChannelName leagueChannelName in Enum.GetValues(typeof(LeagueChannelName)))
+        foreach (ChannelName leagueChannelName in Enum.GetValues(typeof(LeagueChannelName)))
         {
             bool channelExists = false;
 
@@ -239,13 +239,8 @@ public static class LeagueCategoryAndChannelInitiator
         }
     }
 
-    public static InterfaceLeagueCategory GetCategoryInstance(LeagueCategoryName _leagueCategoryName)
+    public static ILeague GetCategoryInstance(LeagueCategoryName _leagueCategoryName)
     {
-        return (InterfaceLeagueCategory)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
+        return (ILeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
-
-    public static InterfaceLeagueChannel GetLeagueChannelInstance(LeagueChannelName _leagueChannelName)
-    {
-        return (InterfaceLeagueChannel)EnumExtensions.GetInstance(_leagueChannelName.ToString());
-    }
-}
+}*/

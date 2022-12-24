@@ -2,7 +2,7 @@
 
 public static class MessageManager
 {
-    public static async Task ModifyLeagueRegisterationChannelMessage(InterfaceLeagueCategory _dbLeagueInstance)
+    public static async Task ModifyLeagueRegisterationChannelMessage(ILeague _dbLeagueInstance)
     {
         Log.WriteLine("Modifying league registration channel message with: " +
             _dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
@@ -33,7 +33,7 @@ public static class MessageManager
         Log.WriteLine("Modifying the message: " + _messageId + " done.", LogLevel.VERBOSE);
     }
 
-    public static string GenerateALeagueJoinButtonMessage(InterfaceLeagueCategory _leagueInterface)
+    public static string GenerateALeagueJoinButtonMessage(ILeague _leagueInterface)
     {
         string? leagueEnumAttrValue =
             EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
@@ -47,7 +47,7 @@ public static class MessageManager
     }
 
 
-    private static string GetAllowedUnitsAsString(InterfaceLeagueCategory _leagueInterface)
+    private static string GetAllowedUnitsAsString(ILeague _leagueInterface)
     {
         string allowedUnits = string.Empty;
 
@@ -65,7 +65,7 @@ public static class MessageManager
         return allowedUnits;
     }
 
-    private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(InterfaceLeagueCategory _leagueInterface)
+    private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(ILeague _leagueInterface)
     {
         int count = 0;
 

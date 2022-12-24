@@ -5,11 +5,12 @@ using System.Runtime.Serialization;
 using Discord.WebSocket;
 
 [DataContract]
-public class CHALLENGE : BaseLeagueChannel
+public class CHALLENGE : BaseChannel
 {
     public CHALLENGE()
     {
-        leagueChannelName = LeagueChannelName.CHALLENGE;
+        channelName = ChannelName.CHALLENGE;
+        botChannelType = BotChannelType.LEAGUECHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
@@ -19,7 +20,7 @@ public class CHALLENGE : BaseLeagueChannel
         };
     }
 
-    public override Task ActivateChannelFeatures()
+    public override async Task ActivateChannelFeatures()
     {
         //Log.WriteLine("Activating challenge system on channel: " + leagueChannelId, LogLevel.VERBOSE);
         //ChallengeSystem.GenerateChallengeQueueMessage(leagueChannelId);

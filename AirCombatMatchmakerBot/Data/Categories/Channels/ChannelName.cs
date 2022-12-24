@@ -16,4 +16,10 @@ public enum ChannelName
     BOTCOMMANDS,
     [EnumMember(Value = "bot-log")]
     BOTLOG,
+
+    // League categories
+    [EnumMember(Value = "league-status")]
+    LEAGUESTATUS,
+    [EnumMember(Value = "challenge-channel")]
+    CHALLENGE,
 }
