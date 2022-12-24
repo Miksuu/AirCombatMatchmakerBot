@@ -11,19 +11,24 @@ public static class CategoryAndChannelInitiator
         foreach (string categoryName in names)
         {
             Log.WriteLine("Generating category named: " + categoryName, LogLevel.VERBOSE);
-            await GenerateACategoryFromName(_guild, categoryName);
+            await GenerateACategoryFromName(_guild, categoryName,
+                _type == typeof(LeagueCategoryName) ? true : false);
         }
     }
 
-    public static async Task GenerateACategoryFromName(SocketGuild _guild, string _categoryName)
+    public static async Task GenerateACategoryFromName(SocketGuild _guild, string _categoryName, bool _isLeagueCategory)
     {
-
-        Log.WriteLine("Generating: " + _categoryName.ToString(), LogLevel.VERBOSE);
-        
-        
-        //_categoryName = "LEAGUETEMPLATE";
-
         bool categoryExists = false;
+
+        Log.WriteLine("Generating: " + _categoryName.ToString() + " is league: " + _isLeagueCategory, LogLevel.DEBUG);
+
+
+        // Make a LeagueTemplate if the _type == typeof(LeagueCategoryName)
+        if (_isLeagueCategory)
+        {
+            _categoryName = "LEAGUETEMPLATE";
+        }
+
 
         InterfaceCategory interfaceCategory = GetCategoryInstance(_categoryName);
 
@@ -35,7 +40,7 @@ public static class CategoryAndChannelInitiator
 
         Log.WriteLine("interfaceCategory name: " + interfaceCategory.CategoryName, LogLevel.DEBUG);
 
-        //BaseCategory baseCategory = interfaceCategory as BaseCategory; 
+        BaseCategory baseCategory = interfaceCategory as BaseCategory; 
         
         /*
         if (Database.Instance.CreatedCategoriesWithChannels.Any(x => x.Value.CategoryName == interfaceCategory.CategoryName))
@@ -136,7 +141,7 @@ public static class CategoryAndChannelInitiator
         }
 
         await GenerateACategoryType(guild, typeof(CategoryName));
-        //await GenerateACategoryType(guild, typeof(LeagueCategoryName));
+        await GenerateACategoryType(guild, typeof(LeagueCategoryName));
     }
 
 
