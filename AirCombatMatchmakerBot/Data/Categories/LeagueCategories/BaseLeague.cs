@@ -1,8 +1,6 @@
 ﻿using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
-using System.Net.Http.Headers;
-
 
 [DataContract]
 public abstract class BaseLeague : ILeague
