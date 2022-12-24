@@ -1,4 +1,6 @@
-﻿using Discord.WebSocket;
+﻿
+
+using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
 
