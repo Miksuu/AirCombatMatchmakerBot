@@ -6,7 +6,7 @@ public static class CategoryAndChannelInitiator
 {
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
     {
-        Log.WriteLine("SSStarting to create categories and channels for" +
+        Log.WriteLine("Starting to create categories and channels for" +
             " the discord server", LogLevel.VERBOSE);
 
         var guild = BotReference.GetGuildRef();
