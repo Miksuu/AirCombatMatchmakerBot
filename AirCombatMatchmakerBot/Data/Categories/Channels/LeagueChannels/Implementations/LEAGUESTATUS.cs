@@ -5,21 +5,22 @@ using System.Runtime.Serialization;
 using Discord.WebSocket;
 
 [DataContract]
-public class LEAGUESTATUS : BaseLeagueChannel
+public class LEAGUESTATUS : BaseChannel
 {
     public LEAGUESTATUS()
     {
-        leagueChannelName = LeagueChannelName.LEAGUESTATUS;
+        channelName = ChannelName.LEAGUESTATUS;
+        botChannelType = BotChannelType.LEAGUECHANNEL;
     }
 
-    public override List<Overwrite> GetGuildLeaguePermissions(SocketGuild _guild)
+    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
     {
         return new List<Overwrite>
         {
         };
     }
 
-    public override async Task ActivateLeagueChannelFeatures()
+    public override async Task ActivateChannelFeatures()
     {
     }
 }

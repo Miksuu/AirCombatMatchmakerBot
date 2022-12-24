@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 
 [JsonObjectAttribute]
-public interface InterfaceLeagueCategory
+public interface ILeague
 {
     public LeagueCategoryName LeagueCategoryName { get; set; }
-    public List<LeagueChannelName> LeagueChannelNames { get; set; }
-    public List<InterfaceLeagueChannel> InterfaceLeagueChannels { get; set; }
+    public List<ChannelName> LeagueChannelNames { get; set; }
+    public List<InterfaceChannel> InterfaceLeagueChannels { get; set; }
 
     public Era LeagueEra { get; set; }
     public int LeaguePlayerCountPerTeam { get; set; }
