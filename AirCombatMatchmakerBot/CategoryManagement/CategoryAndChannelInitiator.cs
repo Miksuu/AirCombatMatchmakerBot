@@ -6,28 +6,22 @@ public static class CategoryAndChannelInitiator
 {
     public static async Task GenerateACategoryType(SocketGuild _guild, Type _type)
     {
-        // Get the names of the members of the specific enum type and loop through the names of the categories
-        string[] names = Enum.GetNames(_type);
-        foreach (string name in names)
+        // Get the values of the members of the specific enum type and loop through the values of the categories
+        var values = Enum.GetValues(_type);
+        foreach (CategoryName categoryName in values)
         {
-            Log.WriteLine("Generating category named: " + name.ToString(), LogLevel.DEBUG);
-            await GenerateACategoryFromName(_guild, name);
+            Log.WriteLine("Generating category named: " + categoryName.ToString(), LogLevel.DEBUG);
+            await GenerateACategoryFromName(_guild, categoryName);
         }
     }
 
-    public static async Task GenerateACategoryFromName(SocketGuild _guild, string _categoryName)
+    public static async Task GenerateACategoryFromName(SocketGuild _guild, CategoryName _categoryName)
     {
 
-        Log.WriteLine("Generating: " + _categoryName, LogLevel.VERBOSE);
-
-        /*
-        InterfaceChannel ic = GetChannelInstance("bot-commands");
-
-        Log.WriteLine("ic:" + ic.ChannelName.ToString(), LogLevel.DEBUG); 
-        */
-
-        /*
-        _categoryName = "LEAGUETEMPLATE";
+        Log.WriteLine("Generating: " + _categoryName.ToString(), LogLevel.VERBOSE);
+        
+        
+        //_categoryName = "LEAGUETEMPLATE";
 
         bool categoryExists = false;
 
@@ -41,8 +35,8 @@ public static class CategoryAndChannelInitiator
 
         Log.WriteLine("interfaceCategory name: " + interfaceCategory.CategoryName, LogLevel.WARNING);
 
-        BaseCategory baseCategory = interfaceCategory as BaseCategory;
-        */
+        //BaseCategory baseCategory = interfaceCategory as BaseCategory; 
+        
         /*
         if (Database.Instance.CreatedCategoriesWithChannels.Any(x => x.Value.CategoryName == interfaceCategory.CategoryName))
         {
@@ -245,10 +239,10 @@ public static class CategoryAndChannelInitiator
         }
     }
 
-    
-    public static InterfaceCategory GetCategoryInstance(string _categoryName)
+
+    public static InterfaceCategory GetCategoryInstance(CategoryName _categoryName)
     {
-        return (InterfaceCategory)EnumExtensions.GetInstance(_categoryName);
+        return (InterfaceCategory)EnumExtensions.GetInstance(_categoryName.ToString());
     }
 
     public static InterfaceChannel GetChannelInstance(string _channelName)

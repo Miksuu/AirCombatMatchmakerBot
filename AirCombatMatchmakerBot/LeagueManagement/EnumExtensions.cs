@@ -19,7 +19,7 @@ public static class EnumExtensions
 
         Log.WriteLine("Generated instance: " + instance, LogLevel.VERBOSE);
 
-        if (instance == null) 
+        if (instance == null)
         {
             Log.WriteLine("instance was null for: " + _string.ToUpper(), LogLevel.CRITICAL);
             return t;
