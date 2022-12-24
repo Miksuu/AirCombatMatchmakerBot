@@ -13,6 +13,7 @@ public abstract class BaseLeague : ILeague
         set => leagueCategoryName = value;
     }
 
+    /*
     List<ChannelName> ILeague.LeagueChannelNames
     {
         get => leagueChannelNames;
@@ -23,7 +24,7 @@ public abstract class BaseLeague : ILeague
     {
         get => interfaceLeagueChannels;
         set => interfaceLeagueChannels = value;
-    }
+    }*/
 
     Era ILeague.LeagueEra
     {

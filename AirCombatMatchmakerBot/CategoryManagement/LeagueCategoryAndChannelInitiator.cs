@@ -19,7 +19,7 @@ public static class LeagueCategoryAndChannelInitiator
         {
             bool channelExists = false;
 
-            List<InterfaceLeagueChannel> channelListForCategory = Database.Instance.StoredLeagueCategoriesWithChannels.First(
+            List<InterfaceLeagueChannel> channelListForCategory = Database.Instance.StoredLeagues.First(
                 x => x.Key == _socketCategoryChannel.Id).Value.InterfaceLeagueChannels;
 
             if (channelListForCategory == null)
@@ -76,7 +76,7 @@ public static class LeagueCategoryAndChannelInitiator
             {
                 List<Overwrite> permissionsList = baseLeagueChannel.GetGuildPermissions(_guild);
 
-                ulong leagueCategoryId = Database.Instance.StoredLeagueCategoriesWithChannels.First(
+                ulong leagueCategoryId = Database.Instance.StoredLeagues.First(
                      x => x.Value.LeagueCategoryName == _InterfaceLeagueCategory.LeagueCategoryName).Key;
 
                 Log.WriteLine("Creating a channel named: " + leagueChannelString + " for category: "

@@ -45,8 +45,8 @@ public static class ButtonHandler
                 Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
                 var findLeagueCategoryType
-                    = Database.Instance.StoredLeagueCategoriesWithChannels.First(x => x.Value.LeagueCategoryName.ToString() == splitString[1]);
-                LeagueCategoryName leagueCategoryName = findLeagueCategoryType.Value.LeagueCategoryName;
+                    = Database.Instance.StoredLeagues.First(x => x.LeagueCategoryName.ToString() == splitString[1]);
+                LeagueCategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
                 var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
 

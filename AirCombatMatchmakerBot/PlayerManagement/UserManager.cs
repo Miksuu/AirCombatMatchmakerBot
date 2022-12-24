@@ -73,7 +73,7 @@ public static class UserManager
         Log.WriteLine("Starting to set teams inactive that " + _userId + " was in.", LogLevel.VERBOSE);
 
         foreach (ILeague storedLeague in
-            Database.Instance.StoredLeagueCategoriesWithChannels.Values)
+            Database.Instance.StoredLeagues)
         {
             Log.WriteLine("Looping through league: " + storedLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
@@ -111,9 +111,9 @@ public static class UserManager
                             }
 
                             var findLeagueCategoryType
-                                = Database.Instance.StoredLeagueCategoriesWithChannels.First(
-                                    x => x.Value.LeagueCategoryName.ToString() == storedLeagueString);
-                            LeagueCategoryName leagueCategoryName = findLeagueCategoryType.Value.LeagueCategoryName;
+                                = Database.Instance.StoredLeagues.First(
+                                    x => x.LeagueCategoryName.ToString() == storedLeagueString);
+                            LeagueCategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
                             var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
                             Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);

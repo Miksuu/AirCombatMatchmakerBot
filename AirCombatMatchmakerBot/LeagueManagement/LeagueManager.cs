@@ -40,22 +40,22 @@ public static class LeagueManager
                 return;
             }
 
-            if (Database.Instance.StoredLeagueCategoriesWithChannels.Any(
-                x => x.Value.LeagueCategoryName == leagueCategoryName))
+            if (Database.Instance.StoredLeagues.Any(
+                x => x.LeagueCategoryName == leagueCategoryName))
             {
                 Log.WriteLine("after alreadycontains", LogLevel.VERBOSE);
-                Log.WriteLine(nameof(Database.Instance.StoredLeagueCategoriesWithChannels) +
+                Log.WriteLine(nameof(Database.Instance.StoredLeagues) +
                     " already contains: " + leagueCategoryName.ToString(), LogLevel.VERBOSE);
 
                 // Update the units and to the database (before interfaceLeagueCategory is replaced by it)
-                Database.Instance.StoredLeagueCategoriesWithChannels.First(
-                    x => x.Value.LeagueCategoryName == leagueCategoryName).Value.LeagueUnits = interfaceLeagueCategory.LeagueUnits;
+                Database.Instance.StoredLeagues.First(
+                    x => x.LeagueCategoryName == leagueCategoryName).LeagueUnits = interfaceLeagueCategory.LeagueUnits;
 
                 /*
                 // Replace InterfaceLeagueCategoryCategory with a one that is from the database
                 System.Collections.Generic.KeyValuePair<
                     ulong, InterfaceCategory> interfaceLeagueCategorykvp =
-                    Database.Instance.StoredLeagueCategoriesWithChannels.First(
+                    Database.Instance.StoredLeagues.First(
                         x => x.Value.LeagueCategoryName == leagueCategoryName);
                 interfaceLeagueCategory = interfaceLeagueCategorykvp.Value;
 
@@ -112,18 +112,18 @@ public static class LeagueManager
                     " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
 
                 Log.WriteLine("Adding " + nameof(interfaceLeagueCategory) + " to " +
-                    nameof(Database.Instance.StoredLeagueCategoriesWithChannels), LogLevel.VERBOSE);
+                    nameof(Database.Instance.StoredLeagues), LogLevel.VERBOSE);
 
-                Database.Instance.StoredLeagueCategoriesWithChannels.Add(socketCategoryChannel.Id, interfaceLeagueCategory);
+                Database.Instance.StoredLeagues.Add(interfaceLeagueCategory);
 
                 Log.WriteLine("Done adding " + nameof(interfaceLeagueCategory) + " to " +
-                    nameof(Database.Instance.StoredLeagueCategoriesWithChannels), LogLevel.DEBUG);
+                    nameof(Database.Instance.StoredLeagues), LogLevel.DEBUG);
             }
             // The category exists, just find it from the database and then get the id of the socketchannel
             else
             {
-                var dbCategory = Database.Instance.StoredLeagueCategoriesWithChannels.First(
-                    x => x.Value.LeagueCategoryName == interfaceLeagueCategory.LeagueCategoryName);
+                var dbCategory = Database.Instance.StoredLeagues.First(
+                    x => x.LeagueCategoryName == interfaceLeagueCategory.LeagueCategoryName);
 
                 ILeague databaseInterfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
                 if (databaseInterfaceLeagueCategory == null)
@@ -133,10 +133,10 @@ public static class LeagueManager
                 }
 
                 Log.WriteLine("Found " + nameof(databaseInterfaceLeagueCategory) + " with id: " +
-                    dbCategory.Key + " named: " +
+                    dbCategory + " named: " +
                     databaseInterfaceLeagueCategory.LeagueCategoryName, LogLevel.VERBOSE);
 
-                socketCategoryChannel = guild.GetCategoryChannel(dbCategory.Key);
+                //socketCategoryChannel = guild.GetCategoryChannel(dbCategory);
 
                 Log.WriteLine("Found " + nameof(socketCategoryChannel) + " that's named: " +
                     socketCategoryChannel.Name, LogLevel.DEBUG);
@@ -166,17 +166,17 @@ public static class LeagueManager
                 " exists in the database!", LogLevel.DEBUG);
 
             var newInterfaceLeagueCategory =
-                Database.Instance.StoredLeagueCategoriesWithChannels.First(
-                    l => l.Value.LeagueCategoryName == _leagueInterface.LeagueCategoryName);
+                Database.Instance.StoredLeagues.First(
+                    l => l.LeagueCategoryName == _leagueInterface.LeagueCategoryName);
 
-            if (newInterfaceLeagueCategory.Value == null)
+            if (newInterfaceLeagueCategory == null)
             {
-                Log.WriteLine(nameof(newInterfaceLeagueCategory.Value) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(newInterfaceLeagueCategory) + " was null!", LogLevel.CRITICAL);
                 return null;
             }
 
-            Log.WriteLine("found result: " + newInterfaceLeagueCategory.Value.LeagueCategoryName, LogLevel.DEBUG);
-            return newInterfaceLeagueCategory.Value;
+            Log.WriteLine("found result: " + newInterfaceLeagueCategory.LeagueCategoryName, LogLevel.DEBUG);
+            return newInterfaceLeagueCategory;
         }
         else
         {
@@ -192,7 +192,7 @@ public static class LeagueManager
 
     private static bool CheckIfALeagueCategoryNameExistsInDatabase(LeagueCategoryName _leagueName)
     {
-        return Database.Instance.StoredLeagueCategoriesWithChannels.Values.Any(l => l.LeagueCategoryName == _leagueName);
+        return Database.Instance.StoredLeagues.Any(l => l.LeagueCategoryName == _leagueName);
     }
 
     public static ILeague GetLeagueInstanceWithLeagueCategoryName(LeagueCategoryName _leagueCategoryName)
