@@ -5,7 +5,7 @@ using System;
 using System.Runtime.Serialization;
 
 [DataContract]
-public class ONEMODERNBFMFOXTWO : BaseLeagueCategory
+public class ONEMODERNBFMFOXTWO : BaseLeague
 {
     public ONEMODERNBFMFOXTWO()
     {

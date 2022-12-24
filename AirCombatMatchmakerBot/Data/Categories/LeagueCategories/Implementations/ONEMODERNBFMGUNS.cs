@@ -3,7 +3,7 @@ using Discord.WebSocket;
 using System.Runtime.Serialization;
 
 [DataContract]
-public class ONEMODERNBFMGUNS : BaseLeagueCategory
+public class ONEMODERNBFMGUNS : BaseLeague
 {
     public ONEMODERNBFMGUNS()
     {

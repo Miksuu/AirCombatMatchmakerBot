@@ -3,60 +3,61 @@ using Discord;
 using System.Runtime.Serialization;
 using System.Net.Http.Headers;
 
+
 [DataContract]
-public abstract class BaseLeagueCategory : InterfaceLeagueCategory
+public abstract class BaseLeague : ILeague
 {
-    LeagueCategoryName InterfaceLeagueCategory.LeagueCategoryName
+    LeagueCategoryName ILeague.LeagueCategoryName
     {
         get => leagueCategoryName;
         set => leagueCategoryName = value;
     }
 
-    List<LeagueChannelName> InterfaceLeagueCategory.LeagueChannelNames
+    List<ChannelName> ILeague.LeagueChannelNames
     {
         get => leagueChannelNames;
         set => leagueChannelNames = value;
     }
 
-    List<InterfaceLeagueChannel> InterfaceLeagueCategory.InterfaceLeagueChannels
+    List<InterfaceChannel> ILeague.InterfaceLeagueChannels
     {
         get => interfaceLeagueChannels;
         set => interfaceLeagueChannels = value;
     }
 
-    Era InterfaceLeagueCategory.LeagueEra
+    Era ILeague.LeagueEra
     {
         get => leagueEra;
         set => leagueEra = value;
     }
 
-    int InterfaceLeagueCategory.LeaguePlayerCountPerTeam
+    int ILeague.LeaguePlayerCountPerTeam
     {
         get => leaguePlayerCountPerTeam;
         set => leaguePlayerCountPerTeam = value;
     }
 
-    List<UnitName> InterfaceLeagueCategory.LeagueUnits
+    List<UnitName> ILeague.LeagueUnits
     {
         get => leagueUnits;
         set => leagueUnits = value;
     }
 
-    LeagueData InterfaceLeagueCategory.LeagueData
+    LeagueData ILeague.LeagueData
     {
         get => leagueData;
         set => leagueData = value;
     }
 
-    DiscordLeagueReferences InterfaceLeagueCategory.DiscordLeagueReferences
+    DiscordLeagueReferences ILeague.DiscordLeagueReferences
     {
         get => discordleagueReferences;
         set => discordleagueReferences = value;
     }
 
     public LeagueCategoryName leagueCategoryName;
-    public List<LeagueChannelName> leagueChannelNames;
-    public List<InterfaceLeagueChannel> interfaceLeagueChannels;
+    public List<ChannelName> leagueChannelNames;
+    public List<InterfaceChannel> interfaceLeagueChannels;
 
     // Generated based on the implementation
     public LeagueCategoryName leagueName;
@@ -70,9 +71,9 @@ public abstract class BaseLeagueCategory : InterfaceLeagueCategory
     public DiscordLeagueReferences discordleagueReferences = new DiscordLeagueReferences();
 
 
-    public BaseLeagueCategory()
+    public BaseLeague()
     {
-        interfaceLeagueChannels = new List<InterfaceLeagueChannel>();
+        interfaceLeagueChannels = new List<InterfaceChannel>();
         leagueChannelNames = new();
     }
 

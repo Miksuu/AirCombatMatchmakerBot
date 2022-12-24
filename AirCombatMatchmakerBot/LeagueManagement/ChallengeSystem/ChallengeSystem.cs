@@ -7,13 +7,13 @@ public static class ChallengeSystem
     {
         Log.WriteLine("Generating a challenge queue message with _channelId: " + _channelId, LogLevel.VERBOSE);
 
-        foreach (InterfaceLeagueCategory storedLeague in
+        foreach (ILeague storedLeague in
             Database.Instance.StoredLeagueCategoriesWithChannels.Values)
         {
             string? leagueName = EnumExtensions.GetEnumMemberAttrValue(storedLeague.LeagueCategoryName);
 
             ulong channelIdToLookFor = storedLeague.DiscordLeagueReferences.leagueChannels[
-                LeagueChannelName.CHALLENGE];
+                ChannelName.CHALLENGE];
 
             Log.WriteLine("Looping on league: " + leagueName +
                 " looking for id: " +channelIdToLookFor, LogLevel.VERBOSE);
