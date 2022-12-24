@@ -37,13 +37,13 @@ public static class ChannelRestore
 
     public static async Task<bool> CheckIfChannelHasBeenDeletedAndRestoreForeagueCategory(
         ulong _categoryId,
-        InterfaceLeagueChannel _interfaceLeagueChannel,
+        InterfaceChannel _interfaceLeagueChannel,
         SocketGuild _guild)
     {
         Log.WriteLine("Checking if channel in " + _categoryId + " has been deleted.", LogLevel.VERBOSE);
 
         if (_guild.GetCategoryChannel(_categoryId).Channels.Any(
-            x => x.Id == _interfaceLeagueChannel.LeagueChannelId))
+            x => x.Id == _interfaceLeagueChannel.ChannelId))
         {
             Log.WriteLine("Channel found, returning. ", LogLevel.VERBOSE);
             return true;
@@ -54,15 +54,15 @@ public static class ChannelRestore
                                          x => x.Key == _categoryId).Value;
 
         var dbFinal = dbKeyValue.InterfaceChannels.First(
-                                             ic => ic.ChannelId == _interfaceLeagueChannel.LeagueChannelId);
+                                             ic => ic.ChannelId == _interfaceLeagueChannel.ChannelId);
 
         dbFinal.ChannelFeaturesWithMessageIds.Clear();
 
         //dbKeyValue.InterfaceChannels.Remove(dbFinal);
-
-        Log.WriteLine("Channel " + _interfaceLeagueChannel.LeagueChannelName +
+            
+        Log.WriteLine("Channel " + _interfaceLeagueChannel.ChannelName +
             " not found, regenerating it...", LogLevel.ERROR);
 
         return false;
     }
-}
+}   

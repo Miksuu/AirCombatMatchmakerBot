@@ -13,7 +13,7 @@ public static class ChallengeSystem
             string? leagueName = EnumExtensions.GetEnumMemberAttrValue(storedLeague.LeagueCategoryName);
 
             ulong channelIdToLookFor = storedLeague.DiscordLeagueReferences.leagueChannels[
-                LeagueChannelName.CHALLENGE];
+                ChannelName.CHALLENGE];
 
             Log.WriteLine("Looping on league: " + leagueName +
                 " looking for id: " +channelIdToLookFor, LogLevel.VERBOSE);

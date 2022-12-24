@@ -77,5 +77,5 @@ public abstract class BaseLeague : ILeague
         leagueChannelNames = new();
     }
 
-    public abstract override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
+    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 }

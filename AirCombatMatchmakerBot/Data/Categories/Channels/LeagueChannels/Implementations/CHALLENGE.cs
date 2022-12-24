@@ -24,6 +24,5 @@ public class CHALLENGE : BaseChannel
     {
         //Log.WriteLine("Activating challenge system on channel: " + leagueChannelId, LogLevel.VERBOSE);
         //ChallengeSystem.GenerateChallengeQueueMessage(leagueChannelId);
-        return Task.CompletedTask;
     }
 }
