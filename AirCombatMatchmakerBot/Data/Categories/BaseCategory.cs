@@ -32,5 +32,5 @@ public abstract class BaseCategory : InterfaceCategory
         interfaceChannels = new List<InterfaceChannel>();
     }
 
-    public extern virtual List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
+    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
 }

@@ -17,7 +17,7 @@ public class LEAGUETEMPLATE : BaseCategory
         };
     }
 
-    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
+    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
     {
         Log.WriteLine("executing permissions from LEAGUETEMPLATE", LogLevel.VERBOSE);
         return new List<Overwrite>

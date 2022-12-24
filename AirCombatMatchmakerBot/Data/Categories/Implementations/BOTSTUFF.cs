@@ -14,10 +14,11 @@ public class BOTSTUFF : BaseCategory
         {
             ChannelName.BOTLOG,
             ChannelName.BOTCOMMANDS
+
         };
     }
 
-    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
+    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
     {
         Log.WriteLine("executing permissions from BOTSTUFF", LogLevel.VERBOSE);
         return new List<Overwrite>

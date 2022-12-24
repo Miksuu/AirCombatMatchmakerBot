@@ -22,11 +22,12 @@ public abstract class BaseChannel : InterfaceChannel
         set => channelFeaturesWithMessageIds = value;
     }
 
+    /*
     BotChannelType InterfaceChannel.BotChannelType
     {
         get => botChannelType;
         set => botChannelType = value;
-    }
+    }*/
 
     public ChannelName channelName;
     public ulong channelId;
