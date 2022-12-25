@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using System;
 using System.Diagnostics.Metrics;
+using System.Threading.Channels;
 
 public static class CategoryAndChannelInitiator
 {
@@ -178,13 +179,13 @@ public static class CategoryAndChannelInitiator
         {
             Log.WriteLine("Looping with channel name: " + channelName, LogLevel.DEBUG);
 
+            bool channelExists = false;
             InterfaceChannel? interfaceChannel = null;
-            //BaseChannel? baseChannel = null;
+            BaseChannel? baseChannel = null;
 
             interfaceChannel = GetChannelInstance(channelName.ToString());
             Log.WriteLine("interfaceChanneltest: " + interfaceChannel.ChannelName.ToString(), LogLevel.DEBUG);
 
-            //baseChannel = interfaceChannel as BaseChannel;
 
             /*
             // Channel found from the basecategory (it exists)
@@ -197,18 +198,6 @@ public static class CategoryAndChannelInitiator
                 interfaceChannel = GetChannelInstance(channelName.ToString());
                 baseChannel = interfaceChannel as BaseChannel;
             }*/
-        }
-
-        /*
-        foreach (ChannelName channelName in _baseCategory.channelNames)
-        {
-            Log.WriteLine("Looping with channel name: " + channelName, LogLevel.DEBUG);
-
-            bool channelExists = false;
-
-            //InterfaceChannel interfaceChannel = GetChannelInstance(channelName.ToString());
-            InterfaceChannel? interfaceChannel = null;
-            BaseChannel? baseChannel = null;
 
             // Channel found from the basecategory (it exists)
             if (_baseCategory.interfaceChannels.Any(x => x.ChannelName == channelName))
@@ -221,29 +210,26 @@ public static class CategoryAndChannelInitiator
 
                 Log.WriteLine("Replaced with: " + interfaceChannel.ChannelName + " from db", LogLevel.DEBUG);
 
-                //channelExists = await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
-                  //  _socketCategoryChannel.Id, interfaceChannel, _guild);
+                channelExists = await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
+                  _socketCategoryChannel.Id, interfaceChannel, _guild);
+
+
             }
             else
             {
                 Log.WriteLine(nameof(_baseCategory.interfaceChannels) + " does not contain channel: " +
                     channelName.ToString() + ", getting instance of it", LogLevel.VERBOSE);
-                //interfaceChannel = GetChannelInstance(channelName.ToString());
+                interfaceChannel = GetChannelInstance(channelName.ToString());
+
             }
 
-            //baseChannel = interfaceChannel as BaseChannel;
+            baseChannel = interfaceChannel as BaseChannel;
 
-            if (!channelExists)
-                Log.WriteLine("Does not contain: " + channelName.ToString() + " adding it", LogLevel.DEBUG);
-
-;
             if (baseChannel == null)
             {
                 Log.WriteLine(nameof(baseChannel).ToString() + " was null!", LogLevel.CRITICAL);
                 return;
             }
-
-
 
             string? channelNameString = EnumExtensions.GetEnumMemberAttrValue(channelName);
             if (channelNameString == null)
@@ -269,19 +255,101 @@ public static class CategoryAndChannelInitiator
                 Log.WriteLine("Done creating the channel with id: " + interfaceChannel.ChannelId +
                     " named:" + channelNameString + " adding it to the db.", LogLevel.DEBUG);
 
-                //_baseCategory.interfaceChannels.Add(interfaceChannel);
-                /*
-                Log.WriteLine("Done adding to the db. Count is now: " + channelListForCategory.Count +
+                _baseCategory.interfaceChannels.Add(interfaceChannel);
+
+                Log.WriteLine("Done adding to the db. Count is now: " + _baseCategory.interfaceChannels.Count +
                     " for the list of category: " + _baseCategory.categoryName.ToString() +
-                    " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE); //
+                    " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
             }
 
-            await baseChannel.ActivateChannelFeatures();
+            baseChannel.ActivateChannelFeatures();
 
-            Log.WriteLine("Done looping through: " + channelNameString, LogLevel.VERBOSE);*/
-        // }
+            Log.WriteLine("Done looping through: " + channelNameString, LogLevel.VERBOSE);
+        }
     }
 
+
+            /*
+            foreach (ChannelName channelName in _baseCategory.channelNames)
+            {
+                Log.WriteLine("Looping with channel name: " + channelName, LogLevel.DEBUG);
+
+                bool channelExists = false;
+
+                //InterfaceChannel interfaceChannel = GetChannelInstance(channelName.ToString());
+                InterfaceChannel? interfaceChannel = null;
+                BaseChannel? baseChannel = null;
+
+                // Channel found from the basecategory (it exists)
+                if (_baseCategory.interfaceChannels.Any(x => x.ChannelName == channelName))
+                {
+                    Log.WriteLine(nameof(_baseCategory.interfaceChannels) + " already contains channel: " +
+                        channelName.ToString(), LogLevel.VERBOSE);
+
+                    // Replace interfaceChannel with a one that is from the database
+                    interfaceChannel = _baseCategory.interfaceChannels.First(x => x.ChannelName == channelName);
+
+                    Log.WriteLine("Replaced with: " + interfaceChannel.ChannelName + " from db", LogLevel.DEBUG);
+
+                    //channelExists = await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
+                      //  _socketCategoryChannel.Id, interfaceChannel, _guild);
+                }
+                else
+                {
+                    Log.WriteLine(nameof(_baseCategory.interfaceChannels) + " does not contain channel: " +
+                        channelName.ToString() + ", getting instance of it", LogLevel.VERBOSE);
+                    //interfaceChannel = GetChannelInstance(channelName.ToString());
+                }
+
+                //baseChannel = interfaceChannel as BaseChannel;
+
+                if (!channelExists)
+                    Log.WriteLine("Does not contain: " + channelName.ToString() + " adding it", LogLevel.DEBUG);
+
+    ;
+                if (baseChannel == null)
+                {
+                    Log.WriteLine(nameof(baseChannel).ToString() + " was null!", LogLevel.CRITICAL);
+                    return;
+                }
+
+
+
+                string? channelNameString = EnumExtensions.GetEnumMemberAttrValue(channelName);
+                if (channelNameString == null)
+                {
+                    Log.WriteLine(nameof(channelNameString).ToString() + " was null!", LogLevel.CRITICAL);
+                    return;
+                }
+
+                if (!channelExists)
+                {
+                    List<Overwrite> permissionsList = baseChannel.GetGuildPermissions(_guild);
+
+
+                    ulong categoryId = Database.Instance.CreatedCategoriesWithChannels.First(
+                         x => x.Value.CategoryName == _baseCategory.categoryName).Key;
+
+                    Log.WriteLine("Creating a channel named: " + channelNameString + " for category: "
+                                + _baseCategory.categoryName + " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
+
+                    baseChannel.channelId = await ChannelManager.CreateAChannelForTheCategory(
+                        _guild, channelNameString, _socketCategoryChannel.Id, permissionsList);
+
+                    Log.WriteLine("Done creating the channel with id: " + interfaceChannel.ChannelId +
+                        " named:" + channelNameString + " adding it to the db.", LogLevel.DEBUG);
+
+                    //_baseCategory.interfaceChannels.Add(interfaceChannel);
+                    /*
+                    Log.WriteLine("Done adding to the db. Count is now: " + channelListForCategory.Count +
+                        " for the list of category: " + _baseCategory.categoryName.ToString() +
+                        " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE); //
+                }
+
+                await baseChannel.ActivateChannelFeatures();
+
+                Log.WriteLine("Done looping through: " + channelNameString, LogLevel.VERBOSE);*/
+            // }
 
     public static InterfaceCategory GetCategoryInstance(string _categoryName)
     {
