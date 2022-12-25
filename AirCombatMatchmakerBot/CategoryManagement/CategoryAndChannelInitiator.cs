@@ -6,7 +6,6 @@ using System.Threading.Channels;
 
 public static class CategoryAndChannelInitiator
 {
-
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
     {
         Log.WriteLine("Starting to create categories and channels for" +

@@ -27,7 +27,7 @@ public static class ChannelRestore
 
         dbFinal.ChannelFeaturesWithMessageIds.Clear();
 
-        //dbKeyValue.InterfaceChannels.Remove(dbFinal);
+        dbKeyValue.InterfaceChannels.Remove(dbFinal);
 
         Log.WriteLine("Channel " + _interfaceChannel.ChannelName +
             " not found, regenerating it...", LogLevel.ERROR);
