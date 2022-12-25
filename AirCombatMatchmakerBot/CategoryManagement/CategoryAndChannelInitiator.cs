@@ -5,31 +5,49 @@ using System.Diagnostics.Metrics;
 
 public static class CategoryAndChannelInitiator
 {
-    public static async Task GenerateACategoryType(SocketGuild _guild, Type _type)
+
+    public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
+    {
+        Log.WriteLine("Starting to create categories and channels for" +
+            " the discord server", LogLevel.VERBOSE);
+
+        var guild = BotReference.GetGuildRef();
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
+        await GenerateACategoryType(guild);
+
+        await SerializationManager.SerializeDB();
+    }
+
+    public static async Task GenerateACategoryType(SocketGuild _guild)
     {
         // Get the names of the members of the specific enum type and loop through the names of the categories
-        var names = Enum.GetNames(_type);
+        var names = Enum.GetNames(typeof(CategoryName));
         foreach (string categoryName in names)
         {
             // Skip creating from the default LeagueTemplate
             if (categoryName == "LEAGUETEMPLATE") continue;
 
             Log.WriteLine("Generating category named: " + categoryName, LogLevel.VERBOSE);
-            await GenerateACategoryFromName(_guild, categoryName,
-                _type == typeof(CategoryName) ? true : false);
+            await GenerateACategoryFromName(_guild, categoryName);
         }
     }
 
     public static async Task GenerateACategoryFromName(
-        SocketGuild _guild, string _categoryName, bool _isLeagueCategory)
+        SocketGuild _guild, string _categoryName)
     {
         bool categoryExists = false;
-        string leagueNameCached = "";
+        //string leagueNameCached = "";
         string finalCategoryName = "";
 
-        Log.WriteLine("Generating: " + _categoryName.ToString() + " is league: " + _isLeagueCategory, LogLevel.DEBUG);
+        Log.WriteLine("Generating: " + _categoryName.ToString(), LogLevel.DEBUG);
 
 
+        /*
         // Make a LeagueTemplate if the _type == typeof(LeagueCategoryName)
         if (_isLeagueCategory)
         {
@@ -37,7 +55,7 @@ public static class CategoryAndChannelInitiator
             Log.WriteLine("leagueNameCached: " + leagueNameCached, LogLevel.VERBOSE);
 
             _categoryName = "LEAGUETEMPLATE";
-        }
+        } */
 
         InterfaceCategory interfaceCategory = GetCategoryInstance(_categoryName);
 
@@ -49,15 +67,40 @@ public static class CategoryAndChannelInitiator
 
         Log.WriteLine("interfaceCategory name: " + interfaceCategory.CategoryName, LogLevel.DEBUG);
 
+        /*
+        if (Database.Instance.StoredLeagues.Any(x=>x.LeagueCategoryName == interfaceCategory.CategoryName))
+        {
+            var searchingWith = Database.Instance.StoredLeagues.First(
+                x => x.LeagueCategoryName.ToString() == interfaceCategory.CategoryName.ToString()).LeagueCategoryName;
 
+            Log.WriteLine("searching with: " + searchingWith, LogLevel.WARNING);
+
+            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(searchingWith);
+        }
+        else
+        {
+            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryName);
+        }*/
 
         BaseCategory baseCategory = interfaceCategory as BaseCategory;
         if (baseCategory == null)
         {
-            Log.WriteLine(nameof(baseCategory).ToString() + " was null!", LogLevel.CRITICAL);
-            return;
+            Log.WriteLine(nameof(baseCategory).ToString() +
+                " was null! This should be a league category", LogLevel.DEBUG);
+
+            baseCategory = new LEAGUETEMPLATE();
+            baseCategory.categoryName = interfaceCategory.CategoryName;
+            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(baseCategory.categoryName);
+
+            Log.WriteLine("League's category name is: " + finalCategoryName, LogLevel.VERBOSE);
+        }
+        else
+        {
+            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(baseCategory.categoryName);
+            Log.WriteLine("Category name is: " + baseCategory.categoryName, LogLevel.VERBOSE);
         }
 
+        /*
         if (_isLeagueCategory)
         {
             finalCategoryName = leagueNameCached;
@@ -65,10 +108,12 @@ public static class CategoryAndChannelInitiator
         else
         {
             finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryName);
-        }
+        }*/
 
 
-        if (Database.Instance.CreatedCategoriesWithChannels.Any(x => x.Value.CategoryName == interfaceCategory.CategoryName))
+        //finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryName);
+
+        if (Database.Instance.CreatedCategoriesWithChannels.Any(x => x.Value.CategoryName == baseCategory.categoryName))
         {
             // Replace InterfaceLeagueCategoryCategory with a one that is from the database
             var interfaceCategoryKvp = Database.Instance.CreatedCategoriesWithChannels.First(
@@ -97,9 +142,6 @@ public static class CategoryAndChannelInitiator
         List<Overwrite> permissionsList = baseCategory.GetGuildPermissions(_guild);
 
         SocketCategoryChannel? socketCategoryChannel = null;
-
-
-        Log.WriteLine(finalCategoryName, LogLevel.WARNING);
 
         // If the category doesn't exist at all, create it and add it to the database
         if (!categoryExists)
@@ -157,22 +199,6 @@ public static class CategoryAndChannelInitiator
         }*/
     }
 
-    public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
-    {
-        Log.WriteLine("Starting to create categories and channels for" +
-            " the discord server", LogLevel.VERBOSE);
-
-        var guild = BotReference.GetGuildRef();
-        if (guild == null)
-        {
-            Exceptions.BotGuildRefNull();
-            return;
-        }
-
-        await GenerateACategoryType(guild, typeof(CategoryName));
-
-        await SerializationManager.SerializeDB();
-    }
 
 
     public static async Task CreateChannelsForTheCategory(

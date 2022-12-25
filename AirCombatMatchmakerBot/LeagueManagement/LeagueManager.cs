@@ -28,9 +28,15 @@ public static class LeagueManager
         Log.WriteLine(nameof(categoryEnumValues) + " length: " + categoryEnumValues.Length, LogLevel.VERBOSE);
         foreach (CategoryName leagueCategoryName in categoryEnumValues)
         {
-            Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString(), LogLevel.VERBOSE);
+            int enumValue = (int)leagueCategoryName;
+
+            Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString() +
+                " with enumValue of: " + enumValue, LogLevel.DEBUG);
             // Check here too if a category is missing channelNames
             //bool categoryExists = false;
+
+            // Skip all the non-leagues
+            if (enumValue < 101) continue;
 
             ILeague interfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
             Log.WriteLine("after setting interface", LogLevel.VERBOSE);

@@ -17,8 +17,9 @@ public static class LeagueChannelManager
         Log.WriteLine(nameof(_leagueInterface) + " before creating leagueButtonRegisterationCustomId: "
             + _leagueInterface.ToString(), LogLevel.VERBOSE);
 
+        
         string leagueButtonRegisterationCustomId =
-           "leagueRegistration_" + _leagueInterface.LeagueCategoryName.ToString();
+           "leagueRegistration_" + _leagueInterface.LeagueCategoryName.ToString().ToString();
 
         Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
             leagueButtonRegisterationCustomId, LogLevel.VERBOSE);
@@ -39,7 +40,7 @@ public static class LeagueChannelManager
                 leagueButtonRegisterationCustomId); // Maybe replace this with some other system
 
         Log.WriteLine("Done creating a league join button for: " + _leagueNameString, LogLevel.DEBUG);
-
+        
         return _leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId;
     }
 }

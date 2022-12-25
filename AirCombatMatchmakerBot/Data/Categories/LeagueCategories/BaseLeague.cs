@@ -3,7 +3,7 @@ using Discord;
 using System.Runtime.Serialization;
 
 [DataContract]
-public abstract class BaseLeague : ILeague
+public abstract class BaseLeague : ILeague, InterfaceCategory
 {
     CategoryName ILeague.LeagueCategoryName
     {
@@ -11,18 +11,23 @@ public abstract class BaseLeague : ILeague
         set => leagueCategoryName = value;
     }
 
-    /*
-    List<ChannelName> ILeague.LeagueChannelNames
+    CategoryName InterfaceCategory.CategoryName
+    {
+        get => categoryName;
+        set => categoryName = value;
+    }
+
+    List<ChannelName> InterfaceCategory.ChannelNames
     {
         get => leagueChannelNames;
         set => leagueChannelNames = value;
     }
 
-    List<InterfaceChannel> ILeague.InterfaceLeagueChannels
+    List<InterfaceChannel> InterfaceCategory.InterfaceChannels
     {
         get => interfaceLeagueChannels;
         set => interfaceLeagueChannels = value;
-    }*/
+    }
 
     Era ILeague.LeagueEra
     {
@@ -55,6 +60,7 @@ public abstract class BaseLeague : ILeague
     }
 
     public CategoryName leagueCategoryName;
+    public CategoryName categoryName;
     public List<ChannelName> leagueChannelNames;
     public List<InterfaceChannel> interfaceLeagueChannels;
 
