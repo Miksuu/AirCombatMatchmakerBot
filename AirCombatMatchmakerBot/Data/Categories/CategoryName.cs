@@ -10,4 +10,7 @@ public enum CategoryName
 
     [EnumMember(Value = "registration")]
     REGISTRATIONCATEGORY,
+
+    [EnumMember(Value = "league-template")]
+    LEAGUETEMPLATE,
 }

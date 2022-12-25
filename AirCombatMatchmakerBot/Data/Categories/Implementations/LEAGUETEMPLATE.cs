@@ -9,7 +9,7 @@ public class LEAGUETEMPLATE : BaseCategory
 {
     public LEAGUETEMPLATE()
     {
-        categoryName = CategoryName.BOTSTUFF;
+        categoryName = CategoryName.LEAGUETEMPLATE;
         channelNames = new List<ChannelName>()
         {
             ChannelName.LEAGUESTATUS,

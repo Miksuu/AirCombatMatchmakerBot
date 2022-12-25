@@ -79,7 +79,7 @@ public static class LeagueManager
 
             Log.WriteLine("Done adding " + nameof(interfaceLeagueCategory) + " to " +
                 nameof(Database.Instance.StoredLeagues) +
-                " count: " + Database.Instance.StoredLeagues, LogLevel.DEBUG);
+                " count: " + Database.Instance.StoredLeagues.Count, LogLevel.DEBUG);
 
 
             /*
