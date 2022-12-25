@@ -24,7 +24,7 @@ public static class SerializationManager
         using (StreamWriter sw = new StreamWriter(dbPath))
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            //serializer.Serialize(writer, Database.Instance, typeof(Database));
+            serializer.Serialize(writer, Database.Instance, typeof(Database));
             writer.Close();
             sw.Close();
         };
