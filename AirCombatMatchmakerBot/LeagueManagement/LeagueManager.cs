@@ -77,6 +77,17 @@ public static class LeagueManager
                 continue;
             }
 
+            string? leagueCategoryNameString = EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName);
+
+            // Get the role and create it if it already doesn't exist
+            SocketRole role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
+                guild, leagueCategoryNameString).Result;
+
+            Log.WriteLine("Role is named: " + role.Name + " with ID: " + role.Id, LogLevel.VERBOSE);
+
+            interfaceLeagueCategory.DiscordLeagueReferences.leagueRoleId = role.Id;
+            //interfaceLeagueCategory.DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
+
             Log.WriteLine("Adding to the stored leagues...", LogLevel.VERBOSE);
 
             Database.Instance.StoredLeagues.Add(interfaceLeagueCategory);
@@ -84,6 +95,8 @@ public static class LeagueManager
             Log.WriteLine("Done adding " + nameof(interfaceLeagueCategory) + " to " +
                 nameof(Database.Instance.StoredLeagues) +
                 " count: " + Database.Instance.StoredLeagues.Count, LogLevel.DEBUG);
+
+
 
 
             /*
