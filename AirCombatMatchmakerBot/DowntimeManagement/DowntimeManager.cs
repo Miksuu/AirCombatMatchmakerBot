@@ -59,7 +59,7 @@ public static class DowntimeManager
         await SerializationManager.SerializeDB();
     }
 
-    public static async Task CheckForUsersThatLeftDuringDowntime()
+    public static Task CheckForUsersThatLeftDuringDowntime()
     {
         Log.WriteLine("Starting to check for users that left during the downtime.", LogLevel.VERBOSE);
 
@@ -70,7 +70,7 @@ public static class DowntimeManager
         if (guild == null)
         {
             Exceptions.BotGuildRefNull();
-            return;
+            return Task.CompletedTask;
         }
 
         foreach (SocketGuildUser user in guild.Users)
@@ -78,7 +78,7 @@ public static class DowntimeManager
             if (user == null)
             {
                 Log.WriteLine("User was null!", LogLevel.CRITICAL);
-                return;
+                return Task.CompletedTask;
             }
 
             string userNameWithId = user.Username + " (" + user.Id + ")";
@@ -110,6 +110,8 @@ public static class DowntimeManager
         }
 
         Log.WriteLine("Done checking for users that left during the downtime.", LogLevel.DEBUG);
+
+        return Task.CompletedTask;
     }
 
     private static List<ulong> GetDifferenceBetweenTheCurrentAndCachedUsers(

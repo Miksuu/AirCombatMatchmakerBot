@@ -40,8 +40,6 @@ public static class CategoryAndChannelInitiator
     public static async Task GenerateACategoryFromName(
         SocketGuild _guild, string _categoryName)
     {
-        bool categoryExists = false;
-        //string leagueNameCached = "";
         string finalCategoryName = "";
 
         Log.WriteLine("Generating: " + _categoryName.ToString(), LogLevel.DEBUG);
@@ -68,7 +66,7 @@ public static class CategoryAndChannelInitiator
         else
         {
             interfaceCategory = GetCategoryInstance(_categoryName);
-            baseCategory = interfaceCategory as BaseCategory;
+
 
             if (interfaceCategory == null)
             {
@@ -77,6 +75,15 @@ public static class CategoryAndChannelInitiator
             }
 
             Log.WriteLine("interfaceCategory name: " + interfaceCategory.CategoryName, LogLevel.DEBUG);
+
+            baseCategory = interfaceCategory as BaseCategory;
+            if (baseCategory == null)
+            {
+                Log.WriteLine(nameof(baseCategory) + " was null!", LogLevel.CRITICAL);
+                return;
+            }
+
+            Log.WriteLine(nameof(baseCategory.categoryName) + ": " + baseCategory.categoryName, LogLevel.VERBOSE);
 
             finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(baseCategory.categoryName);
             Log.WriteLine("Category name is: " + baseCategory.categoryName, LogLevel.VERBOSE);
@@ -151,6 +158,12 @@ public static class CategoryAndChannelInitiator
                 nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.DEBUG);
         }
 
+        if (baseCategory == null)
+        {
+            Log.WriteLine(nameof(baseCategory) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
         // Handle channel checking/creation
         await CreateChannelsForTheCategory(baseCategory, socketCategoryChannel, _guild);
     }
@@ -181,6 +194,12 @@ public static class CategoryAndChannelInitiator
 
             baseChannel = interfaceChannel as BaseChannel;
 
+            if (baseChannel == null)
+            {
+                Log.WriteLine(nameof(baseChannel) + " was null!", LogLevel.CRITICAL);
+                return;
+            }
+
             // Channel found from the basecategory (it exists)
             if (_baseCategory.interfaceChannels.Any(x => x.ChannelName == baseChannel.channelName))
             {
@@ -206,7 +225,7 @@ public static class CategoryAndChannelInitiator
 
             if (baseChannel == null)
             {
-                Log.WriteLine(nameof(baseChannel).ToString() + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(baseChannel) + " was null!", LogLevel.CRITICAL);
                 return;
             }
 

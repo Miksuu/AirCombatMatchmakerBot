@@ -4,16 +4,16 @@ using System;
 
 public static class RoleManager
 {
-    public static async Task<string> FindRoleNameById(ulong _roleId)
+    public static Task<string> FindRoleNameById(ulong _roleId)
     {
         var guild = BotReference.GetGuildRef();
         if (guild == null)
         {
             Exceptions.BotGuildRefNull();
-            return "null";
+            return new Task<string>(() => "null");
         }
 
-        return guild.Roles.First(r => r.Id == _roleId).Name;
+        return new Task<string>(() => guild.Roles.First(r => r.Id == _roleId).Name);
     }
 
     public static async Task GrantUserAccessWithId(ulong _userId, ulong _roleId)
