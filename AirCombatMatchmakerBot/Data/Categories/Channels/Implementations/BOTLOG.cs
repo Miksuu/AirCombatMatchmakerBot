@@ -20,7 +20,8 @@ public class BOTLOG : BaseChannel
         };
     }
 
-    public override async Task ActivateChannelFeatures()
+    
+    public override void ActivateChannelFeatures()
     {
         BotMessageLogging.loggingChannelId = channelId;
     }

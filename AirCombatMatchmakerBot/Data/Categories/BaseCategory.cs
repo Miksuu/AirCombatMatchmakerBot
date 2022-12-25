@@ -31,6 +31,7 @@ public abstract class BaseCategory : InterfaceCategory
 
     public BaseCategory()
     {
+        channelNames= new List<ChannelName>();
         interfaceChannels = new List<InterfaceChannel>();
     }
 

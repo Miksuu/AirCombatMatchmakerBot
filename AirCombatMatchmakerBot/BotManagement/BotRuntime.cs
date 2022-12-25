@@ -57,7 +57,7 @@ public class BotRuntimeManager
 
                 await CategoryAndChannelInitiator.CreateCategoriesAndChannelsForTheDiscordServer();
 
-                await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
+                        await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
 
                 await SerializationManager.SerializeUsersOnTheServer();
 

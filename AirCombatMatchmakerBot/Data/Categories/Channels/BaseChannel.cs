@@ -41,5 +41,5 @@ public abstract class BaseChannel : InterfaceChannel
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
 
-    public extern virtual Task ActivateChannelFeatures();
+    public abstract void ActivateChannelFeatures();
 }

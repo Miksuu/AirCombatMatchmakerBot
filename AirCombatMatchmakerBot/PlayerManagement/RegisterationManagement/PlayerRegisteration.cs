@@ -1,5 +1,6 @@
 ﻿using Discord.WebSocket;
 using Discord;
+using System.Runtime.InteropServices;
 
 public static class PlayerRegisteration
 {

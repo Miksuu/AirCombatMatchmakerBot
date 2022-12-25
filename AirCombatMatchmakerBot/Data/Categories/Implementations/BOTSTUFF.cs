@@ -14,7 +14,6 @@ public class BOTSTUFF : BaseCategory
         {
             ChannelName.BOTLOG,
             ChannelName.BOTCOMMANDS
-
         };
     }
 

@@ -23,7 +23,7 @@ public class REGISTRATIONCHANNEL : BaseChannel
         };
     }
 
-    public override async Task ActivateChannelFeatures()
+    public override async void ActivateChannelFeatures()
     {
         Log.WriteLine("Activating channel features on " +
             nameof(REGISTRATIONCHANNEL) + " id: " + base.channelId, LogLevel.VERBOSE);
