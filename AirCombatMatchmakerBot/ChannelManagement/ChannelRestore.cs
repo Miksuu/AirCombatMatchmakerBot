@@ -4,7 +4,7 @@ using System;
 
 public static class ChannelRestore
 {
-    public static Task<bool> CheckIfChannelHasBeenDeletedAndRestoreForCategory(
+    public static async Task<bool> CheckIfChannelHasBeenDeletedAndRestoreForCategory(
         ulong _categoryId,
         InterfaceChannel _interfaceChannel,
         SocketGuild _guild)
@@ -15,7 +15,7 @@ public static class ChannelRestore
             x => x.Id == _interfaceChannel.ChannelId))
         {
             Log.WriteLine("Channel found, returning. ", LogLevel.VERBOSE);
-            return new Task<bool>(() => true);
+            return true;
         }
 
         // Handles deleting the old value
@@ -32,6 +32,6 @@ public static class ChannelRestore
         Log.WriteLine("Channel " + _interfaceChannel.ChannelName +
             " not found, regenerating it...", LogLevel.ERROR);
 
-        return new Task<bool>(() => false);
+        return false;
     }
 }   
