@@ -3,14 +3,14 @@ using Discord;
 using System.Runtime.Serialization;
 
 [DataContract]
-public abstract class BaseLeague : ILeague, InterfaceCategory
+public abstract class BaseLeague : ILeague
 {
     CategoryName ILeague.LeagueCategoryName
     {
         get => leagueCategoryName;
         set => leagueCategoryName = value;
     }
-
+    /*
     CategoryName InterfaceCategory.CategoryName
     {
         get => categoryName;
@@ -27,7 +27,7 @@ public abstract class BaseLeague : ILeague, InterfaceCategory
     {
         get => interfaceLeagueChannels;
         set => interfaceLeagueChannels = value;
-    }
+    }*/
 
     Era ILeague.LeagueEra
     {
@@ -60,9 +60,9 @@ public abstract class BaseLeague : ILeague, InterfaceCategory
     }
 
     public CategoryName leagueCategoryName;
-    public CategoryName categoryName;
-    public List<ChannelName> leagueChannelNames;
-    public List<InterfaceChannel> interfaceLeagueChannels;
+    //public CategoryName categoryName;
+    //public List<ChannelName> leagueChannelNames;
+    //public List<InterfaceChannel> interfaceLeagueChannels;
 
     // Generated based on the implementation
     public Era leagueEra;
@@ -76,8 +76,8 @@ public abstract class BaseLeague : ILeague, InterfaceCategory
 
     public BaseLeague()
     {
-        interfaceLeagueChannels = new List<InterfaceChannel>();
-        leagueChannelNames = new();
+        //interfaceLeagueChannels = new List<InterfaceChannel>();
+        //leagueChannelNames = new();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);

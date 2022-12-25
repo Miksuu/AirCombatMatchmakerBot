@@ -57,15 +57,7 @@ public static class CategoryAndChannelInitiator
             _categoryName = "LEAGUETEMPLATE";
         } */
 
-        InterfaceCategory interfaceCategory = GetCategoryInstance(_categoryName);
-
-        if (interfaceCategory == null)
-        {
-            Log.WriteLine(nameof(interfaceCategory).ToString() + " was null!", LogLevel.CRITICAL);
-            return;
-        }
-
-        Log.WriteLine("interfaceCategory name: " + interfaceCategory.CategoryName, LogLevel.DEBUG);
+        InterfaceCategory interfaceCategory = null;
 
         /*
         if (Database.Instance.StoredLeagues.Any(x=>x.LeagueCategoryName == interfaceCategory.CategoryName))
@@ -82,20 +74,35 @@ public static class CategoryAndChannelInitiator
             finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryName);
         }*/
 
-        BaseCategory baseCategory = interfaceCategory as BaseCategory;
-        if (baseCategory == null)
+        BaseCategory baseCategory = null;
+        if (Database.Instance.StoredLeagues.Any(x => x.LeagueCategoryName.ToString() == _categoryName))
         {
-            Log.WriteLine(nameof(baseCategory).ToString() +
-                " was null! This should be a league category", LogLevel.DEBUG);
+            Log.WriteLine("This is a league category", LogLevel.DEBUG);
+
+            ILeague leagueInterface = GetLeagueInstance(_categoryName);
 
             baseCategory = new LEAGUETEMPLATE();
-            baseCategory.categoryName = interfaceCategory.CategoryName;
+            baseCategory.categoryName = leagueInterface.LeagueCategoryName;
+
+            finalCategoryName = baseCategory.categoryName.ToString();
             finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(baseCategory.categoryName);
 
             Log.WriteLine("League's category name is: " + finalCategoryName, LogLevel.VERBOSE);
         }
         else
         {
+            interfaceCategory = GetCategoryInstance(_categoryName);
+
+            baseCategory = interfaceCategory as BaseCategory;
+
+            if (interfaceCategory == null)
+            {
+                Log.WriteLine(nameof(interfaceCategory).ToString() + " was null!", LogLevel.CRITICAL);
+                return;
+            }
+
+            Log.WriteLine("interfaceCategory name: " + interfaceCategory.CategoryName, LogLevel.DEBUG);
+
             finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(baseCategory.categoryName);
             Log.WriteLine("Category name is: " + baseCategory.categoryName, LogLevel.VERBOSE);
         }
@@ -113,7 +120,9 @@ public static class CategoryAndChannelInitiator
 
         //finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryName);
 
-        if (Database.Instance.CreatedCategoriesWithChannels.Any(x => x.Value.CategoryName == baseCategory.categoryName))
+        /*
+        if (Database.Instance.CreatedCategoriesWithChannels.Any(
+            x => x.Value.CategoryName.ToString() == _categoryName))
         {
             // Replace InterfaceLeagueCategoryCategory with a one that is from the database
             var interfaceCategoryKvp = Database.Instance.CreatedCategoriesWithChannels.First(
@@ -124,7 +133,7 @@ public static class CategoryAndChannelInitiator
 
             categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
                 interfaceCategoryKvp, _guild);
-        }
+        }*/
 
 
         /*
@@ -161,7 +170,7 @@ public static class CategoryAndChannelInitiator
             Log.WriteLine("Adding " + nameof(interfaceCategory) + " to " +
                 nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.VERBOSE);
 
-            Database.Instance.CreatedCategoriesWithChannels.Add(socketCategoryChannel.Id, interfaceCategory);
+            Database.Instance.CreatedCategoriesWithChannels.Add(socketCategoryChannel.Id, baseCategory);
 
             Log.WriteLine("Done adding " + nameof(interfaceCategory) + " to " +
                 nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.DEBUG);

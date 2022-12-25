@@ -8,7 +8,7 @@ public class ONEMODERNBFMGUNS : BaseLeague
     public ONEMODERNBFMGUNS()
     {
         leagueCategoryName = CategoryName.ONEMODERNBFMGUNS;
-        categoryName = CategoryName.ONEMODERNBFMGUNS;
+        //categoryName = CategoryName.ONEMODERNBFMGUNS;
 
         leagueEra = Era.MODERN;
         leaguePlayerCountPerTeam = 1;
