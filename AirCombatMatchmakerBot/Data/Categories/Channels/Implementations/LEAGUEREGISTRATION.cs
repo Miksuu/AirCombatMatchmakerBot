@@ -25,7 +25,7 @@ public class LEAGUEREGISTRATION : BaseChannel
         };
     }
 
-    public override async void ActivateChannelFeatures()
+    public override async Task ActivateChannelFeatures()
     {
         LeagueManager.leagueRegistrationChannelId = channelId;
 

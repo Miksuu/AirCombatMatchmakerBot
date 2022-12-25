@@ -20,7 +20,8 @@ public class LEAGUESTATUS : BaseChannel
         };
     }
 
-    public override void ActivateChannelFeatures()
+    public override Task ActivateChannelFeatures()
     {
+        return Task.CompletedTask;
     }
 }

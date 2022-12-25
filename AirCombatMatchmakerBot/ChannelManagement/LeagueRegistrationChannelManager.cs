@@ -79,7 +79,6 @@ public static class LeagueRegistrationChannelManager
                 leagueNameString, leagueRegistrationChannelMessageId);
 
             Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
-
         }
     }
 }
