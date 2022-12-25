@@ -240,7 +240,7 @@ public static class CategoryAndChannelInitiator
                     " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
             }
 
-            baseChannel.ActivateChannelFeatures();
+            await baseChannel.ActivateChannelFeatures();
 
             Log.WriteLine("Done looping through: " + channelNameString, LogLevel.VERBOSE);
         }
