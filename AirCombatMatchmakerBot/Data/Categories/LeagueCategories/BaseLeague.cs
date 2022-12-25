@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 [DataContract]
 public abstract class BaseLeague : ILeague
 {
-    LeagueCategoryName ILeague.LeagueCategoryName
+    CategoryName ILeague.LeagueCategoryName
     {
         get => leagueCategoryName;
         set => leagueCategoryName = value;
@@ -54,12 +54,11 @@ public abstract class BaseLeague : ILeague
         set => discordleagueReferences = value;
     }
 
-    public LeagueCategoryName leagueCategoryName;
+    public CategoryName leagueCategoryName;
     public List<ChannelName> leagueChannelNames;
     public List<InterfaceChannel> interfaceLeagueChannels;
 
     // Generated based on the implementation
-    public LeagueCategoryName leagueName;
     public Era leagueEra;
     public int leaguePlayerCountPerTeam;
 

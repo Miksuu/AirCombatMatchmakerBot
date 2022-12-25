@@ -7,7 +7,7 @@ public static class LeagueRegistrationChannelManager
     public static async Task CreateLeagueMessages(LEAGUEREGISTRATION _LEAGUEREGISTRATION,
         ITextChannel _leagueRegistrationChannel)
     {
-        foreach (LeagueCategoryName leagueName in Enum.GetValues(typeof(LeagueCategoryName)))
+        foreach (CategoryName leagueName in Enum.GetValues(typeof(CategoryName)))
         {
             Log.WriteLine("Looping on: " + leagueName.ToString(), LogLevel.VERBOSE);
 

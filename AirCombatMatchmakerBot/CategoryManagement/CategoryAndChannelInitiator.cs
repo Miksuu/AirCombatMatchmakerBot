@@ -16,7 +16,7 @@ public static class CategoryAndChannelInitiator
 
             Log.WriteLine("Generating category named: " + categoryName, LogLevel.VERBOSE);
             await GenerateACategoryFromName(_guild, categoryName,
-                _type == typeof(LeagueCategoryName) ? true : false);
+                _type == typeof(CategoryName) ? true : false);
         }
     }
 
@@ -170,7 +170,6 @@ public static class CategoryAndChannelInitiator
         }
 
         await GenerateACategoryType(guild, typeof(CategoryName));
-        await GenerateACategoryType(guild, typeof(LeagueCategoryName));
 
         await SerializationManager.SerializeDB();
     }

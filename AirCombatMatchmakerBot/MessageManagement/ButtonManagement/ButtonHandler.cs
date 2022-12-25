@@ -46,7 +46,7 @@ public static class ButtonHandler
 
                 var findLeagueCategoryType
                     = Database.Instance.StoredLeagues.First(x => x.LeagueCategoryName.ToString() == splitString[1]);
-                LeagueCategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
+                CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
                 var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
 

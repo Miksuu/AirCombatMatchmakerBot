@@ -6,7 +6,7 @@ public static class LeagueManager
 {
     public static ulong leagueRegistrationChannelId;
 
-    public static ILeague GetCategoryInstance(LeagueCategoryName _leagueCategoryName)
+    public static ILeague GetCategoryInstance(CategoryName _leagueCategoryName)
     {
         return (ILeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
@@ -24,9 +24,9 @@ public static class LeagueManager
         }
 
         // Get all of the league category names and loop through them to create the database entries
-        var categoryEnumValues = Enum.GetValues(typeof(LeagueCategoryName));
+        var categoryEnumValues = Enum.GetValues(typeof(CategoryName));
         Log.WriteLine(nameof(categoryEnumValues) + " length: " + categoryEnumValues.Length, LogLevel.VERBOSE);
-        foreach (LeagueCategoryName leagueCategoryName in categoryEnumValues)
+        foreach (CategoryName leagueCategoryName in categoryEnumValues)
         {
             Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString(), LogLevel.VERBOSE);
             // Check here too if a category is missing channelNames
@@ -207,12 +207,12 @@ public static class LeagueManager
         }
     }
 
-    private static bool CheckIfALeagueCategoryNameExistsInDatabase(LeagueCategoryName _leagueName)
+    private static bool CheckIfALeagueCategoryNameExistsInDatabase(CategoryName _leagueName)
     {
         return Database.Instance.StoredLeagues.Any(l => l.LeagueCategoryName == _leagueName);
     }
 
-    public static ILeague GetLeagueInstanceWithLeagueCategoryName(LeagueCategoryName _leagueCategoryName)
+    public static ILeague GetLeagueInstanceWithLeagueCategoryName(CategoryName _leagueCategoryName)
     {
         Log.WriteLine("Getting a league instance with LeagueCategoryName: " + _leagueCategoryName, LogLevel.VERBOSE);
 

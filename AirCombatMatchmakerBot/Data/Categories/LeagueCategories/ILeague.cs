@@ -3,7 +3,7 @@
 [JsonObjectAttribute]
 public interface ILeague
 {
-    public LeagueCategoryName LeagueCategoryName { get; set; }
+    public CategoryName LeagueCategoryName { get; set; }
     //public List<ChannelName> LeagueChannelNames { get; set; }
     //public List<InterfaceChannel> InterfaceLeagueChannels { get; set; }
 

@@ -113,7 +113,7 @@ public static class UserManager
                             var findLeagueCategoryType
                                 = Database.Instance.StoredLeagues.First(
                                     x => x.LeagueCategoryName.ToString() == storedLeagueString);
-                            LeagueCategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
+                            CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
                             var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
                             Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);

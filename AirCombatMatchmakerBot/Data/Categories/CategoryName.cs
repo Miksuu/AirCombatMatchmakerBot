@@ -13,4 +13,12 @@ public enum CategoryName
 
     [EnumMember(Value = "league-template")]
     LEAGUETEMPLATE,
+
+
+    // Leagues
+    [EnumMember(Value = "1v1 Modern BFM Guns")]
+    ONEMODERNBFMGUNS,
+
+    [EnumMember(Value = "1v1 Modern BFM Fox2")]
+    ONEMODERNBFMFOXTWO,
 }
