@@ -46,35 +46,10 @@ public static class CategoryAndChannelInitiator
 
         Log.WriteLine("Generating: " + _categoryName.ToString(), LogLevel.DEBUG);
 
+        InterfaceCategory? interfaceCategory = null;
+        BaseCategory? baseCategory = null;
 
-        /*
-        // Make a LeagueTemplate if the _type == typeof(LeagueCategoryName)
-        if (_isLeagueCategory)
-        {
-            leagueNameCached = EnumExtensions.GetEnumMemberAttrValue(GetLeagueInstance(_categoryName).LeagueCategoryName);
-            Log.WriteLine("leagueNameCached: " + leagueNameCached, LogLevel.VERBOSE);
-
-            _categoryName = "LEAGUETEMPLATE";
-        } */
-
-        InterfaceCategory interfaceCategory = null;
-
-        /*
-        if (Database.Instance.StoredLeagues.Any(x=>x.LeagueCategoryName == interfaceCategory.CategoryName))
-        {
-            var searchingWith = Database.Instance.StoredLeagues.First(
-                x => x.LeagueCategoryName.ToString() == interfaceCategory.CategoryName.ToString()).LeagueCategoryName;
-
-            Log.WriteLine("searching with: " + searchingWith, LogLevel.WARNING);
-
-            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(searchingWith);
-        }
-        else
-        {
-            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryName);
-        }*/
-
-        BaseCategory baseCategory = null;
+        // For league category generating
         if (Database.Instance.StoredLeagues.Any(x => x.LeagueCategoryName.ToString() == _categoryName))
         {
             Log.WriteLine("This is a league category", LogLevel.DEBUG);
@@ -89,10 +64,10 @@ public static class CategoryAndChannelInitiator
 
             Log.WriteLine("League's category name is: " + finalCategoryName, LogLevel.VERBOSE);
         }
+        // For normal category generating
         else
         {
             interfaceCategory = GetCategoryInstance(_categoryName);
-
             baseCategory = interfaceCategory as BaseCategory;
 
             if (interfaceCategory == null)
@@ -106,19 +81,6 @@ public static class CategoryAndChannelInitiator
             finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(baseCategory.categoryName);
             Log.WriteLine("Category name is: " + baseCategory.categoryName, LogLevel.VERBOSE);
         }
-
-        /*
-        if (_isLeagueCategory)
-        {
-            finalCategoryName = leagueNameCached;
-        }
-        else
-        {
-            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryName);
-        }*/
-
-
-        //finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryName);
 
         /*
         if (Database.Instance.CreatedCategoriesWithChannels.Any(
