@@ -84,10 +84,8 @@ public static class CategoryAndChannelInitiator
         }
 
         List<Overwrite> permissionsList = baseCategory.GetGuildPermissions(_guild);
-
         SocketCategoryChannel? socketCategoryChannel = null;
 
-        // For some reason the .Any didn't work, this does the job
         bool contains = false;
         Log.WriteLine("searching for categoryname: " + baseCategory.categoryName, LogLevel.VERBOSE);
         foreach (var ct in Database.Instance.CreatedCategoriesWithChannels)
@@ -95,14 +93,11 @@ public static class CategoryAndChannelInitiator
             Log.WriteLine("categoryname:" + ct.Value.CategoryName, LogLevel.VERBOSE);
             if (ct.Value.CategoryName == baseCategory.categoryName)
             {
-                Log.WriteLine("Found: " + ct.Value.CategoryName, LogLevel.DEBUG);
-                contains = true;
+                // Checks if the channel is also in the discord server itself too, not only database
+                contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(ct, _guild).Result;
                 break;
             }
         }
-
-        //if (Database.Instance.CreatedCategoriesWithChannels.Any(
-        //    x => x.Value.CategoryName.ToString() == baseCategory.categoryName.ToString()))
 
         // The category exists, just find it from the database and then get the id of the socketchannel
         if (contains)
@@ -127,6 +122,8 @@ public static class CategoryAndChannelInitiator
             baseCategory = dbCategory.Value as BaseCategory;
 
             socketCategoryChannel = _guild.GetCategoryChannel(dbCategory.Key);
+
+            // Insert a fix here if the category is still in DB but does not exist
 
             Log.WriteLine("Found " + nameof(socketCategoryChannel) + " that's named: " +
                 socketCategoryChannel.Name, LogLevel.DEBUG);
@@ -204,7 +201,6 @@ public static class CategoryAndChannelInitiator
                 Log.WriteLine(nameof(_baseCategory.interfaceChannels) + " does not contain channel: " +
                     channelName.ToString() + ", getting instance of it", LogLevel.VERBOSE);
                 interfaceChannel = GetChannelInstance(channelName.ToString());
-
             }
 
             baseChannel = interfaceChannel as BaseChannel;

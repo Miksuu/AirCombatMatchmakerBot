@@ -38,6 +38,7 @@ public class BotRuntimeManager
 
             if (!initDone)
             {
+                
                 /*
                 //ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 var guild = BotReference.GetGuildRef();
@@ -53,6 +54,7 @@ public class BotRuntimeManager
                     Log.WriteLine("Deleting category: " + cat.Name, LogLevel.DEBUG);
                     await cat.DeleteAsync();
                 }*/
+                
 
                 await LeagueManager.CreateLeaguesOnStartupIfNecessary();
 
