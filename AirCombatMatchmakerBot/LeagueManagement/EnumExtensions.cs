@@ -28,21 +28,35 @@ public static class EnumExtensions
         return instance;
     }
 
-    public static string? GetEnumMemberAttrValue(object enumVal)
+    public static string GetEnumMemberAttrValue(object _enumVal)
     {
-        string? enumValString = enumVal.ToString();
+        string? enumValString = _enumVal.ToString();
+
+        Log.WriteLine("enumValString: " + enumValString, LogLevel.VERBOSE);
+
         if (enumValString == null)
         {
             return "null";
         }
 
-        var memInfo = enumVal.GetType().GetMember(enumValString);
+        var memInfo = _enumVal.GetType().GetMember(enumValString);
+        Log.WriteLine("meminfo: " + memInfo.Length, LogLevel.VERBOSE);
+
         var attr = memInfo[0].GetCustomAttributes(false).OfType<EnumMemberAttribute>().FirstOrDefault();
+
         if (attr == null)
         {
-            Log.WriteLine(nameof(attr) + " was null!", LogLevel.CRITICAL);
-            return null;
+            Log.WriteLine("attr was null!", LogLevel.CRITICAL);
+            return "null";
         }
+
+        if (attr.Value == null)
+        {
+            Log.WriteLine("attr.value was null!", LogLevel.CRITICAL);
+            return "null";
+        }
+        Log.WriteLine("returning attr.value: " + attr.Value, LogLevel.VERBOSE);
+
         return attr.Value;
     }
 }
