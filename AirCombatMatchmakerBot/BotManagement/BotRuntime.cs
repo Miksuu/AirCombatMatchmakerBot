@@ -38,6 +38,7 @@ public class BotRuntimeManager
 
             if (!initDone)
             {
+                /*
                 //ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 var guild = BotReference.GetGuildRef();
                 foreach (var ch in guild.Channels)
@@ -51,13 +52,13 @@ public class BotRuntimeManager
                 {
                     Log.WriteLine("Deleting category: " + cat.Name, LogLevel.DEBUG);
                     await cat.DeleteAsync();
-                }
+                }*/
 
                 await LeagueManager.CreateLeaguesOnStartupIfNecessary();
 
                 await CategoryAndChannelInitiator.CreateCategoriesAndChannelsForTheDiscordServer();
 
-                        await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
+                await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
 
                 await SerializationManager.SerializeUsersOnTheServer();
 

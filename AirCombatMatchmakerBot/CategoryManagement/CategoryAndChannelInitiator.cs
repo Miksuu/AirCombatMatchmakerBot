@@ -102,9 +102,26 @@ public static class CategoryAndChannelInitiator
 
         SocketCategoryChannel? socketCategoryChannel = null;
 
+        // For some reason the .Any didn't work, this does the job
+        bool contains = false;
+        Log.WriteLine("searching for categoryname: " + baseCategory.categoryName, LogLevel.VERBOSE);
+        foreach (var ct in Database.Instance.CreatedCategoriesWithChannels)
+        {
+            Log.WriteLine("categoryname:" + ct.Value.CategoryName, LogLevel.VERBOSE);
+            if (ct.Value.CategoryName == baseCategory.categoryName)
+            {
+                Log.WriteLine("Found: " + ct.Value.CategoryName, LogLevel.DEBUG);
+                contains = true;
+                break;
+            }
+        }
+
+        //if (Database.Instance.CreatedCategoriesWithChannels.Any(
+        //    x => x.Value.CategoryName.ToString() == baseCategory.categoryName.ToString()))
+
+
         // The category exists, just find it from the database and then get the id of the socketchannel
-        if (Database.Instance.CreatedCategoriesWithChannels.Any(
-            x => x.Value.CategoryName == baseCategory.categoryName))
+        if (contains)
         {
             Log.WriteLine("Category: " + finalCategoryName + " found, checking it's channels", LogLevel.VERBOSE);
 
@@ -121,6 +138,9 @@ public static class CategoryAndChannelInitiator
             Log.WriteLine("Found " + nameof(dbCategory) + " with id: " +
                 dbCategory.Key + " named: " +
                 dbCategory.Value.CategoryName, LogLevel.VERBOSE);
+
+            // Needs to be inserted in to the basecategory, otherwise on channel generation some data won't show
+            baseCategory = dbCategory.Value as BaseCategory;
 
             socketCategoryChannel = _guild.GetCategoryChannel(dbCategory.Key);
 
@@ -186,6 +206,7 @@ public static class CategoryAndChannelInitiator
             interfaceChannel = GetChannelInstance(channelName.ToString());
             Log.WriteLine("interfaceChanneltest: " + interfaceChannel.ChannelName.ToString(), LogLevel.DEBUG);
 
+            baseChannel = interfaceChannel as BaseChannel;
 
             /*
             // Channel found from the basecategory (it exists)
@@ -199,8 +220,25 @@ public static class CategoryAndChannelInitiator
                 baseChannel = interfaceChannel as BaseChannel;
             }*/
 
+            /*
+            bool contains = false;
+
+            Log.WriteLine("searching for channelName: " + baseChannel.channelName + 
+                " with count of: " + _baseCategory.interfaceChannels.Count, LogLevel.VERBOSE);
+
+            foreach (var ch in _baseCategory.interfaceChannels)
+            {
+                Log.WriteLine("channelName: " + ch.ChannelName, LogLevel.VERBOSE);
+                if (ch.ChannelName == baseChannel.channelName)
+                {
+                    Log.WriteLine("Found ch: " + ch.ChannelName, LogLevel.WARNING);
+                    contains = true;
+                    break;
+                }
+            }*/
+
             // Channel found from the basecategory (it exists)
-            if (_baseCategory.interfaceChannels.Any(x => x.ChannelName == channelName))
+            if (_baseCategory.interfaceChannels.Any(x => x.ChannelName == baseChannel.channelName))
             {
                 Log.WriteLine(nameof(_baseCategory.interfaceChannels) + " already contains channel: " +
                     channelName.ToString(), LogLevel.VERBOSE);
@@ -212,8 +250,6 @@ public static class CategoryAndChannelInitiator
 
                 channelExists = await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
                   _socketCategoryChannel.Id, interfaceChannel, _guild);
-
-
             }
             else
             {
@@ -241,7 +277,6 @@ public static class CategoryAndChannelInitiator
             if (!channelExists)
             {
                 List<Overwrite> permissionsList = baseChannel.GetGuildPermissions(_guild);
-
 
                 ulong categoryId = Database.Instance.CreatedCategoriesWithChannels.First(
                      x => x.Value.CategoryName == _baseCategory.categoryName).Key;
