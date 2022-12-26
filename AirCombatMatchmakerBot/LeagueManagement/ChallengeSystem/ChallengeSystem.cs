@@ -7,25 +7,34 @@ public static class ChallengeSystem
     {
         Log.WriteLine("Generating a challenge queue message with _channelId: " + _channelId, LogLevel.VERBOSE);
 
-        foreach (ILeague storedLeague in Database.Instance.StoredLeagues)
+        foreach (var createdCategoriesKvp in Database.Instance.CreatedCategoriesWithChannels)
         {
-            string? leagueName = EnumExtensions.GetEnumMemberAttrValue(storedLeague.LeagueCategoryName);
+            Log.WriteLine("On league: " + createdCategoriesKvp.Value.CategoryName, LogLevel.VERBOSE);
 
-            ulong channelIdToLookFor = storedLeague.DiscordLeagueReferences.leagueChannels[
-                ChannelName.CHALLENGE];
+            string leagueName = EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryName);
 
-            Log.WriteLine("Looping on league: " + leagueName +
-                " looking for id: " + channelIdToLookFor, LogLevel.VERBOSE);
+            Log.WriteLine("Full league name: " + leagueName, LogLevel.VERBOSE);
 
-            if (_channelId == channelIdToLookFor)
+            if (createdCategoriesKvp.Value.InterfaceChannels.Any(
+                    x => x.ChannelId == _channelId))
             {
-                Log.WriteLine("Found: " + channelIdToLookFor +
-                    " is league: " + leagueName, LogLevel.DEBUG);
+                ulong channelIdToLookFor =
+                    createdCategoriesKvp.Value.InterfaceChannels.First(
+                        x => x.ChannelId == _channelId).ChannelId;
 
-                string challengeMessage = ". \n" +
-                    leagueName + " challenge. \n";
+                Log.WriteLine("Looping on league: " + leagueName +
+                    " looking for id: " + channelIdToLookFor, LogLevel.VERBOSE);
 
-                return challengeMessage;
+                if (_channelId == channelIdToLookFor)
+                {
+                    Log.WriteLine("Found: " + channelIdToLookFor +
+                        " is league: " + leagueName, LogLevel.DEBUG);
+
+                    string challengeMessage = ". \n" +
+                        leagueName + " challenge. \n";
+
+                    return challengeMessage;
+                }
             }
         }
 

@@ -40,18 +40,18 @@ public class BotRuntimeManager
             {
                 //ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 var guild = BotReference.GetGuildRef();
-                //foreach (var ch in guild.Channels)
-                //{
-                //    if (ch.Name == "info") continue;
+                foreach (var ch in guild.Channels)
+                {
+                    if (ch.Name == "info") continue;
 
-                //    Log.WriteLine("deleting " + ch.Name, LogLevel.DEBUG);
-                //    await ch.DeleteAsync();
-                //}
-                //foreach (var cat in guild.CategoryChannels)
-                //{
-                //    Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
-                //    await cat.DeleteAsync();
-                //}
+                    Log.WriteLine("deleting " + ch.Name, LogLevel.DEBUG);
+                    await ch.DeleteAsync();
+                }
+                foreach (var cat in guild.CategoryChannels)
+                {
+                    Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
+                    await cat.DeleteAsync();
+                }
 
 
                 await LeagueManager.CreateLeaguesOnStartupIfNecessary();
