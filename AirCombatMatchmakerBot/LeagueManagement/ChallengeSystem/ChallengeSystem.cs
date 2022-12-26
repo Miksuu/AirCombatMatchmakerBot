@@ -31,7 +31,7 @@ public static class ChallengeSystem
                         " is league: " + leagueName, LogLevel.DEBUG);
 
                     string challengeMessage = ". \n" +
-                        leagueName + " challenge. \n";
+                        leagueName + " challenge. Players In The Queue:. \n";
 
                     return challengeMessage;
                 }

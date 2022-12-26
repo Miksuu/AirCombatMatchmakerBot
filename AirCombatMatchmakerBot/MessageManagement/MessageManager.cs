@@ -12,6 +12,40 @@ public static class MessageManager
          GenerateALeagueJoinButtonMessage(_dbLeagueInstance));
     }
 
+    public static async Task ModifyChallengeChannelMessage(ulong _targetChannel)
+    {
+        /*
+        await ModifyMessage(LeagueManager.leagueRegistrationChannelId,
+            _dbLeagueInstance.DiscordLeagueReferences.leagueRegistrationChannelMessageId,
+         GenerateALeagueJoinButtonMessage(_dbLeagueInstance)); */
+    }
+
+    public static string GenerateALeagueJoinButtonMessage(ILeague _leagueInterface)
+    {
+        string? leagueEnumAttrValue =
+            EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
+
+        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
+            leagueEnumAttrValue, LogLevel.VERBOSE);
+
+        return "." + "\n" + leagueEnumAttrValue + "\n" +
+            GetAllowedUnitsAsString(_leagueInterface) + "\n" +
+            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
+    }
+
+    public static string GenerateALeagueChallengeButtonMessage(ILeague _leagueInterface)
+    {
+        string? leagueEnumAttrValue =
+            EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
+
+        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
+            leagueEnumAttrValue, LogLevel.VERBOSE);
+
+        return "." + "\n" + leagueEnumAttrValue + "\n" +
+            GetAllowedUnitsAsString(_leagueInterface) + "\n" +
+            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
+    }
+
     private static async Task ModifyMessage(
         ulong _channelId, ulong _messageId, string _content)
     {
@@ -32,20 +66,6 @@ public static class MessageManager
 
         Log.WriteLine("Modifying the message: " + _messageId + " done.", LogLevel.VERBOSE);
     }
-
-    public static string GenerateALeagueJoinButtonMessage(ILeague _leagueInterface)
-    {
-        string? leagueEnumAttrValue =
-            EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
-
-        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
-            leagueEnumAttrValue, LogLevel.VERBOSE);
-
-        return "." + "\n" + leagueEnumAttrValue + "\n" +
-            GetAllowedUnitsAsString(_leagueInterface) + "\n" +
-            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
-    }
-
 
     private static string GetAllowedUnitsAsString(ILeague _leagueInterface)
     {
