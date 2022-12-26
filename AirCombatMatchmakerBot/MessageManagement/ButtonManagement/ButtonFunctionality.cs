@@ -5,6 +5,33 @@ using System.Linq;
 
 public static class ButtonFunctionality
 {
+    private static ILeague? FindLeagueInterfaceWithSplitStringPart(string _splitStringIdPart)
+    {
+        Log.WriteLine("Starting to find Ileague from db with: " + _splitStringIdPart, LogLevel.VERBOSE);
+
+        var findLeagueCategoryType
+            = Database.Instance.CreatedCategoriesWithChannels.First(x => x.Key.ToString() == _splitStringIdPart);
+        CategoryName leagueCategoryName = findLeagueCategoryType.Value.CategoryName;
+
+        Log.WriteLine("found: " + nameof(leagueCategoryName) + ": " + leagueCategoryName.ToString(), LogLevel.VERBOSE);
+
+        var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
+
+        Log.WriteLine("Found interface " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
+
+        ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+
+        Log.WriteLine(nameof(dbLeagueInstance) + " db: " + dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
+
+        if (dbLeagueInstance == null)
+        {
+            Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
+            return null;
+        }
+
+        return dbLeagueInstance;
+    }
+
     public static async Task<string> MainRegistration(SocketMessageComponent _component)
     {
         string response = "";
@@ -36,23 +63,7 @@ public static class ButtonFunctionality
 
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
-        var findLeagueCategoryType
-            = Database.Instance.CreatedCategoriesWithChannels.First(x => x.Key.ToString() == _splitString);
-        CategoryName leagueCategoryName = findLeagueCategoryType.Value.CategoryName;
-
-        var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
-
-        Log.WriteLine("leagueInterface: " + leagueInterface, LogLevel.VERBOSE);
-
-        Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
-
-        ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
-
-        if (dbLeagueInstance == null)
-        {
-            Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
-            return;
-        }
+        ILeague dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
 
         Log.WriteLine("found: " + nameof(dbLeagueInstance) + dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
 
@@ -128,6 +139,15 @@ public static class ButtonFunctionality
         }
 
         await _component.RespondAsync(responseMsg, ephemeral: true);
+    }
 
+    public static async Task PostChallenge(SocketMessageComponent _component, string _splitString)
+    {
+        Log.WriteLine("Starting processing a challenge by: " + _component.User.Id +
+            " for league: " + _splitString, LogLevel.VERBOSE);
+
+        ILeague dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
+
+        Log.WriteLine("Adding team to the challenge list", LogLevel.VERBOSE);
     }
 }

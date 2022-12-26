@@ -26,6 +26,9 @@ public static class ButtonHandler
             case "leagueRegistration":
                 await ButtonFunctionality.LeagueRegistration(_component, splitString[1]);
                 break;
+            case "challenge":
+                await ButtonFunctionality.PostChallenge(_component, splitString[1]);
+                break;
             default:
                 response = "Something went wrong with the button press!";
                 logLevel = LogLevel.ERROR;
