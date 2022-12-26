@@ -5,7 +5,7 @@ using System.Linq;
 
 public static class ButtonFunctionality
 {
-    private static ILeague? FindLeagueInterfaceWithSplitStringPart(string _splitStringIdPart)
+    private static ILeague FindLeagueInterfaceWithSplitStringPart(string _splitStringIdPart)
     {
         Log.WriteLine("Starting to find Ileague from db with: " + _splitStringIdPart, LogLevel.VERBOSE);
 
@@ -22,12 +22,6 @@ public static class ButtonFunctionality
         ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
 
         Log.WriteLine(nameof(dbLeagueInstance) + " db: " + dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
-
-        if (dbLeagueInstance == null)
-        {
-            Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
-            return null;
-        }
 
         return dbLeagueInstance;
     }
@@ -146,8 +140,31 @@ public static class ButtonFunctionality
         Log.WriteLine("Starting processing a challenge by: " + _component.User.Id +
             " for league: " + _splitString, LogLevel.VERBOSE);
 
-        ILeague dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
+        ILeague? dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
+
+        if (dbLeagueInstance == null)
+        {
+            Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
+            return;
+        }
 
         Log.WriteLine("Adding team to the challenge list", LogLevel.VERBOSE);
+
+        Team team = TeamManager.FindActiveTeamByPlayerIdInAPredefinedLeague(
+            dbLeagueInstance, ulong.Parse(_splitString));
+
+        Log.WriteLine("Team found: " + team.teamName + " (" + team.teamId + ")" +
+            " adding it to the challenge queue with count: " +
+            dbLeagueInstance.LeagueData.challengeStatus.teamsInTheQueue.Count, LogLevel.VERBOSE);
+
+        dbLeagueInstance.LeagueData.challengeStatus.teamsInTheQueue.Add(team);
+
+        Log.WriteLine("Done adding " + team.teamName + " to the " + dbLeagueInstance.LeagueCategoryName +
+            "'s queue. It has " + dbLeagueInstance.LeagueData.challengeStatus.teamsInTheQueue.Count +
+            "teams now. Printing them out:", LogLevel.DEBUG);
+
+        Log.WriteLine(TeamManager.ReturnTeamsInTheQueueOfAChallenge(
+            dbLeagueInstance.LeagueData.challengeStatus.teamsInTheQueue,
+            dbLeagueInstance.LeaguePlayerCountPerTeam), LogLevel.VERBOSE);
     }
 }
