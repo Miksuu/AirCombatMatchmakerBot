@@ -71,7 +71,7 @@ public static class MessageManager
 
         foreach (Team team in _leagueInterface.LeagueData.Teams)
         {
-            if (team.active)
+            if (team.teamActive)
             {
                 count++;
                 Log.WriteLine("team: " + team.teamName +

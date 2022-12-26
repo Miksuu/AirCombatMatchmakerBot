@@ -97,7 +97,7 @@ public static class UserManager
                             player.playerDiscordId + ")", LogLevel.VERBOSE);
                         if (player.playerDiscordId == _userId)
                         {
-                            team.active = false;
+                            team.teamActive = false;
 
                             teamFound = true;
                             Log.WriteLine("Set team: " + team.teamName + " deactive in league: " +
@@ -301,7 +301,7 @@ public static class UserManager
 
     public static async void SetPlayerActiveAndGrantHimTheRole(ILeague _dbLeagueInstance, ulong _playerId)
     {
-        LeagueManager.ReturnTeamThatThePlayerIsIn(_dbLeagueInstance.LeagueData.Teams, _playerId).active = true;
+        LeagueManager.ReturnTeamThatThePlayerIsIn(_dbLeagueInstance.LeagueData.Teams, _playerId).teamActive = true;
         await RoleManager.GrantUserAccessWithId(
             _playerId, _dbLeagueInstance.DiscordLeagueReferences.leagueRoleId);
     }

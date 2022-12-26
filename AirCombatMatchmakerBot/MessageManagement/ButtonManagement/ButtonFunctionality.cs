@@ -107,7 +107,7 @@ public static class ButtonFunctionality
                     return;
                 }
 
-                // Add the role for the player for the specific league and set him active
+                // Add the role for the player for the specific league and set him teamActive
                 UserManager.SetPlayerActiveAndGrantHimTheRole(dbLeagueInstance, _component.User.Id);
 
                 // Modify the message to have the new player count
