@@ -42,13 +42,14 @@ public class CommandBuilder
         {
             Log.WriteLine("Installing a command: " + _commandName + ", with description: " + _description, LogLevel.DEBUG);
 
-            if (BotReference.clientRef == null)
+            var client = BotReference.GetClientRef();
+            if (client == null)
             {
                 Exceptions.BotClientRefNull();
                 return guildCommand;
             }
 
-            BotReference.clientRef.Rest.CreateGuildCommand(guildCommand.Build(), BotReference.GuildID);
+            client.Rest.CreateGuildCommand(guildCommand.Build(), BotReference.GuildID);
         }
 
         return guildCommand;
@@ -63,11 +64,12 @@ public class CommandBuilder
         Log.WriteLine("Installing a command: " + _commandName + " | with description: " + _description + 
             " | that has an option with name: " + _optionName + " | and optionDescription: " + _optionDescription, LogLevel.DEBUG);
 
-        if (BotReference.clientRef == null)
+        var client = BotReference.GetClientRef();
+        if (client == null)
         {
             Exceptions.BotClientRefNull();
             return;
         }
-        await BotReference.clientRef.Rest.CreateGuildCommand(guildCommandWithOptions.Build(), BotReference.GuildID);
+        await client.Rest.CreateGuildCommand(guildCommandWithOptions.Build(), BotReference.GuildID);
     }
 }

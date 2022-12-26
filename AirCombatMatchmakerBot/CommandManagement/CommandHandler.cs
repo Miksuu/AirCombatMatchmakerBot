@@ -2,18 +2,23 @@
 
 public static class CommandHandler
 {
+    // Installs the commands that are predefined in the code itself
     public static Task InstallCommandsAsync()
     {
         Log.WriteLine("Starting to install the commands.", LogLevel.VERBOSE);
 
-        if (BotReference.clientRef == null)
+        var client = BotReference.GetClientRef();
+
+        if (client == null)
         {
             Exceptions.BotClientRefNull();
             return Task.CompletedTask;
         }
 
-        BotReference.clientRef.Ready += CommandBuilder.PrepareCommands;
-        BotReference.clientRef.SlashCommandExecuted += SlashCommandHandler;
+        client.Ready += CommandBuilder.PrepareCommands;
+
+        // Listens for command usage
+        client.SlashCommandExecuted += SlashCommandHandler;
 
         return Task.CompletedTask;
     }

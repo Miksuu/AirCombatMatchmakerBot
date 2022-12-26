@@ -2,7 +2,7 @@
 {
     public static void BotClientRefNull()
     {
-        Log.WriteLine(nameof(BotReference.clientRef) + " was null!", LogLevel.CRITICAL);
+        Log.WriteLine("ClientRef was null!", LogLevel.CRITICAL);
     }
 
     public static void BotGuildRefNull()
