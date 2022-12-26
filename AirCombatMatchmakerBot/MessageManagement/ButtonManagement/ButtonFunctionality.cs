@@ -30,14 +30,14 @@ public static class ButtonFunctionality
         return response;
     }
 
-    public static async Task LeagueRegistration(SocketMessageComponent _component, string[] _splitString)
+    public static async Task LeagueRegistration(SocketMessageComponent _component, string _splitString)
     {
         string responseMsg = "";
 
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
         var findLeagueCategoryType
-            = Database.Instance.CreatedCategoriesWithChannels.First(x => x.Key.ToString() == _splitString[1]);
+            = Database.Instance.CreatedCategoriesWithChannels.First(x => x.Key.ToString() == _splitString);
         CategoryName leagueCategoryName = findLeagueCategoryType.Value.CategoryName;
 
         var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);

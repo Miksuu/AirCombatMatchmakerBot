@@ -24,7 +24,7 @@ public static class ButtonHandler
                 response = await ButtonFunctionality.MainRegistration(_component);
                 break;
             case "leagueRegistration":
-                await ButtonFunctionality.LeagueRegistration(_component, splitString);
+                await ButtonFunctionality.LeagueRegistration(_component, splitString[1]);
                 break;
             default:
                 response = "Something went wrong with the button press!";
