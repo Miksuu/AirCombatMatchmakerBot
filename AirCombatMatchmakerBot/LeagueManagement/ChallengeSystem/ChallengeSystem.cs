@@ -7,8 +7,7 @@ public static class ChallengeSystem
     {
         Log.WriteLine("Generating a challenge queue message with _channelId: " + _channelId, LogLevel.VERBOSE);
 
-        foreach (ILeague storedLeague in
-            Database.Instance.StoredLeagues)
+        foreach (ILeague storedLeague in Database.Instance.StoredLeagues)
         {
             string? leagueName = EnumExtensions.GetEnumMemberAttrValue(storedLeague.LeagueCategoryName);
 
@@ -16,7 +15,7 @@ public static class ChallengeSystem
                 ChannelName.CHALLENGE];
 
             Log.WriteLine("Looping on league: " + leagueName +
-                " looking for id: " +channelIdToLookFor, LogLevel.VERBOSE);
+                " looking for id: " + channelIdToLookFor, LogLevel.VERBOSE);
 
             if (_channelId == channelIdToLookFor)
             {

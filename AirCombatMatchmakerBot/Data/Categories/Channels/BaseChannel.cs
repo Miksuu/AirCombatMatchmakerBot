@@ -16,6 +16,12 @@ public abstract class BaseChannel : InterfaceChannel
         get => channelId;
         set => channelId = value;
     }
+
+    ulong InterfaceChannel.ChannelsCategoryId
+    {
+        get => channelsCategoryId;
+        set => channelsCategoryId = value;
+    }
     Dictionary<string, ulong> InterfaceChannel.ChannelFeaturesWithMessageIds
     {
         get => channelFeaturesWithMessageIds;
@@ -31,7 +37,8 @@ public abstract class BaseChannel : InterfaceChannel
 
     public ChannelName channelName;
     public ulong channelId;
-    public BotChannelType botChannelType;
+    public ulong channelsCategoryId;
+    //public BotChannelType botChannelType;
 
     public Dictionary<string, ulong> channelFeaturesWithMessageIds;
     public BaseChannel()

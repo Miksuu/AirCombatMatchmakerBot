@@ -200,6 +200,10 @@ public static class CategoryAndChannelInitiator
                 return;
             }
 
+            // Insert the category's ID for easier access for the channels later on
+            // (for channel specific features for example)
+            baseChannel.channelsCategoryId= _socketCategoryChannel.Id;
+
             // Channel found from the basecategory (it exists)
             if (_baseCategory.interfaceChannels.Any(x => x.ChannelName == baseChannel.channelName))
             {

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Converters;
+﻿/*using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
@@ -7,4 +7,4 @@ public enum BotChannelType
 {
     CHANNEL,
     LEAGUECHANNEL,
-}
+}*/

@@ -46,13 +46,14 @@ public static class ButtonHandler
 
                 Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
+                // Change this to search with category ID!!!
                 var findLeagueCategoryType
                     = Database.Instance.StoredLeagues.First(x => x.LeagueCategoryName.ToString() == splitString[1]);
                 CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
                 var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
 
-                Log.WriteLine("leagueInterface: " + leagueInterface,LogLevel.VERBOSE);
+                //Log.WriteLine("leagueInterface: " + leagueInterface,LogLevel.VERBOSE);
 
                 Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
@@ -133,7 +134,7 @@ public static class ButtonHandler
                 {
                     responseMsg = "Error joining the league! Press the register button first!" +
                         " (only admins should be able to see this)";
-                    Log.WriteLine("Player: " + _component.User.Id + "(" + _component.User.Username + ")" +
+                    Log.WriteLine("Player: " + _component.User.Id + " (" + _component.User.Username + ")" +
                         " tried to join a league before registering", LogLevel.WARNING);
                 }
 

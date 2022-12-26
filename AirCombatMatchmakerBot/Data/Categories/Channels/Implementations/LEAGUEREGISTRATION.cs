@@ -10,7 +10,7 @@ public class LEAGUEREGISTRATION : BaseChannel
     public LEAGUEREGISTRATION()
     {
         channelName = ChannelName.LEAGUEREGISTRATION;
-        botChannelType = BotChannelType.CHANNEL;
+        //botChannelType = BotChannelType.CHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
@@ -47,7 +47,6 @@ public class LEAGUEREGISTRATION : BaseChannel
         Log.WriteLine("Channel found: " + channel.Name +
             "(" + channel.Id + ")", LogLevel.VERBOSE);
 
-        //await LeagueCategoryAndChannelInitiator.CreateLeagueCategoriesAndChannelsForTheDiscordServer();
         await LeagueRegistrationChannelManager.CreateLeagueMessages(this, channel);        
     }
 }

@@ -10,7 +10,7 @@ public class BOTLOG : BaseChannel
     public BOTLOG()
     {
         channelName = ChannelName.BOTLOG;
-        botChannelType = BotChannelType.CHANNEL;
+        //botChannelType = BotChannelType.CHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)

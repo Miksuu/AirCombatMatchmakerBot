@@ -10,7 +10,7 @@ public class LEAGUESTATUS : BaseChannel
     public LEAGUESTATUS()
     {
         channelName = ChannelName.LEAGUESTATUS;
-        botChannelType = BotChannelType.LEAGUECHANNEL;
+        //botChannelType = BotChannelType.LEAGUECHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)

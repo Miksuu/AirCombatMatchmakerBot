@@ -10,7 +10,7 @@ public class REGISTRATIONCHANNEL : BaseChannel
     public REGISTRATIONCHANNEL()
     {
         channelName = ChannelName.REGISTRATIONCHANNEL;
-        botChannelType = BotChannelType.CHANNEL;
+        //botChannelType = BotChannelType.CHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)

@@ -10,7 +10,7 @@ public class CHALLENGE : BaseChannel
     public CHALLENGE()
     {
         channelName = ChannelName.CHALLENGE;
-        botChannelType = BotChannelType.LEAGUECHANNEL;
+        //botChannelType = BotChannelType.LEAGUECHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
@@ -20,10 +20,27 @@ public class CHALLENGE : BaseChannel
         };
     }
 
-    public override Task ActivateChannelFeatures()
+    public override async Task ActivateChannelFeatures()
     {
-        //Log.WriteLine("Activating challenge system on channel: " + leagueChannelId, LogLevel.VERBOSE);
-        //ChallengeSystem.GenerateChallengeQueueMessage(leagueChannelId);
-        return Task.CompletedTask;
+        Log.WriteLine("Activating challenge system on channel: " + channelId, LogLevel.VERBOSE);
+
+        string channelFeatureKey = "challenge";
+
+        if (channelFeaturesWithMessageIds.ContainsKey(channelFeatureKey))
+        {
+            Log.WriteLine("Already contains key " + channelFeatureKey, LogLevel.VERBOSE);
+            return;
+        }
+
+        ulong buttonId = await ButtonComponents.CreateButtonMessage(
+            channelId,
+            ChallengeSystem.GenerateChallengeQueueMessage(channelId),
+            "CHALLENGE!",
+            channelFeatureKey + "_" + channelsCategoryId);
+
+        channelFeaturesWithMessageIds.Add(channelFeatureKey, buttonId);
+
+        Log.WriteLine("Done activating channel features on " +
+            nameof(CHALLENGE) + " id: " + base.channelId, LogLevel.VERBOSE);
     }
 }
