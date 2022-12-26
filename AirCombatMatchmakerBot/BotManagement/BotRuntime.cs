@@ -4,8 +4,6 @@ using Discord;
 // The main class to what the bot's functions revolve around
 public class BotRuntimeManager
 {
-    bool initDone = false;
-
     public async Task BotRuntimeTask()
     {
         LogLevelNormalization.InitLogLevelNormalizationStrings();
@@ -17,13 +15,8 @@ public class BotRuntimeManager
         // Set up client and return it
         var client = BotReference.SetClientRefAndReturnit();
 
-        //GlobalVariables.clientRef.ReactionAdded += ReactionManager.Instance.HandleReactionAddTask;
-        //GlobalVariables.clientRef.ReactionRemoved += ReactionManager.Instance.HandleReactionRemove;
-
-        // var token = Environment.GetEnvironmentVariable("NameOfYourEnvironmentVariable");
+        // Reads token from the same directory as the .exe
         var token = File.ReadAllText("token.txt");
-        // var token = JsonConvert.DeserializeObject<AConfigurationClass>(File.ReadAllText("config.json")).Token;
-
         await client.LoginAsync(TokenType.Bot, token);
         await client.StartAsync();
 
@@ -47,14 +40,15 @@ public class BotRuntimeManager
             //    await cat.DeleteAsync();
             //}
 
-            // Creates the league references to the database (must be run before creating the channels)
+            // Creates the league references to the database
+            // (must be run before creating the channels)
             await LeagueManager.CreateLeaguesOnStartupIfNecessary();
 
             // Creates the categories and the channels from the interfaces
             // (dependant on the data from CreateLeaguesOnStartupIfNecessary())
-            await CategoryAndChannelInitiator.CreateCategoriesAndChannelsForTheDiscordServer();
+            await CategoryAndChannelManager.CreateCategoriesAndChannelsForTheDiscordServer();
 
-            // Checks the users that left during down time and sets their teams active, for example
+            // Checks the users that left during down time and sets their teams active
             await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
             await SerializationManager.SerializeUsersOnTheServer();
 

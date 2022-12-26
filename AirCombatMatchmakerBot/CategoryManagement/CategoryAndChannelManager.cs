@@ -4,8 +4,13 @@ using System;
 using System.Diagnostics.Metrics;
 using System.Threading.Channels;
 
-public static class CategoryAndChannelInitiator
+public static class CategoryAndChannelManager
 {
+    // Do not create these categories,
+    // as they are used as template (such as generating a baseline league)
+    private static List<string> categoriesThatWontGetGenerated = new List<string> { 
+        "LEAGUETEMPLATE" };
+
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
     {
         Log.WriteLine("Starting to create categories and channels for" +
@@ -18,46 +23,52 @@ public static class CategoryAndChannelInitiator
             return;
         }
 
-        await GenerateACategoryType(guild);
+        // Get the names of the members of the specific enum type and
+        // loop through the names of the categories
+        var names = Enum.GetNames(typeof(CategoryName));
+        Log.WriteLine(nameof(names) + " count: " + names.Length, LogLevel.VERBOSE);
+        foreach (string categoryName in names)
+        {
+            Log.WriteLine("Looping on category name: " + categoryName, LogLevel.VERBOSE);
 
+            // Skip creating from the default LeagueTemplate
+            if (categoriesThatWontGetGenerated.Contains(categoryName))
+            {
+                Log.WriteLine("category name is: " + categoryName +
+                    " skipping creation for this type of category", LogLevel.VERBOSE);
+                continue;
+            }
+
+            await GenerateACategoryFromName(guild, categoryName);
+        }
+
+        Log.WriteLine("Done looping through the category names, serialiazing.", LogLevel.VERBOSE);
         await SerializationManager.SerializeDB();
     }
 
-    public static async Task GenerateACategoryType(SocketGuild _guild)
-    {
-        // Get the names of the members of the specific enum type and loop through the names of the categories
-        var names = Enum.GetNames(typeof(CategoryName));
-        foreach (string categoryName in names)
-        {
-            // Skip creating from the default LeagueTemplate
-            if (categoryName == "LEAGUETEMPLATE") continue;
-
-            Log.WriteLine("Generating category named: " + categoryName, LogLevel.VERBOSE);
-            await GenerateACategoryFromName(_guild, categoryName);
-        }
-    }
-
-    public static async Task GenerateACategoryFromName(
+    private static async Task GenerateACategoryFromName(
         SocketGuild _guild, string _categoryName)
     {
         string finalCategoryName = "";
-
         bool isLeague = false;
         CategoryName? leagueCategoryName = null;
-
-        Log.WriteLine("Generating: " + _categoryName.ToString(), LogLevel.DEBUG);
-
         InterfaceCategory? interfaceCategory = null;
         BaseCategory? baseCategory = null;
 
+        Log.WriteLine("Generating category named: " + _categoryName, LogLevel.VERBOSE);
+
         // For league category generating
-        if (Database.Instance.StoredLeagues.Any(x => x.LeagueCategoryName.ToString() == _categoryName))
+        if (Database.Instance.StoredLeagues.Any(
+            x => x.LeagueCategoryName.ToString() == _categoryName))
         {
             Log.WriteLine("This is a league category", LogLevel.DEBUG);
 
             isLeague = true;
 
             ILeague leagueInterface = GetLeagueInstance(_categoryName);
+
+            Log.WriteLine("Got " + nameof(leagueInterface) +
+                leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
             baseCategory = new LEAGUETEMPLATE();
             baseCategory.categoryName = leagueInterface.LeagueCategoryName;
@@ -77,11 +88,13 @@ public static class CategoryAndChannelInitiator
 
             if (interfaceCategory == null)
             {
-                Log.WriteLine(nameof(interfaceCategory).ToString() + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(interfaceCategory).ToString() +
+                    " was null!", LogLevel.CRITICAL);
                 return;
             }
 
-            Log.WriteLine("interfaceCategory name: " + interfaceCategory.CategoryName, LogLevel.DEBUG);
+            Log.WriteLine("interfaceCategory name: " +
+                interfaceCategory.CategoryName, LogLevel.DEBUG);
 
             baseCategory = interfaceCategory as BaseCategory;
             if (baseCategory == null)
@@ -90,7 +103,8 @@ public static class CategoryAndChannelInitiator
                 return;
             }
 
-            Log.WriteLine(nameof(baseCategory.categoryName) + ": " + baseCategory.categoryName, LogLevel.VERBOSE);
+            Log.WriteLine(nameof(baseCategory.categoryName) +
+                ": " + baseCategory.categoryName, LogLevel.VERBOSE);
 
             finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(baseCategory.categoryName);
             Log.WriteLine("Category name is: " + baseCategory.categoryName, LogLevel.VERBOSE);
@@ -107,15 +121,18 @@ public static class CategoryAndChannelInitiator
             if (ct.Value.CategoryName == baseCategory.categoryName)
             {
                 // Checks if the channel is also in the discord server itself too, not only database
-                contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(ct, _guild).Result;
+                contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
+                    ct, _guild).Result;
                 break;
             }
         }
 
-        // The category exists, just find it from the database and then get the id of the socketchannel
+        // The category exists,
+        // just find it from the database and then get the id of the socketchannel
         if (contains)
         {
-            Log.WriteLine("Category: " + finalCategoryName + " found, checking it's channels", LogLevel.VERBOSE);
+            Log.WriteLine("Category: " + finalCategoryName +
+                " found, checking it's channels", LogLevel.VERBOSE);
 
             var dbCategory = Database.Instance.CreatedCategoriesWithChannels.First(
                 x => x.Value.CategoryName == baseCategory.categoryName);
@@ -131,7 +148,8 @@ public static class CategoryAndChannelInitiator
                 dbCategory.Key + " named: " +
                 dbCategory.Value.CategoryName, LogLevel.VERBOSE);
 
-            // Needs to be inserted in to the basecategory, otherwise on channel generation some data won't show
+            // Needs to be inserted in to the basecategory,
+            // otherwise on channel generation some data won't show
             baseCategory = dbCategory.Value as BaseCategory;
 
             socketCategoryChannel = _guild.GetCategoryChannel(dbCategory.Key);
@@ -153,7 +171,8 @@ public static class CategoryAndChannelInitiator
                 return;
             }
 
-            Log.WriteLine("Created a " + nameof(socketCategoryChannel) + " with id: " + socketCategoryChannel.Id +
+            Log.WriteLine("Created a " + nameof(socketCategoryChannel) +
+                " with id: " + socketCategoryChannel.Id +
                 " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
 
             // Inserts the id to the discord league references to be cached for later use
@@ -169,7 +188,8 @@ public static class CategoryAndChannelInitiator
             Log.WriteLine("Adding " + nameof(baseCategory) + " to " +
                 nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.VERBOSE);
 
-            Database.Instance.CreatedCategoriesWithChannels.Add(socketCategoryChannel.Id, baseCategory);
+            Database.Instance.CreatedCategoriesWithChannels.Add(
+                socketCategoryChannel.Id, baseCategory);
 
             Log.WriteLine("Done adding " + nameof(baseCategory) + " to " +
                 nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.DEBUG);
@@ -185,7 +205,7 @@ public static class CategoryAndChannelInitiator
         await CreateChannelsForTheCategory(baseCategory, socketCategoryChannel, _guild);
     }
 
-    public static async Task CreateChannelsForTheCategory(
+    private static async Task CreateChannelsForTheCategory(
         BaseCategory _baseCategory,
         SocketCategoryChannel _socketCategoryChannel,
         SocketGuild _guild)
@@ -207,7 +227,8 @@ public static class CategoryAndChannelInitiator
             BaseChannel? baseChannel = null;
 
             interfaceChannel = GetChannelInstance(channelName.ToString());
-            Log.WriteLine("interfaceChanneltest: " + interfaceChannel.ChannelName.ToString(), LogLevel.DEBUG);
+            Log.WriteLine("interfaceChanneltest: " +
+                interfaceChannel.ChannelName.ToString(), LogLevel.DEBUG);
             
             baseChannel = interfaceChannel as BaseChannel;
 
@@ -224,17 +245,21 @@ public static class CategoryAndChannelInitiator
                     channelName.ToString(), LogLevel.VERBOSE);
 
                 // Replace interfaceChannel with a one that is from the database
-                interfaceChannel = _baseCategory.interfaceChannels.First(x => x.ChannelName == channelName);
+                interfaceChannel = _baseCategory.interfaceChannels.First(
+                    x => x.ChannelName == channelName);
 
-                Log.WriteLine("Replaced with: " + interfaceChannel.ChannelName + " from db", LogLevel.DEBUG);
+                Log.WriteLine("Replaced with: " +
+                    interfaceChannel.ChannelName + " from db", LogLevel.DEBUG);
 
-                channelExists = await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
+                channelExists = 
+                   await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
                   _socketCategoryChannel.Id, interfaceChannel, _guild);
             }
             else
             {
-                Log.WriteLine(nameof(_baseCategory.interfaceChannels) + " does not contain channel: " +
-                    channelName.ToString() + ", getting instance of it", LogLevel.VERBOSE);
+                Log.WriteLine(nameof(_baseCategory.interfaceChannels) +
+                    " does not contain channel: " + channelName.ToString() +
+                    ", getting instance of it", LogLevel.VERBOSE);
                 interfaceChannel = GetChannelInstance(channelName.ToString());
             }
 
@@ -265,7 +290,8 @@ public static class CategoryAndChannelInitiator
                      x => x.Value.CategoryName == _baseCategory.categoryName).Key;
 
                 Log.WriteLine("Creating a channel named: " + channelNameString + " for category: "
-                            + _baseCategory.categoryName + " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
+                            + _baseCategory.categoryName + " (" +
+                            _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
 
                 baseChannel.channelId = await ChannelManager.CreateAChannelForTheCategory(
                     _guild, channelNameString, _socketCategoryChannel.Id, permissionsList);
@@ -275,7 +301,8 @@ public static class CategoryAndChannelInitiator
 
                 _baseCategory.interfaceChannels.Add(baseChannel);
 
-                Log.WriteLine("Done adding to the db. Count is now: " + _baseCategory.interfaceChannels.Count +
+                Log.WriteLine("Done adding to the db. Count is now: " +
+                    _baseCategory.interfaceChannels.Count +
                     " for the list of category: " + _baseCategory.categoryName.ToString() +
                     " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
             }
@@ -286,17 +313,17 @@ public static class CategoryAndChannelInitiator
         }
     }
 
-    public static InterfaceCategory GetCategoryInstance(string _categoryName)
+    private static InterfaceCategory GetCategoryInstance(string _categoryName)
     {
         return (InterfaceCategory)EnumExtensions.GetInstance(_categoryName);
     }
 
-    public static ILeague GetLeagueInstance(string _leagueName)
+    private static ILeague GetLeagueInstance(string _leagueName)
     {
         return (ILeague)EnumExtensions.GetInstance(_leagueName);
     }
 
-    public static InterfaceChannel GetChannelInstance(string _channelName)
+    private static InterfaceChannel GetChannelInstance(string _channelName)
     {
         return (InterfaceChannel)EnumExtensions.GetInstance(_channelName);
     }
