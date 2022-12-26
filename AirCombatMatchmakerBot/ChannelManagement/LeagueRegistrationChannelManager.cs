@@ -71,9 +71,11 @@ public static class LeagueRegistrationChannelManager
                 return;
             }
 
+            var leagueInterfaceFromDatabase = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+
             ulong leagueRegistrationChannelMessageId = 
                 await LeagueChannelManager.CreateALeagueJoinButton(
-                    _leagueRegistrationChannel, leagueInterface, leagueNameString);
+                    _leagueRegistrationChannel, leagueInterfaceFromDatabase, leagueNameString);
 
             _LEAGUEREGISTRATION.channelFeaturesWithMessageIds.Add(
                 leagueNameString, leagueRegistrationChannelMessageId);
