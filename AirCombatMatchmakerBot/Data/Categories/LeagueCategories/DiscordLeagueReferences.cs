@@ -5,7 +5,7 @@ public class DiscordLeagueReferences
     public ulong leagueRegistrationChannelMessageId { get; set; }
 
     // The reference to the category created by the system
-    public ulong leagueCategoryId { get; set; }
+    private ulong leagueCategoryId { get; set; }
 
     // The references for the channelNames inside the category
     public Dictionary<ChannelName, ulong> leagueChannels { get; set; }
@@ -16,5 +16,18 @@ public class DiscordLeagueReferences
     public DiscordLeagueReferences()
     {
         leagueChannels = new();
+    }
+
+    public ulong GetLeagueCategoryId()
+    {
+        Log.WriteLine("Getting id: " + leagueCategoryId, LogLevel.VERBOSE);
+        return leagueCategoryId;
+    }
+
+    public void SetLeagueCategoryId(ulong _id)
+    {
+        Log.WriteLine("Settind id: " + leagueCategoryId + " to: " +
+            leagueCategoryId,LogLevel.VERBOSE);
+        leagueCategoryId = _id;
     }
 }

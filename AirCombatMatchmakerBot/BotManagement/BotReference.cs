@@ -23,7 +23,7 @@ public static class BotReference
         return clientRef;
     }
 
-    public static DiscordSocketClient SetClientRefAndReturnit()
+    public static DiscordSocketClient SetClientRefAndReturnIt()
     {
         // Required after some discord API change
         var config = new DiscordSocketConfig()

@@ -45,34 +45,17 @@ public static class LeagueManager
             }
 
             // Add the new newly from the interface implementations added units here
-            if (Database.Instance.StoredLeagues.Any(
-                x => x.LeagueCategoryName == interfaceLeagueCategory.LeagueCategoryName))
+            if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(
+                interfaceLeagueCategory.LeagueCategoryName))
             {
-                Log.WriteLine(nameof(Database.Instance.StoredLeagues) +
+                Log.WriteLine(nameof(Database.Instance.Leagues) +
                     " already contains: " + interfaceLeagueCategory.ToString() +
                     " adding new units to the league", LogLevel.VERBOSE);
 
                 // Update the units and to the database (before interfaceLeagueCategory is replaced by it)
-                Database.Instance.StoredLeagues.First(
-                    x => x.LeagueCategoryName == interfaceLeagueCategory.LeagueCategoryName).LeagueUnits = interfaceLeagueCategory.LeagueUnits;
-
-                /*
-                // Replace InterfaceLeagueCategoryCategory with a one that is from the database
-                System.Collections.Generic.KeyValuePair<
-                    ulong, InterfaceCategory> interfaceLeagueCategorykvp =
-                    Database.Instance.StoredLeagues.First(
-                        x => x.Value.LeagueCategoryName == leagueCategoryName);
-                interfaceLeagueCategory = interfaceLeagueCategorykvp.Value;
-
-
-                Log.WriteLine("Replaced with: " + interfaceLeagueCategory.LeagueCategoryName + " from db", LogLevel.DEBUG);
-                */
-
-                //categoryExists = true;
-
-                /*
-                categoryExists = await CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
-                    interfaceLeagueCategorykvp, guild);                */
+                Database.Instance.Leagues.GetILeagueByCategoryName(
+                    interfaceLeagueCategory.LeagueCategoryName).
+                        LeagueUnits = interfaceLeagueCategory.LeagueUnits;
 
                 continue;
             }
@@ -87,13 +70,7 @@ public static class LeagueManager
 
             interfaceLeagueCategory.DiscordLeagueReferences.leagueRoleId = role.Id;
 
-            Log.WriteLine("Adding to the stored leagues...", LogLevel.VERBOSE);
-
-            Database.Instance.StoredLeagues.Add(interfaceLeagueCategory);
-
-            Log.WriteLine("Done adding " + nameof(interfaceLeagueCategory) + " to " +
-                nameof(Database.Instance.StoredLeagues) +
-                " count: " + Database.Instance.StoredLeagues.Count, LogLevel.DEBUG);
+            Database.Instance.Leagues.AddToStoredLeagues(interfaceLeagueCategory);
         }
 
         return Task.CompletedTask;
@@ -110,14 +87,13 @@ public static class LeagueManager
         Log.WriteLine("Checking if " + _leagueInterface.LeagueCategoryName +
             " has _leagueInterface in the database", LogLevel.VERBOSE);
 
-        if (CheckIfALeagueCategoryNameExistsInDatabase(_leagueInterface.LeagueCategoryName))
+        if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(_leagueInterface.LeagueCategoryName))
         {
             Log.WriteLine(_leagueInterface.LeagueCategoryName +
                 " exists in the database!", LogLevel.DEBUG);
 
             var newInterfaceLeagueCategory =
-                Database.Instance.StoredLeagues.First(
-                    l => l.LeagueCategoryName == _leagueInterface.LeagueCategoryName);
+                Database.Instance.Leagues.GetILeagueByCategoryName(_leagueInterface.LeagueCategoryName);
 
             if (newInterfaceLeagueCategory == null)
             {
@@ -138,11 +114,6 @@ public static class LeagueManager
 
             return _leagueInterface;
         }
-    }
-
-    private static bool CheckIfALeagueCategoryNameExistsInDatabase(CategoryName _leagueName)
-    {
-        return Database.Instance.StoredLeagues.Any(l => l.LeagueCategoryName == _leagueName);
     }
 
     public static ILeague GetLeagueInstanceWithLeagueCategoryName(CategoryName _leagueCategoryName)

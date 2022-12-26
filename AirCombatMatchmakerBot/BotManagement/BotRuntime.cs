@@ -13,7 +13,7 @@ public class BotRuntimeManager
         await SerializationManager.DeSerializeDB();
 
         // Set up client and return it
-        var client = BotReference.SetClientRefAndReturnit();
+        var client = BotReference.SetClientRefAndReturnIt();
 
         // Reads token from the same directory as the .exe
         var token = File.ReadAllText("token.txt");

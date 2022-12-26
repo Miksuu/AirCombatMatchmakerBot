@@ -8,8 +8,8 @@ public static class CategoryAndChannelManager
 {
     // Do not create these categories,
     // as they are used as template (such as generating a baseline league)
-    private static List<string> categoriesThatWontGetGenerated = new List<string> { 
-        "LEAGUETEMPLATE" };
+    private static List<CategoryName> categoriesThatWontGetGenerated = new List<CategoryName> {
+        CategoryName.LEAGUETEMPLATE };
 
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
     {
@@ -23,11 +23,11 @@ public static class CategoryAndChannelManager
             return;
         }
 
-        // Get the names of the members of the specific enum type and
-        // loop through the names of the categories
-        var names = Enum.GetNames(typeof(CategoryName));
-        Log.WriteLine(nameof(names) + " count: " + names.Length, LogLevel.VERBOSE);
-        foreach (string categoryName in names)
+        // Get the values of the members of the specific enum type and
+        // loop through the values of the categories
+        var values = Enum.GetValues(typeof(CategoryName));
+        Log.WriteLine(nameof(values) + " count: " + values.Length, LogLevel.VERBOSE);
+        foreach (CategoryName categoryName in values)
         {
             Log.WriteLine("Looping on category name: " + categoryName, LogLevel.VERBOSE);
 
@@ -47,7 +47,7 @@ public static class CategoryAndChannelManager
     }
 
     private static async Task GenerateACategoryFromName(
-        SocketGuild _guild, string _categoryName)
+        SocketGuild _guild, CategoryName _categoryName)
     {
         string finalCategoryName = "";
         bool isLeague = false;
@@ -58,8 +58,7 @@ public static class CategoryAndChannelManager
         Log.WriteLine("Generating category named: " + _categoryName, LogLevel.VERBOSE);
 
         // For league category generating
-        if (Database.Instance.StoredLeagues.Any(
-            x => x.LeagueCategoryName.ToString() == _categoryName))
+        if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(_categoryName))
         {
             Log.WriteLine("This is a league category", LogLevel.DEBUG);
 
@@ -180,9 +179,8 @@ public static class CategoryAndChannelManager
             {
                 Log.WriteLine("Is league, inserting " + socketCategoryChannel.Id +
                     " to " + leagueCategoryName, LogLevel.DEBUG);
-                Database.Instance.StoredLeagues.First(
-                    x => x.LeagueCategoryName == leagueCategoryName).
-                        DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
+                Database.Instance.Leagues.GetILeagueByCategoryName(leagueCategoryName).
+                        DiscordLeagueReferences.SetLeagueCategoryId(socketCategoryChannel.Id);
             }
 
             Log.WriteLine("Adding " + nameof(baseCategory) + " to " +
@@ -313,14 +311,15 @@ public static class CategoryAndChannelManager
         }
     }
 
-    private static InterfaceCategory GetCategoryInstance(string _categoryName)
+    // Maybe add inside the classes itself
+    private static InterfaceCategory GetCategoryInstance(CategoryName _categoryName)
     {
-        return (InterfaceCategory)EnumExtensions.GetInstance(_categoryName);
+        return (InterfaceCategory)EnumExtensions.GetInstance(_categoryName.ToString());
     }
 
-    private static ILeague GetLeagueInstance(string _leagueName)
+    private static ILeague GetLeagueInstance(CategoryName _leagueCategoryName)
     {
-        return (ILeague)EnumExtensions.GetInstance(_leagueName);
+        return (ILeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
 
     private static InterfaceChannel GetChannelInstance(string _channelName)

@@ -58,4 +58,5 @@ public abstract class BaseLeague : ILeague
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
+
 }
