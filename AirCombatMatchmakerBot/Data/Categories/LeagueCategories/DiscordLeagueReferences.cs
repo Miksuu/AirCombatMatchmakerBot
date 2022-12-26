@@ -2,20 +2,31 @@
 public class DiscordLeagueReferences
 {
     // The references to the message in the registration channel
-    public ulong leagueRegistrationChannelMessageId { get; set; }
+    private ulong leagueRegistrationChannelMessageId { get; set; }
 
     // The reference to the category created by the system
     private ulong leagueCategoryId { get; set; }
 
     // The references for the channelNames inside the category
-    public Dictionary<ChannelName, ulong> leagueChannels { get; set; }
+    private Dictionary<ChannelName, ulong> leagueChannels { get; set; }
 
     // Id of the role which gives access to the league channelNames
-    public ulong leagueRoleId { get; set; }
+    private ulong leagueRoleId { get; set; }
 
     public DiscordLeagueReferences()
     {
         leagueChannels = new();
+    }
+    public ulong GetLeagueRegistrationChannelMessageId()
+    {
+        Log.WriteLine("Getting id: " + leagueRegistrationChannelMessageId, LogLevel.VERBOSE);
+        return leagueRegistrationChannelMessageId;
+    }
+    public void SetLeagueRegistrationChannelMessageId(ulong _id)
+    {
+        Log.WriteLine("Settind id: " + leagueRegistrationChannelMessageId + " to: " +
+            _id, LogLevel.VERBOSE);
+        leagueRegistrationChannelMessageId = _id;
     }
 
     public ulong GetLeagueCategoryId()
@@ -27,7 +38,20 @@ public class DiscordLeagueReferences
     public void SetLeagueCategoryId(ulong _id)
     {
         Log.WriteLine("Settind id: " + leagueCategoryId + " to: " +
-            leagueCategoryId,LogLevel.VERBOSE);
+            _id, LogLevel.VERBOSE);
         leagueCategoryId = _id;
+    }
+
+    public ulong GetLeagueRoleId()
+    {
+        Log.WriteLine("Getting id: " + leagueRoleId, LogLevel.VERBOSE);
+        return leagueRoleId;
+    }
+
+    public void SetLeagueRoleId(ulong _id)
+    {
+        Log.WriteLine("Settind id: " + leagueRoleId + " to: " +
+            _id, LogLevel.VERBOSE);
+        leagueRoleId = _id;
     }
 }

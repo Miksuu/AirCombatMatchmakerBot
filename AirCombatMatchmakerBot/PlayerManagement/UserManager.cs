@@ -114,10 +114,13 @@ public static class UserManager
                                 Database.Instance.Leagues.GetILeagueByString(storedLeagueString);
                             CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
-                            var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
-                            Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
+                            var leagueInterface = 
+                                LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
+                            Log.WriteLine("Found " + nameof(leagueInterface) + ": " +
+                                leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-                            ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+                            ILeague? dbLeagueInstance = 
+                                LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
 
                             if (dbLeagueInstance == null)
                             {
@@ -169,9 +172,11 @@ public static class UserManager
             return false;
         }
     }
-    public static async Task HandleGuildMemberUpdated(Cacheable<SocketGuildUser, ulong> before, SocketGuildUser _socketGuildUserAfter)
+    public static async Task HandleGuildMemberUpdated(
+        Cacheable<SocketGuildUser, ulong> before, SocketGuildUser _socketGuildUserAfter)
     {
-        var playerValue = Database.Instance.PlayerData.PlayerIDs.First(x => x.Key == _socketGuildUserAfter.Id).Value;
+        var playerValue = Database.Instance.PlayerData.PlayerIDs.First(
+            x => x.Key == _socketGuildUserAfter.Id).Value;
 
         if (playerValue == null)
         {
@@ -183,10 +188,12 @@ public static class UserManager
         // This should not be empty, since it's being looked up from the database
         string playerValueNickName = playerValue.playerNickName;
 
-        string socketGuildUserAfterNickName = CheckIfNickNameIsEmptyAndReturnUsername(_socketGuildUserAfter.Id);
+        string socketGuildUserAfterNickName =
+            CheckIfNickNameIsEmptyAndReturnUsername(_socketGuildUserAfter.Id);
 
-        Log.WriteLine("Updating user: " + _socketGuildUserAfter.Username + " (" + _socketGuildUserAfter.Id + ")" +
-            " | name: " + playerValueNickName + " -> " + socketGuildUserAfterNickName, LogLevel.DEBUG);
+        Log.WriteLine("Updating user: " + _socketGuildUserAfter.Username + " (" 
+            + _socketGuildUserAfter.Id + ")" + " | name: " + playerValueNickName +
+            " -> " + socketGuildUserAfterNickName, LogLevel.DEBUG);
 
         playerValue.playerNickName = socketGuildUserAfterNickName;
         await SerializationManager.SerializeDB();
@@ -298,18 +305,12 @@ public static class UserManager
         await SerializationManager.SerializeDB();
     }
 
-    public static async void SetPlayerActiveAndGrantHimTheRole(ILeague _dbLeagueInstance, ulong _playerId)
+    public static async void SetPlayerActiveAndGrantHimTheRole(
+        ILeague _dbLeagueInstance, ulong _playerId)
     {
-        LeagueManager.ReturnTeamThatThePlayerIsIn(_dbLeagueInstance.LeagueData.Teams, _playerId).teamActive = true;
+        LeagueManager.ReturnTeamThatThePlayerIsIn(
+            _dbLeagueInstance.LeagueData.Teams, _playerId).teamActive = true;
         await RoleManager.GrantUserAccessWithId(
-            _playerId, _dbLeagueInstance.DiscordLeagueReferences.leagueRoleId);
+            _playerId, _dbLeagueInstance.DiscordLeagueReferences.GetLeagueRoleId());
     }
-
-    /*
-    public static async Task MessageUpdated(Cacheable<IMessage, ulong> before, SocketMessage after, ISocketMessageChannel channel)
-    {
-        // If the message was not in the cache, downloading it will result in getting a copy of `after`.
-        var message = await before.GetOrDownloadAsync();
-        Console.WriteLine($"{message} -> {after}");
-    } */
 }
