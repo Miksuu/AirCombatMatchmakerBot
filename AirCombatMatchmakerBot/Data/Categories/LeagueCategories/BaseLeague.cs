@@ -10,24 +10,6 @@ public abstract class BaseLeague : ILeague
         get => leagueCategoryName;
         set => leagueCategoryName = value;
     }
-    /*
-    CategoryName InterfaceCategory.CategoryName
-    {
-        get => categoryName;
-        set => categoryName = value;
-    }
-
-    List<ChannelName> InterfaceCategory.ChannelNames
-    {
-        get => leagueChannelNames;
-        set => leagueChannelNames = value;
-    }
-
-    List<InterfaceChannel> InterfaceCategory.InterfaceChannels
-    {
-        get => interfaceLeagueChannels;
-        set => interfaceLeagueChannels = value;
-    }*/
 
     Era ILeague.LeagueEra
     {
@@ -60,9 +42,6 @@ public abstract class BaseLeague : ILeague
     }
 
     public CategoryName leagueCategoryName;
-    //public CategoryName categoryName;
-    //public List<ChannelName> leagueChannelNames;
-    //public List<InterfaceChannel> interfaceLeagueChannels;
 
     // Generated based on the implementation
     public Era leagueEra;
@@ -76,8 +55,6 @@ public abstract class BaseLeague : ILeague
 
     public BaseLeague()
     {
-        //interfaceLeagueChannels = new List<InterfaceChannel>();
-        //leagueChannelNames = new();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
