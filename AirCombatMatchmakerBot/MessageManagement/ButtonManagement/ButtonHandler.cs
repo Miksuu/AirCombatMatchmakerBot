@@ -48,8 +48,8 @@ public static class ButtonHandler
 
                 // Change this to search with category ID!!!
                 var findLeagueCategoryType
-                    = Database.Instance.StoredLeagues.First(x => x.LeagueCategoryName.ToString() == splitString[1]);
-                CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
+                    = Database.Instance.CreatedCategoriesWithChannels.First(x => x.Key.ToString() == splitString[1]);
+                CategoryName leagueCategoryName = findLeagueCategoryType.Value.CategoryName;
 
                 var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
 

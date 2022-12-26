@@ -17,9 +17,8 @@ public static class LeagueChannelManager
         Log.WriteLine(nameof(_leagueInterface) + " before creating leagueButtonRegisterationCustomId: "
             + _leagueInterface.ToString(), LogLevel.VERBOSE);
 
-        
         string leagueButtonRegisterationCustomId =
-           "leagueRegistration_" + _leagueInterface.LeagueCategoryName.ToString().ToString();
+           "leagueRegistration_" + _leagueRegistrationChannel.CategoryId;
 
         Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
             leagueButtonRegisterationCustomId, LogLevel.VERBOSE);
