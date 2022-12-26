@@ -208,7 +208,7 @@ public static class CategoryAndChannelInitiator
 
             interfaceChannel = GetChannelInstance(channelName.ToString());
             Log.WriteLine("interfaceChanneltest: " + interfaceChannel.ChannelName.ToString(), LogLevel.DEBUG);
-
+            
             baseChannel = interfaceChannel as BaseChannel;
 
             if (baseChannel == null)
@@ -216,10 +216,6 @@ public static class CategoryAndChannelInitiator
                 Log.WriteLine(nameof(baseChannel) + " was null!", LogLevel.CRITICAL);
                 return;
             }
-
-            // Insert the category's ID for easier access for the channels later on
-            // (for channel specific features for example)
-            baseChannel.channelsCategoryId= _socketCategoryChannel.Id;
 
             // Channel found from the basecategory (it exists)
             if (_baseCategory.interfaceChannels.Any(x => x.ChannelName == baseChannel.channelName))
@@ -250,6 +246,10 @@ public static class CategoryAndChannelInitiator
                 return;
             }
 
+            // Insert the category's ID for easier access for the channels later on
+            // (for channel specific features for example)
+            baseChannel.channelsCategoryId = _socketCategoryChannel.Id;
+
             string? channelNameString = EnumExtensions.GetEnumMemberAttrValue(channelName);
             if (channelNameString == null)
             {
@@ -273,7 +273,7 @@ public static class CategoryAndChannelInitiator
                 Log.WriteLine("Done creating the channel with id: " + interfaceChannel.ChannelId +
                     " named:" + channelNameString + " adding it to the db.", LogLevel.DEBUG);
 
-                _baseCategory.interfaceChannels.Add(interfaceChannel);
+                _baseCategory.interfaceChannels.Add(baseChannel);
 
                 Log.WriteLine("Done adding to the db. Count is now: " + _baseCategory.interfaceChannels.Count +
                     " for the list of category: " + _baseCategory.categoryName.ToString() +
