@@ -8,6 +8,8 @@ public static class LeagueChannelManager
     {
         Log.WriteLine("Starting to create a league join button for: " + _leagueNameString, LogLevel.VERBOSE);
 
+        //_leagueInterface.
+
         if (_leagueInterface == null)
         {
             Log.WriteLine("_leagueInterface was null!", LogLevel.CRITICAL);
@@ -18,7 +20,7 @@ public static class LeagueChannelManager
             + _leagueInterface.ToString(), LogLevel.VERBOSE);
 
         string leagueButtonRegisterationCustomId =
-           "leagueRegistration_" + _leagueRegistrationChannel.CategoryId;
+           "leagueRegistration_" + _leagueInterface.DiscordLeagueReferences.leagueCategoryId;
 
         Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
             leagueButtonRegisterationCustomId, LogLevel.VERBOSE);

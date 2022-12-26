@@ -42,6 +42,9 @@ public static class CategoryAndChannelInitiator
     {
         string finalCategoryName = "";
 
+        bool isLeague = false;
+        CategoryName? leagueCategoryName = null;
+
         Log.WriteLine("Generating: " + _categoryName.ToString(), LogLevel.DEBUG);
 
         InterfaceCategory? interfaceCategory = null;
@@ -52,10 +55,15 @@ public static class CategoryAndChannelInitiator
         {
             Log.WriteLine("This is a league category", LogLevel.DEBUG);
 
+            isLeague = true;
+
             ILeague leagueInterface = GetLeagueInstance(_categoryName);
 
             baseCategory = new LEAGUETEMPLATE();
             baseCategory.categoryName = leagueInterface.LeagueCategoryName;
+
+            // Cached for later use (inserting the category ID)
+            leagueCategoryName = leagueInterface.LeagueCategoryName;
 
             finalCategoryName = baseCategory.categoryName.ToString();
             finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(baseCategory.categoryName);
@@ -66,7 +74,6 @@ public static class CategoryAndChannelInitiator
         else
         {
             interfaceCategory = GetCategoryInstance(_categoryName);
-
 
             if (interfaceCategory == null)
             {
@@ -148,6 +155,16 @@ public static class CategoryAndChannelInitiator
 
             Log.WriteLine("Created a " + nameof(socketCategoryChannel) + " with id: " + socketCategoryChannel.Id +
                 " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
+
+            // Inserts the id to the discord league references to be cached for later use
+            if (isLeague)
+            {
+                Log.WriteLine("Is league, inserting " + socketCategoryChannel.Id +
+                    " to " + leagueCategoryName, LogLevel.DEBUG);
+                Database.Instance.StoredLeagues.First(
+                    x => x.LeagueCategoryName == leagueCategoryName).
+                        DiscordLeagueReferences.leagueCategoryId = socketCategoryChannel.Id;
+            }
 
             Log.WriteLine("Adding " + nameof(baseCategory) + " to " +
                 nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.VERBOSE);

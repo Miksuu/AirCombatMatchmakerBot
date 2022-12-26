@@ -46,14 +46,13 @@ public static class ButtonHandler
 
                 Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
-                // Change this to search with category ID!!!
                 var findLeagueCategoryType
                     = Database.Instance.CreatedCategoriesWithChannels.First(x => x.Key.ToString() == splitString[1]);
                 CategoryName leagueCategoryName = findLeagueCategoryType.Value.CategoryName;
 
                 var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
 
-                //Log.WriteLine("leagueInterface: " + leagueInterface,LogLevel.VERBOSE);
+                Log.WriteLine("leagueInterface: " + leagueInterface,LogLevel.VERBOSE);
 
                 Log.WriteLine("Found " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
