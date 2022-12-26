@@ -10,7 +10,6 @@ public class CHALLENGE : BaseChannel
     public CHALLENGE()
     {
         channelName = ChannelName.CHALLENGE;
-        //botChannelType = BotChannelType.LEAGUECHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)

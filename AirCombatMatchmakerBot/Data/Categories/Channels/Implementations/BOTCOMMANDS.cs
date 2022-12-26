@@ -10,7 +10,6 @@ public class BOTCOMMANDS : BaseChannel
     public BOTCOMMANDS()
     {
         channelName = ChannelName.BOTCOMMANDS;
-        //botChannelType = BotChannelType.CHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)

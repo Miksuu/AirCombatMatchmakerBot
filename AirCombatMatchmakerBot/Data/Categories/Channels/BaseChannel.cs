@@ -28,17 +28,9 @@ public abstract class BaseChannel : InterfaceChannel
         set => channelFeaturesWithMessageIds = value;
     }
 
-    /*
-    BotChannelType InterfaceChannel.BotChannelType
-    {
-        get => botChannelType;
-        set => botChannelType = value;
-    }*/
-
     public ChannelName channelName;
     public ulong channelId;
     public ulong channelsCategoryId;
-    //public BotChannelType botChannelType;
 
     public Dictionary<string, ulong> channelFeaturesWithMessageIds;
     public BaseChannel()
