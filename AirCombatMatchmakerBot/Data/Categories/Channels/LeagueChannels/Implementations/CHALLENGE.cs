@@ -49,7 +49,7 @@ public class CHALLENGE : BaseChannel
             channelId, LogLevel.VERBOSE);
 
         foreach (var createdCategoriesKvp in
-            Database.Instance.Categories.GetDictionaryOfCreatedCategoriesWithChannels())
+            Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
             Log.WriteLine("On league: " + createdCategoriesKvp.Value.CategoryName, LogLevel.VERBOSE);
 

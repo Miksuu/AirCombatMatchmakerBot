@@ -105,7 +105,7 @@ public static class DowntimeManager
             " users on the temp list", LogLevel.DEBUG);
 
         var difference = GetDifferenceBetweenTheCurrentAndCachedUsers(
-                Database.Instance.CachedUsers.GetListOfCachedUserIds(),
+                Database.Instance.CachedUsers.CachedUserIDs,
                 usersOnTheServerAfterDowntime);
 
         if (difference.Count > 0)

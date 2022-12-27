@@ -3,7 +3,7 @@
 [DataContract]
 public class CachedUsers
 {
-    List<ulong> CachedUserIDs
+    public List<ulong> CachedUserIDs
     {
         get
         {
