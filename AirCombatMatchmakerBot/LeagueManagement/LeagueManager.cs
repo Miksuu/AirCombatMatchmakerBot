@@ -70,7 +70,7 @@ public static class LeagueManager
 
             Log.WriteLine("Role is named: " + role.Name + " with ID: " + role.Id, LogLevel.VERBOSE);
 
-            interfaceLeagueCategory.DiscordLeagueReferences.SetLeagueRoleId(role.Id);
+            interfaceLeagueCategory.DiscordLeagueReferences.LeagueRoleId = role.Id;
 
             Database.Instance.Leagues.AddToStoredLeagues(interfaceLeagueCategory);
         }

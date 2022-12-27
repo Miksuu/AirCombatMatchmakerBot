@@ -183,7 +183,7 @@ public static class CategoryAndChannelManager
                 Log.WriteLine("Is league, inserting " + socketCategoryChannel.Id +
                     " to " + leagueCategoryName, LogLevel.DEBUG);
                 Database.Instance.Leagues.GetILeagueByCategoryName(leagueCategoryName).
-                        DiscordLeagueReferences.SetLeagueCategoryId(socketCategoryChannel.Id);
+                        DiscordLeagueReferences.LeagueCategoryId = socketCategoryChannel.Id;
             }
 
             Database.Instance.Categories.AddToCreatedCategoryWithChannelWithUlongAndBaseCategory(

@@ -9,7 +9,7 @@ public static class MessageManager
             _dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
 
         await ModifyMessage(LeagueManager.leagueRegistrationChannelId,
-            _dbLeagueInstance.DiscordLeagueReferences.GetLeagueRegistrationChannelMessageId(),
+            _dbLeagueInstance.DiscordLeagueReferences.LeagueRegistrationChannelMessageId,
          GenerateALeagueJoinButtonMessage(_dbLeagueInstance));
     }
 

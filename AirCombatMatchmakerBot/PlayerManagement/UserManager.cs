@@ -176,6 +176,6 @@ public static class UserManager
     {
        _dbLeagueInstance.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_playerId).SetTheActive(true);
         await RoleManager.GrantUserAccessWithId(
-            _playerId, _dbLeagueInstance.DiscordLeagueReferences.GetLeagueRoleId());
+            _playerId, _dbLeagueInstance.DiscordLeagueReferences.LeagueRoleId);
     }
 }

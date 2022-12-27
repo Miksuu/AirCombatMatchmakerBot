@@ -3,6 +3,69 @@
 [DataContract]
 public class DiscordLeagueReferences
 {
+    public ulong LeagueRegistrationChannelMessageId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(leagueRegistrationChannelMessageId) +
+                leagueRegistrationChannelMessageId, LogLevel.VERBOSE);
+            return leagueRoleId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(leagueRegistrationChannelMessageId) +
+                leagueRegistrationChannelMessageId + " to: " + value, LogLevel.VERBOSE);
+            leagueRegistrationChannelMessageId = value;
+        }
+    }
+
+    public ulong LeagueCategoryId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(leagueCategoryId) + leagueCategoryId, LogLevel.VERBOSE);
+            return leagueCategoryId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(leagueCategoryId) + leagueCategoryId
+                + " to: " + value, LogLevel.VERBOSE);
+            leagueCategoryId = value;
+        }
+    }
+
+
+    public Dictionary<ChannelName, ulong> LeagueChannels
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(leagueChannels) + " with count of: " +
+                leagueChannels.Count, LogLevel.VERBOSE);
+            return leagueChannels;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(leagueChannels)
+                + " to: " + value, LogLevel.VERBOSE);
+            leagueChannels = value;
+        }
+    }
+
+    public ulong LeagueRoleId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(leagueRoleId) + leagueRoleId, LogLevel.VERBOSE);
+            return leagueRoleId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(leagueRoleId) + leagueRoleId
+                + " to: " + value, LogLevel.VERBOSE);
+            leagueRoleId = value;
+        }
+    }
+
     // The references to the message in the registration channel
     [DataMember] private ulong leagueRegistrationChannelMessageId { get; set; }
 
@@ -19,6 +82,8 @@ public class DiscordLeagueReferences
     {
         leagueChannels = new();
     }
+
+    /*
     public ulong GetLeagueRegistrationChannelMessageId()
     {
         Log.WriteLine("Getting id: " + leagueRegistrationChannelMessageId, LogLevel.VERBOSE);
@@ -54,5 +119,5 @@ public class DiscordLeagueReferences
         Log.WriteLine("Setting id: " + leagueRoleId + " to: " +
             _id, LogLevel.VERBOSE);
         leagueRoleId = _id;
-    }
+    }*/
 }
