@@ -3,8 +3,8 @@
 [DataContract]
 public class Player
 {
-    [DataMember] public string playerNickName { get; set; }
-    [DataMember] public ulong playerDiscordId { get; set; }
+    [DataMember] private string playerNickName { get; set; }
+    [DataMember] private ulong playerDiscordId { get; set; }
 
     public Player()
     {

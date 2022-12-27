@@ -25,7 +25,8 @@ public static class LeagueManager
 
         // Get all of the league category names and loop through them to create the database entries
         var categoryEnumValues = Enum.GetValues(typeof(CategoryName));
-        Log.WriteLine(nameof(categoryEnumValues) + " length: " + categoryEnumValues.Length, LogLevel.VERBOSE);
+        Log.WriteLine(nameof(categoryEnumValues) +
+            " length: " + categoryEnumValues.Length, LogLevel.VERBOSE);
         foreach (CategoryName leagueCategoryName in categoryEnumValues)
         {
             Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString(), LogLevel.DEBUG);
@@ -40,7 +41,8 @@ public static class LeagueManager
             Log.WriteLine("after setting interface", LogLevel.VERBOSE);
             if (interfaceLeagueCategory == null)
             {
-                Log.WriteLine(nameof(interfaceLeagueCategory).ToString() + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(interfaceLeagueCategory).ToString() +
+                    " was null!", LogLevel.CRITICAL);
                 return Task.CompletedTask;
             }
 
@@ -87,7 +89,8 @@ public static class LeagueManager
         Log.WriteLine("Checking if " + _leagueInterface.LeagueCategoryName +
             " has _leagueInterface in the database", LogLevel.VERBOSE);
 
-        if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(_leagueInterface.LeagueCategoryName))
+        if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(
+            _leagueInterface.LeagueCategoryName))
         {
             Log.WriteLine(_leagueInterface.LeagueCategoryName +
                 " exists in the database!", LogLevel.DEBUG);
@@ -101,7 +104,8 @@ public static class LeagueManager
                 return null;
             }
 
-            Log.WriteLine("found result: " + newInterfaceLeagueCategory.LeagueCategoryName, LogLevel.DEBUG);
+            Log.WriteLine("found result: " +
+                newInterfaceLeagueCategory.LeagueCategoryName, LogLevel.DEBUG);
             return newInterfaceLeagueCategory;
         }
         else
@@ -118,7 +122,8 @@ public static class LeagueManager
 
     public static ILeague GetLeagueInstanceWithLeagueCategoryName(CategoryName _leagueCategoryName)
     {
-        Log.WriteLine("Getting a league instance with LeagueCategoryName: " + _leagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("Getting a league instance with LeagueCategoryName: " +
+            _leagueCategoryName, LogLevel.VERBOSE);
 
         var leagueInstance = (ILeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
         leagueInstance.LeagueCategoryName = _leagueCategoryName;
@@ -132,61 +137,14 @@ public static class LeagueManager
 
         if (dbLeagueInstance == null)
         {
-            Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(dbLeagueInstance) +
+                " was null! Could not find the league.", LogLevel.CRITICAL);
             return _interfaceToSearchFor;
         }
 
-        Log.WriteLine("Found " + nameof(dbLeagueInstance) + ": " + dbLeagueInstance.LeagueCategoryName, LogLevel.DEBUG);
+        Log.WriteLine("Found " + nameof(dbLeagueInstance) +
+            ": " + dbLeagueInstance.LeagueCategoryName, LogLevel.DEBUG);
 
         return dbLeagueInstance;
-    }
-
-    public static bool CheckIfPlayerIsAlreadyInATeamById(List<Team> _leagueTeams, ulong _idToSearchFor)
-    {
-        foreach (Team team in _leagueTeams)
-        {
-            Log.WriteLine("Searching team: " + team.teamName +
-                " with " + team.players.Count, LogLevel.VERBOSE);
-
-            foreach (Player teamPlayer in team.players)
-            {
-                Log.WriteLine("Checking player: " + teamPlayer.playerNickName +
-                    " (" + teamPlayer.playerDiscordId + ")", LogLevel.VERBOSE);
-
-                if (teamPlayer.playerDiscordId == _idToSearchFor)
-                {
-                    return true;
-                }
-            }
-        }
-
-        Log.WriteLine("Did not find any teams that the player was in the league", LogLevel.VERBOSE);
-
-        return false;
-    }
-
-    // Always run CheckIfPlayerIsAlreadyInATeamById() before!
-    public static Team ReturnTeamThatThePlayerIsIn(List<Team> _leagueTeams, ulong _idToSearchFor)
-    {
-        foreach (Team team in _leagueTeams)
-        {
-            Log.WriteLine("Searching team: " + team.teamName +
-                " with " + team.players.Count, LogLevel.VERBOSE);
-
-            foreach (Player teamPlayer in team.players)
-            {
-                Log.WriteLine("Checking player: " + teamPlayer.playerNickName +
-                    " (" + teamPlayer.playerDiscordId + ")", LogLevel.VERBOSE);
-
-                if (teamPlayer.playerDiscordId == _idToSearchFor)
-                {
-                    return team;
-                }
-            }
-        }
-
-        Log.WriteLine("Did not find any teams that the player was in the league", LogLevel.CRITICAL);
-
-        return new Team();
     }
 }
