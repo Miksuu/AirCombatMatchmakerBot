@@ -41,7 +41,7 @@ public static class ButtonFunctionality
         // Checks that the player does not exist in the database already, true if this is not the case
         if (UserManager.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
         {
-            await UserManager.HandleUserRegisterationToCache(_component.User.Id);
+            Database.Instance.CachedUsers.AddUserIdToCachedList(_component.User.Id);
 
             response = _component.User.Mention + ", " +
                 BotMessaging.GetMessageResponse(

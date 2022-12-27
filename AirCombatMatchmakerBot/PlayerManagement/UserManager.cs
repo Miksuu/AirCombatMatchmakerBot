@@ -10,9 +10,6 @@ public static class UserManager
         Log.WriteLine("User " + _user.Username +
             " has joined the discord with id: " + _user.Id, LogLevel.VERBOSE);
 
-        //await CreateARegisterationProfileForTheUser(_user, userNameWithNickName);
-        //await AddUserToCache(userNameWithNickName, _user.Id);
-
         // Check if the user is already in the database
         if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(_user.Id))
         {
@@ -24,15 +21,16 @@ public static class UserManager
         Log.WriteLine("User: " + _user.Username + " (" + _user.Id + ")" +
             " joined with previous profile, adding him to the cache.", LogLevel.DEBUG);
 
-        await HandleUserRegisterationToCache(_user.Id);
+        Database.Instance.CachedUsers.AddUserIdToCachedList(_user.Id);
 
         await RoleManager.GrantUserAccess(_user.Id, "Member");
 
         Log.WriteLine("Adding " + _user.Id + " to the cache done.", LogLevel.VERBOSE);
+
+        await SerializationManager.SerializeDB();
     }
 
-
-
+    /*
     // For the new users that join the discord, need to add them to the cache too
     public static async Task HandleUserRegisterationToCache(ulong _userId)
     {
@@ -45,7 +43,7 @@ public static class UserManager
     {
         Database.Instance.CachedUsers.AddUserIdToCachedList(_userId);
         await SerializationManager.SerializeDB();
-    }
+    } */
 
     public static async Task HandleUserLeaveDelegate(SocketGuild _guild, SocketUser _user)
     {
