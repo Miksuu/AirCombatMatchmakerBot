@@ -96,7 +96,7 @@ public static class CommandHandler
                     {
                         // Deletes the player profile and returns a bool as task if if was succesful,
                         // otherwise inform the user that it didn't exist in the database
-                        if (UserManager.DeletePlayerProfile(firstOptionValue).Result)
+                        if (Database.Instance.PlayerData.DeletePlayerProfile(firstOptionValue).Result)
                         {
                             response = "Deleted: " + firstOptionValue + " from the database.";
                         }

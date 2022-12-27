@@ -14,7 +14,7 @@ public static class UserManager
         //await AddUserToCache(userNameWithNickName, _user.Id);
 
         // Check if the user is already in the database
-        if (!CheckIfUserHasPlayerProfile(_user.Id))
+        if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(_user.Id))
         {
             Log.WriteLine("User is not in the PlayerID's list," +
                 " disregarding any further action", LogLevel.VERBOSE);
@@ -31,10 +31,7 @@ public static class UserManager
         Log.WriteLine("Adding " + _user.Id + " to the cache done.", LogLevel.VERBOSE);
     }
 
-    public static bool CheckIfUserHasPlayerProfile(ulong _userId)
-    {
-        return Database.Instance.PlayerData.PlayerIDs.Any(x => x.Key == _userId);
-    }
+
 
     // For the new users that join the discord, need to add them to the cache too
     public static async Task HandleUserRegisterationToCache(ulong _userId)
@@ -156,12 +153,12 @@ public static class UserManager
         Log.WriteLine("Adding a new player: " + nickName + " (" + _playerId + ").", LogLevel.DEBUG);
 
         // Checks if the player is already in the database, just in case
-        if (!UserManager.CheckIfUserHasPlayerProfile(_playerId))
+        if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(_playerId))
         {
             Log.WriteLine("Player doesn't exist in the database: " + _playerId, LogLevel.VERBOSE);
 
             // Add to the profile
-            Database.Instance.PlayerData.PlayerIDs.Add(_playerId, new Player(_playerId, nickName));
+            Database.Instance.PlayerData.AddAPlayerProfile(new Player(_playerId, nickName));
 
             // Add the member role for access.
             await RoleManager.GrantUserAccess(_playerId, "Member");
@@ -178,8 +175,8 @@ public static class UserManager
     public static async Task HandleGuildMemberUpdated(
         Cacheable<SocketGuildUser, ulong> before, SocketGuildUser _socketGuildUserAfter)
     {
-        var playerValue = Database.Instance.PlayerData.PlayerIDs.First(
-            x => x.Key == _socketGuildUserAfter.Id).Value;
+        var playerValue = 
+            Database.Instance.PlayerData.GetAPlayerProfileById(_socketGuildUserAfter.Id);
 
         if (playerValue == null)
         {
@@ -233,47 +230,6 @@ public static class UserManager
             Log.WriteLine("returning nickName " + nickName, LogLevel.VERBOSE);
             return nickName;
         }
-    }
-
-    public static async Task<bool> DeletePlayerProfile(string _dataValue)
-    {
-        ulong userId = UInt64.Parse(_dataValue);
-
-        Log.WriteLine("Starting to remove the player profile: " + userId, LogLevel.VERBOSE);
-        if (!UserManager.CheckIfUserHasPlayerProfile(userId))
-        {
-            Log.WriteLine("Did not find ID: " + userId + "in the local database.", LogLevel.DEBUG);
-            return false;
-        }
-
-        Log.WriteLine("Deleting a player profile " + userId, LogLevel.DEBUG);
-        Database.Instance.PlayerData.PlayerIDs.Remove(userId);
-
-        var user = GetSocketGuildUserById(userId);
-
-        // If the user is in the server
-        if (user == null)
-        {
-            Log.WriteLine("User with id: " + userId + " was null!!" +
-                " Was not found in the server?", LogLevel.DEBUG);
-            return false;
-        }
-
-        Log.WriteLine("User found in the server", LogLevel.VERBOSE);
-
-        // Remove user's access (back to the registration...)
-        await RoleManager.RevokeUserAccess(userId, "Member");
-
-        /*
-        // After termination, create a regiteration profile for that player
-        string userNameWithNickName = user.Username + " aka "
-            + CheckIfNickNameIsEmptyAndReturnUsername(user.Id) +
-            " (" + user.Id + ")";
-        //await CreateARegisterationProfileForTheUser(user, userNameWithNickName); */
-
-        Log.WriteLine("Done removing the player profile: " + userId, LogLevel.DEBUG);
-
-        return true;
     }
 
     // Gets the user by the discord UserId. This may not be present in the Database.

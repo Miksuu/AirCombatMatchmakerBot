@@ -39,17 +39,17 @@ public class Leagues
         return FoundLeague;
     }
 
-    public List<ILeague> GetListOfStoredLeagues()
-    {
-        Log.WriteLine("Getting list of ILeagues with count of: " + StoredLeagues.Count, LogLevel.VERBOSE);
-        return StoredLeagues;
-    }
-
     public void AddToStoredLeagues(ILeague _ILeague)
     {
         Log.WriteLine("Adding ILeague: " + _ILeague.LeagueCategoryName +
             "to the StoredLeague list", LogLevel.VERBOSE);
         StoredLeagues.Add(_ILeague);
         Log.WriteLine("Done adding, count is now: " + StoredLeagues.Count, LogLevel.VERBOSE);
+    }
+
+    public List<ILeague> GetListOfStoredLeagues()
+    {
+        Log.WriteLine("Getting list of ILeagues with count of: " + StoredLeagues.Count, LogLevel.VERBOSE);
+        return StoredLeagues;
     }
 }

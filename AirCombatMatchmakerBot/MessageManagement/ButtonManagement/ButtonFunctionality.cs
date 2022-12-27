@@ -74,9 +74,9 @@ public static class ButtonFunctionality
 
         // Check that the player is in the PlayerData
         // (should be, he doesn't see this button before, except if hes admin)
-        if (Database.Instance.PlayerData.PlayerIDs.ContainsKey(_component.User.Id))
+        if (Database.Instance.PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(_component.User.Id))
         {
-            Player player = Database.Instance.PlayerData.PlayerIDs[_component.User.Id];
+            Player player = Database.Instance.PlayerData.GetAPlayerProfileById(_component.User.Id);
 
             if (player.GetPlayerDiscordId() == 0)
             {

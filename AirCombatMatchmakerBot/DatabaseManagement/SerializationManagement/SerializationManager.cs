@@ -58,7 +58,7 @@ public static class SerializationManager
 
                 if (!user.IsBot)
                 {
-                    if (!UserManager.CheckIfUserHasPlayerProfile(user.Id))
+                    if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(user.Id))
                     {
                         Log.WriteLine("User: " + user.Id +
                             " does not have a profile, disregarding", LogLevel.VERBOSE);

@@ -34,7 +34,7 @@ public static class DowntimeManager
             }
             else
             {
-                if (!UserManager.CheckIfUserHasPlayerProfile(user.Id))
+                if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(user.Id))
                 {
                     Log.WriteLine(
                         user.Username + "(" + user.Id +
