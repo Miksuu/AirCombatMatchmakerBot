@@ -7,25 +7,54 @@ public abstract class BaseCategory : InterfaceCategory
 {
     CategoryName InterfaceCategory.CategoryName
     {
-        get => categoryName;
-        set => categoryName = value;
+        get
+        {
+            Log.WriteLine("Getting " + nameof(categoryName) + ": " + categoryName, LogLevel.VERBOSE);
+            return categoryName;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(categoryName) + categoryName
+                + " to: " + value, LogLevel.VERBOSE);
+            categoryName = value;
+        }
     }
 
     List<ChannelName> InterfaceCategory.ChannelNames
     {
-        get => channelNames;
-        set => channelNames = value;
+        get
+        {
+            Log.WriteLine("Getting " + nameof(channelNames) + ": " +
+                channelNames, LogLevel.VERBOSE);
+            return channelNames;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(channelNames) + channelNames
+                + " to: " + value, LogLevel.VERBOSE);
+            channelNames = value;
+        }
     }
 
     List<InterfaceChannel> InterfaceCategory.InterfaceChannels
     {
-        get => interfaceChannels;
-        set => interfaceChannels = value;
+        get
+        {
+            Log.WriteLine("Getting " + nameof(interfaceChannels) + ": " +
+                interfaceChannels, LogLevel.VERBOSE);
+            return interfaceChannels;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(interfaceChannels) + interfaceChannels
+                + " to: " + value, LogLevel.VERBOSE);
+            interfaceChannels = value;
+        }
     }
 
-    public CategoryName categoryName;
-    public List<ChannelName> channelNames;
-    public List<InterfaceChannel> interfaceChannels;
+    [DataMember] protected CategoryName categoryName;
+    [DataMember] protected List<ChannelName> channelNames;
+    [DataMember] protected List<InterfaceChannel> interfaceChannels;
 
     public BaseCategory()
     {
