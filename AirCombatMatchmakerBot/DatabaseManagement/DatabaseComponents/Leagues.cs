@@ -19,7 +19,6 @@ public class Leagues
         return exists;
     }
 
-
     // Might want to add a check that it exists, use the method above
     public ILeague GetILeagueByCategoryName(CategoryName? _leagueCategoryName)
     {
@@ -76,16 +75,16 @@ public class Leagues
             {
                 if (!teamFound)
                 {
-                    foreach (Player player in team.players)
+                    foreach (Player player in team.GetListOfPlayersInATeam())
                     {
                         Log.WriteLine("Looping through player: " + player.GetPlayerNickname() + " (" +
                             player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
                         if (player.GetPlayerDiscordId() == _userId)
                         {
-                            team.teamActive = false;
+                            team.SetTheActive(false);
 
                             teamFound = true;
-                            Log.WriteLine("Set team: " + team.teamName + " deactive in league: " +
+                            Log.WriteLine("Set team: " + team.GetTeamName() + " deactive in league: " +
                                 storedLeague.LeagueCategoryName + " because " + player.GetPlayerNickname() +
                                 " left", LogLevel.DEBUG);
 

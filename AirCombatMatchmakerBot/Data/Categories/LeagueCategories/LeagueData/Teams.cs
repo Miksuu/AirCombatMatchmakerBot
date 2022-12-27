@@ -15,7 +15,7 @@ public class Teams
     public void AddToTeams(Team _Team)
     {
         Log.WriteLine(
-            "Adding Team: " + _Team + " (" + _Team.teamId + ") to the Teams list", LogLevel.VERBOSE);
+            "Adding Team: " + _Team + " (" + _Team.GetTeamId() + ") to the Teams list", LogLevel.VERBOSE);
         TeamsList.Add(_Team);
         Log.WriteLine("Done adding the team. Count is now: " + TeamsList.Count, LogLevel.VERBOSE);
     }
@@ -42,10 +42,12 @@ public class Teams
     {
         foreach (Team team in TeamsList)
         {
-            Log.WriteLine("Searching team: " + team.teamName +
-                " with " + team.players.Count, LogLevel.VERBOSE);
+            List<Player> Players = team.GetListOfPlayersInATeam();
 
-            foreach (Player teamPlayer in team.players)
+            Log.WriteLine("Searching team: " + team.GetTeamName() +
+                " with " + Players.Count, LogLevel.VERBOSE);
+
+            foreach (Player teamPlayer in Players)
             {
                 Log.WriteLine("Checking player: " + teamPlayer.GetPlayerNickname() +
                     " (" + teamPlayer.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
@@ -67,10 +69,12 @@ public class Teams
     {
         foreach (Team team in TeamsList)
         {
-            Log.WriteLine("Searching team: " + team.teamName +
-                " with " + team.players.Count, LogLevel.VERBOSE);
+            List<Player> Players = team.GetListOfPlayersInATeam();
 
-            foreach (Player teamPlayer in team.players)
+            Log.WriteLine("Searching team: " + team.GetTeamName() +
+                " with " + Players.Count, LogLevel.VERBOSE);
+
+            foreach (Player teamPlayer in Players)
             {
                 Log.WriteLine("Checking player: " + teamPlayer.GetPlayerNickname() +
                     " (" + teamPlayer.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);

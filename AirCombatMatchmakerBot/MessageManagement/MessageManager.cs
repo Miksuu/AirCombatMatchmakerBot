@@ -74,7 +74,8 @@ public static class MessageManager
 
         for (int u = 0; u < _leagueInterface.LeagueUnits.Count; ++u)
         {
-            allowedUnits += EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueUnits[u]);
+            allowedUnits +=
+                EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueUnits[u]);
 
             // Is not the last index
             if (u != _leagueInterface.LeagueUnits.Count - 1)
@@ -86,21 +87,24 @@ public static class MessageManager
         return allowedUnits;
     }
 
-    private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(ILeague _leagueInterface)
+    private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(
+        ILeague _leagueInterface)
     {
         int count = 0;
 
         foreach (Team team in _leagueInterface.LeagueData.Teams.GetListOfTeams())
         {
-            if (team.teamActive)
+            string teamName = team.GetTeamName();
+
+            if (team.GetIfTheTeamIsActive())
             {
                 count++;
-                Log.WriteLine("team: " + team.teamName +
+                Log.WriteLine("team: " + teamName +
                     " is active, increased count to: " + count, LogLevel.VERBOSE);
             }
             else
             {
-                Log.WriteLine("team: " + team.teamName + " is not active", LogLevel.VERBOSE);
+                Log.WriteLine("team: " + teamName + " is not active", LogLevel.VERBOSE);
             }
         }
 

@@ -171,18 +171,17 @@ public static class ButtonFunctionality
 
         Log.WriteLine("Adding team to the challenge list", LogLevel.VERBOSE);
 
-        Team team = TeamManager.FindActiveTeamByPlayerIdInAPredefinedLeague(
+        Team? team = TeamManager.FindActiveTeamByPlayerIdInAPredefinedLeague(
             dbLeagueInstance, ulong.Parse(_splitString));
 
-        Log.WriteLine("Team found: " + team.teamName + " (" + team.teamId + ")" +
+        Log.WriteLine("Team found: " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
             " adding it to the challenge queue with count: " +
             dbLeagueInstance.LeagueData.ChallengeStatus.GetListOfTeamsInTheQueue(),
             LogLevel.VERBOSE);
 
         dbLeagueInstance.LeagueData.ChallengeStatus.AddToTeamsInTheQueue(team);
 
-        Log.WriteLine(TeamManager.ReturnTeamsInTheQueueOfAChallenge(
-            dbLeagueInstance.LeagueData.ChallengeStatus.GetListOfTeamsInTheQueue(),
+        Log.WriteLine(dbLeagueInstance.LeagueData.ChallengeStatus.ReturnTeamsInTheQueueOfAChallenge(
             dbLeagueInstance.LeaguePlayerCountPerTeam), LogLevel.VERBOSE);
     }
 }
