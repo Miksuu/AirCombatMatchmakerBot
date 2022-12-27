@@ -59,4 +59,24 @@ public abstract class BaseLeague : ILeague
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 
+    public Team? FindActiveTeamByPlayerIdInAPredefinedLeague(ulong _playerId)
+    {
+        Log.WriteLine("Starting to find a active team by player id: " + _playerId +
+            " in league: " + leagueCategoryName, LogLevel.VERBOSE);
+
+        foreach (Team team in leagueData.Teams.GetListOfTeams())
+        {
+            Team? foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
+
+            if (foundTeam != null)
+            {
+                return foundTeam;
+            }
+        }
+
+        Log.WriteLine("Team not found! Admin trying to access challenge" +
+    " of a league that he's not registered to?", LogLevel.WARNING);
+
+        return null;
+    }
 }

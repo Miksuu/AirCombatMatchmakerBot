@@ -5,7 +5,7 @@ using System.Linq;
 
 public static class ButtonFunctionality
 {
-    private static ILeague FindLeagueInterfaceWithSplitStringPart(
+    private static ILeague? FindLeagueInterfaceWithSplitStringPart(
         string _splitStringIdPart)
     {
         Log.WriteLine("Starting to find Ileague from db with: " +
@@ -29,9 +29,15 @@ public static class ButtonFunctionality
         ILeague? dbLeagueInstance =
             Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
 
+        if (dbLeagueInstance == null)
+        {
+            Log.WriteLine(nameof(dbLeagueInstance) +
+                " was null! Could not find the league.", LogLevel.CRITICAL);
+            return null;
+        }
+
         Log.WriteLine(nameof(dbLeagueInstance) + " db: " +
             dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
-
         return dbLeagueInstance;
     }
 
@@ -67,7 +73,14 @@ public static class ButtonFunctionality
 
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
-        ILeague dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
+        ILeague? dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
+
+        if (dbLeagueInstance == null)
+        {
+            Log.WriteLine(nameof(dbLeagueInstance) +
+                " was null! Could not find the league.", LogLevel.CRITICAL);
+            return;
+        }
 
         Log.WriteLine("found: " + nameof(dbLeagueInstance) + 
             dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
@@ -171,15 +184,31 @@ public static class ButtonFunctionality
 
         Log.WriteLine("Adding team to the challenge list", LogLevel.VERBOSE);
 
-        Team? team = TeamManager.FindActiveTeamByPlayerIdInAPredefinedLeague(
-            dbLeagueInstance, ulong.Parse(_splitString));
+        BaseLeague? baseLeague = dbLeagueInstance as BaseLeague;
+
+        if (baseLeague == null)
+        {
+            Log.WriteLine(nameof(baseLeague) +
+                " was null! Could not find the league.", LogLevel.CRITICAL);
+            return;
+        }
+
+        Team? team = baseLeague.FindActiveTeamByPlayerIdInAPredefinedLeague(
+            ulong.Parse(_splitString));
+
+        if (team == null)
+        {
+            Log.WriteLine(nameof(team) +
+                " was null! Could not find the team.", LogLevel.CRITICAL);
+            return;
+        }
 
         Log.WriteLine("Team found: " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
             " adding it to the challenge queue with count: " +
-            dbLeagueInstance.LeagueData.ChallengeStatus.GetListOfTeamsInTheQueue(),
+            baseLeague.leagueData.ChallengeStatus.GetListOfTeamsInTheQueue(),
             LogLevel.VERBOSE);
 
-        dbLeagueInstance.LeagueData.ChallengeStatus.AddToTeamsInTheQueue(team);
+        baseLeague.leagueData.ChallengeStatus.AddToTeamsInTheQueue(team);
 
         Log.WriteLine(dbLeagueInstance.LeagueData.ChallengeStatus.ReturnTeamsInTheQueueOfAChallenge(
             dbLeagueInstance.LeaguePlayerCountPerTeam), LogLevel.VERBOSE);
