@@ -26,14 +26,7 @@ public class CachedUsers
         cachedUserIDs = new List<ulong>();
     }
 
-    /*
-    public List<ulong> GetListOfCachedUserIds()
-    {
-        Log.WriteLine("Getting list of cachedUserIDs with count of: " + cachedUserIDs.Count, LogLevel.VERBOSE);
-        return cachedUserIDs;
-    }*/
-
-    public async void AddUserIdToCachedList(ulong _userId)
+    public void AddUserIdToCachedList(ulong _userId)
     {
         Log.WriteLine("Adding " + _userId + " to the cache list", LogLevel.VERBOSE);
         if (!CachedUserIDs.Contains(_userId))

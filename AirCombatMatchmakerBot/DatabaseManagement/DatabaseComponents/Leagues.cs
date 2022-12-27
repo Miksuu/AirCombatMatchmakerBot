@@ -3,11 +3,27 @@
 [DataContract]
 public class Leagues
 {
-    [DataMember] private List<ILeague> StoredLeagues { get; set; }
+    public List<ILeague> StoredLeagues
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(storedLeagues) + " with count of: " +
+                storedLeagues.Count, LogLevel.VERBOSE);
+            return storedLeagues;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(storedLeagues)
+                + " to: " + value, LogLevel.VERBOSE);
+            storedLeagues = value;
+        }
+    }
+
+    [DataMember] private List<ILeague> storedLeagues { get; set; }
 
     public Leagues()
     {
-        StoredLeagues = new List<ILeague>();
+        storedLeagues = new List<ILeague>();
     }
 
     public bool CheckIfILeagueExistsByCategoryName(CategoryName _leagueCategoryName)
@@ -46,11 +62,12 @@ public class Leagues
         Log.WriteLine("Done adding, count is now: " + StoredLeagues.Count, LogLevel.VERBOSE);
     }
 
+    /*
     public List<ILeague> GetListOfStoredLeagues()
     {
         Log.WriteLine("Getting list of ILeagues with count of: " + StoredLeagues.Count, LogLevel.VERBOSE);
         return StoredLeagues;
-    }
+    }*/
 
     public async void HandleSettingTeamsInactiveThatUserWasIn(ulong _userId)
     {

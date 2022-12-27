@@ -21,7 +21,8 @@ public class CHALLENGE : BaseChannel
 
     public override async Task ActivateChannelFeatures()
     {
-        Log.WriteLine("Activating challenge system on channel: " + channelId, LogLevel.VERBOSE);
+        Log.WriteLine("Activating challenge system on channel: " +
+            channelId, LogLevel.VERBOSE);
 
         string channelFeatureKey = "challenge";
 
@@ -51,7 +52,8 @@ public class CHALLENGE : BaseChannel
         foreach (var createdCategoriesKvp in
             Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
-            Log.WriteLine("On league: " + createdCategoriesKvp.Value.CategoryName, LogLevel.VERBOSE);
+            Log.WriteLine("On league: " +
+                createdCategoriesKvp.Value.CategoryName, LogLevel.VERBOSE);
 
             string leagueName =
                 EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryName);
@@ -81,8 +83,8 @@ public class CHALLENGE : BaseChannel
             }
         }
 
-        Log.WriteLine(
-            "Did not find a channel id to generate a challenge queue message on!", LogLevel.ERROR);
+        Log.WriteLine("Did not find a channel id to generate a challenge" +
+            " queue message on!", LogLevel.ERROR);
         return string.Empty;
     }
 }

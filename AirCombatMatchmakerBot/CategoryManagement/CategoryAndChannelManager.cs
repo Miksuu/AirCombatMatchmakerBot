@@ -54,7 +54,6 @@ public static class CategoryAndChannelManager
         bool isLeague = false;
         CategoryName? leagueCategoryName = null;
         InterfaceCategory? interfaceCategory = null;
-        //BaseCategory? baseCategory = null;
 
         Log.WriteLine("Generating category named: " + _categoryName, LogLevel.VERBOSE);
 
@@ -69,11 +68,6 @@ public static class CategoryAndChannelManager
 
             Log.WriteLine("Got " + nameof(leagueInterface) +
                 leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
-
-            /*
-            baseCategory = new LEAGUETEMPLATE();
-            baseCategory.categoryName = leagueInterface.LeagueCategoryName;
-            */
 
             interfaceCategory = GetCategoryInstance(CategoryName.LEAGUETEMPLATE);
             interfaceCategory.CategoryName = _categoryName;
@@ -100,14 +94,6 @@ public static class CategoryAndChannelManager
 
             Log.WriteLine("interfaceCategory name: " +
                 interfaceCategory.CategoryName, LogLevel.DEBUG);
-
-            /*
-            baseCategory = interfaceCategory as BaseCategory;
-            if (baseCategory == null)
-            {
-                Log.WriteLine(nameof(baseCategory) + " was null!", LogLevel.CRITICAL);
-                return;
-            }*/
 
             Log.WriteLine(nameof(interfaceCategory.CategoryName) +
                 ": " + interfaceCategory.CategoryName, LogLevel.VERBOSE);
@@ -169,10 +155,6 @@ public static class CategoryAndChannelManager
             Log.WriteLine("Found " + nameof(dbCategory) + " with id: " +
                 dbCategory.Key + " named: " +
                 dbCategory.Value.CategoryName, LogLevel.VERBOSE);
-
-            // Needs to be inserted in to the basecategory,
-            // otherwise on channel generation some data won't show
-            //baseCategory = dbCategory.Value as BaseCategory;
 
             socketCategoryChannel = _guild.GetCategoryChannel(dbCategory.Key);
 
