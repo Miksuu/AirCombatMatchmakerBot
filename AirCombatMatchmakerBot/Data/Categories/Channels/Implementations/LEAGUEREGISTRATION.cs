@@ -46,11 +46,10 @@ public class LEAGUEREGISTRATION : BaseChannel
         Log.WriteLine("Channel found: " + channel.Name +
             "(" + channel.Id + ")", LogLevel.VERBOSE);
 
-        await CreateLeagueMessages(this, channel);        
+        await CreateLeagueMessages(channel);        
     }
 
-    public static async Task CreateLeagueMessages(LEAGUEREGISTRATION _LEAGUEREGISTRATION,
-    ITextChannel _leagueRegistrationChannel)
+    public async Task CreateLeagueMessages(ITextChannel _leagueRegistrationChannel)
     {
         foreach (CategoryName leagueName in Enum.GetValues(typeof(CategoryName)))
         {
@@ -70,9 +69,9 @@ public class LEAGUEREGISTRATION : BaseChannel
             }
 
             Log.WriteLine("Printing all keys and values in: " + nameof(
-                _LEAGUEREGISTRATION.channelFeaturesWithMessageIds) + " that has count of: " +
-                _LEAGUEREGISTRATION.channelFeaturesWithMessageIds.Count, LogLevel.VERBOSE);
-            foreach (var item in _LEAGUEREGISTRATION.channelFeaturesWithMessageIds)
+                channelFeaturesWithMessageIds) + " that has count of: " +
+                channelFeaturesWithMessageIds.Count, LogLevel.VERBOSE);
+            foreach (var item in channelFeaturesWithMessageIds)
             {
                 Log.WriteLine("Key in db: " + item.Key +
                     " with value: " + item.Value, LogLevel.VERBOSE);
@@ -99,11 +98,11 @@ public class LEAGUEREGISTRATION : BaseChannel
 
             // If the channelMessages features got this already, if yes, continue, otherwise finish
             // the operation then save it to the dictionary
-            if (_LEAGUEREGISTRATION.channelFeaturesWithMessageIds.ContainsKey(
+            if (channelFeaturesWithMessageIds.ContainsKey(
                 leagueNameString) && containsMessage)
             {
                 Log.WriteLine("The key " + leagueNameString + " was already found in: " +
-                    nameof(_LEAGUEREGISTRATION.channelFeaturesWithMessageIds) +
+                    nameof(channelFeaturesWithMessageIds) +
                     ", continuing.", LogLevel.VERBOSE);
                 continue;
             }
@@ -124,7 +123,7 @@ public class LEAGUEREGISTRATION : BaseChannel
 
             Log.WriteLine("id:" + leagueRegistrationChannelMessageId, LogLevel.VERBOSE);
 
-            _LEAGUEREGISTRATION.channelFeaturesWithMessageIds.Add(
+            channelFeaturesWithMessageIds.Add(
                 leagueNameString, leagueRegistrationChannelMessageId);
 
             Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
