@@ -1,4 +1,6 @@
-﻿[Serializable]
+﻿using System.Runtime.Serialization;
+
+[DataContract]
 public class Team
 {
     public int skillRating { get; set; }

@@ -1,8 +1,10 @@
-﻿[Serializable]
+﻿using System.Runtime.Serialization;
+
+[DataContract]
 public class Teams
 {
-    private List<Team> TeamsList { get; set; }
-    private int currentTeamInt { get; set; }
+    [DataMember] private List<Team> TeamsList { get; set; }
+    [DataMember] private int currentTeamInt { get; set; }
 
     public Teams() 
     {

@@ -1,7 +1,9 @@
-﻿[Serializable]
+﻿using System.Runtime.Serialization;
+
+[DataContract]
 public class CachedUsers
 {
-    private List<ulong> cachedUserIDs { get; set; }
+    [DataMember] private List<ulong> cachedUserIDs { get; set; }
 
     public CachedUsers()
     {

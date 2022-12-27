@@ -1,9 +1,10 @@
 ﻿using Discord.WebSocket;
+using System.Runtime.Serialization;
 
-[Serializable]
+[DataContract]
 public class Admins
 {
-    private List<ulong> adminIDs { get; set; }
+    [DataMember] private List<ulong> adminIDs { get; set; }
 
     public Admins()
     {

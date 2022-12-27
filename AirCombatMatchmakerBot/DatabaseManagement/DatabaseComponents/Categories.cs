@@ -1,10 +1,11 @@
 ﻿using Discord.WebSocket;
+using System.Runtime.Serialization;
 
-[Serializable]
+[DataContract]
 public class Categories
 {
     // Dictionary of channel categories and channelNames inside them
-    private Dictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels { get; set; }
+    [DataMember] private Dictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels { get; set; }
 
     public Categories()
     {

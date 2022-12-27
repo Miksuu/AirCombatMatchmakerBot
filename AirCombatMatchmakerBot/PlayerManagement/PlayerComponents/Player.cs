@@ -1,4 +1,6 @@
-﻿[Serializable]
+﻿using System.Runtime.Serialization;
+
+[DataContract]
 public class Player
 {
     public string playerNickName { get; set; }

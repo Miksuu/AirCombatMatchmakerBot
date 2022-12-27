@@ -1,4 +1,5 @@
 using Discord.WebSocket;
+using System.Runtime.Serialization;
 
 [Serializable]
 public class Database

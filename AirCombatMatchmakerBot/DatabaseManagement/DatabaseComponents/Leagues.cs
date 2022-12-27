@@ -1,7 +1,9 @@
-﻿[Serializable]
+﻿using System.Runtime.Serialization;
+
+[DataContract]
 public class Leagues
 {
-    private List<ILeague> StoredLeagues { get; set; }
+    [DataMember] private List<ILeague> StoredLeagues { get; set; }
 
     public Leagues()
     {

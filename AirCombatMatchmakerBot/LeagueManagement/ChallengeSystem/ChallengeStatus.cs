@@ -1,7 +1,9 @@
-﻿[Serializable]
+﻿using System.Runtime.Serialization;
+
+[DataContract]
 public class ChallengeStatus
 {
-    private List<Team> TeamsInTheQueue { get; set; }
+    [DataMember] private List<Team> TeamsInTheQueue { get; set; }
     public ChallengeStatus()
     {
         TeamsInTheQueue = new List<Team>();

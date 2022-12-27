@@ -1,17 +1,19 @@
-﻿[Serializable]
+﻿using System.Runtime.Serialization;
+
+[DataContract]
 public class DiscordLeagueReferences
 {
     // The references to the message in the registration channel
-    private ulong leagueRegistrationChannelMessageId { get; set; }
+    [DataMember] private ulong leagueRegistrationChannelMessageId { get; set; }
 
     // The reference to the category created by the system
-    private ulong leagueCategoryId { get; set; }
+    [DataMember] private ulong leagueCategoryId { get; set; }
 
     // The references for the channelNames inside the category
-    private Dictionary<ChannelName, ulong> leagueChannels { get; set; }
+    [DataMember] private Dictionary<ChannelName, ulong> leagueChannels { get; set; }
 
     // Id of the role which gives access to the league channelNames
-    private ulong leagueRoleId { get; set; }
+    [DataMember] private ulong leagueRoleId { get; set; }
 
     public DiscordLeagueReferences()
     {

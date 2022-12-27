@@ -1,7 +1,9 @@
-﻿[Serializable]
+﻿using System.Runtime.Serialization;
+
+[DataContract]
 public class PlayerData
 {
-    public Dictionary<ulong, Player> PlayerIDs { get; set; }
+    [DataMember] public Dictionary<ulong, Player> PlayerIDs { get; set; }
     public PlayerData()
     {
         PlayerIDs = new Dictionary<ulong, Player>();
