@@ -54,7 +54,7 @@ public class Teams
     /*
     public List<Team> GetListOfTeams()
     {
-        Log.WriteLine("Getting list of Teams with count of: " + teamsList.Count, LogLevel.VERBOSE);
+        Log.WriteLine("Getting list of teams with count of: " + teamsList.Count, LogLevel.VERBOSE);
         return teamsList;
     }
 

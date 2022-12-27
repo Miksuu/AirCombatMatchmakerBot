@@ -4,20 +4,51 @@ using System.Runtime.Serialization;
 [DataContract]
 public class LeagueData
 {
-    [DataMember] public Teams Teams { get; set; }
-    [DataMember] public ChallengeStatus ChallengeStatus { get; set; }
+    public Teams Teams
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(teams), LogLevel.VERBOSE);
+            return teams;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(teams)
+                + " to: " + value, LogLevel.VERBOSE);
+            teams = value;
+        }
+    }
+
+    public ChallengeStatus ChallengeStatus
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(challengeStatus), LogLevel.VERBOSE);
+            return challengeStatus;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(challengeStatus)
+                + " to: " + value, LogLevel.VERBOSE);
+            challengeStatus = value;
+        }
+    }
+
+
+    [DataMember] private Teams teams { get; set; }
+    [DataMember] private ChallengeStatus challengeStatus { get; set; }
     [DataMember] private bool matchmakerActive { get; set; }
     public LeagueData()
     {
-        Teams = new();
-        ChallengeStatus = new();
+        teams = new();
+        challengeStatus = new();
     }
 
     public Team? FindActiveTeamByPlayerIdInAPredefinedLeague(ulong _playerId)
     {
         Log.WriteLine("Starting to find a active team by player id: " + _playerId, LogLevel.VERBOSE);
 
-        foreach (Team team in Teams.TeamsList)
+        foreach (Team team in teams.TeamsList)
         {
             Team? foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
 
@@ -46,12 +77,12 @@ public class LeagueData
 
         Log.WriteLine("Team found: " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
             " adding it to the challenge queue: " +
-            ChallengeStatus.TeamsInTheQueue,
+            challengeStatus.TeamsInTheQueue,
             LogLevel.VERBOSE);
 
-        ChallengeStatus.AddToTeamsInTheQueue(team);
+        challengeStatus.AddToTeamsInTheQueue(team);
 
-        Log.WriteLine(ChallengeStatus.ReturnTeamsInTheQueueOfAChallenge(
+        Log.WriteLine(challengeStatus.ReturnTeamsInTheQueueOfAChallenge(
             _leaguePlayerCountPerTeam), LogLevel.VERBOSE);
     }
 }
