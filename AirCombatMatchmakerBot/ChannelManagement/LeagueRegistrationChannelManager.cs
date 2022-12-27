@@ -16,7 +16,7 @@ public static class LeagueRegistrationChannelManager
 
             // Skip all the non-leagues
             int enumValue = (int)leagueName;
-            if (enumValue < 101) continue;
+            if (enumValue > 100) continue;
 
             string? leagueNameString = EnumExtensions.GetEnumMemberAttrValue(leagueName);
             Log.WriteLine("leagueNameString: " + leagueNameString, LogLevel.VERBOSE);

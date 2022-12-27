@@ -34,7 +34,7 @@ public static class LeagueManager
 
             // Skip all the non-leagues
             int enumValue = (int)leagueCategoryName;
-            if (enumValue < 101) continue;
+            if (enumValue > 100) continue;
 
             ILeague interfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
             Log.WriteLine("after setting interface", LogLevel.VERBOSE);

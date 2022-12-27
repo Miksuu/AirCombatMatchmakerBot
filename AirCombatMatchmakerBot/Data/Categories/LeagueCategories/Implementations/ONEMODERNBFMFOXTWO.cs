@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿
+using Discord;
 using Discord.WebSocket;
 using System.Data;
 using System;
@@ -10,8 +11,6 @@ public class ONEMODERNBFMFOXTWO : BaseLeague
     public ONEMODERNBFMFOXTWO()
     {
         leagueCategoryName = CategoryName.ONEMODERNBFMFOXTWO;
-        //categoryName = CategoryName.ONEMODERNBFMFOXTWO;
-
         leagueEra = Era.MODERN;
         leaguePlayerCountPerTeam = 1;
 

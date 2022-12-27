@@ -2,25 +2,27 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
+// REMEMBER TO SET THE VALUES CORRECTLY HERE !!!
+
 [JsonConverter(typeof(StringEnumConverter))]
 public enum CategoryName
 {
-    [EnumMember(Value = "bot-stuff")]
-    BOTSTUFF,
-
-    [EnumMember(Value = "registration")]
-    REGISTRATIONCATEGORY,
-
-    [EnumMember(Value = "league-template")]
-    LEAGUETEMPLATE,
-
-
-    // Leagues. They have value larger than 100 so during league creation
-    // those other CategoryNames won't be tried to make a league
     [EnumMember(Value = "1v1 Modern BFM Guns")]
-    ONEMODERNBFMGUNS = 101,
+    ONEMODERNBFMGUNS = 0,
 
 
     [EnumMember(Value = "1v1 Modern BFM Fox2")]
-    ONEMODERNBFMFOXTWO = 102,
+    ONEMODERNBFMFOXTWO = 1,
+
+
+    // Categories. They have value larger than 100 so during league creation
+    // those other CategoryNames won't be made a league
+    [EnumMember(Value = "bot-stuff")]
+    BOTSTUFF = 101,
+
+    [EnumMember(Value = "registration")]
+    REGISTRATIONCATEGORY = 102,
+
+    [EnumMember(Value = "league-template")]
+    LEAGUETEMPLATE = 103,
 }

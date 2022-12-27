@@ -33,14 +33,13 @@ public class DiscordLeagueReferences
 
     public ulong GetLeagueCategoryId()
     {
-        Log.WriteLine("Getting id: " + leagueCategoryId, LogLevel.CRITICAL);
+        Log.WriteLine("Getting id: " + leagueCategoryId, LogLevel.VERBOSE);
         return leagueCategoryId;
     }
 
     public void SetLeagueCategoryId(ulong _id)
     {
-        Log.WriteLine("Setting id: " + leagueCategoryId + " to: " +
-            _id, LogLevel.ERROR);
+        Log.WriteLine("Setting id: " + leagueCategoryId + " to: " + _id, LogLevel.VERBOSE);
         leagueCategoryId = _id;
     }
 
