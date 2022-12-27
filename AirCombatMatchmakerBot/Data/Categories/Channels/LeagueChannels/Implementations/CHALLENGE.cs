@@ -33,7 +33,7 @@ public class CHALLENGE : BaseChannel
 
         ulong buttonId = await ButtonComponents.CreateButtonMessage(
             channelId,
-            ChallengeSystem.GenerateChallengeQueueMessage(channelId),
+            GenerateChallengeQueueMessage(),
             "CHALLENGE!",
             channelFeatureKey + "_" + channelsCategoryId);
 
@@ -41,5 +41,48 @@ public class CHALLENGE : BaseChannel
 
         Log.WriteLine("Done activating channel features on " +
             nameof(CHALLENGE) + " id: " + base.channelId, LogLevel.VERBOSE);
+    }
+
+    public string GenerateChallengeQueueMessage()
+    {
+        Log.WriteLine("Generating a challenge queue message with _channelId: " +
+            channelId, LogLevel.VERBOSE);
+
+        foreach (var createdCategoriesKvp in
+            Database.Instance.Categories.GetDictionaryOfCreatedCategoriesWithChannels())
+        {
+            Log.WriteLine("On league: " + createdCategoriesKvp.Value.CategoryName, LogLevel.VERBOSE);
+
+            string leagueName =
+                EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryName);
+
+            Log.WriteLine("Full league name: " + leagueName, LogLevel.VERBOSE);
+
+            if (createdCategoriesKvp.Value.InterfaceChannels.Any(
+                    x => x.ChannelId == channelId))
+            {
+                ulong channelIdToLookFor =
+                    createdCategoriesKvp.Value.InterfaceChannels.First(
+                        x => x.ChannelId == channelId).ChannelId;
+
+                Log.WriteLine("Looping on league: " + leagueName +
+                    " looking for id: " + channelIdToLookFor, LogLevel.VERBOSE);
+
+                if (channelId == channelIdToLookFor)
+                {
+                    Log.WriteLine("Found: " + channelIdToLookFor +
+                        " is league: " + leagueName, LogLevel.DEBUG);
+
+                    string challengeMessage = ". \n" +
+                        leagueName + " challenge. Players In The Queue:. \n";
+
+                    return challengeMessage;
+                }
+            }
+        }
+
+        Log.WriteLine(
+            "Did not find a channel id to generate a challenge queue message on!", LogLevel.ERROR);
+        return string.Empty;
     }
 }
