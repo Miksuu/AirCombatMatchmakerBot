@@ -9,7 +9,7 @@ public class DiscordLeagueReferences
         {
             Log.WriteLine("Getting " + nameof(leagueRegistrationChannelMessageId) +
                 leagueRegistrationChannelMessageId, LogLevel.VERBOSE);
-            return leagueRoleId;
+            return leagueRegistrationChannelMessageId;
         }
         set
         {
