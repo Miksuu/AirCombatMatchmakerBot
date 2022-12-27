@@ -71,7 +71,7 @@ public class Leagues
 
             string? storedLeagueString = storedLeague.ToString();
 
-            foreach (Team team in storedLeague.LeagueData.Teams.GetListOfTeams())
+            foreach (Team team in storedLeague.LeagueData.Teams.TeamsList)
             {
                 if (!teamFound)
                 {

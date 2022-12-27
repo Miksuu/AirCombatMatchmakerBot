@@ -17,7 +17,7 @@ public class LeagueData
     {
         Log.WriteLine("Starting to find a active team by player id: " + _playerId, LogLevel.VERBOSE);
 
-        foreach (Team team in Teams.GetListOfTeams())
+        foreach (Team team in Teams.TeamsList)
         {
             Team? foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
 
@@ -45,8 +45,8 @@ public class LeagueData
         }
 
         Log.WriteLine("Team found: " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
-            " adding it to the challenge queue with count: " +
-            ChallengeStatus.GetListOfTeamsInTheQueue(),
+            " adding it to the challenge queue: " +
+            ChallengeStatus.TeamsInTheQueue,
             LogLevel.VERBOSE);
 
         ChallengeStatus.AddToTeamsInTheQueue(team);

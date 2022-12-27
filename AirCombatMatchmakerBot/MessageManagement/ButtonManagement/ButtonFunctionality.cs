@@ -112,13 +112,13 @@ public static class ButtonFunctionality
                 Team newTeam = new Team(
                     new List<Player> { player },
                     player.GetPlayerNickname(),
-                    dbLeagueInstance.LeagueData.Teams.GetCurrentTeamInt());
+                    dbLeagueInstance.LeagueData.Teams.CurrentTeamInt);
 
                 if (dbLeagueInstance.LeaguePlayerCountPerTeam < 2)
                 {
                     Log.WriteLine("This league is solo", LogLevel.VERBOSE);
 
-                    dbLeagueInstance.LeagueData.Teams.AddToTeams(newTeam);
+                    dbLeagueInstance.LeagueData.Teams.AddToListOfTeams(newTeam);
                 }
                 else
                 {
@@ -137,7 +137,7 @@ public static class ButtonFunctionality
 
 
                 Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
-                    dbLeagueInstance.LeagueData.Teams.GetListOfTeams().Count, LogLevel.DEBUG);
+                    dbLeagueInstance.LeagueData.Teams.TeamsList.Count, LogLevel.DEBUG);
 
                 dbLeagueInstance.LeagueData.Teams.IncrementCurrentTeamInt();
                 await SerializationManager.SerializeDB();

@@ -3,34 +3,66 @@
 [DataContract]
 public class Teams
 {
-    [DataMember] private List<Team> TeamsList { get; set; }
+    public List<Team> TeamsList
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(teamsList) + " with count of: " +
+                teamsList.Count, LogLevel.VERBOSE);
+            return teamsList;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(teamsList) + teamsList
+                + " to: " + value, LogLevel.VERBOSE);
+            teamsList = value;
+        }
+    }
+
+    public int CurrentTeamInt
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(currentTeamInt) + currentTeamInt, LogLevel.VERBOSE);
+            return currentTeamInt;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(currentTeamInt) + currentTeamInt
+                + " to: " + value, LogLevel.VERBOSE);
+            currentTeamInt = value;
+        }
+    }
+
+    [DataMember] private List<Team> teamsList { get; set; }
     [DataMember] private int currentTeamInt { get; set; }
 
     public Teams() 
     {
-        TeamsList = new List<Team>();
+        teamsList = new List<Team>();
         currentTeamInt = 1;
     }
 
-    public void AddToTeams(Team _Team)
+    public void AddToListOfTeams(Team _Team)
     {
         Log.WriteLine(
             "Adding Team: " + _Team + " (" + _Team.GetTeamId() + ") to the Teams list", LogLevel.VERBOSE);
-        TeamsList.Add(_Team);
-        Log.WriteLine("Done adding the team. Count is now: " + TeamsList.Count, LogLevel.VERBOSE);
+        teamsList.Add(_Team);
+        Log.WriteLine("Done adding the team. Count is now: " + teamsList.Count, LogLevel.VERBOSE);
     }
 
+    /*
     public List<Team> GetListOfTeams()
     {
-        Log.WriteLine("Getting list of Teams with count of: " + TeamsList.Count, LogLevel.VERBOSE);
-        return TeamsList;
+        Log.WriteLine("Getting list of Teams with count of: " + teamsList.Count, LogLevel.VERBOSE);
+        return teamsList;
     }
 
     public int GetCurrentTeamInt()
     {
         Log.WriteLine("Getting currentTeamInt: " + currentTeamInt, LogLevel.VERBOSE);
         return currentTeamInt;
-    }
+    }*/
 
     public void IncrementCurrentTeamInt()
     {
@@ -40,7 +72,7 @@ public class Teams
 
     public bool CheckIfPlayerIsAlreadyInATeamById(ulong _idToSearchFor)
     {
-        foreach (Team team in TeamsList)
+        foreach (Team team in teamsList)
         {
             List<Player> Players = team.GetListOfPlayersInATeam();
 
@@ -67,7 +99,7 @@ public class Teams
     // Always run CheckIfPlayerIsAlreadyInATeamById() before!
     public Team ReturnTeamThatThePlayerIsIn(ulong _idToSearchFor)
     {
-        foreach (Team team in TeamsList)
+        foreach (Team team in teamsList)
         {
             List<Player> Players = team.GetListOfPlayersInATeam();
 

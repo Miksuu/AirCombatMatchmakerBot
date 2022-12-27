@@ -92,7 +92,7 @@ public static class MessageManager
     {
         int count = 0;
 
-        foreach (Team team in _leagueInterface.LeagueData.Teams.GetListOfTeams())
+        foreach (Team team in _leagueInterface.LeagueData.Teams.TeamsList)
         {
             string teamName = team.GetTeamName();
 
