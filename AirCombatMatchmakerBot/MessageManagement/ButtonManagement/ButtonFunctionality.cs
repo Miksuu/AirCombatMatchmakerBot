@@ -88,7 +88,7 @@ public static class ButtonFunctionality
             Log.WriteLine("Found player: " + player.GetPlayerNickname() +
                 " (" + player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
 
-            if (dbLeagueInstance.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
+            if (!dbLeagueInstance.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
                 _component.User.Id))
             {
                 Log.WriteLine(
