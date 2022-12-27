@@ -53,8 +53,8 @@ public abstract class BaseChannel : InterfaceChannel
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(channelFeaturesWithMessageIds) + ": " +
-                channelFeaturesWithMessageIds, LogLevel.VERBOSE);
+            Log.WriteLine("Getting " + nameof(channelFeaturesWithMessageIds) + " with count of: " +
+                channelFeaturesWithMessageIds.Count, LogLevel.VERBOSE);
             return channelFeaturesWithMessageIds;
         }
         set
