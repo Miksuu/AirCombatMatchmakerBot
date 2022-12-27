@@ -4,20 +4,36 @@ using System.Runtime.Serialization;
 [DataContract]
 public class Categories
 {
+    public Dictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(createdCategoriesWithChannels) + " with count of: " +
+                createdCategoriesWithChannels.Count, LogLevel.VERBOSE);
+            return createdCategoriesWithChannels;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(createdCategoriesWithChannels)
+                + " to: " + value, LogLevel.VERBOSE);
+            createdCategoriesWithChannels = value;
+        }
+    }
+
     // Dictionary of channel categories and channelNames inside them
-    [DataMember] private Dictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels { get; set; }
+    [DataMember] private Dictionary<ulong, InterfaceCategory> createdCategoriesWithChannels { get; set; }
 
     public Categories()
     {
-        CreatedCategoriesWithChannels = new();
+        createdCategoriesWithChannels = new();
     }
-
+    /*
     public Dictionary<ulong, InterfaceCategory> GetDictionaryOfCreatedCategoriesWithChannels()
     {
         Log.WriteLine("Getting list of cachedUserIDs with count of: " +
-            CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
-        return CreatedCategoriesWithChannels;
-    }
+            createdCategoriesWithChannels.Count, LogLevel.VERBOSE);
+        return createdCategoriesWithChannels;
+    }*/
 
     public KeyValuePair<ulong, InterfaceCategory> GetCreatedCategoryWithChannelKvpWithId(
         ulong _idToSearchWith)
@@ -38,11 +54,11 @@ public class Categories
         return FoundCategoryKvp;
     }
 
-    public void AddToCreatedCategoryWithChannelWithUlongAndBaseCategory(ulong _id, BaseCategory _baseCategory)
+    public void AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(ulong _id, InterfaceCategory _InterfaceCategory)
     {
-        Log.WriteLine("Adding baseCategory: " + _baseCategory.categoryName +
+        Log.WriteLine("Adding baseCategory: " + _InterfaceCategory.CategoryName +
             "to the CreatedCategoriesWithChannels Dictionary" + " with id: " + _id, LogLevel.VERBOSE);
-        CreatedCategoriesWithChannels.Add(_id, _baseCategory);
+        CreatedCategoriesWithChannels.Add(_id, _InterfaceCategory);
         Log.WriteLine("Done adding, count is now: " + CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
     }
 
