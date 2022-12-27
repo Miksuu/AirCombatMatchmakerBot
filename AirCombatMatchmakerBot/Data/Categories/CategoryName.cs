@@ -10,10 +10,8 @@ public enum CategoryName
     [EnumMember(Value = "1v1 Modern BFM Guns")]
     ONEMODERNBFMGUNS = 0,
 
-
     [EnumMember(Value = "1v1 Modern BFM Fox2")]
     ONEMODERNBFMFOXTWO = 1,
-
 
     // Categories. They have value larger than 100 so during league creation
     // those other CategoryNames won't be made a league

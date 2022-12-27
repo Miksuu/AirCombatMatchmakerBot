@@ -59,7 +59,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(channelFeaturesWithMessageIds) + channelFeaturesWithMessageIds
+            Log.WriteLine("Setting " + nameof(channelFeaturesWithMessageIds)
                 + " to: " + value, LogLevel.VERBOSE);
             channelFeaturesWithMessageIds = value;
         }

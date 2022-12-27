@@ -24,13 +24,13 @@ public abstract class BaseCategory : InterfaceCategory
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(channelNames) + ": " +
-                channelNames, LogLevel.VERBOSE);
+            Log.WriteLine("Getting " + nameof(channelNames) + " with count of: " +
+                channelNames.Count, LogLevel.VERBOSE);
             return channelNames;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(channelNames) + channelNames
+            Log.WriteLine("Setting " + nameof(channelNames)
                 + " to: " + value, LogLevel.VERBOSE);
             channelNames = value;
         }
@@ -40,13 +40,13 @@ public abstract class BaseCategory : InterfaceCategory
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(interfaceChannels) + ": " +
-                interfaceChannels, LogLevel.VERBOSE);
+            Log.WriteLine("Getting " + nameof(interfaceChannels) + " with count of: " +
+                interfaceChannels.Count, LogLevel.VERBOSE);
             return interfaceChannels;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(interfaceChannels) + interfaceChannels
+            Log.WriteLine("Setting " + nameof(interfaceChannels)
                 + " to: " + value, LogLevel.VERBOSE);
             interfaceChannels = value;
         }
