@@ -70,6 +70,6 @@ public class CommandBuilder
             Exceptions.BotClientRefNull();
             return;
         }
-        await client.Rest.CreateGuildCommand(guildCommandWithOptions.Build(), BotReference.GuildID);
+        await client.Rest.CreateGuildCommand(guildCommandWithOptions.Build(), BotReference.GetGuildID());
     }
 }

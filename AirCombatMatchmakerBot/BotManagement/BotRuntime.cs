@@ -22,7 +22,7 @@ public class BotRuntimeManager
 
         client.Ready += async () =>
         {
-            BotReference.connected = true;
+            BotReference.SetConnectionState(true);
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
             //ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES

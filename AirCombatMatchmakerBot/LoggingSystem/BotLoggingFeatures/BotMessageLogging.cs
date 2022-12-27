@@ -21,7 +21,7 @@ public static class BotMessageLogging
 
         completeLogString += "```" + _logMessage + "```";
 
-        if (BotReference.connected)
+        if (BotReference.GetConnectionState())
         {
             var guild = BotReference.GetGuildRef();
 

@@ -10,8 +10,7 @@ public static class BotReference
     private static SocketGuild? guildRef;
     // Hardcoded to work only on one discord server (so enter it's ID here)
     private readonly static ulong GuildID = 1047140922950942760;
-
-    public static bool connected = false;
+    private static bool connectionState = false;
 
     public static DiscordSocketClient? GetClientRef()
     {
@@ -57,7 +56,22 @@ public static class BotReference
 
     public static ulong GetGuildID()
     {
-        Log.WriteLine("Getting the guild id.", LogLevel.VERBOSE);
+        Log.WriteLine("Getting the " + nameof(GuildID) + ": " +
+            GuildID, LogLevel.VERBOSE);
         return GuildID;
+    }
+
+    public static bool GetConnectionState()
+    {
+        Log.WriteLine("Getting the " + nameof(connectionState) +
+            ": " + connectionState, LogLevel.VERBOSE);
+        return connectionState;
+    }
+
+    public static void SetConnectionState(bool _newConnectionState)
+    {
+        Log.WriteLine("Setting the " + nameof(connectionState) +
+            ": " + connectionState + " to: " + _newConnectionState, LogLevel.VERBOSE);
+        connectionState = _newConnectionState;
     }
 }
