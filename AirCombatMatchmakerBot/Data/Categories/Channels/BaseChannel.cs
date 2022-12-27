@@ -28,11 +28,11 @@ public abstract class BaseChannel : InterfaceChannel
         set => channelFeaturesWithMessageIds = value;
     }
 
-    public ChannelName channelName;
-    public ulong channelId;
-    public ulong channelsCategoryId;
+    protected ChannelName channelName;
+    protected ulong channelId;
+    protected ulong channelsCategoryId;
+    protected Dictionary<string, ulong> channelFeaturesWithMessageIds;
 
-    public Dictionary<string, ulong> channelFeaturesWithMessageIds;
     public BaseChannel()
     {
         channelFeaturesWithMessageIds = new Dictionary<string, ulong>();
@@ -41,4 +41,24 @@ public abstract class BaseChannel : InterfaceChannel
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
 
     public abstract Task ActivateChannelFeatures();
+
+    public ChannelName GetChannelName()
+    {
+        Log.WriteLine("Getting " + nameof(ChannelName) + ": " + channelName, LogLevel.VERBOSE);
+        return channelName;
+    }
+
+    public void SetChannelsId(ulong _newChannelId)
+    {
+        Log.WriteLine("Setting " + nameof(channelId) + channelId
+            + " to: " + _newChannelId, LogLevel.VERBOSE);
+        channelId = _newChannelId;
+    }
+
+    public void SetChannelsCategoryId(ulong _newCategoryId)
+    {
+        Log.WriteLine("Setting " + nameof(channelsCategoryId) + channelsCategoryId
+            + " to: " + _newCategoryId, LogLevel.VERBOSE);
+        channelsCategoryId = _newCategoryId;
+    }
 }
