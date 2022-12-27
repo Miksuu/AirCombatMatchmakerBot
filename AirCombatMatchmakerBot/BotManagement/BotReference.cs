@@ -9,7 +9,7 @@ public static class BotReference
     // Use guild ref to get the guild specific things, such as channels in a category
     private static SocketGuild? guildRef;
     // Hardcoded to work only on one discord server (so enter it's ID here)
-    public readonly static ulong GuildID = 1047140922950942760;
+    private readonly static ulong GuildID = 1047140922950942760;
 
     public static bool connected = false;
 
@@ -53,5 +53,11 @@ public static class BotReference
             guildRef = clientRef.GetGuild(GuildID);
             return guildRef;
         }
+    }
+
+    public static ulong GetGuildID()
+    {
+        Log.WriteLine("Getting the guild id.", LogLevel.VERBOSE);
+        return GuildID;
     }
 }

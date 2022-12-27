@@ -49,7 +49,7 @@ public class CommandBuilder
                 return guildCommand;
             }
 
-            client.Rest.CreateGuildCommand(guildCommand.Build(), BotReference.GuildID);
+            client.Rest.CreateGuildCommand(guildCommand.Build(), BotReference.GetGuildID());
         }
 
         return guildCommand;
