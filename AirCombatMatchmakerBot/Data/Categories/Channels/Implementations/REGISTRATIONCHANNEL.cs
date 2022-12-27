@@ -9,7 +9,7 @@ public class REGISTRATIONCHANNEL : BaseChannel
 {
     public REGISTRATIONCHANNEL()
     {
-        channelName = ChannelName.REGISTRATIONCHANNEL;;
+        channelName = ChannelName.REGISTRATIONCHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)

@@ -234,7 +234,7 @@ public static class CategoryAndChannelManager
             }
 
             // Channel found from the basecategory (it exists)
-            if (_baseCategory.interfaceChannels.Any(x => x.ChannelName == baseChannel.GetChannelName()))
+            if (_baseCategory.interfaceChannels.Any(x => x.ChannelName == interfaceChannel.ChannelName))
             {
                 Log.WriteLine(nameof(_baseCategory.interfaceChannels) + " already contains channel: " +
                     channelName.ToString(), LogLevel.VERBOSE);
@@ -268,7 +268,7 @@ public static class CategoryAndChannelManager
 
             // Insert the category's ID for easier access for the channels later on
             // (for channel specific features for example)
-            baseChannel.SetChannelsCategoryId(_socketCategoryChannel.Id);
+            interfaceChannel.ChannelsCategoryId = _socketCategoryChannel.Id;
 
             string? channelNameString = EnumExtensions.GetEnumMemberAttrValue(channelName);
             if (channelNameString == null)
@@ -289,8 +289,8 @@ public static class CategoryAndChannelManager
                     Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
                         _baseCategory.categoryName).Key;
 
-                baseChannel.SetChannelsId(await ChannelManager.CreateAChannelForTheCategory(
-                    _guild, channelNameString, _socketCategoryChannel.Id, permissionsList));
+                interfaceChannel.ChannelId = await ChannelManager.CreateAChannelForTheCategory(
+                    _guild, channelNameString, _socketCategoryChannel.Id, permissionsList);
 
                 Log.WriteLine("Done creating the channel with id: " + interfaceChannel.ChannelId +
                     " named:" + channelNameString + " adding it to the db.", LogLevel.DEBUG);
