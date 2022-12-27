@@ -26,21 +26,21 @@ public class DiscordLeagueReferences
     }
     public void SetLeagueRegistrationChannelMessageId(ulong _id)
     {
-        Log.WriteLine("Settind id: " + leagueRegistrationChannelMessageId + " to: " +
+        Log.WriteLine("Setting id: " + leagueRegistrationChannelMessageId + " to: " +
             _id, LogLevel.VERBOSE);
         leagueRegistrationChannelMessageId = _id;
     }
 
     public ulong GetLeagueCategoryId()
     {
-        Log.WriteLine("Getting id: " + leagueCategoryId, LogLevel.VERBOSE);
+        Log.WriteLine("Getting id: " + leagueCategoryId, LogLevel.CRITICAL);
         return leagueCategoryId;
     }
 
     public void SetLeagueCategoryId(ulong _id)
     {
-        Log.WriteLine("Settind id: " + leagueCategoryId + " to: " +
-            _id, LogLevel.VERBOSE);
+        Log.WriteLine("Setting id: " + leagueCategoryId + " to: " +
+            _id, LogLevel.ERROR);
         leagueCategoryId = _id;
     }
 
@@ -52,7 +52,7 @@ public class DiscordLeagueReferences
 
     public void SetLeagueRoleId(ulong _id)
     {
-        Log.WriteLine("Settind id: " + leagueRoleId + " to: " +
+        Log.WriteLine("Setting id: " + leagueRoleId + " to: " +
             _id, LogLevel.VERBOSE);
         leagueRoleId = _id;
     }

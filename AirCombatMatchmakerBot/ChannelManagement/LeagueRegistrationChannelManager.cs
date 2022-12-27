@@ -32,13 +32,15 @@ public static class LeagueRegistrationChannelManager
                 _LEAGUEREGISTRATION.channelFeaturesWithMessageIds.Count, LogLevel.VERBOSE);
             foreach (var item in _LEAGUEREGISTRATION.channelFeaturesWithMessageIds)
             {
-                Log.WriteLine("Key in db: " + item.Key + " with value: " + item.Value, LogLevel.VERBOSE);
+                Log.WriteLine("Key in db: " + item.Key +
+                    " with value: " + item.Value, LogLevel.VERBOSE);
             }
 
             // Checks if the message is present in the channelMessages
             bool containsMessage = false;
             var channelMessages = 
-                await _leagueRegistrationChannel.GetMessagesAsync(50, CacheMode.AllowDownload).FirstAsync();
+                await _leagueRegistrationChannel.GetMessagesAsync(
+                    50, CacheMode.AllowDownload).FirstAsync();
 
             Log.WriteLine("Searching: " + leagueNameString + " from: " + nameof(channelMessages) +
                 " with a count of: " + channelMessages.Count, LogLevel.VERBOSE);
@@ -71,11 +73,14 @@ public static class LeagueRegistrationChannelManager
                 return;
             }
 
-            var leagueInterfaceFromDatabase = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+            var leagueInterfaceFromDatabase = 
+                LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
 
             ulong leagueRegistrationChannelMessageId = 
                 await LeagueChannelManager.CreateALeagueJoinButton(
                     _leagueRegistrationChannel, leagueInterfaceFromDatabase, leagueNameString);
+
+            Log.WriteLine("id:" + leagueRegistrationChannelMessageId, LogLevel.VERBOSE);
 
             _LEAGUEREGISTRATION.channelFeaturesWithMessageIds.Add(
                 leagueNameString, leagueRegistrationChannelMessageId);

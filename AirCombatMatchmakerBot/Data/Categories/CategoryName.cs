@@ -20,6 +20,7 @@ public enum CategoryName
     [EnumMember(Value = "1v1 Modern BFM Guns")]
     ONEMODERNBFMGUNS = 101,
 
+
     [EnumMember(Value = "1v1 Modern BFM Fox2")]
     ONEMODERNBFMFOXTWO = 102,
 }
