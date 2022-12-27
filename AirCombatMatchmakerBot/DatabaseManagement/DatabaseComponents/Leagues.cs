@@ -52,4 +52,82 @@ public class Leagues
         Log.WriteLine("Getting list of ILeagues with count of: " + StoredLeagues.Count, LogLevel.VERBOSE);
         return StoredLeagues;
     }
+
+    public async void HandleSettingTeamsInactiveThatUserWasIn(ulong _userId)
+    {
+        Log.WriteLine("Starting to set teams inactive that " + _userId + " was in.", LogLevel.VERBOSE);
+
+        foreach (ILeague storedLeague in StoredLeagues)
+        {
+            Log.WriteLine("Looping through league: " +
+                storedLeague.LeagueCategoryName, LogLevel.VERBOSE);
+
+            bool teamFound = false;
+
+            if (storedLeague == null)
+            {
+                Log.WriteLine("storedLeague was null!", LogLevel.CRITICAL);
+                continue;
+            }
+
+            string? storedLeagueString = storedLeague.ToString();
+
+            foreach (Team team in storedLeague.LeagueData.Teams.GetListOfTeams())
+            {
+                if (!teamFound)
+                {
+                    foreach (Player player in team.players)
+                    {
+                        Log.WriteLine("Looping through player: " + player.GetPlayerNickname() + " (" +
+                            player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
+                        if (player.GetPlayerDiscordId() == _userId)
+                        {
+                            team.teamActive = false;
+
+                            teamFound = true;
+                            Log.WriteLine("Set team: " + team.teamName + " deactive in league: " +
+                                storedLeague.LeagueCategoryName + " because " + player.GetPlayerNickname() +
+                                " left", LogLevel.DEBUG);
+
+                            if (storedLeagueString == null)
+                            {
+                                Log.WriteLine("storedLeagueString was null!", LogLevel.CRITICAL);
+                                continue;
+                            }
+
+                            var findLeagueCategoryType = GetILeagueByString(storedLeagueString);
+                            CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
+
+                            var leagueInterface =
+                                LeagueManager.GetLeagueInstanceWithLeagueCategoryName(
+                                    leagueCategoryName);
+                            Log.WriteLine("Found " + nameof(leagueInterface) + ": " +
+                                leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
+
+                            ILeague? dbLeagueInstance =
+                                LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(
+                                    leagueInterface);
+
+                            if (dbLeagueInstance == null)
+                            {
+                                Log.WriteLine("dbLeagueInstance was null!", LogLevel.CRITICAL);
+                                continue;
+                            }
+
+                            await MessageManager.ModifyLeagueRegisterationChannelMessage(
+                                dbLeagueInstance);
+
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Log.WriteLine("The team was already found in the league, breaking and proceeding" +
+                        " to the next one.", LogLevel.VERBOSE);
+                    break;
+                }
+            }
+        }
+    }
 }

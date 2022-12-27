@@ -30,24 +30,10 @@ public static class UserManager
         await SerializationManager.SerializeDB();
     }
 
-    /*
-    // For the new users that join the discord, need to add them to the cache too
-    public static async Task HandleUserRegisterationToCache(ulong _userId)
-    {
-        await AddUserToCache(_userId);
-    }
-
-    // Add the user to the cached users list,
-    // this doesn't happen to the terminated users as they are already in the server
-    private static async Task AddUserToCache(ulong _userId)
-    {
-        Database.Instance.CachedUsers.AddUserIdToCachedList(_userId);
-        await SerializationManager.SerializeDB();
-    } */
-
     public static async Task HandleUserLeaveDelegate(SocketGuild _guild, SocketUser _user)
     {
         await HandleUserLeave(_user.Username, _user.Id);
+        await SerializationManager.SerializeDB();
     }
 
     public static async Task HandleUserLeave(
@@ -57,91 +43,12 @@ public static class UserManager
         Log.WriteLine(_userName + " (" + _userId +
             ") bailed out! Handling deleting registration channels etc.", LogLevel.DEBUG);
 
-        await HandleSettingTeamsInactiveThatUserWasIn(_userId);
+        Database.Instance.Leagues.HandleSettingTeamsInactiveThatUserWasIn(_userId);
 
         Database.Instance.CachedUsers.RemoveUserFromTheCachedList(_userName, _userId);
     }
 
-    private static async Task HandleSettingTeamsInactiveThatUserWasIn(ulong _userId)
-    {
-        Log.WriteLine("Starting to set teams inactive that " + _userId + " was in.", LogLevel.VERBOSE);
-
-        foreach (ILeague storedLeague in
-            Database.Instance.Leagues.GetListOfStoredLeagues())
-        {
-            Log.WriteLine("Looping through league: " +
-                storedLeague.LeagueCategoryName, LogLevel.VERBOSE);
-
-            bool teamFound = false;
-
-            if (storedLeague == null)
-            {
-                Log.WriteLine("storedLeague was null!", LogLevel.CRITICAL);
-                continue;
-            }
-
-            string? storedLeagueString = storedLeague.ToString();
-
-            foreach (Team team in storedLeague.LeagueData.Teams.GetListOfTeams())
-            {
-                if (!teamFound)
-                {
-                    foreach (Player player in team.players)
-                    {
-                        Log.WriteLine("Looping through player: " + player.GetPlayerNickname() + " (" +
-                            player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
-                        if (player.GetPlayerDiscordId() == _userId)
-                        {
-                            team.teamActive = false;
-
-                            teamFound = true;
-                            Log.WriteLine("Set team: " + team.teamName + " deactive in league: " +
-                                storedLeague.LeagueCategoryName + " because " + player.GetPlayerNickname() +
-                                " left", LogLevel.DEBUG);
-
-                            if (storedLeagueString == null)
-                            {
-                                Log.WriteLine("storedLeagueString was null!", LogLevel.CRITICAL);
-                                continue;
-                            }
-
-                            var findLeagueCategoryType =
-                                Database.Instance.Leagues.GetILeagueByString(storedLeagueString);
-                            CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
-
-                            var leagueInterface = 
-                                LeagueManager.GetLeagueInstanceWithLeagueCategoryName(
-                                    leagueCategoryName);
-                            Log.WriteLine("Found " + nameof(leagueInterface) + ": " +
-                                leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
-
-                            ILeague? dbLeagueInstance = 
-                                LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(
-                                    leagueInterface);
-
-                            if (dbLeagueInstance == null)
-                            {
-                                Log.WriteLine("dbLeagueInstance was null!", LogLevel.CRITICAL);
-                                continue;
-                            }
-
-                            await MessageManager.ModifyLeagueRegisterationChannelMessage(
-                                dbLeagueInstance);
-
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    Log.WriteLine("The team was already found in the league, breaking and proceeding" +
-                        " to the next one.", LogLevel.VERBOSE);
-                    break;
-                }
-            }
-        }
-    }
-
+    // Move to PlayerData
     public static async Task<bool> AddNewPlayerToTheDatabaseById(ulong _playerId)
     {
         Log.WriteLine("Start of the addnewplayer with: " + _playerId, LogLevel.VERBOSE);
@@ -170,6 +77,7 @@ public static class UserManager
             return false;
         }
     }
+
     public static async Task HandleGuildMemberUpdated(
         Cacheable<SocketGuildUser, ulong> before, SocketGuildUser _socketGuildUserAfter)
     {
