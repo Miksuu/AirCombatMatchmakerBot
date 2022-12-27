@@ -3,11 +3,11 @@
 [DataContract]
 public class Team
 {
-    public int skillRating { get; set; }
-    public string teamName { get; set; }
-    public List<Player> players { get; set; }
-    public bool teamActive { get; set; }
-    public int teamId { get; set; }
+    [DataMember] public int skillRating { get; set; }
+    [DataMember] public string teamName { get; set; }
+    [DataMember] public List<Player> players { get; set; }
+    [DataMember] public bool teamActive { get; set; }
+    [DataMember] public int teamId { get; set; }
 
     public Team()
     {

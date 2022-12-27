@@ -4,8 +4,8 @@ using System.Runtime.Serialization;
 [DataContract]
 public class LeagueData
 {
-    public Teams Teams { get; set; }
-    public ChallengeStatus ChallengeStatus { get; set; }
+    [DataMember] public Teams Teams { get; set; }
+    [DataMember] public ChallengeStatus ChallengeStatus { get; set; }
     [DataMember] private bool matchmakerActive { get; set; }
     public LeagueData()
     {
