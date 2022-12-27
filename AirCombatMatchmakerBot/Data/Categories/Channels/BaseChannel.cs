@@ -65,10 +65,10 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    protected ChannelName channelName;
-    protected ulong channelId;
-    protected ulong channelsCategoryId;
-    protected Dictionary<string, ulong> channelFeaturesWithMessageIds;
+    [DataMember] protected ChannelName channelName;
+    [DataMember] protected ulong channelId;
+    [DataMember] protected ulong channelsCategoryId;
+    [DataMember] protected Dictionary<string, ulong> channelFeaturesWithMessageIds;
 
     public BaseChannel()
     {

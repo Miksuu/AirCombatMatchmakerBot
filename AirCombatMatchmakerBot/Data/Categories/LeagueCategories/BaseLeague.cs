@@ -41,17 +41,17 @@ public abstract class BaseLeague : ILeague
         set => discordleagueReferences = value;
     }
 
-    protected CategoryName leagueCategoryName;
+    [DataMember] protected CategoryName leagueCategoryName;
 
     // Generated based on the implementation
-    protected Era leagueEra;
-    protected int leaguePlayerCountPerTeam;
+    [DataMember] protected Era leagueEra;
+    [DataMember] protected int leaguePlayerCountPerTeam;
 
-    protected List<UnitName> leagueUnits = new List<UnitName>();
+    [DataMember] protected List<UnitName> leagueUnits = new List<UnitName>();
 
-    protected LeagueData leagueData = new LeagueData();
+    [DataMember] protected LeagueData leagueData = new LeagueData();
 
-    protected DiscordLeagueReferences discordleagueReferences = new DiscordLeagueReferences();
+    [DataMember] protected DiscordLeagueReferences discordleagueReferences = new DiscordLeagueReferences();
 
     public BaseLeague()
     {
