@@ -75,7 +75,7 @@ public static class CategoryAndChannelManager
             // Cached for later use (inserting the category ID)
             leagueCategoryName = leagueInterface.LeagueCategoryName;
 
-            finalCategoryName = baseCategory.categoryName.ToString();
+            //finalCategoryName = baseCategory.categoryName.ToString();
             finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(baseCategory.categoryName);
 
             Log.WriteLine("League's category name is: " + finalCategoryName, LogLevel.VERBOSE);

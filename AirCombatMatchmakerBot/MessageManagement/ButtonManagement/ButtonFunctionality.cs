@@ -27,7 +27,7 @@ public static class ButtonFunctionality
             leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
         ILeague? dbLeagueInstance =
-            LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+            Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
 
         Log.WriteLine(nameof(dbLeagueInstance) + " db: " +
             dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);

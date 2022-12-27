@@ -78,48 +78,6 @@ public static class LeagueManager
         return Task.CompletedTask;
     }
 
-    public static ILeague? GetInterfaceLeagueCategoryFromTheDatabase(ILeague _leagueInterface)
-    {
-        if (_leagueInterface == null)
-        {
-            Log.WriteLine("_leagueInterface was null!", LogLevel.CRITICAL);
-            return null;
-        }
-
-        Log.WriteLine("Checking if " + _leagueInterface.LeagueCategoryName +
-            " has _leagueInterface in the database", LogLevel.VERBOSE);
-
-        if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(
-            _leagueInterface.LeagueCategoryName))
-        {
-            Log.WriteLine(_leagueInterface.LeagueCategoryName +
-                " exists in the database!", LogLevel.DEBUG);
-
-            var newInterfaceLeagueCategory =
-                Database.Instance.Leagues.GetILeagueByCategoryName(_leagueInterface.LeagueCategoryName);
-
-            if (newInterfaceLeagueCategory == null)
-            {
-                Log.WriteLine(nameof(newInterfaceLeagueCategory) + " was null!", LogLevel.CRITICAL);
-                return null;
-            }
-
-            Log.WriteLine("found result: " +
-                newInterfaceLeagueCategory.LeagueCategoryName, LogLevel.DEBUG);
-            return newInterfaceLeagueCategory;
-        }
-        else
-        {
-            Log.WriteLine(_leagueInterface.LeagueCategoryName + " does not exist in the database," +
-                " creating a new LeagueData for it", LogLevel.DEBUG);
-
-            _leagueInterface.LeagueData = new LeagueData();
-            _leagueInterface.DiscordLeagueReferences = new DiscordLeagueReferences();
-
-            return _leagueInterface;
-        }
-    }
-
     public static ILeague GetLeagueInstanceWithLeagueCategoryName(CategoryName _leagueCategoryName)
     {
         Log.WriteLine("Getting a league instance with LeagueCategoryName: " +
@@ -131,6 +89,7 @@ public static class LeagueManager
         return leagueInstance;
     }
 
+    /*
     public static ILeague FindLeagueAndReturnInterfaceFromDatabase(ILeague _interfaceToSearchFor)
     {
         var dbLeagueInstance = GetInterfaceLeagueCategoryFromTheDatabase(_interfaceToSearchFor);
@@ -146,5 +105,5 @@ public static class LeagueManager
             ": " + dbLeagueInstance.LeagueCategoryName, LogLevel.DEBUG);
 
         return dbLeagueInstance;
-    }
+    }*/
 }

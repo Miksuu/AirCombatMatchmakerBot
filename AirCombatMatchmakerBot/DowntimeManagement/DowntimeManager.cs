@@ -2,7 +2,6 @@
 
 public static class DowntimeManager
 {
-    //public static bool useWaitingChannels = true;
     public static async Task CheckForUsersThatJoinedAfterDowntime()
     {
         Log.WriteLine("Checking for Users that entered the discord during " +

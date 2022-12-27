@@ -95,7 +95,7 @@ public class Leagues
                                 continue;
                             }
 
-                            var findLeagueCategoryType = GetILeagueByString(storedLeagueString);
+                            ILeague findLeagueCategoryType = GetILeagueByString(storedLeagueString);
                             CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
                             var leagueInterface =
@@ -105,7 +105,7 @@ public class Leagues
                                 leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
                             ILeague? dbLeagueInstance =
-                                LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(
+                                Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(
                                     leagueInterface);
 
                             if (dbLeagueInstance == null)
@@ -128,6 +128,46 @@ public class Leagues
                     break;
                 }
             }
+        }
+    }
+
+    public ILeague? GetInterfaceLeagueCategoryFromTheDatabase(ILeague _leagueInterface)
+    {
+        if (_leagueInterface == null)
+        {
+            Log.WriteLine("_leagueInterface was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        Log.WriteLine("Checking if " + _leagueInterface.LeagueCategoryName +
+            " has _leagueInterface in the database", LogLevel.VERBOSE);
+
+        if (CheckIfILeagueExistsByCategoryName(_leagueInterface.LeagueCategoryName))
+        {
+            Log.WriteLine(_leagueInterface.LeagueCategoryName +
+                " exists in the database!", LogLevel.DEBUG);
+
+            var newInterfaceLeagueCategory = GetILeagueByCategoryName(_leagueInterface.LeagueCategoryName);
+
+            if (newInterfaceLeagueCategory == null)
+            {
+                Log.WriteLine(nameof(newInterfaceLeagueCategory) + " was null!", LogLevel.CRITICAL);
+                return null;
+            }
+
+            Log.WriteLine("found result: " +
+                newInterfaceLeagueCategory.LeagueCategoryName, LogLevel.DEBUG);
+            return newInterfaceLeagueCategory;
+        }
+        else
+        {
+            Log.WriteLine(_leagueInterface.LeagueCategoryName + " does not exist in the database," +
+                " creating a new LeagueData for it", LogLevel.DEBUG);
+
+            _leagueInterface.LeagueData = new LeagueData();
+            _leagueInterface.DiscordLeagueReferences = new DiscordLeagueReferences();
+
+            return _leagueInterface;
         }
     }
 }

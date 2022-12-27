@@ -74,7 +74,7 @@ public static class LeagueRegistrationChannelManager
             }
 
             var leagueInterfaceFromDatabase = 
-                LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+                Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
 
             ulong leagueRegistrationChannelMessageId = 
                 await LeagueChannelManager.CreateALeagueJoinButton(

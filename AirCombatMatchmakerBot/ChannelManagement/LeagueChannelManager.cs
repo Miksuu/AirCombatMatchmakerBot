@@ -23,7 +23,8 @@ public static class LeagueChannelManager
         Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
             leagueButtonRegisterationCustomId, LogLevel.VERBOSE);
 
-        _leagueInterface = LeagueManager.GetInterfaceLeagueCategoryFromTheDatabase(_leagueInterface);
+        _leagueInterface =
+            Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(_leagueInterface);
 
         if (_leagueInterface == null)
         {
