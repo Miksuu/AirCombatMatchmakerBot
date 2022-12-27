@@ -27,8 +27,6 @@ public class CachedUsers
         {
             Log.WriteLine("User " + _userId + " is already on the list", LogLevel.VERBOSE);
         }
-
-        await SerializationManager.SerializeDB();
     }
 
     public async void RemoveUserFromTheCachedList(string _userName, ulong _userId)
