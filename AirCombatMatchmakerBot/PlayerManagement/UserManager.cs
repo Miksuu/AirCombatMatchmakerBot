@@ -4,7 +4,6 @@ using System.Numerics;
 
 public static class UserManager
 {
-
     // For the new users that join the discord, need to add them to the cache too
     public static async Task HandleUserJoin(SocketGuildUser _user)
     {
@@ -47,7 +46,7 @@ public static class UserManager
     // this doesn't happen to the terminated users as they are already in the server
     private static async Task AddUserToCache(ulong _userId)
     {
-        SerializationManager.AddUserIdToCachedList(_userId);
+        Database.Instance.CachedUsers.AddUserIdToCachedList(_userId);
         await SerializationManager.SerializeDB();
     }
 
@@ -65,7 +64,7 @@ public static class UserManager
 
         await HandleSettingTeamsInactiveThatUserWasIn(_userId);
 
-        SerializationManager.RemoveUserFromTheCachedList(_userName, _userId);
+        Database.Instance.CachedUsers.RemoveUserFromTheCachedList(_userName, _userId);
     }
 
     private static async Task HandleSettingTeamsInactiveThatUserWasIn(ulong _userId)
@@ -75,7 +74,8 @@ public static class UserManager
         foreach (ILeague storedLeague in
             Database.Instance.Leagues.GetListOfStoredLeagues())
         {
-            Log.WriteLine("Looping through league: " + storedLeague.LeagueCategoryName, LogLevel.VERBOSE);
+            Log.WriteLine("Looping through league: " +
+                storedLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
             bool teamFound = false;
 
@@ -87,7 +87,7 @@ public static class UserManager
 
             string? storedLeagueString = storedLeague.ToString();
 
-            foreach (Team team in storedLeague.LeagueData.Teams)
+            foreach (Team team in storedLeague.LeagueData.Teams.GetListOfTeams())
             {
                 if (!teamFound)
                 {
@@ -115,12 +115,14 @@ public static class UserManager
                             CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
                             var leagueInterface = 
-                                LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
+                                LeagueManager.GetLeagueInstanceWithLeagueCategoryName(
+                                    leagueCategoryName);
                             Log.WriteLine("Found " + nameof(leagueInterface) + ": " +
                                 leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
                             ILeague? dbLeagueInstance = 
-                                LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+                                LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(
+                                    leagueInterface);
 
                             if (dbLeagueInstance == null)
                             {
@@ -128,7 +130,8 @@ public static class UserManager
                                 continue;
                             }
 
-                            await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
+                            await MessageManager.ModifyLeagueRegisterationChannelMessage(
+                                dbLeagueInstance);
 
                             break;
                         }
@@ -201,7 +204,8 @@ public static class UserManager
 
     public static string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
     {
-        Log.WriteLine("Checking if nickname is empty and return username with ID: " + _id, LogLevel.VERBOSE);
+        Log.WriteLine("Checking if nickname is empty and return username with ID: " +
+            _id, LogLevel.VERBOSE);
 
         var SocketGuildUser = GetSocketGuildUserById(_id);
 
@@ -309,7 +313,7 @@ public static class UserManager
         ILeague _dbLeagueInstance, ulong _playerId)
     {
         LeagueManager.ReturnTeamThatThePlayerIsIn(
-            _dbLeagueInstance.LeagueData.Teams, _playerId).teamActive = true;
+            _dbLeagueInstance.LeagueData.Teams.GetListOfTeams(), _playerId).teamActive = true;
         await RoleManager.GrantUserAccessWithId(
             _playerId, _dbLeagueInstance.DiscordLeagueReferences.GetLeagueRoleId());
     }

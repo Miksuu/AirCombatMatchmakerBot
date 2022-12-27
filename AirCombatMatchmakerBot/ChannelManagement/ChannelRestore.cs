@@ -9,7 +9,8 @@ public static class ChannelRestore
         InterfaceChannel _interfaceChannel,
         SocketGuild _guild)
     {
-        Log.WriteLine("Checking if channel in " + _categoryId + " has been deleted.", LogLevel.VERBOSE);
+        Log.WriteLine("Checking if channel in " + _categoryId +
+            " has been deleted.", LogLevel.VERBOSE);
 
         if (_guild.GetCategoryChannel(_categoryId).Channels.Any(
             x => x.Id == _interfaceChannel.ChannelId))
@@ -19,8 +20,9 @@ public static class ChannelRestore
         }
 
         // Handles deleting the old value
-        var dbKeyValue = Database.Instance.CreatedCategoriesWithChannels.First(
-                                         x => x.Key == _categoryId).Value;
+        var dbKeyValue =
+            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithId(
+                _categoryId).Value;
 
         var dbFinal = dbKeyValue.InterfaceChannels.First(
                                              ic => ic.ChannelId == _interfaceChannel.ChannelId);

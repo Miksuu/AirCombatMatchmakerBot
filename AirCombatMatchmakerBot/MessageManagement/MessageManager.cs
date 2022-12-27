@@ -2,7 +2,8 @@
 
 public static class MessageManager
 {
-    public static async Task ModifyLeagueRegisterationChannelMessage(ILeague _dbLeagueInstance)
+    public static async Task ModifyLeagueRegisterationChannelMessage(
+        ILeague _dbLeagueInstance)
     {
         Log.WriteLine("Modifying league registration channel message with: " +
             _dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
@@ -89,7 +90,7 @@ public static class MessageManager
     {
         int count = 0;
 
-        foreach (Team team in _leagueInterface.LeagueData.Teams)
+        foreach (Team team in _leagueInterface.LeagueData.Teams.GetListOfTeams())
         {
             if (team.teamActive)
             {

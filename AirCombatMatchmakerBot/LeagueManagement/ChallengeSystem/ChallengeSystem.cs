@@ -5,13 +5,16 @@ public static class ChallengeSystem
 {
     public static string GenerateChallengeQueueMessage(ulong _channelId)
     {
-        Log.WriteLine("Generating a challenge queue message with _channelId: " + _channelId, LogLevel.VERBOSE);
+        Log.WriteLine("Generating a challenge queue message with _channelId: " +
+            _channelId, LogLevel.VERBOSE);
 
-        foreach (var createdCategoriesKvp in Database.Instance.CreatedCategoriesWithChannels)
+        foreach (var createdCategoriesKvp in 
+            Database.Instance.Categories.GetDictionaryOfCreatedCategoriesWithChannels())
         {
             Log.WriteLine("On league: " + createdCategoriesKvp.Value.CategoryName, LogLevel.VERBOSE);
 
-            string leagueName = EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryName);
+            string leagueName =
+                EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryName);
 
             Log.WriteLine("Full league name: " + leagueName, LogLevel.VERBOSE);
 
@@ -38,7 +41,8 @@ public static class ChallengeSystem
             }
         }
 
-        Log.WriteLine("Did not find a channel id to generate a challenge queue message on!", LogLevel.ERROR);
+        Log.WriteLine(
+            "Did not find a channel id to generate a challenge queue message on!", LogLevel.ERROR);
         return string.Empty;
     }
 }

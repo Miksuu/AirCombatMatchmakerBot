@@ -5,7 +5,7 @@
         Log.WriteLine("Starting to find a active team by player id: " + _playerId +
             " in league: " + _dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
 
-        foreach (Team team in _dbLeagueInstance.LeagueData.Teams)
+        foreach (Team team in _dbLeagueInstance.LeagueData.Teams.GetListOfTeams())
         {
             Log.WriteLine("Starting to loop through team: " + team.teamName + " (" + team.teamId +
                 ") with player count of: " + team.players.Count + " with player id: " + _playerId +

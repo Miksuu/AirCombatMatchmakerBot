@@ -5,23 +5,32 @@ using System.Linq;
 
 public static class ButtonFunctionality
 {
-    private static ILeague FindLeagueInterfaceWithSplitStringPart(string _splitStringIdPart)
+    private static ILeague FindLeagueInterfaceWithSplitStringPart(
+        string _splitStringIdPart)
     {
-        Log.WriteLine("Starting to find Ileague from db with: " + _splitStringIdPart, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to find Ileague from db with: " +
+            _splitStringIdPart, LogLevel.VERBOSE);
 
-        var findLeagueCategoryType
-            = Database.Instance.CreatedCategoriesWithChannels.First(x => x.Key.ToString() == _splitStringIdPart);
+        KeyValuePair<ulong, InterfaceCategory> findLeagueCategoryType =
+            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithId(
+                ulong.Parse(_splitStringIdPart));
         CategoryName leagueCategoryName = findLeagueCategoryType.Value.CategoryName;
 
-        Log.WriteLine("found: " + nameof(leagueCategoryName) + ": " + leagueCategoryName.ToString(), LogLevel.VERBOSE);
+        Log.WriteLine("found: " + nameof(leagueCategoryName) + ": " +
+            leagueCategoryName.ToString(), LogLevel.VERBOSE);
 
-        var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
+        var leagueInterface =
+            LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
 
-        Log.WriteLine("Found interface " + nameof(leagueInterface) + ": " + leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine(
+            "Found interface " + nameof(leagueInterface) + ": " +
+            leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-        ILeague? dbLeagueInstance = LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
+        ILeague? dbLeagueInstance =
+            LeagueManager.FindLeagueAndReturnInterfaceFromDatabase(leagueInterface);
 
-        Log.WriteLine(nameof(dbLeagueInstance) + " db: " + dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine(nameof(dbLeagueInstance) + " db: " +
+            dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
 
         return dbLeagueInstance;
     }
@@ -51,7 +60,8 @@ public static class ButtonFunctionality
         return response;
     }
 
-    public static async Task LeagueRegistration(SocketMessageComponent _component, string _splitString)
+    public static async Task LeagueRegistration(
+        SocketMessageComponent _component, string _splitString)
     {
         string responseMsg = "";
 
@@ -59,39 +69,43 @@ public static class ButtonFunctionality
 
         ILeague dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
 
-        Log.WriteLine("found: " + nameof(dbLeagueInstance) + dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("found: " + nameof(dbLeagueInstance) + 
+            dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
 
-        // Check that the player is in the PlayerData (should be, he doesn't see this button before, except if hes admin)
+        // Check that the player is in the PlayerData
+        // (should be, he doesn't see this button before, except if hes admin)
         if (Database.Instance.PlayerData.PlayerIDs.ContainsKey(_component.User.Id))
         {
             Player player = Database.Instance.PlayerData.PlayerIDs[_component.User.Id];
 
             if (player.playerDiscordId == 0)
             {
-                Log.WriteLine("Player's: " + player.playerNickName + " id was 0!", LogLevel.CRITICAL);
+                Log.WriteLine("Player's: " + player.playerNickName +
+                    " id was 0!", LogLevel.CRITICAL);
                 return;
             }
 
-            Log.WriteLine("Found player: " + player.playerNickName + " (" + player.playerDiscordId + ")", LogLevel.VERBOSE);
+            Log.WriteLine("Found player: " + player.playerNickName +
+                " (" + player.playerDiscordId + ")", LogLevel.VERBOSE);
 
-            if (!LeagueManager.CheckIfPlayerIsAlreadyInATeamById(dbLeagueInstance.LeagueData.Teams, _component.User.Id))
+            if (!LeagueManager.CheckIfPlayerIsAlreadyInATeamById(
+                dbLeagueInstance.LeagueData.Teams.GetListOfTeams(), _component.User.Id))
             {
-                Log.WriteLine("The player was not found in any team in the league", LogLevel.VERBOSE);
+                Log.WriteLine(
+                    "The player was not found in any team in the league", LogLevel.VERBOSE);
 
-                // Create a team with unique ID and increment that ID after the data has been serialized
+                // Create a team with unique ID and increment that ID
+                // after the data has been serialized
                 Team newTeam = new Team(
                     new List<Player> { player },
                     player.playerNickName,
-                    dbLeagueInstance.LeagueData.currentTeamInt);
+                    dbLeagueInstance.LeagueData.Teams.GetCurrentTeamInt());
 
                 if (dbLeagueInstance.LeaguePlayerCountPerTeam < 2)
                 {
                     Log.WriteLine("This league is solo", LogLevel.VERBOSE);
 
-                    dbLeagueInstance.LeagueData.Teams.Add(newTeam);
-
-                    Log.WriteLine("Done adding the team. Count is now: " +
-                        dbLeagueInstance.LeagueData.Teams.Count, LogLevel.VERBOSE);
+                    dbLeagueInstance.LeagueData.Teams.AddToTeams(newTeam);
                 }
                 else
                 {
@@ -102,24 +116,28 @@ public static class ButtonFunctionality
                 }
 
                 // Add the role for the player for the specific league and set him teamActive
-                UserManager.SetPlayerActiveAndGrantHimTheRole(dbLeagueInstance, _component.User.Id);
+                UserManager.SetPlayerActiveAndGrantHimTheRole(
+                    dbLeagueInstance, _component.User.Id);
 
                 // Modify the message to have the new player count
                 await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
 
-                Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
-                    dbLeagueInstance.LeagueData.Teams.Count, LogLevel.DEBUG);
 
-                dbLeagueInstance.LeagueData.currentTeamInt++;
+                Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
+                    dbLeagueInstance.LeagueData.Teams.GetListOfTeams().Count, LogLevel.DEBUG);
+
+                dbLeagueInstance.LeagueData.Teams.IncrementCurrentTeamInt();
                 await SerializationManager.SerializeDB();
             }
             else
             {
                 // Need to handle team related behaviour better later
 
-                Log.WriteLine("The player was already in a team in that league! Setting him active", LogLevel.DEBUG);
+                Log.WriteLine("The player was already in a team in that league!" +
+                    " Setting him active", LogLevel.DEBUG);
 
-                UserManager.SetPlayerActiveAndGrantHimTheRole(dbLeagueInstance, _component.User.Id);
+                UserManager.SetPlayerActiveAndGrantHimTheRole(
+                    dbLeagueInstance, _component.User.Id);
 
                 await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
             }
@@ -128,14 +146,16 @@ public static class ButtonFunctionality
         {
             responseMsg = "Error joining the league! Press the register button first!" +
                 " (only admins should be able to see this)";
-            Log.WriteLine("Player: " + _component.User.Id + " (" + _component.User.Username + ")" +
+            Log.WriteLine("Player: " + _component.User.Id +
+                " (" + _component.User.Username + ")" +
                 " tried to join a league before registering", LogLevel.WARNING);
         }
 
         await _component.RespondAsync(responseMsg, ephemeral: true);
     }
 
-    public static async Task PostChallenge(SocketMessageComponent _component, string _splitString)
+    public static async Task PostChallenge(
+        SocketMessageComponent _component, string _splitString)
     {
         Log.WriteLine("Starting processing a challenge by: " + _component.User.Id +
             " for league: " + _splitString, LogLevel.VERBOSE);
@@ -144,7 +164,8 @@ public static class ButtonFunctionality
 
         if (dbLeagueInstance == null)
         {
-            Log.WriteLine(nameof(dbLeagueInstance) + " was null! Could not find the league.", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(dbLeagueInstance) +
+                " was null! Could not find the league.", LogLevel.CRITICAL);
             return;
         }
 
@@ -155,16 +176,13 @@ public static class ButtonFunctionality
 
         Log.WriteLine("Team found: " + team.teamName + " (" + team.teamId + ")" +
             " adding it to the challenge queue with count: " +
-            dbLeagueInstance.LeagueData.challengeStatus.teamsInTheQueue.Count, LogLevel.VERBOSE);
+            dbLeagueInstance.LeagueData.ChallengeStatus.GetListOfTeamsInTheQueue(),
+            LogLevel.VERBOSE);
 
-        dbLeagueInstance.LeagueData.challengeStatus.teamsInTheQueue.Add(team);
-
-        Log.WriteLine("Done adding " + team.teamName + " to the " + dbLeagueInstance.LeagueCategoryName +
-            "'s queue. It has " + dbLeagueInstance.LeagueData.challengeStatus.teamsInTheQueue.Count +
-            "teams now. Printing them out:", LogLevel.DEBUG);
+        dbLeagueInstance.LeagueData.ChallengeStatus.AddToTeamsInTheQueue(team);
 
         Log.WriteLine(TeamManager.ReturnTeamsInTheQueueOfAChallenge(
-            dbLeagueInstance.LeagueData.challengeStatus.teamsInTheQueue,
+            dbLeagueInstance.LeagueData.ChallengeStatus.GetListOfTeamsInTheQueue(),
             dbLeagueInstance.LeaguePlayerCountPerTeam), LogLevel.VERBOSE);
     }
 }

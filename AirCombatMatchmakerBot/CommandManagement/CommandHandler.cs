@@ -56,7 +56,7 @@ public static class CommandHandler
             case "register":
                 Log.WriteLine("On register case. ", LogLevel.VERBOSE);
                 // Check if the user is admin
-                if (CheckIfCommandSenderWasAnAdmin(_command))
+                if (Database.Instance.Admins.CheckIfCommandSenderWasAnAdmin(_command))
                 {
                     Log.WriteLine("Admin check pass", LogLevel.VERBOSE);
                     if (firstOptionValue != null)
@@ -90,7 +90,7 @@ public static class CommandHandler
 
             case "terminate":
                 // Check if the user is admin
-                if (CheckIfCommandSenderWasAnAdmin(_command))
+                if (Database.Instance.Admins.CheckIfCommandSenderWasAnAdmin(_command))
                 {
                     if (firstOptionValue != null)
                     {
@@ -132,10 +132,5 @@ public static class CommandHandler
             _command.Data.Name, response, _command.Channel.Name)); ;
 
         Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
-    }
-
-    private static bool CheckIfCommandSenderWasAnAdmin(SocketSlashCommand _command)
-    {
-        return Database.Instance.adminIDs.Contains(_command.User.Id);
     }
 }

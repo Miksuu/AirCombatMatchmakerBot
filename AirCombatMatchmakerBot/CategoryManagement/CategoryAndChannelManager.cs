@@ -114,7 +114,7 @@ public static class CategoryAndChannelManager
 
         bool contains = false;
         Log.WriteLine("searching for categoryname: " + baseCategory.categoryName, LogLevel.VERBOSE);
-        foreach (var ct in Database.Instance.CreatedCategoriesWithChannels)
+        foreach (var ct in Database.Instance.Categories.GetDictionaryOfCreatedCategoriesWithChannels())
         {
             Log.WriteLine("categoryname:" + ct.Value.CategoryName, LogLevel.VERBOSE);
             if (ct.Value.CategoryName == baseCategory.categoryName)
@@ -133,8 +133,11 @@ public static class CategoryAndChannelManager
             Log.WriteLine("Category: " + finalCategoryName +
                 " found, checking it's channels", LogLevel.VERBOSE);
 
-            var dbCategory = Database.Instance.CreatedCategoriesWithChannels.First(
-                x => x.Value.CategoryName == baseCategory.categoryName);
+
+            // param: baseCategory.categoryName
+            var dbCategory =
+                Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
+                    baseCategory.categoryName);
 
             //InterfaceCategory databaseInterfaceCategory = GetCategoryInstance(categoryName);
             if (dbCategory.Key == 0 || dbCategory.Value == null)
@@ -183,14 +186,8 @@ public static class CategoryAndChannelManager
                         DiscordLeagueReferences.SetLeagueCategoryId(socketCategoryChannel.Id);
             }
 
-            Log.WriteLine("Adding " + nameof(baseCategory) + " to " +
-                nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.VERBOSE);
-
-            Database.Instance.CreatedCategoriesWithChannels.Add(
+            Database.Instance.Categories.AddToCreatedCategoryWithChannelWithUlongAndBaseCategory(
                 socketCategoryChannel.Id, baseCategory);
-
-            Log.WriteLine("Done adding " + nameof(baseCategory) + " to " +
-                nameof(Database.Instance.CreatedCategoriesWithChannels), LogLevel.DEBUG);
         }
 
         if (baseCategory == null)
@@ -284,12 +281,13 @@ public static class CategoryAndChannelManager
             {
                 List<Overwrite> permissionsList = baseChannel.GetGuildPermissions(_guild);
 
-                ulong categoryId = Database.Instance.CreatedCategoriesWithChannels.First(
-                     x => x.Value.CategoryName == _baseCategory.categoryName).Key;
-
                 Log.WriteLine("Creating a channel named: " + channelNameString + " for category: "
-                            + _baseCategory.categoryName + " (" +
-                            _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
+                             + _baseCategory.categoryName + " (" +
+                             _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
+
+                ulong categoryId =
+                    Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
+                        _baseCategory.categoryName).Key;
 
                 baseChannel.channelId = await ChannelManager.CreateAChannelForTheCategory(
                     _guild, channelNameString, _socketCategoryChannel.Id, permissionsList);

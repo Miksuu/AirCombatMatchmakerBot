@@ -23,7 +23,8 @@ public static class CategoryRestore
             " not found, regenerating it...", LogLevel.ERROR);
 
         // Delete the old entry from the database
-        Database.Instance.CreatedCategoriesWithChannels.Remove(_categoryKvp.Key);
+        Database.Instance.Categories.RemoveFromCreatedCategoryWithChannelWithKey(
+            _categoryKvp.Key);
 
         return false;
     }

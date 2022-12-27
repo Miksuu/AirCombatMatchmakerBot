@@ -66,7 +66,7 @@ public static class SerializationManager
                         continue;
                     }
 
-                    AddUserIdToCachedList(user.Id);
+                    Database.Instance.CachedUsers.AddUserIdToCachedList(user.Id);
                 }
                 else
                 {
@@ -111,38 +111,5 @@ public static class SerializationManager
         Log.WriteLine("DB DESERIALIZATION DONE!", LogLevel.SERIALIZATION);
 
         return Task.CompletedTask;
-    }
-
-    public static void AddUserIdToCachedList(ulong _userId)
-    {
-        Log.WriteLine("Adding " + _userId + " to the cache list", LogLevel.VERBOSE);
-
-        if (!Database.Instance.cachedUserIDs.Contains(_userId))
-        {
-            Database.Instance.cachedUserIDs.Add(_userId);
-            Log.WriteLine("Added " + _userId +
-                " to cached users list.", LogLevel.DEBUG);
-        }
-        else
-        {
-            Log.WriteLine("User " + _userId + " is already on the list", LogLevel.VERBOSE);
-        }
-    }
-
-    public static async void RemoveUserFromTheCachedList(string _userName, ulong _userId)
-    {
-        Log.WriteLine("Removing " + _userName + "(" + _userId + ")" + " from the cache list", LogLevel.VERBOSE);
-
-        if (!Database.Instance.cachedUserIDs.Contains(_userId))
-        {
-            Log.WriteLine("User " + _userName + " is not present on the list!", LogLevel.WARNING);
-            return;
-        }
-
-        Database.Instance.cachedUserIDs.Remove(_userId);
-
-        Log.WriteLine("Removed " + _userName + " from the cached users list.", LogLevel.DEBUG);
-
-        await SerializeDB();
     }
 }

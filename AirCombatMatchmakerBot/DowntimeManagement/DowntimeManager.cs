@@ -29,17 +29,19 @@ public static class DowntimeManager
 
             if (user.IsBot)
             {
-                Log.WriteLine("User " + user.Username + " is a bot, disregarding", LogLevel.VERBOSE);
+                Log.WriteLine("User " + user.Username +
+                    " is a bot, disregarding", LogLevel.VERBOSE);
             }
             else
             {
                 if (!UserManager.CheckIfUserHasPlayerProfile(user.Id))
                 {
                     Log.WriteLine(
-                        user.Username + "(" + user.Id + ") was not found, disregarding", LogLevel.VERBOSE);
+                        user.Username + "(" + user.Id +
+                        ") was not found, disregarding", LogLevel.VERBOSE);
                 }
-                // Run handle user join that will server the same purpose than the new player joining
-                // when the bot is up (if he was registered)
+                // Run handle user join that will server the same purpose than the
+                // new player joining when the bot is up (if he was registered)
                 else
                     Log.WriteLine(user.Username + " (" + user.Id + ") " + "was not found!" +
                         " adding user to the list!", LogLevel.DEBUG);
@@ -61,7 +63,8 @@ public static class DowntimeManager
 
     public static Task CheckForUsersThatLeftDuringDowntime()
     {
-        Log.WriteLine("Starting to check for users that left during the downtime.", LogLevel.VERBOSE);
+        Log.WriteLine(
+            "Starting to check for users that left during the downtime.", LogLevel.VERBOSE);
 
         List<ulong> usersOnTheServerAfterDowntime = new List<ulong>();
 
@@ -95,14 +98,16 @@ public static class DowntimeManager
                 Log.WriteLine("The list count is now: " +
                     usersOnTheServerAfterDowntime.Count, LogLevel.VERBOSE);
             }
-            else Log.WriteLine("User " + user.Username + " was a bot, diregarding", LogLevel.VERBOSE);
+            else Log.WriteLine("User " + user.Username +
+                " was a bot, diregarding", LogLevel.VERBOSE);
         }
 
         Log.WriteLine("Looping done with: " + usersOnTheServerAfterDowntime.Count +
             " users on the temp list", LogLevel.DEBUG);
 
         var difference = GetDifferenceBetweenTheCurrentAndCachedUsers(
-                Database.Instance.cachedUserIDs, usersOnTheServerAfterDowntime);
+                Database.Instance.CachedUsers.GetListOfCachedUserIds(),
+                usersOnTheServerAfterDowntime);
 
         if (difference.Count > 0)
         {
@@ -118,10 +123,12 @@ public static class DowntimeManager
         List<ulong> _currentUsers, List<ulong> _databaseUsers)
     {
         PrintUlongListOfUsers(
-            "Printing a list of CURRENT user's ID's count of: " , _currentUsers, LogLevel.VERBOSE);
+            "Printing a list of CURRENT user's ID's count of: ",
+            _currentUsers, LogLevel.VERBOSE);
 
         PrintUlongListOfUsers(
-            "Printing a list of DATABASE user's ID's count of: ", _databaseUsers, LogLevel.VERBOSE);
+            "Printing a list of DATABASE user's ID's count of: ",
+            _databaseUsers, LogLevel.VERBOSE);
         List<ulong> difference = _currentUsers.Except(_databaseUsers).ToList();
 
         if (difference.Count > 0)
