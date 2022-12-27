@@ -193,24 +193,6 @@ public static class ButtonFunctionality
             return;
         }
 
-        Team? team = baseLeague.FindActiveTeamByPlayerIdInAPredefinedLeague(
-            ulong.Parse(_splitString));
-
-        if (team == null)
-        {
-            Log.WriteLine(nameof(team) +
-                " was null! Could not find the team.", LogLevel.CRITICAL);
-            return;
-        }
-
-        Log.WriteLine("Team found: " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
-            " adding it to the challenge queue with count: " +
-            baseLeague.leagueData.ChallengeStatus.GetListOfTeamsInTheQueue(),
-            LogLevel.VERBOSE);
-
-        baseLeague.leagueData.ChallengeStatus.AddToTeamsInTheQueue(team);
-
-        Log.WriteLine(dbLeagueInstance.LeagueData.ChallengeStatus.ReturnTeamsInTheQueueOfAChallenge(
-            dbLeagueInstance.LeaguePlayerCountPerTeam), LogLevel.VERBOSE);
+        baseLeague.PostChallengeToThisLeague(_component.User.Id);
     }
 }

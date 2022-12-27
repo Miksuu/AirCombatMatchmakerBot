@@ -59,7 +59,7 @@ public abstract class BaseLeague : ILeague
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 
-    public Team? FindActiveTeamByPlayerIdInAPredefinedLeague(ulong _playerId)
+    private Team? FindActiveTeamByPlayerIdInAPredefinedLeague(ulong _playerId)
     {
         Log.WriteLine("Starting to find a active team by player id: " + _playerId +
             " in league: " + leagueCategoryName, LogLevel.VERBOSE);
@@ -78,5 +78,27 @@ public abstract class BaseLeague : ILeague
     " of a league that he's not registered to?", LogLevel.WARNING);
 
         return null;
+    }
+
+    public void PostChallengeToThisLeague(ulong _playerId)
+    {
+        Team? team = FindActiveTeamByPlayerIdInAPredefinedLeague(_playerId);
+
+        if (team == null)
+        {
+            Log.WriteLine(nameof(team) +
+                " was null! Could not find the team.", LogLevel.CRITICAL);
+            return;
+        }
+
+        Log.WriteLine("Team found: " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
+            " adding it to the challenge queue with count: " +
+            leagueData.ChallengeStatus.GetListOfTeamsInTheQueue(),
+            LogLevel.VERBOSE);
+
+        leagueData.ChallengeStatus.AddToTeamsInTheQueue(team);
+
+        Log.WriteLine(leagueData.ChallengeStatus.ReturnTeamsInTheQueueOfAChallenge(
+            leaguePlayerCountPerTeam), LogLevel.VERBOSE);
     }
 }
