@@ -32,7 +32,8 @@ public class CommandBuilder
 
     // Adds a new command based on parameters
     // TO DO: add support for options such as adding user, for operations such as challenging people 
-    public static Discord.SlashCommandBuilder AddNewCommand(string _commandName, string _description, bool _optionIncluded = false)
+    public static Discord.SlashCommandBuilder AddNewCommand(
+        string _commandName, string _description, bool _optionIncluded = false)
     {
         var guildCommand = new Discord.SlashCommandBuilder()
             .WithName(_commandName)
@@ -40,7 +41,8 @@ public class CommandBuilder
 
         if (!_optionIncluded) 
         {
-            Log.WriteLine("Installing a command: " + _commandName + ", with description: " + _description, LogLevel.DEBUG);
+            Log.WriteLine("Installing a command: " + _commandName + ", with description: " +
+                _description, LogLevel.DEBUG);
 
             var client = BotReference.GetClientRef();
             if (client == null)
@@ -55,14 +57,17 @@ public class CommandBuilder
         return guildCommand;
     }
 
-    public static async void AddNewCommandWithOption(string _commandName, string _description, string _optionName, string _optionDescription)
+    public static async void AddNewCommandWithOption(
+        string _commandName, string _description, string _optionName, string _optionDescription)
     {
-        Discord.SlashCommandBuilder guildCommandWithOptions = AddNewCommand(_commandName, _description, true).AddOption(
+        Discord.SlashCommandBuilder guildCommandWithOptions = AddNewCommand(
+            _commandName, _description, true).AddOption(
             _optionName, ApplicationCommandOptionType.String,
             _optionDescription, isRequired: true);
 
-        Log.WriteLine("Installing a command: " + _commandName + " | with description: " + _description + 
-            " | that has an option with name: " + _optionName + " | and optionDescription: " + _optionDescription, LogLevel.DEBUG);
+        Log.WriteLine("Installing a command: " + _commandName + " | with description: " +
+            _description +  " | that has an option with name: " +
+            _optionName + " | and optionDescription: " + _optionDescription, LogLevel.DEBUG);
 
         var client = BotReference.GetClientRef();
         if (client == null)
@@ -70,6 +75,7 @@ public class CommandBuilder
             Exceptions.BotClientRefNull();
             return;
         }
-        await client.Rest.CreateGuildCommand(guildCommandWithOptions.Build(), BotReference.GetGuildID());
+        await client.Rest.CreateGuildCommand(
+            guildCommandWithOptions.Build(), BotReference.GetGuildID());
     }
 }

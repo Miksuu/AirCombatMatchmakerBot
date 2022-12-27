@@ -10,7 +10,6 @@ public class LEAGUEREGISTRATION : BaseChannel
     public LEAGUEREGISTRATION()
     {
         channelName = ChannelName.LEAGUEREGISTRATION;
-        //botChannelType = BotChannelType.CHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
