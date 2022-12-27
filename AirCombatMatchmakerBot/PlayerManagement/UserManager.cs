@@ -93,15 +93,15 @@ public static class UserManager
                 {
                     foreach (Player player in team.players)
                     {
-                        Log.WriteLine("Looping through player: " + player.playerNickName + " (" +
-                            player.playerDiscordId + ")", LogLevel.VERBOSE);
-                        if (player.playerDiscordId == _userId)
+                        Log.WriteLine("Looping through player: " + player.GetPlayerNickname() + " (" +
+                            player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
+                        if (player.GetPlayerDiscordId() == _userId)
                         {
                             team.teamActive = false;
 
                             teamFound = true;
                             Log.WriteLine("Set team: " + team.teamName + " deactive in league: " +
-                                storedLeague.LeagueCategoryName + " because " + player.playerNickName +
+                                storedLeague.LeagueCategoryName + " because " + player.GetPlayerNickname() +
                                 " left", LogLevel.DEBUG);
 
                             if (storedLeagueString == null)
@@ -189,7 +189,7 @@ public static class UserManager
         }
 
         // This should not be empty, since it's being looked up from the database
-        string playerValueNickName = playerValue.playerNickName;
+        string playerValueNickName = playerValue.GetPlayerNickname();
 
         string socketGuildUserAfterNickName =
             CheckIfNickNameIsEmptyAndReturnUsername(_socketGuildUserAfter.Id);
@@ -198,7 +198,7 @@ public static class UserManager
             + _socketGuildUserAfter.Id + ")" + " | name: " + playerValueNickName +
             " -> " + socketGuildUserAfterNickName, LogLevel.DEBUG);
 
-        playerValue.playerNickName = socketGuildUserAfterNickName;
+        playerValue.SetPlayerNickname(socketGuildUserAfterNickName);
         await SerializationManager.SerializeDB();
     }
 

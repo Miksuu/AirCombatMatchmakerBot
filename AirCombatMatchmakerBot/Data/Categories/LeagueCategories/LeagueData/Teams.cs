@@ -47,10 +47,10 @@ public class Teams
 
             foreach (Player teamPlayer in team.players)
             {
-                Log.WriteLine("Checking player: " + teamPlayer.playerNickName +
-                    " (" + teamPlayer.playerDiscordId + ")", LogLevel.VERBOSE);
+                Log.WriteLine("Checking player: " + teamPlayer.GetPlayerNickname() +
+                    " (" + teamPlayer.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
 
-                if (teamPlayer.playerDiscordId == _idToSearchFor)
+                if (teamPlayer.GetPlayerDiscordId() == _idToSearchFor)
                 {
                     return true;
                 }
@@ -72,10 +72,10 @@ public class Teams
 
             foreach (Player teamPlayer in team.players)
             {
-                Log.WriteLine("Checking player: " + teamPlayer.playerNickName +
-                    " (" + teamPlayer.playerDiscordId + ")", LogLevel.VERBOSE);
+                Log.WriteLine("Checking player: " + teamPlayer.GetPlayerNickname() +
+                    " (" + teamPlayer.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
 
-                if (teamPlayer.playerDiscordId == _idToSearchFor)
+                if (teamPlayer.GetPlayerDiscordId() == _idToSearchFor)
                 {
                     return team;
                 }

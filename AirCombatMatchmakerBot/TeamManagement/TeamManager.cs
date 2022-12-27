@@ -12,7 +12,7 @@
                 " in league: " + _dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
 
             bool teamActive = team.teamActive;
-            bool teamContainsPlayer = team.players.Any(x => x.playerDiscordId == _playerId);
+            bool teamContainsPlayer = team.players.Any(x => x.GetPlayerDiscordId() == _playerId);
             Log.WriteLine("active: " + teamActive + " | teamContainsPlayer: " + teamContainsPlayer, LogLevel.VERBOSE);
 
             if (teamActive && teamContainsPlayer)

@@ -78,15 +78,15 @@ public static class ButtonFunctionality
         {
             Player player = Database.Instance.PlayerData.PlayerIDs[_component.User.Id];
 
-            if (player.playerDiscordId == 0)
+            if (player.GetPlayerDiscordId() == 0)
             {
-                Log.WriteLine("Player's: " + player.playerNickName +
+                Log.WriteLine("Player's: " + player.GetPlayerNickname() +
                     " id was 0!", LogLevel.CRITICAL);
                 return;
             }
 
-            Log.WriteLine("Found player: " + player.playerNickName +
-                " (" + player.playerDiscordId + ")", LogLevel.VERBOSE);
+            Log.WriteLine("Found player: " + player.GetPlayerNickname() +
+                " (" + player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
 
             if (dbLeagueInstance.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
                 _component.User.Id))
@@ -98,7 +98,7 @@ public static class ButtonFunctionality
                 // after the data has been serialized
                 Team newTeam = new Team(
                     new List<Player> { player },
-                    player.playerNickName,
+                    player.GetPlayerNickname(),
                     dbLeagueInstance.LeagueData.Teams.GetCurrentTeamInt());
 
                 if (dbLeagueInstance.LeaguePlayerCountPerTeam < 2)
