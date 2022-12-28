@@ -138,7 +138,7 @@ public static class CategoryAndChannelManager
                 Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
                     interfaceCategory.CategoryName);
 
-            //InterfaceCategory databaseInterfaceCategory = GetCategoryInstance(categoryName);
+            //InterfaceCategory databaseInterfaceCategory = GetCategoryInstance(buttonName);
             if (dbCategory.Key == 0 || dbCategory.Value == null)
             {
                 Log.WriteLine(nameof(dbCategory) + " was null!", LogLevel.CRITICAL);
