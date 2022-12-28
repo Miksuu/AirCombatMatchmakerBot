@@ -75,7 +75,6 @@ public static class CategoryAndChannelManager
             // Cached for later use (inserting the category ID)
             leagueCategoryName = leagueInterface.LeagueCategoryName;
 
-            //finalCategoryName = baseCategory.categoryName.ToString();
             finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(leagueInterface.LeagueCategoryName);
 
             Log.WriteLine("League's category name is: " + finalCategoryName, LogLevel.VERBOSE);
@@ -110,14 +109,7 @@ public static class CategoryAndChannelManager
             return;
         }
 
-        BaseCategory? baseCategoryTemp = interfaceCategory as BaseCategory;
-        if (baseCategoryTemp == null)
-        {
-            Log.WriteLine(nameof(baseCategoryTemp) + " was null!", LogLevel.CRITICAL);
-            return;
-        }
-
-        List<Overwrite> permissionsList = baseCategoryTemp.GetGuildPermissions(_guild);
+        List<Overwrite> permissionsList = interfaceCategory.GetGuildPermissions(_guild);
         SocketCategoryChannel? socketCategoryChannel = null;
 
         bool contains = false;
@@ -193,7 +185,7 @@ public static class CategoryAndChannelManager
         }
 
         // Handle channel checking/creation
-        await baseCategoryTemp.CreateChannelsForTheCategory(
+        await interfaceCategory.CreateChannelsForTheCategory(
             interfaceCategory, socketCategoryChannel, _guild);
     }
 

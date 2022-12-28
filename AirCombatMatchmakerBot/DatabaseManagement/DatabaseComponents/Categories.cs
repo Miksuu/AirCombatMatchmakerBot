@@ -56,7 +56,7 @@ public class Categories
 
     public void AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(ulong _id, InterfaceCategory _InterfaceCategory)
     {
-        Log.WriteLine("Adding baseCategory: " + _InterfaceCategory.CategoryName +
+        Log.WriteLine("Adding interfaceCategory: " + _InterfaceCategory.CategoryName +
             "to the CreatedCategoriesWithChannels Dictionary" + " with id: " + _id, LogLevel.VERBOSE);
         CreatedCategoriesWithChannels.Add(_id, _InterfaceCategory);
         Log.WriteLine("Done adding, count is now: " + CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
