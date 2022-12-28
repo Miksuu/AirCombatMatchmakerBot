@@ -126,17 +126,9 @@ public abstract class BaseCategory : InterfaceCategory
                 return;
             }
 
-            BaseChannel? baseChannelTemp = interfaceChannel as BaseChannel;
-
-            if (baseChannelTemp == null)
-            {
-                Log.WriteLine(nameof(baseChannelTemp) + " was null!", LogLevel.CRITICAL);
-                return;
-            }
-
             if (!channelExists)
             {
-                List<Overwrite> permissionsList = baseChannelTemp.GetGuildPermissions(_guild);
+                List<Overwrite> permissionsList = interfaceChannel.GetGuildPermissions(_guild);
 
                 Log.WriteLine("Creating a channel named: " + channelNameString + " for category: "
                              + _interfaceCategory.CategoryName + " (" +
@@ -160,7 +152,7 @@ public abstract class BaseCategory : InterfaceCategory
                     " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
             }
 
-            await baseChannelTemp.ActivateChannelFeatures();
+            await interfaceChannel.ActivateChannelFeatures();
 
             Log.WriteLine("Done looping through: " + channelNameString, LogLevel.VERBOSE);
         }

@@ -27,6 +27,7 @@ public class Categories
     {
         createdCategoriesWithChannels = new();
     }
+
     /*
     public Dictionary<ulong, InterfaceCategory> GetDictionaryOfCreatedCategoriesWithChannels()
     {
