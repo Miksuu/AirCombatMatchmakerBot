@@ -7,7 +7,7 @@ public interface InterfaceMessage
 {
     public MessageName MessageName { get; set; }
     public bool ShowOnChannelGeneration { get; set; }
-    public List<ButtonName> ButtonNames { get; set; }
+    public List<ButtonName> MessageButtonNames { get; set; }
 
     public abstract void TempMethod();
 }

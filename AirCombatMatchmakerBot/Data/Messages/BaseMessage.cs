@@ -20,6 +20,7 @@ public abstract class BaseMessage : InterfaceMessage
             messageName = value;
         }
     }
+
     bool InterfaceMessage.ShowOnChannelGeneration
     {
         get
@@ -36,7 +37,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    List<ButtonName> MessageButtonNames
+    List<ButtonName> InterfaceMessage.MessageButtonNames
     {
         get
         {
