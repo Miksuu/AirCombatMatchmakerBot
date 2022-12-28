@@ -152,7 +152,7 @@ public abstract class BaseCategory : InterfaceCategory
                     " (" + _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
             }
 
-            await interfaceChannel.ActivateChannelFeatures();
+            await interfaceChannel.PostChannelMessages();
 
             Log.WriteLine("Done looping through: " + channelNameString, LogLevel.VERBOSE);
         }

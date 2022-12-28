@@ -19,7 +19,7 @@ public class CHALLENGE : BaseChannel
         };
     }
 
-    public override async Task ActivateChannelFeatures()
+    public override async Task PostChannelMessages()
     {
         Log.WriteLine("Activating challenge system on channel: " +
             channelId, LogLevel.VERBOSE);

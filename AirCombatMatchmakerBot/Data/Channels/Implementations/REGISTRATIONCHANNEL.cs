@@ -22,7 +22,8 @@ public class REGISTRATIONCHANNEL : BaseChannel
         };
     }
 
-    public override async Task ActivateChannelFeatures()
+    public override async Task PostChannelMessages()
+
     {
         Log.WriteLine("Activating channel features on " +
             nameof(REGISTRATIONCHANNEL) + " id: " + base.channelId, LogLevel.VERBOSE);
@@ -35,7 +36,8 @@ public class REGISTRATIONCHANNEL : BaseChannel
             return;
         }
 
-        Log.WriteLine("Does not contain the key: " + channelFeatureKey + ", continuing", LogLevel.VERBOSE);
+        Log.WriteLine("Does not contain the key: " +
+            channelFeatureKey + ", continuing", LogLevel.VERBOSE);
 
         channelFeaturesWithMessageIds.Add(channelFeatureKey,
             await PlayerRegisteration.CreateMainRegisterationChannelButton(channelId));

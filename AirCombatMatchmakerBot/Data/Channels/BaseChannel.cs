@@ -65,16 +65,34 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
+    List<MessageName> InterfaceChannel.ChannelMessages
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(channelMessages) + " with count of: " +
+                channelMessages.Count, LogLevel.VERBOSE);
+            return channelMessages;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(channelMessages)
+                + " to: " + value, LogLevel.VERBOSE);
+            channelMessages = value;
+        }
+    }
+
     [DataMember] protected ChannelName channelName;
     [DataMember] protected ulong channelId;
     [DataMember] protected ulong channelsCategoryId;
     [DataMember] protected Dictionary<string, ulong> channelFeaturesWithMessageIds;
+    [DataMember] protected List<MessageName> channelMessages { get; set; }
 
     public BaseChannel()
     {
         channelFeaturesWithMessageIds = new Dictionary<string, ulong>();
+        channelMessages = new List<MessageName>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
-    public abstract Task ActivateChannelFeatures();
+    public abstract Task PostChannelMessages();
 }

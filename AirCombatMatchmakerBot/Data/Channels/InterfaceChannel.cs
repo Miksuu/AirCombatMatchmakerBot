@@ -9,7 +9,8 @@ public interface InterfaceChannel
     public ulong ChannelId { get; set; }
     public ulong ChannelsCategoryId { get; set; }
     public Dictionary<string, ulong> ChannelFeaturesWithMessageIds { get; set; }
+    public List<MessageName> ChannelMessages { get; set; }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
-    public abstract Task ActivateChannelFeatures();
+    public abstract Task PostChannelMessages();
 }

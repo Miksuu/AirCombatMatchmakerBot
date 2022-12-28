@@ -19,7 +19,7 @@ public class BOTLOG : BaseChannel
         };
     }
 
-    public override Task ActivateChannelFeatures()
+    public override Task PostChannelMessages()
     {
         BotMessageLogging.loggingChannelId = channelId;
         return Task.CompletedTask;
