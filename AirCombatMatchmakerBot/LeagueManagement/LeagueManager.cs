@@ -6,9 +6,9 @@ public static class LeagueManager
 {
     public static ulong leagueRegistrationChannelId;
 
-    public static ILeague GetCategoryInstance(CategoryName _leagueCategoryName)
+    public static InterfaceLeague GetCategoryInstance(CategoryName _leagueCategoryName)
     {
-        return (ILeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
+        return (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
 
     public static Task CreateLeaguesOnStartupIfNecessary()
@@ -37,7 +37,7 @@ public static class LeagueManager
             int enumValue = (int)leagueCategoryName;
             if (enumValue > 100) continue;
 
-            ILeague interfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
+            InterfaceLeague interfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
             Log.WriteLine("after setting interface", LogLevel.VERBOSE);
             if (interfaceLeagueCategory == null)
             {
@@ -78,19 +78,19 @@ public static class LeagueManager
         return Task.CompletedTask;
     }
 
-    public static ILeague GetLeagueInstanceWithLeagueCategoryName(CategoryName _leagueCategoryName)
+    public static InterfaceLeague GetLeagueInstanceWithLeagueCategoryName(CategoryName _leagueCategoryName)
     {
         Log.WriteLine("Getting a league instance with LeagueCategoryName: " +
             _leagueCategoryName, LogLevel.VERBOSE);
 
-        var leagueInstance = (ILeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
+        var leagueInstance = (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
         leagueInstance.LeagueCategoryName = _leagueCategoryName;
         Log.WriteLine(nameof(leagueInstance) + ": " + leagueInstance.ToString(),LogLevel.VERBOSE);
         return leagueInstance;
     }
 
     /*
-    public static ILeague FindLeagueAndReturnInterfaceFromDatabase(ILeague _interfaceToSearchFor)
+    public static InterfaceLeague FindLeagueAndReturnInterfaceFromDatabase(InterfaceLeague _interfaceToSearchFor)
     {
         var dbLeagueInstance = GetInterfaceLeagueCategoryFromTheDatabase(_interfaceToSearchFor);
 

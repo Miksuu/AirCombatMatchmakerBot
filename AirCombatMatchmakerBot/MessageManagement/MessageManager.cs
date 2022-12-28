@@ -3,7 +3,7 @@
 public static class MessageManager
 {
     public static async Task ModifyLeagueRegisterationChannelMessage(
-        ILeague _dbLeagueInstance)
+        InterfaceLeague _dbLeagueInstance)
     {
         Log.WriteLine("Modifying league registration channel message with: " +
             _dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
@@ -21,7 +21,7 @@ public static class MessageManager
          GenerateALeagueJoinButtonMessage(_dbLeagueInstance)); */
     }
 
-    public static string GenerateALeagueJoinButtonMessage(ILeague _leagueInterface)
+    public static string GenerateALeagueJoinButtonMessage(InterfaceLeague _leagueInterface)
     {
         string? leagueEnumAttrValue =
             EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
@@ -34,7 +34,7 @@ public static class MessageManager
             GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
     }
 
-    public static string GenerateALeagueChallengeButtonMessage(ILeague _leagueInterface)
+    public static string GenerateALeagueChallengeButtonMessage(InterfaceLeague _leagueInterface)
     {
         string? leagueEnumAttrValue =
             EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
@@ -68,7 +68,7 @@ public static class MessageManager
         Log.WriteLine("Modifying the message: " + _messageId + " done.", LogLevel.VERBOSE);
     }
 
-    private static string GetAllowedUnitsAsString(ILeague _leagueInterface)
+    private static string GetAllowedUnitsAsString(InterfaceLeague _leagueInterface)
     {
         string allowedUnits = string.Empty;
 
@@ -88,7 +88,7 @@ public static class MessageManager
     }
 
     private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(
-        ILeague _leagueInterface)
+        InterfaceLeague _leagueInterface)
     {
         int count = 0;
 

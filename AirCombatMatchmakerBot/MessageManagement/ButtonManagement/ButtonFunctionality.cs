@@ -5,7 +5,7 @@ using System.Linq;
 
 public static class ButtonFunctionality
 {
-    private static ILeague? FindLeagueInterfaceWithSplitStringPart(
+    private static InterfaceLeague? FindLeagueInterfaceWithSplitStringPart(
         string _splitStringIdPart)
     {
         Log.WriteLine("Starting to find Ileague from db with: " +
@@ -26,7 +26,7 @@ public static class ButtonFunctionality
             "Found interface " + nameof(leagueInterface) + ": " +
             leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-        ILeague? dbLeagueInstance =
+        InterfaceLeague? dbLeagueInstance =
             Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
 
         if (dbLeagueInstance == null)
@@ -73,7 +73,7 @@ public static class ButtonFunctionality
 
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
-        ILeague? dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
+        InterfaceLeague? dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
 
         if (dbLeagueInstance == null)
         {
@@ -173,7 +173,7 @@ public static class ButtonFunctionality
         Log.WriteLine("Starting processing a challenge by: " + _component.User.Id +
             " for league: " + _splitString, LogLevel.VERBOSE);
 
-        ILeague? dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
+        InterfaceLeague? dbLeagueInstance = FindLeagueInterfaceWithSplitStringPart(_splitString);
 
         if (dbLeagueInstance == null)
         {

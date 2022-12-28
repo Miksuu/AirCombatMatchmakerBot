@@ -4,7 +4,7 @@ using Discord.WebSocket;
 public static class LeagueChannelManager
 {
     public static async Task<ulong> CreateALeagueJoinButton(
-        ITextChannel _leagueRegistrationChannel, ILeague? _leagueInterface, string _leagueNameString)
+        ITextChannel _leagueRegistrationChannel, InterfaceLeague? _leagueInterface, string _leagueNameString)
     {
         Log.WriteLine("Starting to create a league join button for: " + _leagueNameString, LogLevel.VERBOSE);
 

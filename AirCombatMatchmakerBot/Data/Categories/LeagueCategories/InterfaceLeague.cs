@@ -3,7 +3,7 @@ using Discord;
 using Newtonsoft.Json;
 
 [JsonObjectAttribute]
-public interface ILeague
+public interface InterfaceLeague
 {
     public CategoryName LeagueCategoryName { get; set; }
 

@@ -3,7 +3,7 @@
 [DataContract]
 public class Leagues
 {
-    public List<ILeague> StoredLeagues
+    public List<InterfaceLeague> StoredLeagues
     {
         get
         {
@@ -19,11 +19,11 @@ public class Leagues
         }
     }
 
-    [DataMember] private List<ILeague> storedLeagues { get; set; }
+    [DataMember] private List<InterfaceLeague> storedLeagues { get; set; }
 
     public Leagues()
     {
-        storedLeagues = new List<ILeague>();
+        storedLeagues = new List<InterfaceLeague>();
     }
 
     public bool CheckIfILeagueExistsByCategoryName(CategoryName _leagueCategoryName)
@@ -36,25 +36,25 @@ public class Leagues
     }
 
     // Might want to add a check that it exists, use the method above
-    public ILeague GetILeagueByCategoryName(CategoryName? _leagueCategoryName)
+    public InterfaceLeague GetILeagueByCategoryName(CategoryName? _leagueCategoryName)
     {
         Log.WriteLine("Getting ILeague by category name: " + _leagueCategoryName, LogLevel.VERBOSE);
-        ILeague FoundLeague = StoredLeagues.First(x => x.LeagueCategoryName == _leagueCategoryName);
+        InterfaceLeague FoundLeague = StoredLeagues.First(x => x.LeagueCategoryName == _leagueCategoryName);
         Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
         return FoundLeague;
     }
 
     // Maybe unnecessary to get it by string
-    public ILeague GetILeagueByString(string _leagueCategoryNameString)
+    public InterfaceLeague GetILeagueByString(string _leagueCategoryNameString)
     {
         Log.WriteLine("Getting ILeague by string: " + _leagueCategoryNameString, LogLevel.VERBOSE);
-        ILeague FoundLeague = StoredLeagues.First(
+        InterfaceLeague FoundLeague = StoredLeagues.First(
             x => x.LeagueCategoryName.ToString() == _leagueCategoryNameString);
         Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
         return FoundLeague;
     }
 
-    public void AddToStoredLeagues(ILeague _ILeague)
+    public void AddToStoredLeagues(InterfaceLeague _ILeague)
     {
         Log.WriteLine("Adding ILeague: " + _ILeague.LeagueCategoryName +
             "to the StoredLeague list", LogLevel.VERBOSE);
@@ -63,7 +63,7 @@ public class Leagues
     }
 
     /*
-    public List<ILeague> GetListOfStoredLeagues()
+    public List<InterfaceLeague> GetListOfStoredLeagues()
     {
         Log.WriteLine("Getting list of ILeagues with count of: " + StoredLeagues.Count, LogLevel.VERBOSE);
         return StoredLeagues;
@@ -73,7 +73,7 @@ public class Leagues
     {
         Log.WriteLine("Starting to set teams inactive that " + _userId + " was in.", LogLevel.VERBOSE);
 
-        foreach (ILeague storedLeague in StoredLeagues)
+        foreach (InterfaceLeague storedLeague in StoredLeagues)
         {
             Log.WriteLine("Looping through league: " +
                 storedLeague.LeagueCategoryName, LogLevel.VERBOSE);
@@ -111,7 +111,7 @@ public class Leagues
                                 continue;
                             }
 
-                            ILeague findLeagueCategoryType = GetILeagueByString(storedLeagueString);
+                            InterfaceLeague findLeagueCategoryType = GetILeagueByString(storedLeagueString);
                             CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
                             var leagueInterface =
@@ -120,7 +120,7 @@ public class Leagues
                             Log.WriteLine("Found " + nameof(leagueInterface) + ": " +
                                 leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-                            ILeague? dbLeagueInstance =
+                            InterfaceLeague? dbLeagueInstance =
                                 Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(
                                     leagueInterface);
 
@@ -147,7 +147,7 @@ public class Leagues
         }
     }
 
-    public ILeague? GetInterfaceLeagueCategoryFromTheDatabase(ILeague _leagueInterface)
+    public InterfaceLeague? GetInterfaceLeagueCategoryFromTheDatabase(InterfaceLeague _leagueInterface)
     {
         if (_leagueInterface == null)
         {

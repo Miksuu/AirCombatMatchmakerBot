@@ -3,9 +3,9 @@ using Discord;
 using System.Runtime.Serialization;
 
 [DataContract]
-public abstract class BaseLeague : ILeague
+public abstract class BaseLeague : InterfaceLeague
 {
-    CategoryName ILeague.LeagueCategoryName
+    CategoryName InterfaceLeague.LeagueCategoryName
     {
         get
         {
@@ -20,7 +20,7 @@ public abstract class BaseLeague : ILeague
         }
     }
 
-    Era ILeague.LeagueEra
+    Era InterfaceLeague.LeagueEra
     {
         get
         {
@@ -35,7 +35,7 @@ public abstract class BaseLeague : ILeague
         }
     }
 
-    int ILeague.LeaguePlayerCountPerTeam
+    int InterfaceLeague.LeaguePlayerCountPerTeam
     {
         get
         {
@@ -50,7 +50,7 @@ public abstract class BaseLeague : ILeague
         }
     }
 
-    List<UnitName> ILeague.LeagueUnits
+    List<UnitName> InterfaceLeague.LeagueUnits
     {
         get
         {
@@ -65,7 +65,7 @@ public abstract class BaseLeague : ILeague
         }
     }
 
-    LeagueData ILeague.LeagueData
+    LeagueData InterfaceLeague.LeagueData
     {
         get
         {
@@ -80,7 +80,7 @@ public abstract class BaseLeague : ILeague
         }
     }
 
-    DiscordLeagueReferences ILeague.DiscordLeagueReferences
+    DiscordLeagueReferences InterfaceLeague.DiscordLeagueReferences
     {
         get
         {

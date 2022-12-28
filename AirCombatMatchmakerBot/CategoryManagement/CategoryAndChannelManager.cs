@@ -64,7 +64,7 @@ public static class CategoryAndChannelManager
 
             isLeague = true;
 
-            ILeague leagueInterface = GetLeagueInstance(_categoryName);
+            InterfaceLeague leagueInterface = GetLeagueInstance(_categoryName);
 
             Log.WriteLine("Got " + nameof(leagueInterface) +
                 leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
@@ -75,7 +75,8 @@ public static class CategoryAndChannelManager
             // Cached for later use (inserting the category ID)
             leagueCategoryName = leagueInterface.LeagueCategoryName;
 
-            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(leagueInterface.LeagueCategoryName);
+            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(
+                leagueInterface.LeagueCategoryName);
 
             Log.WriteLine("League's category name is: " + finalCategoryName, LogLevel.VERBOSE);
         }
@@ -195,8 +196,8 @@ public static class CategoryAndChannelManager
         return (InterfaceCategory)EnumExtensions.GetInstance(_categoryName.ToString());
     }
 
-    private static ILeague GetLeagueInstance(CategoryName _leagueCategoryName)
+    private static InterfaceLeague GetLeagueInstance(CategoryName _leagueCategoryName)
     {
-        return (ILeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
+        return (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
 }

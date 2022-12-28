@@ -172,7 +172,7 @@ public static class UserManager
     }
 
     public static async void SetPlayerActiveAndGrantHimTheRole(
-        ILeague _dbLeagueInstance, ulong _playerId)
+        InterfaceLeague _dbLeagueInstance, ulong _playerId)
     {
        _dbLeagueInstance.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_playerId).SetTheActive(true);
         await RoleManager.GrantUserAccessWithId(
