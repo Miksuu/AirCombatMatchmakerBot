@@ -9,7 +9,8 @@ public abstract class BaseButton : InterfaceButton
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(buttonName) + ": " + buttonName, LogLevel.VERBOSE);
+            Log.WriteLine("Getting " + nameof(buttonName) + ": " +
+                buttonName, LogLevel.VERBOSE);
             return buttonName;
         }
         set

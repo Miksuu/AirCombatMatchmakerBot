@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 public interface InterfaceMessage
 {
     public MessageName MessageName { get; set; }
+    public bool ShowOnChannelGeneration { get; set; }
+    public List<ButtonName> ButtonNames { get; set; }
 
     public abstract void TempMethod();
 }
