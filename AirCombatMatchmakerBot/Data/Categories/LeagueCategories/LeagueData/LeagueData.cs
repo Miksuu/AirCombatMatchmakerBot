@@ -34,7 +34,6 @@ public class LeagueData
         }
     }
 
-
     [DataMember] private Teams teams { get; set; }
     [DataMember] private ChallengeStatus challengeStatus { get; set; }
     [DataMember] private bool matchmakerActive { get; set; }

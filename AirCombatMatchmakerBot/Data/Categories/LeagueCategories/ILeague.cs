@@ -1,11 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using Discord.WebSocket;
+using Discord;
+using Newtonsoft.Json;
 
 [JsonObjectAttribute]
 public interface ILeague
 {
     public CategoryName LeagueCategoryName { get; set; }
-    //public List<ChannelName> LeagueChannelNames { get; set; }
-    //public List<InterfaceChannel> InterfaceLeagueChannels { get; set; }
 
     public Era LeagueEra { get; set; }
     public int LeaguePlayerCountPerTeam { get; set; }
@@ -14,4 +14,6 @@ public interface ILeague
 
     public LeagueData LeagueData { get; set; }
     public DiscordLeagueReferences DiscordLeagueReferences { get; set; }
+
+    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 }

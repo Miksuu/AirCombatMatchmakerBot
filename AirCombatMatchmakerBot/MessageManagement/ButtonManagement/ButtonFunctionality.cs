@@ -182,18 +182,6 @@ public static class ButtonFunctionality
             return;
         }
 
-        /*
-        Log.WriteLine("Adding team to the challenge list", LogLevel.VERBOSE);
-
-        BaseLeague? baseLeague = dbLeagueInstance as BaseLeague;
-
-        if (baseLeague == null)
-        {
-            Log.WriteLine(nameof(baseLeague) +
-                " was null! Could not find the league.", LogLevel.CRITICAL);
-            return;
-        }*/
-
         dbLeagueInstance.LeagueData.PostChallengeToThisLeague(
             _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam);
     }
