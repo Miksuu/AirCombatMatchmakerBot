@@ -77,7 +77,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
-    public Task PostChannelMessages()
+    public virtual Task PostChannelMessages()
     {
         Log.WriteLine("Starting to post channel messages on: " + channelName, LogLevel.VERBOSE);
 
