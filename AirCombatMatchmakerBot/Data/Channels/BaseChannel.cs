@@ -98,6 +98,24 @@ public abstract class BaseChannel : InterfaceChannel
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
 
+    public async Task CreateAChannelForTheCategory(SocketGuild _guild)
+    {
+        Log.WriteLine("Creating a channel named: " + channelName +
+            " for category: " + channelsCategoryId, LogLevel.VERBOSE);
+
+        string channelNameString = EnumExtensions.GetEnumMemberAttrValue(channelName);
+
+        var channel = await _guild.CreateTextChannelAsync(channelNameString, x => {
+            x.PermissionOverwrites = GetGuildPermissions(_guild);
+            x.CategoryId = channelsCategoryId;
+        });
+
+        channelId = channel.Id;
+
+        Log.WriteLine("Done creating a channel named: " + channelName + " with ID: " + channel.Id +
+            " for category: " + channelsCategoryId, LogLevel.DEBUG);
+    }
+
     public virtual async Task PrepareChannelMessages()
     {
         Log.WriteLine("Starting to prepare channel messages on: " + channelName, LogLevel.VERBOSE);

@@ -13,6 +13,7 @@ public interface InterfaceChannel
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
 
+    public Task CreateAChannelForTheCategory(SocketGuild _guild);
     public Task PrepareChannelMessages();
     public Task PostChannelMessages(
         Dictionary<string, InterfaceMessage> _interfaceMessagesWithIdsOnDatabase);

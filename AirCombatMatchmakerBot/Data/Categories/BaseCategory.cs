@@ -121,18 +121,19 @@ public abstract class BaseCategory : InterfaceCategory
             // (for channel specific features for example)
             interfaceChannel.ChannelsCategoryId = _socketCategoryChannel.Id;
 
-            string? channelNameString = EnumExtensions.GetEnumMemberAttrValue(channelName);
+            //string? channelNameString = EnumExtensions.GetEnumMemberAttrValue(channelName);
+            /*
             if (channelNameString == null)
             {
                 Log.WriteLine(nameof(channelNameString).ToString() + " was null!", LogLevel.CRITICAL);
                 return;
-            }
+            }*/
 
             if (!channelExists)
             {
                 List<Overwrite> permissionsList = interfaceChannel.GetGuildPermissions(_guild);
 
-                Log.WriteLine("Creating a channel named: " + channelNameString + " for category: "
+                Log.WriteLine("Creating a channel named: " + interfaceChannel.ChannelName + " for category: "
                              + _interfaceCategory.CategoryName + " (" +
                              _socketCategoryChannel.Id + ")", LogLevel.VERBOSE);
 
@@ -140,11 +141,7 @@ public abstract class BaseCategory : InterfaceCategory
                     Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
                         _interfaceCategory.CategoryName).Key;
 
-                interfaceChannel.ChannelId = await ChannelManager.CreateAChannelForTheCategory(
-                    _guild, channelNameString, _socketCategoryChannel.Id, permissionsList);
-
-                Log.WriteLine("Done creating the channel with id: " + interfaceChannel.ChannelId +
-                    " named:" + channelNameString + " adding it to the db.", LogLevel.DEBUG);
+                await interfaceChannel.CreateAChannelForTheCategory(_guild);
 
                 _interfaceCategory.InterfaceChannels.Add(interfaceChannel);
 
@@ -156,7 +153,7 @@ public abstract class BaseCategory : InterfaceCategory
 
             await interfaceChannel.PrepareChannelMessages();
 
-            Log.WriteLine("Done looping through: " + channelNameString, LogLevel.VERBOSE);
+            Log.WriteLine("Done looping through.", LogLevel.VERBOSE);
         }
     }
 
