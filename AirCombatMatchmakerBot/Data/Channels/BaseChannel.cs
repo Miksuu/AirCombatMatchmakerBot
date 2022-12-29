@@ -1,6 +1,7 @@
 ﻿using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
+using System;
 
 [DataContract]
 public abstract class BaseChannel : InterfaceChannel
@@ -50,33 +51,89 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    Dictionary<MessageName, ulong> InterfaceChannel.ChannelMessagesWithIds
+    List<MessageName> InterfaceChannel.ChannelMessages
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(channelMessagesWithIds) + " with count of: " +
-                channelMessagesWithIds.Count, LogLevel.VERBOSE);
-            return channelMessagesWithIds;
+            Log.WriteLine("Getting " + nameof(channelMessages) + " with count of: " +
+                channelMessages.Count, LogLevel.VERBOSE);
+            return channelMessages;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(channelMessagesWithIds)
+            Log.WriteLine("Setting " + nameof(channelMessages)
                 + " to: " + value, LogLevel.VERBOSE);
-            channelMessagesWithIds = value;
+            channelMessages = value;
+        }
+    }
+
+    Dictionary<InterfaceMessage, ulong> InterfaceChannel.InterfaceMessagesWithIds
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(interfaceMessagesWithIds) + " with count of: " +
+                interfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+            return interfaceMessagesWithIds;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(interfaceMessagesWithIds)
+                + " to: " + value, LogLevel.VERBOSE);
+            interfaceMessagesWithIds = value;
         }
     }
 
     [DataMember] protected ChannelName channelName;
     [DataMember] protected ulong channelId;
     [DataMember] protected ulong channelsCategoryId;
-    [DataMember] protected Dictionary<MessageName, ulong> channelMessagesWithIds { get; set; }
+    protected List<MessageName> channelMessages;
+    [DataMember] protected Dictionary<InterfaceMessage, ulong> interfaceMessagesWithIds;
+
 
     public BaseChannel()
     {
-        channelMessagesWithIds = new Dictionary<MessageName, ulong>();
+        channelMessages = new List<MessageName>();
+        interfaceMessagesWithIds = new Dictionary<InterfaceMessage, ulong>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
+
+    public virtual async Task PrepareChannelMessages()
+    {
+        Log.WriteLine("Starting to prepare channel messages on: " + channelName, LogLevel.VERBOSE);
+
+        var guild = BotReference.GetGuildRef();
+
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
+        foreach (var messageName in channelMessages)
+        {
+            Log.WriteLine("on: " + nameof(messageName) + messageName, LogLevel.VERBOSE);
+
+            InterfaceMessage interfaceMessage = (InterfaceMessage)EnumExtensions.GetInstance(messageName.ToString());
+
+            if (interfaceMessagesWithIds.Any(x => x.Key.MessageName == messageName))
+            {
+                Log.WriteLine("Already contains key " + messageName, LogLevel.VERBOSE);
+                return;
+            }
+
+            Log.WriteLine("Does not contain the key: " +
+                messageName + ", continuing", LogLevel.VERBOSE);
+
+            interfaceMessagesWithIds.Add(interfaceMessage, 0);
+
+            Log.WriteLine("Done with: " + messageName, LogLevel.VERBOSE);
+        }
+        Log.WriteLine("Done posting channel messages on " +
+            channelName + " id: " + channelId, LogLevel.VERBOSE);
+
+        await PostChannelMessages();
+    }
     public virtual Task PostChannelMessages()
     {
         Log.WriteLine("Starting to post channel messages on: " + channelName, LogLevel.VERBOSE);
@@ -89,30 +146,15 @@ public abstract class BaseChannel : InterfaceChannel
             return Task.CompletedTask;
         }
 
-        foreach (var messageNameWithId in channelMessagesWithIds)
+        foreach (var interfaceMessageKvp in interfaceMessagesWithIds) 
         {
-            Log.WriteLine("on: " + nameof(messageNameWithId) + messageNameWithId.Key, LogLevel.VERBOSE);
+            Log.WriteLine("Posting message: " + interfaceMessageKvp.Key, LogLevel.VERBOSE);
 
-            if (messageNameWithId.Value != 0)
-            {
-                Log.WriteLine("Already contains key " + messageNameWithId.Key, LogLevel.VERBOSE);
-                return Task.CompletedTask;
-            }
+            ulong id = interfaceMessageKvp.Key.CreateTheMessageAndItsButtonsOnTheBaseClass(
+                guild, channelId).Result;
 
-            Log.WriteLine("Does not contain the key: " +
-                messageNameWithId.Key + ", continuing", LogLevel.VERBOSE);
-
-            InterfaceMessage interfaceMessage = (InterfaceMessage)EnumExtensions.GetInstance(messageNameWithId.Key.ToString());
-
-            ulong id = interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                    guild, channelId).Result;
-
-            channelMessagesWithIds[messageNameWithId.Key] = id;
-
-            Log.WriteLine("Done with: " + messageNameWithId.Key + " | " + messageNameWithId.Value, LogLevel.VERBOSE);
+            interfaceMessagesWithIds[interfaceMessageKvp.Key] = id;
         }
-        Log.WriteLine("Done posting channel messages on " +
-            channelName + " id: " + channelId, LogLevel.VERBOSE);
 
         return Task.CompletedTask;
     }

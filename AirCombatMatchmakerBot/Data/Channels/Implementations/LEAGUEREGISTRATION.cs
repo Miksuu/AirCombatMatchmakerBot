@@ -99,7 +99,7 @@ public class LEAGUEREGISTRATION : BaseChannel
             /*
             // If the channelMessages features got this already, if yes, continue, otherwise finish
             // the operation then save it to the dictionary
-            if (channelMessagesWithIds.ContainsKey(
+            if (channelMessages.ContainsKey(
                 leagueNameString) && containsMessage)
             {
                 Log.WriteLine("The key " + leagueNameString + " was already found in: " +

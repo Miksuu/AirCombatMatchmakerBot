@@ -27,7 +27,7 @@ public class CHALLENGE : BaseChannel
 
         string channelFeatureKey = "challenge";
         /*
-        if (channelMessagesWithIds.va != 0)
+        if (channelMessages.va != 0)
         {
             Log.WriteLine("Already contains key " + channelFeatureKey, LogLevel.VERBOSE);
             return;

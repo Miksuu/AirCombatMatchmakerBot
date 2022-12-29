@@ -10,9 +10,9 @@ public class REGISTRATIONCHANNEL : BaseChannel
     public REGISTRATIONCHANNEL()
     {
         channelName = ChannelName.REGISTRATIONCHANNEL;
-        channelMessagesWithIds = new Dictionary<MessageName, ulong>
+        channelMessages = new List<MessageName>
         {
-            { MessageName.REGISTRATIONMESSAGE, 0 }
+            MessageName.REGISTRATIONMESSAGE, 
         }; 
     }
 

@@ -27,7 +27,7 @@ public static class ChannelRestore
         var dbFinal = dbKeyValue.InterfaceChannels.First(
                                              ic => ic.ChannelId == _interfaceChannel.ChannelId);
 
-        dbFinal.ChannelMessagesWithIds.Clear();
+        dbFinal.InterfaceMessagesWithIds.Clear();
 
         dbKeyValue.InterfaceChannels.Remove(dbFinal);
 

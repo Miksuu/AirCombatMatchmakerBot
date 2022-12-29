@@ -20,7 +20,7 @@ public class BOTLOG : BaseChannel
     }
 
     
-    public override Task PostChannelMessages()
+    public override Task PrepareChannelMessages()
     {
         Log.WriteLine("Setting logging channel id with: " + channelId, LogLevel.VERBOSE);
         BotMessageLogging.loggingChannelId = channelId;
