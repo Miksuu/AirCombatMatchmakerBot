@@ -52,6 +52,7 @@ public abstract class BaseMessage : InterfaceMessage
             messageButtonNames = value;
         }
     }
+
     string InterfaceMessage.Message
     {
         get
@@ -68,10 +69,27 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
+    ulong InterfaceMessage.MessageId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(messageId)
+                + ": " + messageId, LogLevel.VERBOSE);
+            return messageId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(messageId) +
+                messageId + " to: " + value, LogLevel.VERBOSE);
+            messageId = value;
+        }
+    }
+
     [DataMember] protected MessageName messageName;
     [DataMember] protected bool showOnChannelGeneration;
     [DataMember] protected List<ButtonName> messageButtonNames;
     [DataMember] protected string message = "";
+    [DataMember] protected ulong messageId;
 
     public BaseMessage()
     {

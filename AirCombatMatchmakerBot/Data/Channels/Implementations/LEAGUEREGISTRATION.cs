@@ -142,7 +142,7 @@ public class LEAGUEREGISTRATION : BaseChannel
 
             Log.WriteLine("interfaceMessage message: " + interfaceMessage.Message, LogLevel.VERBOSE);
 
-            interfaceMessagesWithIds.Add(interfaceMessage, leagueName.ToString());
+            interfaceMessagesWithIds.Add(leagueName.ToString(), interfaceMessage);
 
             Log.WriteLine("Added to the dictionary, count is now: " +
                 interfaceMessagesWithIds.Count, LogLevel.VERBOSE);

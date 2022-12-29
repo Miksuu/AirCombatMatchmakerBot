@@ -9,7 +9,7 @@ public interface InterfaceChannel
     public ulong ChannelId { get; set; }
     public ulong ChannelsCategoryId { get; set; }
     public List<MessageName> ChannelMessages { get; set; }
-    public Dictionary<InterfaceMessage, string> InterfaceMessagesWithIds { get; set; }
+    public Dictionary<string, InterfaceMessage> InterfaceMessagesWithIds { get; set; }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
 
