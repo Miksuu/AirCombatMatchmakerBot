@@ -1,4 +1,4 @@
-﻿using Discord.WebSocket;
+﻿//using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
 
@@ -52,15 +52,72 @@ public abstract class BaseMessage : InterfaceMessage
             messageButtonNames = value;
         }
     }
+    string InterfaceMessage.Message
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(message)
+                + ": " + message, LogLevel.VERBOSE);
+            return message;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(message) +
+                message + " to: " + value, LogLevel.VERBOSE);
+            message = value;
+        }
+    }
+
 
     [DataMember] protected MessageName messageName;
     [DataMember] protected bool showOnChannelGeneration;
     [DataMember] protected List<ButtonName> messageButtonNames;
+    [DataMember] protected string message;
 
     public BaseMessage()
     {
         messageButtonNames = new List<ButtonName>();
     }
 
-    public abstract void TempMethod();
+    public async Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
+        Discord.WebSocket.SocketGuild _guild, ulong _channelId)
+    {
+        var component = new ComponentBuilder();
+
+        Log.WriteLine("Creating the channel message with id: "
+            + _channelId, LogLevel.VERBOSE);
+
+        var textChannel = _guild.GetChannel(_channelId) as ITextChannel;
+
+        if (textChannel == null)
+        {
+            Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
+            return 0;
+        }
+
+        Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
+
+        Log.WriteLine("messageButtonNames.Count: " + messageButtonNames.Count, LogLevel.VERBOSE);
+
+        foreach (ButtonName buttonName in messageButtonNames)
+        {
+            InterfaceButton interfaceButton = (InterfaceButton)EnumExtensions.GetInstance(buttonName.ToString());
+            Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " + interfaceButton.ButtonName, LogLevel.VERBOSE);
+
+            component.WithButton(interfaceButton.CreateTheButton(_channelId.ToString()));
+        }
+
+        var newMessage = await textChannel.SendMessageAsync(
+        message, components: component.Build());
+
+        Log.WriteLine("Created a new message with id: " + newMessage.Id,LogLevel.VERBOSE);
+
+        return newMessage.Id;
+    }
+    /*
+    public abstract void CreateTheMessageAndItsButtonsOnTheInheritedClass(
+        SocketGuild _guild, ulong _channelId);
+    */
+
+
 }

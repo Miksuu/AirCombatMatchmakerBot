@@ -19,14 +19,14 @@ public class CHALLENGE : BaseChannel
         };
     }
 
-    public override async Task PostChannelMessages()
+    public async Task PostChannelMessages()
     {
         Log.WriteLine("Activating challenge system on channel: " +
             channelId, LogLevel.VERBOSE);
 
         string channelFeatureKey = "challenge";
-
-        if (channelFeaturesWithMessageIds.ContainsKey(channelFeatureKey))
+        /*
+        if (channelMessagesWithIds.va != 0)
         {
             Log.WriteLine("Already contains key " + channelFeatureKey, LogLevel.VERBOSE);
             return;
@@ -41,7 +41,8 @@ public class CHALLENGE : BaseChannel
         channelFeaturesWithMessageIds.Add(channelFeatureKey, buttonId);
 
         Log.WriteLine("Done activating channel features on " +
-            nameof(CHALLENGE) + " id: " + base.channelId, LogLevel.VERBOSE);
+            nameof(CHALLENGE) + " id: " + base.channelId, LogLevel.VERBOSE); 
+        */
     }
 
     public string GenerateChallengeQueueMessage()

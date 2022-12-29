@@ -10,6 +10,10 @@ public class REGISTRATIONCHANNEL : BaseChannel
     public REGISTRATIONCHANNEL()
     {
         channelName = ChannelName.REGISTRATIONCHANNEL;
+        channelMessagesWithIds = new Dictionary<MessageName, ulong>
+        {
+            { MessageName.REGISTRATIONMESSAGE, 0 }
+        }; 
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
@@ -20,29 +24,5 @@ public class REGISTRATIONCHANNEL : BaseChannel
                 _guild, "Member").Result.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)),
         };
-    }
-
-    public override async Task PostChannelMessages()
-
-    {
-        Log.WriteLine("Activating channel features on " +
-            nameof(REGISTRATIONCHANNEL) + " id: " + base.channelId, LogLevel.VERBOSE);
-
-        string channelFeatureKey = "mainRegistration";
-
-        if (channelFeaturesWithMessageIds.ContainsKey(channelFeatureKey))
-        {
-            Log.WriteLine("Already contains key " + channelFeatureKey, LogLevel.VERBOSE);
-            return;
-        }
-
-        Log.WriteLine("Does not contain the key: " +
-            channelFeatureKey + ", continuing", LogLevel.VERBOSE);
-
-        channelFeaturesWithMessageIds.Add(channelFeatureKey,
-            await PlayerRegisteration.CreateMainRegisterationChannelButton(channelId));
-
-        Log.WriteLine("Done activating channel features on " +
-            nameof(REGISTRATIONCHANNEL) + " id: " + base.channelId, LogLevel.VERBOSE);
     }
 }

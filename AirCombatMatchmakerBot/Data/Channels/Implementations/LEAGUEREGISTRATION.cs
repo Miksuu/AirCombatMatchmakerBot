@@ -24,7 +24,8 @@ public class LEAGUEREGISTRATION : BaseChannel
         };
     }
 
-    public override async Task PostChannelMessages()
+
+    public async Task PostChannelMessages()
     {
         LeagueManager.leagueRegistrationChannelId = channelId;
 
@@ -68,14 +69,15 @@ public class LEAGUEREGISTRATION : BaseChannel
                 return;
             }
 
+            /*
             Log.WriteLine("Printing all keys and values in: " + nameof(
-                channelFeaturesWithMessageIds) + " that has count of: " +
+                ChannelMessagesWithIds) + " that has count of: " +
                 channelFeaturesWithMessageIds.Count, LogLevel.VERBOSE);
             foreach (var item in channelFeaturesWithMessageIds)
             {
                 Log.WriteLine("Key in db: " + item.Key +
                     " with value: " + item.Value, LogLevel.VERBOSE);
-            }
+            }*/
 
             // Checks if the message is present in the channelMessages
             bool containsMessage = false;
@@ -95,10 +97,10 @@ public class LEAGUEREGISTRATION : BaseChannel
                     containsMessage = true;
                 }
             }
-
+            /*
             // If the channelMessages features got this already, if yes, continue, otherwise finish
             // the operation then save it to the dictionary
-            if (channelFeaturesWithMessageIds.ContainsKey(
+            if (channelMessagesWithIds.ContainsKey(
                 leagueNameString) && containsMessage)
             {
                 Log.WriteLine("The key " + leagueNameString + " was already found in: " +
@@ -126,7 +128,7 @@ public class LEAGUEREGISTRATION : BaseChannel
             channelFeaturesWithMessageIds.Add(
                 leagueNameString, leagueRegistrationChannelMessageId);
 
-            Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
+            Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE); */
         }
     }
 }

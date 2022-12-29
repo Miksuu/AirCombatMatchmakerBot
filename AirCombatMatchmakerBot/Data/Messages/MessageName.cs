@@ -6,6 +6,6 @@ using System.Runtime.Serialization;
 public enum MessageName
 
 {
-    [EnumMember(Value = "ENTER A MESSAGE NAME HERE")]
-    ENTERAMESSAGENAMEHERE = 0,
+    [EnumMember(Value = "REGISTRATION MESSAGE")]
+    REGISTRATIONMESSAGE = 0,
 }

@@ -6,6 +6,6 @@ using System.Runtime.Serialization;
 public enum ButtonName
 
 {
-    [EnumMember(Value = "ENTER A BUTTON NAME HERE")]
-    ENTERABUTTONNAMEHERE = 0,
+    [EnumMember(Value = "REGISTRATIONBUTTON")]
+    REGISTRATIONBUTTON = 0,
 }

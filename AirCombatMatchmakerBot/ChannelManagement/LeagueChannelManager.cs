@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 
+/*
 public static class LeagueChannelManager
 {
     public static async Task<ulong> CreateALeagueJoinButton(
@@ -43,4 +44,4 @@ public static class LeagueChannelManager
         
         return _leagueInterface.DiscordLeagueReferences.LeagueRegistrationChannelMessageId;
     }
-}
+}*/

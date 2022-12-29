@@ -19,7 +19,7 @@ public class BOTCOMMANDS : BaseChannel
         };
     }
 
-    public override Task PostChannelMessages()
+    public Task PostChannelMessages()
     {
         return Task.CompletedTask;
     }
