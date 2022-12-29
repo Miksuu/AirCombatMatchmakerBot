@@ -90,6 +90,8 @@ public abstract class BaseCategory : InterfaceCategory
                 return;
             }
 
+
+               
             // Channel found from the basecategory (it exists)
             if (_interfaceCategory.InterfaceChannels.Any(x => x.ChannelName == interfaceChannel.ChannelName))
             {

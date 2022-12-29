@@ -138,7 +138,9 @@ public static class CategoryAndChannelManager
                 Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
                     interfaceCategory.CategoryName);
 
-            //InterfaceCategory databaseInterfaceCategory = GetCategoryInstance(buttonName);
+            interfaceCategory = dbCategory.Value;
+
+            ////InterfaceCategory databaseInterfaceCategory = GetCategoryInstance(buttonName);
             if (dbCategory.Key == 0 || dbCategory.Value == null)
             {
                 Log.WriteLine(nameof(dbCategory) + " was null!", LogLevel.CRITICAL);
@@ -184,6 +186,8 @@ public static class CategoryAndChannelManager
             Database.Instance.Categories.AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(
                 socketCategoryChannel.Id, interfaceCategory);
         }
+
+
 
         // Handle channel checking/creation
         await interfaceCategory.CreateChannelsForTheCategory(
