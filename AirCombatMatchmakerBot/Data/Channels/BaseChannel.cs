@@ -110,22 +110,24 @@ public abstract class BaseChannel : InterfaceChannel
             return;
         }
 
+        // Add to a method later
+        var interfaceMessagesWithIdsOnDatabase =
+            Database.Instance.Categories.CreatedCategoriesWithChannels.First(
+                x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
+                    x => x.ChannelId == channelId).InterfaceMessagesWithIds;
+
         foreach (var messageName in channelMessages)
         {
             Log.WriteLine("on: " + nameof(messageName) + messageName, LogLevel.VERBOSE);
 
             InterfaceMessage interfaceMessage = (InterfaceMessage)EnumExtensions.GetInstance(messageName.ToString());
 
-            if (interfaceMessagesWithIds.Any(x => x.Value.MessageName == messageName))
-            {
-                Log.WriteLine("Already contains key " + messageName, LogLevel.VERBOSE);
-                return;
-            }
+            if (interfaceMessagesWithIdsOnDatabase.ContainsKey(messageName.ToString())) continue;
 
             Log.WriteLine("Does not contain the key: " +
                 messageName + ", continuing", LogLevel.VERBOSE);
 
-            interfaceMessagesWithIds.Add("0", interfaceMessage);
+            interfaceMessagesWithIdsOnDatabase.Add(messageName.ToString(), interfaceMessage);
 
             Log.WriteLine("Done with: " + messageName, LogLevel.VERBOSE);
         }
@@ -146,16 +148,54 @@ public abstract class BaseChannel : InterfaceChannel
             return Task.CompletedTask;
         }
 
+        Log.WriteLine("Finding channels: " + channelName + " parent category with id: " +
+            channelsCategoryId, LogLevel.VERBOSE);
+
+        /*
+        
+        if (Database.Instance.Categories.CreatedCategoriesWithChannels.Any(
+                x => x.Key == channelsCategoryId))
+        {
+            Log.WriteLine("Found1: " + channelsCategoryId, LogLevel.VERBOSE);
+
+            var interfaceMessagesWithIdsOnDatabase =
+                Database.Instance.Categories.CreatedCategoriesWithChannels.First(
+                x => x.Key == channelsCategoryId).Value.InterfaceChannels;
+
+            Log.WriteLine("First1 count: " +
+                interfaceMessagesWithIdsOnDatabase.Count, LogLevel.VERBOSE);
+
+            if (interfaceMessagesWithIdsOnDatabase.Any(x => x.ChannelId == channelId))
+            {
+                Log.WriteLine("Found2: " + channelId, LogLevel.VERBOSE);
+                interfaceChannelFromDatabase = interfaceMessagesWithIdsOnDatabase.First(
+                    x => x.ChannelId == channelId);
+
+                Log.WriteLine("First2: " + interfaceChannelFromDatabase, LogLevel.VERBOSE);
+            }
+        }*/
+
         foreach (var interfaceMessageKvp in interfaceMessagesWithIds) 
         {
-            Log.WriteLine("Posting message: " + interfaceMessageKvp.Key, LogLevel.VERBOSE);
+            Log.WriteLine("Looping on message: " + interfaceMessageKvp.Value.MessageName + " with id: " +
+                interfaceMessageKvp.Key, LogLevel.VERBOSE);
+
+            /*
+            if (interfaceChannelFromDatabase != null)
+            {
+                Log.WriteLine("message found: " + interfaceChannelFromDatabase.InterfaceMessagesWithIds.Any(
+                        x => x.Key == interfaceMessageKvp.Key), LogLevel.VERBOSE);
+            }*/
+
+            var messageKey = interfaceMessagesWithIds[interfaceMessageKvp.Key];
+
+            Log.WriteLine("Key was 0, message does not exist. Creating it.", LogLevel.VERBOSE);
 
             ulong id = interfaceMessageKvp.Value.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                guild, channelId, interfaceMessageKvp.Key).Result;
+            guild, channelId, interfaceMessageKvp.Key).Result;
 
-            interfaceMessagesWithIds[interfaceMessageKvp.Key].MessageId = id;
+            messageKey.MessageId = id;
         }
-
         return Task.CompletedTask;
     }
 }

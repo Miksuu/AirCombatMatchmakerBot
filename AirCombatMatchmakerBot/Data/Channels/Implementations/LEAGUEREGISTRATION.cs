@@ -142,10 +142,18 @@ public class LEAGUEREGISTRATION : BaseChannel
 
             Log.WriteLine("interfaceMessage message: " + interfaceMessage.Message, LogLevel.VERBOSE);
 
-            interfaceMessagesWithIds.Add(leagueName.ToString(), interfaceMessage);
+            // Add to a method later
+            var interfaceMessagesWithIdsOnDatabase =
+                Database.Instance.Categories.CreatedCategoriesWithChannels.First(
+                    x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
+                        x => x.ChannelId == channelId).InterfaceMessagesWithIds;
+
+            if (interfaceMessagesWithIdsOnDatabase.ContainsKey(leagueName.ToString())) return;
+
+            interfaceMessagesWithIdsOnDatabase.Add(leagueName.ToString(), interfaceMessage);
 
             Log.WriteLine("Added to the dictionary, count is now: " +
-                interfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+                interfaceMessagesWithIdsOnDatabase.Count, LogLevel.VERBOSE);
 
             /*
             leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueRegistrationChannelMessageId =
