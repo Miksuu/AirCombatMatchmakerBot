@@ -54,12 +54,13 @@ public abstract class BaseButton : InterfaceButton
     }
 
     [DataMember] protected ButtonName buttonName;
-    [DataMember] protected string buttonLabel;
+    [DataMember] protected string buttonLabel = "";
     [DataMember] protected ButtonStyle buttonStyle;
 
+    /*
     public BaseButton()
     {
-    }
+    }*/
 
     public Discord.ButtonBuilder CreateTheButton(string _customId)
     {

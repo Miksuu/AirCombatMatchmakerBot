@@ -77,7 +77,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
-    public async Task PostChannelMessages()
+    public Task PostChannelMessages()
     {
         Log.WriteLine("Starting to post channel messages on: " + channelName, LogLevel.VERBOSE);
 
@@ -86,7 +86,7 @@ public abstract class BaseChannel : InterfaceChannel
         if (guild == null)
         {
             Exceptions.BotGuildRefNull();
-            return;
+            return Task.CompletedTask;
         }
 
         foreach (var messageNameWithId in channelMessagesWithIds)
@@ -96,7 +96,7 @@ public abstract class BaseChannel : InterfaceChannel
             if (messageNameWithId.Value != 0)
             {
                 Log.WriteLine("Already contains key " + messageNameWithId.Key, LogLevel.VERBOSE);
-                return;
+                return Task.CompletedTask;
             }
 
             Log.WriteLine("Does not contain the key: " +
@@ -113,5 +113,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
         Log.WriteLine("Done posting channel messages on " +
             channelName + " id: " + channelId, LogLevel.VERBOSE);
+
+        return Task.CompletedTask;
     }
 }

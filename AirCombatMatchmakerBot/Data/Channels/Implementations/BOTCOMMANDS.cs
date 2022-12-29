@@ -18,9 +18,4 @@ public class BOTCOMMANDS : BaseChannel
         {
         };
     }
-
-    public Task PostChannelMessages()
-    {
-        return Task.CompletedTask;
-    }
 }

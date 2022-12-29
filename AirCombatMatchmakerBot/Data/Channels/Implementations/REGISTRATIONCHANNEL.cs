@@ -25,4 +25,11 @@ public class REGISTRATIONCHANNEL : BaseChannel
                 new OverwritePermissions(viewChannel: PermValue.Deny)),
         };
     }
+
+
+    /*
+    public Task PostChannelMessages()
+    {
+        return Task.CompletedTask;
+    }*/
 }

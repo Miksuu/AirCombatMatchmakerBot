@@ -19,6 +19,7 @@ public class CHALLENGE : BaseChannel
         };
     }
 
+    /*
     public async Task PostChannelMessages()
     {
         Log.WriteLine("Activating challenge system on channel: " +
@@ -42,8 +43,8 @@ public class CHALLENGE : BaseChannel
 
         Log.WriteLine("Done activating channel features on " +
             nameof(CHALLENGE) + " id: " + base.channelId, LogLevel.VERBOSE); 
-        */
-    }
+       
+    } */
 
     public string GenerateChallengeQueueMessage()
     {

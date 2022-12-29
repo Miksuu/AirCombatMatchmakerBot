@@ -24,7 +24,7 @@ public class LEAGUEREGISTRATION : BaseChannel
         };
     }
 
-
+    /*
     public async Task PostChannelMessages()
     {
         LeagueManager.leagueRegistrationChannelId = channelId;
@@ -48,7 +48,7 @@ public class LEAGUEREGISTRATION : BaseChannel
             "(" + channel.Id + ")", LogLevel.VERBOSE);
 
         await CreateLeagueMessages(channel);        
-    }
+    }*/
 
     public async Task CreateLeagueMessages(ITextChannel _leagueRegistrationChannel)
     {
@@ -80,7 +80,6 @@ public class LEAGUEREGISTRATION : BaseChannel
             }*/
 
             // Checks if the message is present in the channelMessages
-            bool containsMessage = false;
             var channelMessages =
                 await _leagueRegistrationChannel.GetMessagesAsync(
                     50, CacheMode.AllowDownload).FirstAsync();
@@ -94,7 +93,7 @@ public class LEAGUEREGISTRATION : BaseChannel
                 if (msg.Content.Contains(leagueNameString))
                 {
                     Log.WriteLine($"contains: {msg.Content}", LogLevel.VERBOSE);
-                    containsMessage = true;
+                    //containsMessage = true;
                 }
             }
             /*

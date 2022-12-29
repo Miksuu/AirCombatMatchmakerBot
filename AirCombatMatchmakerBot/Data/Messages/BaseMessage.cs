@@ -72,7 +72,7 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected MessageName messageName;
     [DataMember] protected bool showOnChannelGeneration;
     [DataMember] protected List<ButtonName> messageButtonNames;
-    [DataMember] protected string message;
+    [DataMember] protected string message = "";
 
     public BaseMessage()
     {

@@ -19,9 +19,10 @@ public class BOTLOG : BaseChannel
         };
     }
 
+    /*
     public Task PostChannelMessages()
     {
         BotMessageLogging.loggingChannelId = channelId;
         return Task.CompletedTask;
-    }
+    }*/
 }

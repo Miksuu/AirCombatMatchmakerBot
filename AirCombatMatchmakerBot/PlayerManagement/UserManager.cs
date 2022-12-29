@@ -36,7 +36,7 @@ public static class UserManager
         await SerializationManager.SerializeDB();
     }
 
-    public static async Task HandleUserLeave(
+    public static Task HandleUserLeave(
         string _userName, // Just for printing purposes right now 
         ulong _userId)
     {
@@ -46,6 +46,8 @@ public static class UserManager
         Database.Instance.Leagues.HandleSettingTeamsInactiveThatUserWasIn(_userId);
 
         Database.Instance.CachedUsers.RemoveUserFromTheCachedList(_userName, _userId);
+
+        return Task.CompletedTask;
     }
 
 
