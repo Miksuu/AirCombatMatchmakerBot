@@ -134,9 +134,9 @@ public abstract class BaseChannel : InterfaceChannel
         Log.WriteLine("Done posting channel messages on " +
             channelName + " id: " + channelId, LogLevel.VERBOSE);
 
-        await PostChannelMessages();
+        await PostChannelMessages(interfaceMessagesWithIdsOnDatabase);
     }
-    public virtual Task PostChannelMessages()
+    public virtual Task PostChannelMessages(Dictionary<string, InterfaceMessage> _interfaceMessagesWithIdsOnDatabase)
     {
         Log.WriteLine("Starting to post channel messages on: " + channelName, LogLevel.VERBOSE);
 
@@ -175,7 +175,7 @@ public abstract class BaseChannel : InterfaceChannel
             }
         }*/
 
-        foreach (var interfaceMessageKvp in interfaceMessagesWithIds) 
+        foreach (var interfaceMessageKvp in _interfaceMessagesWithIdsOnDatabase) 
         {
             Log.WriteLine("Looping on message: " + interfaceMessageKvp.Value.MessageName + " with id: " +
                 interfaceMessageKvp.Key, LogLevel.VERBOSE);
@@ -188,6 +188,8 @@ public abstract class BaseChannel : InterfaceChannel
             }*/
 
             var messageKey = interfaceMessagesWithIds[interfaceMessageKvp.Key];
+
+            if (messageKey.MessageId != 0) continue;
 
             Log.WriteLine("Key was 0, message does not exist. Creating it.", LogLevel.VERBOSE);
 

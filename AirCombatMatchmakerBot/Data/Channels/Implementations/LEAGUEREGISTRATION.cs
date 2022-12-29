@@ -41,6 +41,12 @@ public class LEAGUEREGISTRATION : BaseChannel
 
     public override async Task PrepareChannelMessages()
     {
+        // Add to a method later
+        var interfaceMessagesWithIdsOnDatabase =
+            Database.Instance.Categories.CreatedCategoriesWithChannels.First(
+                x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
+                    x => x.ChannelId == channelId).InterfaceMessagesWithIds;
+
         foreach (CategoryName leagueName in Enum.GetValues(typeof(CategoryName)))
         {
             Log.WriteLine("Looping on: " + leagueName.ToString(), LogLevel.VERBOSE);
@@ -58,47 +64,6 @@ public class LEAGUEREGISTRATION : BaseChannel
                 return;
             }
 
-            /*
-            Log.WriteLine("Printing all keys and values in: " + nameof(
-                ChannelMessagesWithIds) + " that has count of: " +
-                channelFeaturesWithMessageIds.Count, LogLevel.VERBOSE);
-            foreach (var item in channelFeaturesWithMessageIds)
-            {
-                Log.WriteLine("Key in db: " + item.Key +
-                    " with value: " + item.Value, LogLevel.VERBOSE);
-            }*/
-
-            /*
-            // Checks if the message is present in the channelMessages
-            var channelMessages =
-                await _leagueRegistrationChannel.GetMessagesAsync(
-                    50, CacheMode.AllowDownload).FirstAsync();
-
-            Log.WriteLine("Searching: " + leagueNameString + " from: " + nameof(channelMessages) +
-                " with a count of: " + channelMessages.Count, LogLevel.VERBOSE);
-
-            foreach (var msg in channelMessages)
-            {
-                Log.WriteLine("Looping on msg: " + msg.Content.ToString(), LogLevel.VERBOSE);
-                if (msg.Content.Contains(leagueNameString))
-                {
-                    Log.WriteLine($"contains: {msg.Content}", LogLevel.VERBOSE);
-                    //containsMessage = true;
-                }
-            }
-
-            
-            // If the channelMessages features got this already, if yes, continue, otherwise finish
-            // the operation then save it to the dictionary
-            if (channelMessages.ContainsKey(
-                leagueNameString) && containsMessage)
-            {
-                Log.WriteLine("The key " + leagueNameString + " was already found in: " +
-                    nameof(channelFeaturesWithMessageIds) +
-                    ", continuing.", LogLevel.VERBOSE);
-                continue;
-            }*/
-
             var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
             if (leagueInterface == null)
             {
@@ -109,11 +74,6 @@ public class LEAGUEREGISTRATION : BaseChannel
             var leagueInterfaceFromDatabase =
                 Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
 
-            /*
-            ulong leagueRegistrationChannelMessageId =
-                await LeagueChannelManager.CreateALeagueJoinButton(
-                    _leagueRegistrationChannel, leagueInterfaceFromDatabase, leagueNameString);
-            */
 
             Log.WriteLine("Starting to create a league join button for: " + leagueNameString, LogLevel.VERBOSE);
 
@@ -126,12 +86,6 @@ public class LEAGUEREGISTRATION : BaseChannel
             Log.WriteLine(nameof(leagueInterfaceFromDatabase) + " before creating leagueButtonRegisterationCustomId: "
                 + leagueInterfaceFromDatabase.ToString(), LogLevel.VERBOSE);
 
-            /*
-            string leagueButtonRegisterationCustomId =
-               "LEAGUEREGISTRATION" + leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId;
- 
-            Log.WriteLine(nameof(leagueButtonRegisterationCustomId) + ": " +
-                leagueButtonRegisterationCustomId, LogLevel.VERBOSE);           */
 
             InterfaceMessage interfaceMessage =
                 (InterfaceMessage)EnumExtensions.GetInstance(channelMessages.ElementAt(0).ToString());
@@ -142,12 +96,6 @@ public class LEAGUEREGISTRATION : BaseChannel
 
             Log.WriteLine("interfaceMessage message: " + interfaceMessage.Message, LogLevel.VERBOSE);
 
-            // Add to a method later
-            var interfaceMessagesWithIdsOnDatabase =
-                Database.Instance.Categories.CreatedCategoriesWithChannels.First(
-                    x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
-                        x => x.ChannelId == channelId).InterfaceMessagesWithIds;
-
             if (interfaceMessagesWithIdsOnDatabase.ContainsKey(leagueName.ToString())) return;
 
             interfaceMessagesWithIdsOnDatabase.Add(leagueName.ToString(), interfaceMessage);
@@ -155,29 +103,10 @@ public class LEAGUEREGISTRATION : BaseChannel
             Log.WriteLine("Added to the dictionary, count is now: " +
                 interfaceMessagesWithIdsOnDatabase.Count, LogLevel.VERBOSE);
 
-            /*
-            leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueRegistrationChannelMessageId =
-                await ButtonComponents.CreateButtonMessage(
-                    _leagueRegistrationChannel.Id,
-                    leagueInterface.GenerateALeagueJoinButtonMessage(),
-                    "Join",
-                    leagueButtonRegisterationCustomId); // Maybe replace this with some other system
-            Log.WriteLine("Done creating a league join button for: " + leagueNameString, LogLevel.DEBUG);
-
-            //_leagueInterface.DiscordLeagueReferences.leagueRegistrationChannelMessageId;
-
-
-            //Log.WriteLine("id:" + leagueRegistrationChannelMessageId, LogLevel.VERBOSE);
-
-            /*
-            channelFeaturesWithMessageIds.Add(
-                leagueNameString, leagueRegistrationChannelMessageId);
-            */
-
             Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
         }
 
-        await base.PostChannelMessages();
+        await base.PostChannelMessages(interfaceMessagesWithIdsOnDatabase);
     }
 
     /*
