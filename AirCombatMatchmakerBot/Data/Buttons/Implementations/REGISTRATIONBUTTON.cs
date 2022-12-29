@@ -14,13 +14,30 @@ public class REGISTRATIONBUTTON : BaseButton
         buttonStyle = ButtonStyle.Primary;
     }
 
-    public void CreateTheButton()
+    public void CreateTheButton(){}
+
+    public override string ActivateButtonFunction(SocketMessageComponent _component)
     {
+        string response = "";
+        // Checks that the player does not exist in the database already, true if this is not the case
+        if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
+        {
+            Database.Instance.CachedUsers.AddUserIdToCachedList(_component.User.Id);
 
-    }
-
-    public void ActivateButtonFunction()
-    {
-
+            response = _component.User.Mention + ", " +
+                BotMessaging.GetMessageResponse(
+                    _component.Data.CustomId,
+                    " registration complete, welcome!",
+                    _component.Channel.Name);
+        }
+        else
+        {
+            response = _component.User.Mention + ", " +
+                BotMessaging.GetMessageResponse(
+                    _component.Data.CustomId,
+                    " You are already registered!",
+                    _component.Channel.Name);
+        }
+        return response;
     }
 }

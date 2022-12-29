@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Discord;
+using Discord.WebSocket;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 [DataContract]
@@ -17,6 +19,84 @@ public class PlayerData
 
         PlayerIDs.Add(_Player.GetPlayerDiscordId(), _Player);
         Log.WriteLine("Done adding, count is now: " + PlayerIDs.Count, LogLevel.VERBOSE);
+    }
+
+    public async Task<bool> AddNewPlayerToTheDatabaseById(ulong _playerId)
+    {
+        Log.WriteLine("Start of the addnewplayer with: " + _playerId, LogLevel.VERBOSE);
+
+        var nickName = CheckIfNickNameIsEmptyAndReturnUsername(_playerId);
+
+        Log.WriteLine("Adding a new player: " + nickName + " (" + _playerId + ").", LogLevel.DEBUG);
+
+        // Checks if the player is already in the database, just in case
+        if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(_playerId))
+        {
+            Log.WriteLine("Player doesn't exist in the database: " + _playerId, LogLevel.VERBOSE);
+
+            // Add to the profile
+            Database.Instance.PlayerData.AddAPlayerProfile(new Player(_playerId, nickName));
+
+            // Add the member role for access.
+            await RoleManager.GrantUserAccess(_playerId, "Member");
+
+            return true;
+        }
+        else
+        {
+            Log.WriteLine("Tried to add a player that was already in the database: " +
+                _playerId, LogLevel.DEBUG);
+            return false;
+        }
+    }
+
+    public string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
+    {
+        Log.WriteLine("Checking if nickname is empty and return username with ID: " +
+            _id, LogLevel.VERBOSE);
+
+        var SocketGuildUser = GetSocketGuildUserById(_id);
+
+        if (SocketGuildUser == null)
+        {
+            Log.WriteLine("SocketGuildUser by ID: " + _id + " is null!", LogLevel.ERROR);
+            return "null";
+        }
+
+        Log.WriteLine("SocketGuildUser " + _id + " is not null", LogLevel.VERBOSE);
+
+        string userName = SocketGuildUser.Username;
+        string nickName = SocketGuildUser.Nickname;
+
+        Log.WriteLine("Checking if " + userName + "'s (" + _id + ")" +
+            " nickName: " + nickName + " | " + " is the same", LogLevel.VERBOSE);
+
+        if (nickName == "" || nickName == userName || nickName == null)
+        {
+            Log.WriteLine("returning userName: " + userName, LogLevel.VERBOSE);
+            return userName;
+        }
+        else
+        {
+            Log.WriteLine("returning nickName " + nickName, LogLevel.VERBOSE);
+            return nickName;
+        }
+    }
+
+    // Gets the user by the discord UserId. This may not be present in the Database.
+    public SocketGuildUser? GetSocketGuildUserById(ulong _id)
+    {
+        Log.WriteLine("Getting SocketGuildUser by id: " + _id, LogLevel.DEBUG);
+
+        var guild = BotReference.GetGuildRef();
+
+        if (guild == null)
+        {
+            Exceptions.BotClientRefNull();
+            return null;
+        }
+
+        return guild.GetUser(_id);
     }
 
     public bool CheckIfUserHasPlayerProfile(ulong _userId)
@@ -46,6 +126,33 @@ public class PlayerData
         return FoundPlayer;
     }
 
+    public async Task HandleGuildMemberUpdated(
+    Cacheable<SocketGuildUser, ulong> before, SocketGuildUser _socketGuildUserAfter)
+    {
+        var playerValue =
+            Database.Instance.PlayerData.GetAPlayerProfileById(_socketGuildUserAfter.Id);
+
+        if (playerValue == null)
+        {
+            Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username +
+            "'s profile, no valid player found (not registered?) ", LogLevel.DEBUG);
+            return;
+        }
+
+        // This should not be empty, since it's being looked up from the database
+        string playerValueNickName = playerValue.GetPlayerNickname();
+
+        string socketGuildUserAfterNickName =
+            CheckIfNickNameIsEmptyAndReturnUsername(_socketGuildUserAfter.Id);
+
+        Log.WriteLine("Updating user: " + _socketGuildUserAfter.Username + " ("
+            + _socketGuildUserAfter.Id + ")" + " | name: " + playerValueNickName +
+            " -> " + socketGuildUserAfterNickName, LogLevel.DEBUG);
+
+        playerValue.SetPlayerNickname(socketGuildUserAfterNickName);
+        await SerializationManager.SerializeDB();
+    }
+
     public async Task<bool> DeletePlayerProfile(string _dataValue)
     {
         ulong userId = UInt64.Parse(_dataValue);
@@ -60,7 +167,7 @@ public class PlayerData
         Log.WriteLine("Deleting a player profile " + userId, LogLevel.DEBUG);
         Database.Instance.PlayerData.PlayerIDs.Remove(userId);
 
-        var user = UserManager.GetSocketGuildUserById(userId);
+        var user = GetSocketGuildUserById(userId);
 
         // If the user is in the server
         if (user == null)

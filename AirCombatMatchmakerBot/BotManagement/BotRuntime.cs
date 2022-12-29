@@ -57,7 +57,7 @@ public class BotRuntimeManager
             //client.MessageUpdated += UserManager.MessageUpdated;
 
             // If a member's nickname changes
-            client.GuildMemberUpdated += UserManager.HandleGuildMemberUpdated;
+            client.GuildMemberUpdated += Database.Instance.PlayerData.HandleGuildMemberUpdated;
             client.UserLeft += UserManager.HandleUserLeaveDelegate;
 
             //client.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;

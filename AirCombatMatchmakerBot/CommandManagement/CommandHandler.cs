@@ -65,7 +65,7 @@ public static class CommandHandler
                         // Registers the player profile and returns a bool as task if if was succesful,
                         // otherwise inform the user the user that he tried to register in to the database was already in it
 
-                        if (UserManager.AddNewPlayerToTheDatabaseById(UInt64.Parse(firstOptionValue)).Result)
+                        if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(UInt64.Parse(firstOptionValue)).Result)
                         {
                             response = "Added: " + firstOptionValue + " to the database.";
                         }

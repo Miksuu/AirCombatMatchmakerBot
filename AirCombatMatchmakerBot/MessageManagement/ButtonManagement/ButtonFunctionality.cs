@@ -41,31 +41,6 @@ public static class ButtonFunctionality
         return dbLeagueInstance;
     }
 
-    public static async Task<string> MainRegistration(SocketMessageComponent _component)
-    {
-        string response = "";
-        // Checks that the player does not exist in the database already, true if this is not the case
-        if (UserManager.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
-        {
-            Database.Instance.CachedUsers.AddUserIdToCachedList(_component.User.Id);
-
-            response = _component.User.Mention + ", " +
-                BotMessaging.GetMessageResponse(
-                    _component.Data.CustomId,
-                    " registration complete, welcome!",
-                    _component.Channel.Name);
-        }
-        else
-        {
-            response = _component.User.Mention + ", " +
-                BotMessaging.GetMessageResponse(
-                    _component.Data.CustomId,
-                    " You are already registered!",
-                    _component.Channel.Name);
-        }
-        return response;
-    }
-
     public static async Task LeagueRegistration(
         SocketMessageComponent _component, string _splitString)
     {

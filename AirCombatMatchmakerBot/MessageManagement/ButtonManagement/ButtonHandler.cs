@@ -17,6 +17,11 @@ public static class ButtonHandler
         
         string response = "EMPTY";
         LogLevel logLevel = LogLevel.DEBUG;
+
+        InterfaceButton interfaceButton = (InterfaceButton)EnumExtensions.GetInstance(splitString[0]);
+        response = interfaceButton.ActivateButtonFunction(_component);
+
+        /*
         // Checks with first element of the split string (action)
         switch (splitString[0])
         {
@@ -36,7 +41,7 @@ public static class ButtonHandler
         }
 
         Log.WriteLine("Before serialization on ButtonHandler", LogLevel.VERBOSE);
-
+        */
         await SerializationManager.SerializeDB();
 
         if (splitString[0] != "leagueRegistration")
