@@ -162,8 +162,8 @@ public static class CategoryAndChannelManager
         else
         {
             socketCategoryChannel =
-                await CategoryManager.CreateANewSocketCategoryChannelAndReturnIt(
-                    _guild, finalCategoryName, permissionsList);
+                await interfaceCategory.CreateANewSocketCategoryChannelAndReturnIt(
+                    _guild, finalCategoryName);
             if (socketCategoryChannel == null)
             {
                 Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);

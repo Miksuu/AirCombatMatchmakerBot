@@ -11,6 +11,8 @@ public interface InterfaceCategory
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
 
+    public Task<SocketCategoryChannel?> CreateANewSocketCategoryChannelAndReturnIt(
+        SocketGuild _guild, string _categoryName);
     public Task CreateChannelsForTheCategory(
         InterfaceCategory _interfaceCategory, 
         SocketCategoryChannel _socketCategoryChannel, 
