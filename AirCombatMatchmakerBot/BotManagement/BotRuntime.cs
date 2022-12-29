@@ -26,9 +26,8 @@ public class BotRuntimeManager
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
             //ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
-            
-            
-            
+           
+
             var guild = BotReference.GetGuildRef();
             foreach (var ch in guild.Channels)
             {
