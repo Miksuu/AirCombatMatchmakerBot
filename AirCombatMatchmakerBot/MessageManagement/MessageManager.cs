@@ -2,16 +2,7 @@
 
 public static class MessageManager
 {
-    public static async Task ModifyLeagueRegisterationChannelMessage(
-        InterfaceLeague _dbLeagueInstance)
-    {
-        Log.WriteLine("Modifying league registration channel message with: " +
-            _dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
 
-        await ModifyMessage(LeagueManager.leagueRegistrationChannelId,
-            _dbLeagueInstance.DiscordLeagueReferences.LeagueRegistrationChannelMessageId,
-         GenerateALeagueJoinButtonMessage(_dbLeagueInstance));
-    }
 
     public static async Task ModifyChallengeChannelMessage(ulong _targetChannel)
     {
@@ -21,33 +12,8 @@ public static class MessageManager
          GenerateALeagueJoinButtonMessage(_dbLeagueInstance)); */
     }
 
-    public static string GenerateALeagueJoinButtonMessage(InterfaceLeague _leagueInterface)
-    {
-        string? leagueEnumAttrValue =
-            EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
 
-        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
-            leagueEnumAttrValue, LogLevel.VERBOSE);
-
-        return "." + "\n" + leagueEnumAttrValue + "\n" +
-            GetAllowedUnitsAsString(_leagueInterface) + "\n" +
-            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
-    }
-
-    public static string GenerateALeagueChallengeButtonMessage(InterfaceLeague _leagueInterface)
-    {
-        string? leagueEnumAttrValue =
-            EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueCategoryName);
-
-        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
-            leagueEnumAttrValue, LogLevel.VERBOSE);
-
-        return "." + "\n" + leagueEnumAttrValue + "\n" +
-            GetAllowedUnitsAsString(_leagueInterface) + "\n" +
-            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_leagueInterface);
-    }
-
-    private static async Task ModifyMessage(
+    public static async Task ModifyMessage(
         ulong _channelId, ulong _messageId, string _content)
     {
         Log.WriteLine("Modifying a message on channel id: " + _channelId + " that has msg id: " +
@@ -66,57 +32,5 @@ public static class MessageManager
         await channel.ModifyMessageAsync(_messageId, m => m.Content = _content);
 
         Log.WriteLine("Modifying the message: " + _messageId + " done.", LogLevel.VERBOSE);
-    }
-
-    private static string GetAllowedUnitsAsString(InterfaceLeague _leagueInterface)
-    {
-        string allowedUnits = string.Empty;
-
-        for (int u = 0; u < _leagueInterface.LeagueUnits.Count; ++u)
-        {
-            allowedUnits +=
-                EnumExtensions.GetEnumMemberAttrValue(_leagueInterface.LeagueUnits[u]);
-
-            // Is not the last index
-            if (u != _leagueInterface.LeagueUnits.Count - 1)
-            {
-                allowedUnits += ", ";
-            }
-        }
-
-        return allowedUnits;
-    }
-
-    private static string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(
-        InterfaceLeague _leagueInterface)
-    {
-        int count = 0;
-
-        foreach (Team team in _leagueInterface.LeagueData.Teams.TeamsList)
-        {
-            string teamName = team.GetTeamName();
-
-            if (team.GetIfTheTeamIsActive())
-            {
-                count++;
-                Log.WriteLine("team: " + teamName +
-                    " is active, increased count to: " + count, LogLevel.VERBOSE);
-            }
-            else
-            {
-                Log.WriteLine("team: " + teamName + " is not active", LogLevel.VERBOSE);
-            }
-        }
-
-        Log.WriteLine("Total count: " + count, LogLevel.VERBOSE);
-
-        if (_leagueInterface.LeaguePlayerCountPerTeam > 1)
-        {
-            return "Teams: " + count;
-        }
-        else
-        {
-            return "Players: " + count;
-        }
     }
 }

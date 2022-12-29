@@ -68,7 +68,6 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-
     [DataMember] protected MessageName messageName;
     [DataMember] protected bool showOnChannelGeneration;
     [DataMember] protected List<ButtonName> messageButtonNames;
@@ -80,7 +79,7 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     public async Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        Discord.WebSocket.SocketGuild _guild, ulong _channelId)
+        Discord.WebSocket.SocketGuild _guild, ulong _channelId, string _customIdForButton)
     {
         var component = new ComponentBuilder();
 
@@ -104,20 +103,14 @@ public abstract class BaseMessage : InterfaceMessage
             InterfaceButton interfaceButton = (InterfaceButton)EnumExtensions.GetInstance(buttonName.ToString());
             Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " + interfaceButton.ButtonName, LogLevel.VERBOSE);
 
-            component.WithButton(interfaceButton.CreateTheButton(_channelId.ToString()));
+            component.WithButton(interfaceButton.CreateTheButton(_customIdForButton));
         }
 
         var newMessage = await textChannel.SendMessageAsync(
-        message, components: component.Build());
+            message, components: component.Build());
 
         Log.WriteLine("Created a new message with id: " + newMessage.Id,LogLevel.VERBOSE);
 
         return newMessage.Id;
     }
-    /*
-    public abstract void CreateTheMessageAndItsButtonsOnTheInheritedClass(
-        SocketGuild _guild, ulong _channelId);
-    */
-
-
 }

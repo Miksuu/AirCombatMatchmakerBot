@@ -67,7 +67,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    Dictionary<InterfaceMessage, ulong> InterfaceChannel.InterfaceMessagesWithIds
+    Dictionary<InterfaceMessage, string> InterfaceChannel.InterfaceMessagesWithIds
     {
         get
         {
@@ -87,13 +87,13 @@ public abstract class BaseChannel : InterfaceChannel
     [DataMember] protected ulong channelId;
     [DataMember] protected ulong channelsCategoryId;
     protected List<MessageName> channelMessages;
-    [DataMember] protected Dictionary<InterfaceMessage, ulong> interfaceMessagesWithIds;
+    [DataMember] protected Dictionary<InterfaceMessage, string> interfaceMessagesWithIds;
 
 
     public BaseChannel()
     {
         channelMessages = new List<MessageName>();
-        interfaceMessagesWithIds = new Dictionary<InterfaceMessage, ulong>();
+        interfaceMessagesWithIds = new Dictionary<InterfaceMessage, string>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
@@ -125,7 +125,7 @@ public abstract class BaseChannel : InterfaceChannel
             Log.WriteLine("Does not contain the key: " +
                 messageName + ", continuing", LogLevel.VERBOSE);
 
-            interfaceMessagesWithIds.Add(interfaceMessage, 0);
+            interfaceMessagesWithIds.Add(interfaceMessage, "0");
 
             Log.WriteLine("Done with: " + messageName, LogLevel.VERBOSE);
         }
@@ -151,9 +151,9 @@ public abstract class BaseChannel : InterfaceChannel
             Log.WriteLine("Posting message: " + interfaceMessageKvp.Key, LogLevel.VERBOSE);
 
             ulong id = interfaceMessageKvp.Key.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                guild, channelId).Result;
+                guild, channelId, interfaceMessageKvp.Value).Result;
 
-            interfaceMessagesWithIds[interfaceMessageKvp.Key] = id;
+            interfaceMessagesWithIds[interfaceMessageKvp.Key] = id.ToString();
         }
 
         return Task.CompletedTask;

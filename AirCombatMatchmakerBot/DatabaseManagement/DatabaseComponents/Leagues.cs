@@ -130,8 +130,7 @@ public class Leagues
                                 continue;
                             }
 
-                            await MessageManager.ModifyLeagueRegisterationChannelMessage(
-                                dbLeagueInstance);
+                            await dbLeagueInstance.ModifyLeagueRegisterationChannelMessage();
 
                             break;
                         }

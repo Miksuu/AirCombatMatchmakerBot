@@ -11,7 +11,7 @@ public interface InterfaceMessage
     public string Message { get; set; }
 
     public Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        SocketGuild _guild, ulong _channelId);
+        SocketGuild _guild, ulong _channelId, string _customIdForButton);
 
     /*
     public abstract void CreateTheMessageAndItsButtonsOnTheInheritedClass(

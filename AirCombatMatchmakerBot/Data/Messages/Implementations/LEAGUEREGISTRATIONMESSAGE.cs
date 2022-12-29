@@ -16,13 +16,6 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         {
             ButtonName.LEAGUEREGISTRATIONBUTTON,
         };
-        message = "Click this button to register!";
+        message = "Insert league registration message here";
     }
-
-    /*
-    public void CreateTheMessageAndItsButtonsOnTheInheritedClass(
-        SocketGuild _guild, ulong _channelId)
-    {
-        base.CreateTheMessageAndItsButtonsOnTheBaseClass(_guild, _channelId);
-    }*/
 }

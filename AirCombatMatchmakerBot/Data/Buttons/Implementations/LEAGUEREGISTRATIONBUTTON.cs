@@ -10,7 +10,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
     public LEAGUEREGISTRATIONBUTTON()
     {
         buttonName = ButtonName.LEAGUEREGISTRATIONBUTTON;
-        buttonLabel = "REGISTER";
+        buttonLabel = "Join";
         buttonStyle = ButtonStyle.Primary;
     }
 
@@ -82,7 +82,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                     dbLeagueInstance, _component.User.Id);
 
                 // Modify the message to have the new player count
-                await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
+                await dbLeagueInstance.ModifyLeagueRegisterationChannelMessage();
 
 
                 Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
@@ -101,7 +101,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 UserManager.SetPlayerActiveAndGrantHimTheRole(
                     dbLeagueInstance, _component.User.Id);
 
-                await MessageManager.ModifyLeagueRegisterationChannelMessage(dbLeagueInstance);
+                await dbLeagueInstance.ModifyLeagueRegisterationChannelMessage();
             }
         }
         else

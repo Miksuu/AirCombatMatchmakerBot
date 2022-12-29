@@ -108,4 +108,91 @@ public abstract class BaseLeague : InterfaceLeague
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
+
+    public string GenerateALeagueJoinButtonMessage()
+    {
+        string? leagueEnumAttrValue =
+            EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName);
+
+        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
+            leagueEnumAttrValue, LogLevel.VERBOSE);
+
+        return "." + "\n" + leagueEnumAttrValue + "\n" +
+            GetAllowedUnitsAsString() + "\n" +
+            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface();
+    }
+
+    public string GetAllowedUnitsAsString()
+    {
+        string allowedUnits = string.Empty;
+
+        for (int u = 0; u < leagueUnits.Count; ++u)
+        {
+            allowedUnits +=
+                EnumExtensions.GetEnumMemberAttrValue(leagueUnits[u]);
+
+            // Is not the last index
+            if (u != leagueUnits.Count - 1)
+            {
+                allowedUnits += ", ";
+            }
+        }
+
+        return allowedUnits;
+    }
+
+    public string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface()
+    {
+        int count = 0;
+
+        foreach (Team team in leagueData.Teams.TeamsList)
+        {
+            string teamName = team.GetTeamName();
+
+            if (team.GetIfTheTeamIsActive())
+            {
+                count++;
+                Log.WriteLine("team: " + teamName +
+                    " is active, increased count to: " + count, LogLevel.VERBOSE);
+            }
+            else
+            {
+                Log.WriteLine("team: " + teamName + " is not active", LogLevel.VERBOSE);
+            }
+        }
+
+        Log.WriteLine("Total count: " + count, LogLevel.VERBOSE);
+
+        if (leaguePlayerCountPerTeam > 1)
+        {
+            return "Teams: " + count;
+        }
+        else
+        {
+            return "Players: " + count;
+        }
+    }
+
+    public async Task ModifyLeagueRegisterationChannelMessage()
+    {
+        Log.WriteLine("Modifying league registration channel message with: " +
+            leagueCategoryName, LogLevel.VERBOSE);
+
+        await MessageManager.ModifyMessage(LeagueManager.leagueRegistrationChannelId,
+            discordleagueReferences.LeagueRegistrationChannelMessageId,
+         GenerateALeagueJoinButtonMessage());
+    }
+
+    public string GenerateALeagueChallengeButtonMessage()
+    {
+        string? leagueEnumAttrValue =
+            EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName);
+
+        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
+            leagueEnumAttrValue, LogLevel.VERBOSE);
+
+        return "." + "\n" + leagueEnumAttrValue + "\n" +
+            GetAllowedUnitsAsString() + "\n" +
+            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface();
+    }
 }
