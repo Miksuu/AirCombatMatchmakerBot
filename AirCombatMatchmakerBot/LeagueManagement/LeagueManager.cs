@@ -4,7 +4,7 @@ using System;
 
 public static class LeagueManager
 {
-    public static ulong leagueRegistrationChannelId;
+    //public static ulong leagueRegistrationChannelId;
 
     public static InterfaceLeague GetCategoryInstance(CategoryName _leagueCategoryName)
     {

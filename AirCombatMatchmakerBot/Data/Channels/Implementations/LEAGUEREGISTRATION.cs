@@ -106,8 +106,6 @@ public class LEAGUEREGISTRATION : BaseChannel
             Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
         }
 
-        LeagueManager.leagueRegistrationChannelId = channelId;
-
         await base.PostChannelMessages(interfaceMessagesWithIdsOnDatabase);
     }
 

@@ -179,13 +179,15 @@ public abstract class BaseLeague : InterfaceLeague
             leagueCategoryName, LogLevel.VERBOSE);
 
         // Find the category fo the message ID
-        ulong messageId = Database.Instance.Categories.CreatedCategoriesWithChannels.First(
+        var channel = Database.Instance.Categories.CreatedCategoriesWithChannels.First(
             x => x.Value.CategoryName == CategoryName.REGISTRATIONCATEGORY).Value.InterfaceChannels.First(
-                x => x.ChannelName == ChannelName.LEAGUEREGISTRATION).InterfaceMessagesWithIds.First(
-                    x => x.Key.ToString() == leagueCategoryName.ToString()).Value.MessageId;
+                x => x.ChannelName == ChannelName.LEAGUEREGISTRATION);
+
+        var messageId = channel.InterfaceMessagesWithIds.First(
+            x => x.Key.ToString() == leagueCategoryName.ToString()).Value.MessageId;
 
         await MessageManager.ModifyMessage(
-            LeagueManager.leagueRegistrationChannelId, messageId, GenerateALeagueJoinButtonMessage());
+            channel.ChannelId, messageId, GenerateALeagueJoinButtonMessage());
     }
 
     public string GenerateALeagueChallengeButtonMessage()
