@@ -19,29 +19,8 @@ public static class ButtonHandler
         LogLevel logLevel = LogLevel.DEBUG;
 
         InterfaceButton interfaceButton = (InterfaceButton)EnumExtensions.GetInstance(splitString[0]);
-        response = interfaceButton.ActivateButtonFunction(_component);
+        response = interfaceButton.ActivateButtonFunction(_component, splitString[1]).Result;
 
-        /*
-        // Checks with first element of the split string (action)
-        switch (splitString[0])
-        {
-            case "mainRegistration":
-                response = await ButtonFunctionality.MainRegistration(_component);
-                break;
-            case "leagueRegistration":
-                await ButtonFunctionality.LeagueRegistration(_component, splitString[1]);
-                break;
-            case "challenge":
-                await ButtonFunctionality.PostChallenge(_component, splitString[1]);
-                break;
-            default:
-                response = "Something went wrong with the button press!";
-                logLevel = LogLevel.ERROR;
-                break;
-        }
-
-        Log.WriteLine("Before serialization on ButtonHandler", LogLevel.VERBOSE);
-        */
         await SerializationManager.SerializeDB();
 
         if (splitString[0] != "leagueRegistration")

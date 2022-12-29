@@ -77,5 +77,5 @@ public abstract class BaseButton : InterfaceButton
         return button;
     }
 
-    public abstract string ActivateButtonFunction(SocketMessageComponent _component);
+    public abstract Task<string> ActivateButtonFunction(SocketMessageComponent _component, string _splitString);
 }

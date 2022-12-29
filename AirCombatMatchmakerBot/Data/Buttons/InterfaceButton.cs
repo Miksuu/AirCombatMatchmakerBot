@@ -10,6 +10,6 @@ public interface InterfaceButton
     public ButtonStyle ButtonStyle { get; set; }
 
     public Discord.ButtonBuilder CreateTheButton(string _customId);
-    public abstract string ActivateButtonFunction(
-        SocketMessageComponent _component);
+    public abstract Task<string> ActivateButtonFunction(
+        SocketMessageComponent _component, string _splitString);
 }

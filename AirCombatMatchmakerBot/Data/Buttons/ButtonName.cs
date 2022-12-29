@@ -8,4 +8,7 @@ public enum ButtonName
 {
     [EnumMember(Value = "REGISTRATIONBUTTON")]
     REGISTRATIONBUTTON = 0,
+
+    [EnumMember(Value = "LEAGUEREGISTRATIONBUTTON")]
+    LEAGUEREGISTRATIONBUTTON = 1,
 }
