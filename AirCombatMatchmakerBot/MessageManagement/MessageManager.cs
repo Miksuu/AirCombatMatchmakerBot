@@ -2,8 +2,6 @@
 
 public static class MessageManager
 {
-
-
     public static async Task ModifyChallengeChannelMessage(ulong _targetChannel)
     {
         /*

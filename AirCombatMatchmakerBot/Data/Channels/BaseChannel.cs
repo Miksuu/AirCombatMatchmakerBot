@@ -151,30 +151,6 @@ public abstract class BaseChannel : InterfaceChannel
         Log.WriteLine("Finding channels: " + channelName + " parent category with id: " +
             channelsCategoryId, LogLevel.VERBOSE);
 
-        /*
-        
-        if (Database.Instance.Categories.CreatedCategoriesWithChannels.Any(
-                x => x.Key == channelsCategoryId))
-        {
-            Log.WriteLine("Found1: " + channelsCategoryId, LogLevel.VERBOSE);
-
-            var interfaceMessagesWithIdsOnDatabase =
-                Database.Instance.Categories.CreatedCategoriesWithChannels.First(
-                x => x.Key == channelsCategoryId).Value.InterfaceChannels;
-
-            Log.WriteLine("First1 count: " +
-                interfaceMessagesWithIdsOnDatabase.Count, LogLevel.VERBOSE);
-
-            if (interfaceMessagesWithIdsOnDatabase.Any(x => x.ChannelId == channelId))
-            {
-                Log.WriteLine("Found2: " + channelId, LogLevel.VERBOSE);
-                interfaceChannelFromDatabase = interfaceMessagesWithIdsOnDatabase.First(
-                    x => x.ChannelId == channelId);
-
-                Log.WriteLine("First2: " + interfaceChannelFromDatabase, LogLevel.VERBOSE);
-            }
-        }*/
-
         foreach (var interfaceMessageKvp in _interfaceMessagesWithIdsOnDatabase) 
         {
             Log.WriteLine("Looping on message: " + interfaceMessageKvp.Value.MessageName + " with id: " +

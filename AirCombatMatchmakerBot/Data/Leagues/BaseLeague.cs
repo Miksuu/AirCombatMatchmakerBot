@@ -178,9 +178,14 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Modifying league registration channel message with: " +
             leagueCategoryName, LogLevel.VERBOSE);
 
-        await MessageManager.ModifyMessage(LeagueManager.leagueRegistrationChannelId,
-            discordleagueReferences.LeagueRegistrationChannelMessageId,
-         GenerateALeagueJoinButtonMessage());
+        // Find the category fo the message ID
+        ulong messageId = Database.Instance.Categories.CreatedCategoriesWithChannels.First(
+            x => x.Value.CategoryName == CategoryName.REGISTRATIONCATEGORY).Value.InterfaceChannels.First(
+                x => x.ChannelName == ChannelName.LEAGUEREGISTRATION).InterfaceMessagesWithIds.First(
+                    x => x.Key.ToString() == leagueCategoryName.ToString()).Value.MessageId;
+
+        await MessageManager.ModifyMessage(
+            LeagueManager.leagueRegistrationChannelId, messageId, GenerateALeagueJoinButtonMessage());
     }
 
     public string GenerateALeagueChallengeButtonMessage()

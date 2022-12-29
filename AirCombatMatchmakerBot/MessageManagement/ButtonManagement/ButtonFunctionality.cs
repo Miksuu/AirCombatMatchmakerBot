@@ -12,8 +12,8 @@ public static class ButtonFunctionality
             _splitStringIdPart, LogLevel.VERBOSE);
 
         KeyValuePair<ulong, InterfaceCategory> findLeagueCategoryType =
-            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithId(
-                ulong.Parse(_splitStringIdPart));
+            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithString(
+                _splitStringIdPart);
         CategoryName leagueCategoryName = findLeagueCategoryType.Value.CategoryName;
 
         Log.WriteLine("found: " + nameof(leagueCategoryName) + ": " +
