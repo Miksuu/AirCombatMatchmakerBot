@@ -10,6 +10,10 @@ public class CHALLENGE : BaseChannel
     public CHALLENGE()
     {
         channelName = ChannelName.CHALLENGE;
+        channelMessages = new List<MessageName>
+        {
+            MessageName.CHALLENGEMESSAGE,
+        };
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
@@ -19,32 +23,66 @@ public class CHALLENGE : BaseChannel
         };
     }
 
-    /*
-    public async Task PostChannelMessages()
+    public override async Task PrepareChannelMessages()
     {
-        Log.WriteLine("Activating challenge system on channel: " +
-            channelId, LogLevel.VERBOSE);
+        var guild = BotReference.GetGuildRef();
 
-        string channelFeatureKey = "challenge";
-        /*
-        if (channelMessages.va != 0)
+        if (guild == null)
         {
-            Log.WriteLine("Already contains key " + channelFeatureKey, LogLevel.VERBOSE);
+            Exceptions.BotGuildRefNull();
             return;
         }
 
-        ulong buttonId = await ButtonComponents.CreateButtonMessage(
-            channelId,
-            GenerateChallengeQueueMessage(),
-            "CHALLENGE!",
-            channelFeatureKey + "_" + channelsCategoryId);
+        var databaseInterfaceChannel =
+            Database.Instance.Categories.CreatedCategoriesWithChannels.First(
+                x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
+                    x => x.ChannelId == channelId);
 
-        channelFeaturesWithMessageIds.Add(channelFeatureKey, buttonId);
+        InterfaceMessage interfaceMessage =
+            (InterfaceMessage)EnumExtensions.GetInstance(channelMessages[0].ToString());
 
-        Log.WriteLine("Done activating channel features on " +
-            nameof(CHALLENGE) + " id: " + base.channelId, LogLevel.VERBOSE); 
-       
-    } */
+        if (!databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(
+            channelMessages[0].ToString()))
+        {
+            Log.WriteLine("Does not contain the key: " +
+                channelMessages[0] + ", continuing", LogLevel.VERBOSE);
+
+            // Generate the initial message
+            interfaceMessage.Message = GenerateChallengeQueueMessage();
+
+            databaseInterfaceChannel.InterfaceMessagesWithIds.Add(
+                channelMessages[0].ToString(), interfaceMessage);
+        }
+
+        await base.PostChannelMessages(guild, databaseInterfaceChannel);
+
+    }
+    /*
+public async Task PostChannelMessages()
+{
+    Log.WriteLine("Activating challenge system on channel: " +
+        channelId, LogLevel.VERBOSE);
+
+    string channelFeatureKey = "challenge";
+    /*
+    if (channelMessages.va != 0)
+    {
+        Log.WriteLine("Already contains key " + channelFeatureKey, LogLevel.VERBOSE);
+        return;
+    }
+
+    ulong buttonId = await ButtonComponents.CreateButtonMessage(
+        channelId,
+        GenerateChallengeQueueMessage(),
+        "CHALLENGE!",
+        channelFeatureKey + "_" + channelsCategoryId);
+
+    channelFeaturesWithMessageIds.Add(channelFeatureKey, buttonId);
+
+    Log.WriteLine("Done activating channel features on " +
+        nameof(CHALLENGE) + " id: " + base.channelId, LogLevel.VERBOSE); 
+
+} */
 
     public string GenerateChallengeQueueMessage()
     {

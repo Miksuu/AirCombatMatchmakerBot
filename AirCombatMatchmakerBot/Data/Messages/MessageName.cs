@@ -12,5 +12,5 @@ public enum MessageName
     LEAGUEREGISTRATIONMESSAGE = 1,
 
     [EnumMember(Value = "CHALLENGE MESSAGE")]
-    CHALLENGEMESSAGE = 1,
+    CHALLENGEMESSAGE = 2,
 }

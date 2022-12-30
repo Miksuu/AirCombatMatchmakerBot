@@ -18,11 +18,4 @@ public class REGISTRATIONMESSAGE : BaseMessage
         };
         message = "Click this button to register!";
     }
-
-    /*
-    public void CreateTheMessageAndItsButtonsOnTheInheritedClass(
-        SocketGuild _guild, ulong _channelId)
-    {
-        base.CreateTheMessageAndItsButtonsOnTheBaseClass(_guild, _channelId);
-    }*/
 }
