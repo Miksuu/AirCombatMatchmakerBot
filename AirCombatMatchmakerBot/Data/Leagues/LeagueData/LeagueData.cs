@@ -63,7 +63,8 @@ public class LeagueData
         return null;
     }
 
-    public void PostChallengeToThisLeague(ulong _playerId, int _leaguePlayerCountPerTeam)
+    public string PostChallengeToThisLeague(
+        ulong _playerId, int _leaguePlayerCountPerTeam)
     {
         Team? team = FindActiveTeamByPlayerIdInAPredefinedLeague(_playerId);
 
@@ -71,7 +72,7 @@ public class LeagueData
         {
             Log.WriteLine(nameof(team) +
                 " was null! Could not find the team.", LogLevel.CRITICAL);
-            return;
+            return "Error! Team not found";
         }
 
         Log.WriteLine("Team found: " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
@@ -79,9 +80,15 @@ public class LeagueData
             challengeStatus.TeamsInTheQueue,
             LogLevel.VERBOSE);
 
+
         challengeStatus.AddToTeamsInTheQueue(team);
 
-        Log.WriteLine(challengeStatus.ReturnTeamsInTheQueueOfAChallenge(
-            _leaguePlayerCountPerTeam), LogLevel.VERBOSE);
+        string teamsInTheQueue =
+            challengeStatus.ReturnTeamsInTheQueueOfAChallenge(_leaguePlayerCountPerTeam, this);
+
+        Log.WriteLine(teamsInTheQueue, LogLevel.VERBOSE);
+
+        return teamsInTheQueue;
     }
+
 }

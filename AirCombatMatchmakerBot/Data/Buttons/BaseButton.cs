@@ -53,14 +53,45 @@ public abstract class BaseButton : InterfaceButton
         }
     }
 
+    /*
+    ulong InterfaceButton.ChannelId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(channelId) + ": " +
+                channelId, LogLevel.VERBOSE);
+            return channelId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(channelId) + channelId
+                + " to: " + value, LogLevel.VERBOSE);
+            channelId = value;
+        }
+    }
+
+    ulong InterfaceButton.MessageId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(messageId) + ": " +
+                messageId, LogLevel.VERBOSE);
+            return messageId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(messageId) + messageId
+                + " to: " + value, LogLevel.VERBOSE);
+            messageId = value;
+        }
+    }*/
+
     [DataMember] protected ButtonName buttonName;
     [DataMember] protected string buttonLabel = "";
     [DataMember] protected ButtonStyle buttonStyle;
-
-    /*
-    public BaseButton()
-    {
-    }*/
+    // Need to know these for message updating (from button function itself)
+    //[DataMember] protected ulong channelId;
+    //[DataMember] protected ulong messageId;
 
     public Discord.ButtonBuilder CreateTheButton(string _customId)
     {
@@ -77,5 +108,6 @@ public abstract class BaseButton : InterfaceButton
         return button;
     }
 
-    public abstract Task<string> ActivateButtonFunction(SocketMessageComponent _component, string _splitString);
+    public abstract Task<string> ActivateButtonFunction(
+        SocketMessageComponent _component, string _splitString, ulong _channelId, ulong _messageId);
 }

@@ -85,20 +85,41 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
+    /*
+    List<InterfaceButton> InterfaceMessage.InterfaceButtons
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(interfaceButtons) + " with count of: " +
+                interfaceButtons.Count, LogLevel.VERBOSE);
+            return interfaceButtons;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(interfaceButtons)
+                + " to: " + value, LogLevel.VERBOSE);
+            interfaceButtons = value;
+        }
+    }*/
+
     [DataMember] protected MessageName messageName;
     [DataMember] protected bool showOnChannelGeneration;
     [DataMember] protected List<ButtonName> messageButtonNames;
     [DataMember] protected string message = "";
     [DataMember] protected ulong messageId;
+    //[DataMember] protected List<InterfaceButton> interfaceButtons;
 
     public BaseMessage()
     {
         messageButtonNames = new List<ButtonName>();
+        //interfaceButtons = new List<InterfaceButton>();
     }
 
     public async Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
         Discord.WebSocket.SocketGuild _guild, ulong _channelId, string _customIdForButton)
     {
+        //List<InterfaceButton> tempInterfaceButtons = new List<InterfaceButton>();
+
         var component = new ComponentBuilder();
 
         Log.WriteLine("Creating the channel message with id: "
@@ -118,17 +139,35 @@ public abstract class BaseMessage : InterfaceMessage
 
         foreach (ButtonName buttonName in messageButtonNames)
         {
-            InterfaceButton interfaceButton = (InterfaceButton)EnumExtensions.GetInstance(buttonName.ToString());
-            Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " + interfaceButton.ButtonName, LogLevel.VERBOSE);
+            InterfaceButton interfaceButton =
+                (InterfaceButton)EnumExtensions.GetInstance(buttonName.ToString());
+            Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " + 
+                interfaceButton.ButtonName, LogLevel.VERBOSE);
 
             component.WithButton(interfaceButton.CreateTheButton(_customIdForButton));
+
+           // tempInterfaceButtons.Add(interfaceButton);
         }
 
         var newMessage = await textChannel.SendMessageAsync(
             message, components: component.Build());
+        ulong newMessageId = newMessage.Id;
 
-        Log.WriteLine("Created a new message with id: " + newMessage.Id,LogLevel.VERBOSE);
+        /*
+        foreach (InterfaceButton button in tempInterfaceButtons)
+        {
+            button.ChannelId = _channelId;
+            button.MessageId = newMessageId;
 
-        return newMessage.Id;
+            // Temp, maybe not the best way to look it up with name?
+            // cant have 2 same named buttons in same message
+            if (interfaceButtons.Any(x => x.ButtonName == button.ButtonName)) continue;
+
+            interfaceButtons.Add(button);
+        }*/
+
+        Log.WriteLine("Created a new message with id: " + newMessageId,LogLevel.VERBOSE);
+
+        return newMessageId;
     }
 }

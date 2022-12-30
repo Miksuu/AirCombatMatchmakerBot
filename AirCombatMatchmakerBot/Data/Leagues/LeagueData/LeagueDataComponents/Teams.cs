@@ -122,4 +122,24 @@ public class Teams
 
         return new Team();
     }
+
+
+    public Team FindTeamById(int _id)
+    {
+        Log.WriteLine("Finding team by id: " + _id, LogLevel.VERBOSE);
+
+        if (!teamsList.Any(x => x.GetTeamId() == _id))
+        {
+            Log.WriteLine("Trying to get a team by id: + " + _id +
+                " that is nonexistent!", LogLevel.ERROR);
+            return new Team();
+        }
+
+        Team foundTeam = teamsList.First(x => x.GetTeamId() == _id);
+
+        Log.WriteLine("Found team: " + foundTeam.GetTeamName() + " id: " + foundTeam.GetTeamId() +
+            " with members: " + foundTeam.GetTeamMembersInAString(), LogLevel.DEBUG);
+
+        return foundTeam;
+    }
 }
