@@ -2,15 +2,6 @@
 
 public static class MessageManager
 {
-    public static async Task ModifyChallengeChannelMessage(ulong _targetChannel)
-    {
-        /*
-        await ModifyMessage(LeagueManager.leagueRegistrationChannelId,
-            _dbLeagueInstance.DiscordLeagueReferences.leagueRegistrationChannelMessageId,
-         GenerateALeagueJoinButtonMessage(_dbLeagueInstance)); */
-    }
-
-
     public static async Task ModifyMessage(
         ulong _channelId, ulong _messageId, string _content)
     {

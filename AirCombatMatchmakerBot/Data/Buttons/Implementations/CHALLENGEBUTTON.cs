@@ -3,6 +3,7 @@ using System.Data;
 using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
+using System.Threading.Channels;
 
 [DataContract]
 public class CHALLENGEBUTTON : BaseButton
@@ -17,7 +18,7 @@ public class CHALLENGEBUTTON : BaseButton
     public void CreateTheButton(){}
 
     public override async Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, string _splitString, ulong _channelId, ulong _messageId)
+        SocketMessageComponent _component, string _splitString, ulong _channelId, ulong _messageId, string _message)
     {
 
         Log.WriteLine("Starting processing a challenge by: " + _component.User.Id +
@@ -62,7 +63,8 @@ public class CHALLENGEBUTTON : BaseButton
             return "Error adding to the queue! could not find the league.";
         }
 
-        string newMessage = dbLeagueInstance.LeagueData.PostChallengeToThisLeague(
+        // Merge the message and the current challenge status in to one.
+        string newMessage = _message + dbLeagueInstance.LeagueData.PostChallengeToThisLeague(
             _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam);
 
         await MessageManager.ModifyMessage(_channelId, _messageId, newMessage);
@@ -90,6 +92,6 @@ public class CHALLENGEBUTTON : BaseButton
         }
         return response;*/
 
-        return "Added your team to the queue!";
+        return "";
     }
 }

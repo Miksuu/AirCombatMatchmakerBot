@@ -57,32 +57,6 @@ public class CHALLENGE : BaseChannel
         await base.PostChannelMessages(guild, databaseInterfaceChannel);
 
     }
-    /*
-public async Task PostChannelMessages()
-{
-    Log.WriteLine("Activating challenge system on channel: " +
-        channelId, LogLevel.VERBOSE);
-
-    string channelFeatureKey = "challenge";
-    /*
-    if (channelMessages.va != 0)
-    {
-        Log.WriteLine("Already contains key " + channelFeatureKey, LogLevel.VERBOSE);
-        return;
-    }
-
-    ulong buttonId = await ButtonComponents.CreateButtonMessage(
-        channelId,
-        GenerateChallengeQueueMessage(),
-        "CHALLENGE!",
-        channelFeatureKey + "_" + channelsCategoryId);
-
-    channelFeaturesWithMessageIds.Add(channelFeatureKey, buttonId);
-
-    Log.WriteLine("Done activating channel features on " +
-        nameof(CHALLENGE) + " id: " + base.channelId, LogLevel.VERBOSE); 
-
-} */
 
     public string GenerateChallengeQueueMessage()
     {
@@ -116,7 +90,7 @@ public async Task PostChannelMessages()
                         " is league: " + leagueName, LogLevel.DEBUG);
 
                     string challengeMessage = ". \n" +
-                        leagueName + " challenge. Players In The Queue:. \n";
+                        leagueName + " challenge. Players In The Queue: \n";
 
                     return challengeMessage;
                 }

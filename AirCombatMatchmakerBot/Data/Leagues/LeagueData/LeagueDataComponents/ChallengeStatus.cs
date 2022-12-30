@@ -22,8 +22,6 @@ public class ChallengeStatus
 
     [DataMember] private List<int> teamsInTheQueue { get; set; }
 
-    //[NonSerialized] public LeagueData leagueDataRef;
-
     public ChallengeStatus()
     {
         teamsInTheQueue = new List<int>();

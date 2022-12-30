@@ -1,5 +1,4 @@
 ﻿using Discord;
-using Discord;
 using System.Data;
 using System;
 using System.Runtime.Serialization;
@@ -19,7 +18,7 @@ public class REGISTRATIONBUTTON : BaseButton
 
     public override async Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, string _splitString,
-        ulong _channelId, ulong _messageId)
+        ulong _channelId, ulong _messageId, string _message)
     {
         string response = "";
         // Checks that the player does not exist in the database already, true if this is not the case
