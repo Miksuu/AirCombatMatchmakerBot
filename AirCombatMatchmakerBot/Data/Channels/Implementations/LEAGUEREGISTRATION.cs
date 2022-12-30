@@ -41,6 +41,8 @@ public class LEAGUEREGISTRATION : BaseChannel
 
     public override async Task PrepareChannelMessages()
     {
+        Log.WriteLine("Starting to to prepare channel messages on " + channelName, LogLevel.VERBOSE);
+
         var guild = BotReference.GetGuildRef();
 
         if (guild == null)
@@ -54,6 +56,8 @@ public class LEAGUEREGISTRATION : BaseChannel
             Database.Instance.Categories.CreatedCategoriesWithChannels.First(
                 x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
                     x => x.ChannelId == channelId);
+
+        Log.WriteLine("After db find", LogLevel.VERBOSE);
 
         foreach (CategoryName leagueName in Enum.GetValues(typeof(CategoryName)))
         {
@@ -104,7 +108,7 @@ public class LEAGUEREGISTRATION : BaseChannel
 
             Log.WriteLine("interfaceMessage message: " + interfaceMessage.Message, LogLevel.VERBOSE);
 
-            if (databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(leagueName.ToString())) return;
+            if (databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(leagueName.ToString())) continue;
 
             databaseInterfaceChannel.InterfaceMessagesWithIds.Add(leagueName.ToString(), interfaceMessage);
 
@@ -114,6 +118,7 @@ public class LEAGUEREGISTRATION : BaseChannel
             Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
         }
 
+        Log.WriteLine("Before entering PostChannelMessages", LogLevel.VERBOSE);
         await base.PostChannelMessages(guild, databaseInterfaceChannel);
     }
 }

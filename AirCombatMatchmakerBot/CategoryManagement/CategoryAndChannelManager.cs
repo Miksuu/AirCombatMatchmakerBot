@@ -187,8 +187,6 @@ public static class CategoryAndChannelManager
                 socketCategoryChannel.Id, interfaceCategory);
         }
 
-
-
         // Handle channel checking/creation
         await interfaceCategory.CreateChannelsForTheCategory(
             interfaceCategory, socketCategoryChannel, _guild);

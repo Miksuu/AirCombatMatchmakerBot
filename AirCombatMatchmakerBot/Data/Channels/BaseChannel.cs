@@ -2,6 +2,7 @@
 using Discord;
 using System.Runtime.Serialization;
 using System;
+using System.Threading.Channels;
 
 [DataContract]
 public abstract class BaseChannel : InterfaceChannel
@@ -171,36 +172,23 @@ public abstract class BaseChannel : InterfaceChannel
         Log.WriteLine("Finding channels: " + channelName + " parent category with id: " +
             channelsCategoryId, LogLevel.VERBOSE);
 
+        // If the message doesn't exist, set it ID to 0 to regenerate it
+        var channel = _guild.GetTextChannel(_databaseInterfaceChannel.ChannelId) as ITextChannel;
+        Log.WriteLine("Channel found: " + channel.Name + " id: " + channel.Id, LogLevel.VERBOSE);
+        var channelMessages = await channel.GetMessagesAsync(50, CacheMode.AllowDownload).FirstAsync();
+
         foreach (var interfaceMessageKvp in _databaseInterfaceChannel.InterfaceMessagesWithIds) 
         {
             Log.WriteLine("Looping on message: " + interfaceMessageKvp.Value.MessageName + " with id: " +
                 interfaceMessageKvp.Key, LogLevel.VERBOSE);
 
-            /*
-
-            var channelMessages =
-                await _leagueRegistrationChannel.GetMessagesAsync(
-                    50, CacheMode.AllowDownload).FirstAsync();
-
-            Log.WriteLine("Searching: " + leagueNameString + " from: " + nameof(channelMessages) +
-                " with a count of: " + channelMessages.Count, LogLevel.VERBOSE);
-
-            foreach (var msg in channelMessages)
-            {
-                Log.WriteLine("Looping on msg: " + msg.Content.ToString(), LogLevel.VERBOSE);
-                if (msg.Content.Contains(leagueNameString))
-                {
-                    Log.WriteLine($"contains: {msg.Content}", LogLevel.VERBOSE);
-                    //containsMessage = true;
-                }
-            }*/
-
             var messageKey = interfaceMessagesWithIds[interfaceMessageKvp.Key];
 
-            // If the message doesn't exist, set it ID to 0 to regenerate it
-            var channel = _guild.GetTextChannel(_databaseInterfaceChannel.ChannelId);
-            var message = await channel.GetMessageAsync(interfaceMessageKvp.Value.MessageId);
-            if (message == null) 
+            Log.WriteLine("messageKey id: " + messageKey.MessageId, LogLevel.VERBOSE);
+
+            Log.WriteLine("Any: " + channelMessages.Any(x => x.Id == messageKey.MessageId), LogLevel.DEBUG);
+
+            if (!channelMessages.Any(x => x.Id == messageKey.MessageId) && messageKey.MessageId != 0)
             {
                 Log.WriteLine("Message " + messageKey.MessageId +
                     "not found! Setting it to 0 and regenerating", LogLevel.WARNING);
@@ -216,6 +204,7 @@ public abstract class BaseChannel : InterfaceChannel
 
             messageKey.MessageId = id;
         }
+
         return;
     }
 }
