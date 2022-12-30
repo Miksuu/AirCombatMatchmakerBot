@@ -6,12 +6,12 @@ using System.Runtime.Serialization;
 using Discord.WebSocket;
 
 [DataContract]
-public class REGISTRATIONBUTTON : BaseButton
+public class CHALLENGEBUTTON : BaseButton
 {
-    public REGISTRATIONBUTTON()
+    public CHALLENGEBUTTON()
     {
-        buttonName = ButtonName.REGISTRATIONBUTTON;
-        buttonLabel = "REGISTER";
+        buttonName = ButtonName.CHALLENGEBUTTON;
+        buttonLabel = "CHALLENGE";
         buttonStyle = ButtonStyle.Primary;
     }
 
@@ -20,6 +20,24 @@ public class REGISTRATIONBUTTON : BaseButton
     public override async Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, string _splitString)
     {
+
+        Log.WriteLine("Starting processing a challenge by: " + _component.User.Id +
+             " for league: " + _splitString, LogLevel.VERBOSE);
+
+        InterfaceLeague? dbLeagueInstance = 
+            Database.Instance.Leagues.FindLeagueInterfaceWithSplitStringPart(_splitString);
+
+        if (dbLeagueInstance == null)
+        {
+            Log.WriteLine(nameof(dbLeagueInstance) +
+                " was null! Could not find the league.", LogLevel.CRITICAL);
+            return "";
+        }
+
+        dbLeagueInstance.LeagueData.PostChallengeToThisLeague(
+            _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam);
+
+        /*
         string response = "";
         // Checks that the player does not exist in the database already, true if this is not the case
         if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
@@ -40,6 +58,8 @@ public class REGISTRATIONBUTTON : BaseButton
                     " You are already registered!",
                     _component.Channel.Name);
         }
-        return response;
+        return response;*/
+
+        return "";
     }
 }

@@ -4,8 +4,6 @@ using System;
 
 public static class LeagueManager
 {
-    //public static ulong leagueRegistrationChannelId;
-
     public static InterfaceLeague GetCategoryInstance(CategoryName _leagueCategoryName)
     {
         return (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
@@ -30,8 +28,6 @@ public static class LeagueManager
         foreach (CategoryName leagueCategoryName in categoryEnumValues)
         {
             Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString(), LogLevel.DEBUG);
-            // Check here too if a category is missing channelNames
-            //bool categoryExists = false;
 
             // Skip all the non-leagues
             int enumValue = (int)leagueCategoryName;

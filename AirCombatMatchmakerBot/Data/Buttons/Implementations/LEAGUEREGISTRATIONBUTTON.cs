@@ -16,13 +16,15 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override async Task<string> ActivateButtonFunction(SocketMessageComponent _component, string _splitString)
+    public override async Task<string> ActivateButtonFunction(
+        SocketMessageComponent _component, string _splitString)
     {
         string responseMsg = "";
 
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
-        InterfaceLeague? dbLeagueInstance = ButtonFunctionality.FindLeagueInterfaceWithSplitStringPart(_splitString);
+        InterfaceLeague? dbLeagueInstance = 
+            Database.Instance.Leagues.FindLeagueInterfaceWithSplitStringPart(_splitString);
 
         if (dbLeagueInstance == null)
         {
@@ -36,9 +38,11 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
         // Check that the player is in the PlayerData
         // (should be, he doesn't see this button before, except if hes admin)
-        if (Database.Instance.PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(_component.User.Id))
+        if (Database.Instance.PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(
+            _component.User.Id))
         {
-            Player player = Database.Instance.PlayerData.GetAPlayerProfileById(_component.User.Id);
+            Player player = Database.Instance.PlayerData.GetAPlayerProfileById(
+                _component.User.Id);
 
             if (player.GetPlayerDiscordId() == 0)
             {
