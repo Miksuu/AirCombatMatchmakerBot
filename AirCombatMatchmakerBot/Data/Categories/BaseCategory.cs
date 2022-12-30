@@ -151,14 +151,6 @@ public abstract class BaseCategory : InterfaceCategory
             // (for channel specific features for example)
             interfaceChannel.ChannelsCategoryId = _socketCategoryChannel.Id;
 
-            //string? channelNameString = EnumExtensions.GetEnumMemberAttrValue(channelName);
-            /*
-            if (channelNameString == null)
-            {
-                Log.WriteLine(nameof(channelNameString).ToString() + " was null!", LogLevel.CRITICAL);
-                return;
-            }*/
-
             if (!channelExists)
             {
                 List<Overwrite> permissionsList = interfaceChannel.GetGuildPermissions(_guild);
@@ -172,6 +164,8 @@ public abstract class BaseCategory : InterfaceCategory
                         _interfaceCategory.CategoryName).Key;
 
                 await interfaceChannel.CreateAChannelForTheCategory(_guild);
+
+                interfaceChannel.InterfaceMessagesWithIds.Clear();
 
                 _interfaceCategory.InterfaceChannels.Add(interfaceChannel);
 
