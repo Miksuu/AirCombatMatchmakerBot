@@ -20,7 +20,6 @@ public class CHALLENGEBUTTON : BaseButton
     public override async Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, string _splitString, ulong _channelId, ulong _messageId, string _message)
     {
-
         Log.WriteLine("Starting processing a challenge by: " + _component.User.Id +
              " for league: " + _splitString, LogLevel.VERBOSE);
 
@@ -64,33 +63,17 @@ public class CHALLENGEBUTTON : BaseButton
         }
 
         // Merge the message and the current challenge status in to one.
-        string newMessage = _message + dbLeagueInstance.LeagueData.PostChallengeToThisLeague(
+        string postedChallengeMessage = dbLeagueInstance.LeagueData.PostChallengeToThisLeague(
             _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam);
 
+        if (postedChallengeMessage == "alreadyInQueue")
+        {
+            return "You are already in the queue!";
+        }
+
+        string newMessage = _message + postedChallengeMessage;
+
         await MessageManager.ModifyMessage(_channelId, _messageId, newMessage);
-
-        /*
-        string response = "";
-        // Checks that the player does not exist in the database already, true if this is not the case
-        if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
-        {
-            Database.Instance.CachedUsers.AddUserIdToCachedList(_component.User.Id);
-
-            response = _component.User.Mention + ", " +
-                BotMessaging.GetMessageResponse(
-                    _component.Data.CustomId,
-                    " registration complete, welcome!",
-                    _component.Channel.Name);
-        }
-        else
-        {
-            response = _component.User.Mention + ", " +
-                BotMessaging.GetMessageResponse(
-                    _component.Data.CustomId,
-                    " You are already registered!",
-                    _component.Channel.Name);
-        }
-        return response;*/
 
         return "";
     }

@@ -80,6 +80,12 @@ public class LeagueData
             challengeStatus.TeamsInTheQueue,
             LogLevel.VERBOSE);
 
+        if (challengeStatus.TeamsInTheQueue.Any(x => x == team.GetTeamId()))
+        {
+            Log.WriteLine("Team " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
+                " was already in queue!", LogLevel.DEBUG);
+            return "alreadyInQueue";
+        }
 
         challengeStatus.AddToTeamsInTheQueue(team);
 
