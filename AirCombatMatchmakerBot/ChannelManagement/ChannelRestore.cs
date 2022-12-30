@@ -25,7 +25,7 @@ public static class ChannelRestore
                 _categoryId).Value;
 
         var dbFinal = dbKeyValue.InterfaceChannels.First(
-                                             ic => ic.ChannelId == _interfaceChannel.ChannelId);
+            ic => ic.ChannelId == _interfaceChannel.ChannelId);
 
         dbKeyValue.InterfaceChannels.Remove(dbFinal);
 

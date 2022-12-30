@@ -41,11 +41,19 @@ public class LEAGUEREGISTRATION : BaseChannel
 
     public override async Task PrepareChannelMessages()
     {
+        var guild = BotReference.GetGuildRef();
+
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
         // Add to a method later
-        var interfaceMessagesWithIdsOnDatabase =
+        var databaseInterfaceChannel =
             Database.Instance.Categories.CreatedCategoriesWithChannels.First(
                 x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
-                    x => x.ChannelId == channelId).InterfaceMessagesWithIds;
+                    x => x.ChannelId == channelId);
 
         foreach (CategoryName leagueName in Enum.GetValues(typeof(CategoryName)))
         {
@@ -96,123 +104,16 @@ public class LEAGUEREGISTRATION : BaseChannel
 
             Log.WriteLine("interfaceMessage message: " + interfaceMessage.Message, LogLevel.VERBOSE);
 
-            if (interfaceMessagesWithIdsOnDatabase.ContainsKey(leagueName.ToString())) return;
+            if (databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(leagueName.ToString())) return;
 
-            interfaceMessagesWithIdsOnDatabase.Add(leagueName.ToString(), interfaceMessage);
+            databaseInterfaceChannel.InterfaceMessagesWithIds.Add(leagueName.ToString(), interfaceMessage);
 
             Log.WriteLine("Added to the dictionary, count is now: " +
-                interfaceMessagesWithIdsOnDatabase.Count, LogLevel.VERBOSE);
+                databaseInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
 
             Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
         }
 
-        await base.PostChannelMessages(interfaceMessagesWithIdsOnDatabase);
-    }
-
-    /*
-    public async Task PostChannelMessages()
-    {
-        LeagueManager.leagueRegistrationChannelId = channelId;
-
-        var guild = BotReference.GetGuildRef();
-
-        if (guild == null)
-        {
-            Exceptions.BotGuildRefNull();
-            return;
-        }
-
-        var channel = guild.GetTextChannel(channelId) as ITextChannel;
-
-        if (channel == null)
-        {
-            Log.WriteLine("Channel was null with id: " + channelId, LogLevel.ERROR);
-            return;
-        }
-        Log.WriteLine("Channel found: " + channel.Name +
-            "(" + channel.Id + ")", LogLevel.VERBOSE);
-
-        await CreateLeagueMessages(channel);        
-    }*/
-
-    public async Task CreateLeagueMessages(ITextChannel _leagueRegistrationChannel)
-    {
-        foreach (CategoryName leagueName in Enum.GetValues(typeof(CategoryName)))
-        {
-            Log.WriteLine("Looping on: " + leagueName.ToString(), LogLevel.VERBOSE);
-
-            // Skip all the non-leagues
-            int enumValue = (int)leagueName;
-            if (enumValue > 100) continue;
-
-            string? leagueNameString = EnumExtensions.GetEnumMemberAttrValue(leagueName);
-            Log.WriteLine("leagueNameString: " + leagueNameString, LogLevel.VERBOSE);
-
-            if (leagueNameString == null)
-            {
-                Log.WriteLine(nameof(leagueNameString) + " was null!", LogLevel.CRITICAL);
-                return;
-            }
-
-            /*
-            Log.WriteLine("Printing all keys and values in: " + nameof(
-                ChannelMessagesWithIds) + " that has count of: " +
-                channelFeaturesWithMessageIds.Count, LogLevel.VERBOSE);
-            foreach (var item in channelFeaturesWithMessageIds)
-            {
-                Log.WriteLine("Key in db: " + item.Key +
-                    " with value: " + item.Value, LogLevel.VERBOSE);
-            }*/
-
-            // Checks if the message is present in the channelMessages
-            var channelMessages =
-                await _leagueRegistrationChannel.GetMessagesAsync(
-                    50, CacheMode.AllowDownload).FirstAsync();
-
-            Log.WriteLine("Searching: " + leagueNameString + " from: " + nameof(channelMessages) +
-                " with a count of: " + channelMessages.Count, LogLevel.VERBOSE);
-
-            foreach (var msg in channelMessages)
-            {
-                Log.WriteLine("Looping on msg: " + msg.Content.ToString(), LogLevel.VERBOSE);
-                if (msg.Content.Contains(leagueNameString))
-                {
-                    Log.WriteLine($"contains: {msg.Content}", LogLevel.VERBOSE);
-                    //containsMessage = true;
-                }
-            }
-            /*
-            // If the channelMessages features got this already, if yes, continue, otherwise finish
-            // the operation then save it to the dictionary
-            if (channelMessages.ContainsKey(
-                leagueNameString) && containsMessage)
-            {
-                Log.WriteLine("The key " + leagueNameString + " was already found in: " +
-                    nameof(channelFeaturesWithMessageIds) +
-                    ", continuing.", LogLevel.VERBOSE);
-                continue;
-            }
-
-            var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
-            if (leagueInterface == null)
-            {
-                Log.WriteLine("leagueInterface was null!", LogLevel.CRITICAL);
-                return;
-            }
-
-            var leagueInterfaceFromDatabase =
-                Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
-
-            ulong leagueRegistrationChannelMessageId =
-                await LeagueChannelManager.CreateALeagueJoinButton(
-                    _leagueRegistrationChannel, leagueInterfaceFromDatabase, leagueNameString);
-
-            Log.WriteLine("id:" + leagueRegistrationChannelMessageId, LogLevel.VERBOSE);
-
-            channelFeaturesWithMessageIds.Add(
-                leagueNameString, leagueRegistrationChannelMessageId);
-
-            Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE); */
-        }
+        await base.PostChannelMessages(guild, databaseInterfaceChannel);
     }
 }

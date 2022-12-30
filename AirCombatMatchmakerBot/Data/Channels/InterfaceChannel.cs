@@ -15,6 +15,6 @@ public interface InterfaceChannel
 
     public Task CreateAChannelForTheCategory(SocketGuild _guild);
     public Task PrepareChannelMessages();
-    public Task PostChannelMessages(
-        Dictionary<string, InterfaceMessage> _interfaceMessagesWithIdsOnDatabase);
+    public Task PostChannelMessages(SocketGuild _guild,
+        InterfaceChannel _databaseInterfaceChannel);
 }

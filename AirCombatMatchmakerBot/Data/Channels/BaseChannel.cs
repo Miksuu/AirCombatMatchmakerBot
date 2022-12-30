@@ -129,10 +129,10 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         // Add to a method later
-        var interfaceMessagesWithIdsOnDatabase =
+        var databaseInterfaceChannel =
             Database.Instance.Categories.CreatedCategoriesWithChannels.First(
                 x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
-                    x => x.ChannelId == channelId).InterfaceMessagesWithIds;
+                    x => x.ChannelId == channelId);
 
         foreach (var messageName in channelMessages)
         {
@@ -140,21 +140,23 @@ public abstract class BaseChannel : InterfaceChannel
 
             InterfaceMessage interfaceMessage = (InterfaceMessage)EnumExtensions.GetInstance(messageName.ToString());
 
-            if (interfaceMessagesWithIdsOnDatabase.ContainsKey(messageName.ToString())) continue;
+            if (databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(messageName.ToString())) continue;
 
             Log.WriteLine("Does not contain the key: " +
                 messageName + ", continuing", LogLevel.VERBOSE);
 
-            interfaceMessagesWithIdsOnDatabase.Add(messageName.ToString(), interfaceMessage);
+            databaseInterfaceChannel.InterfaceMessagesWithIds.Add(messageName.ToString(), interfaceMessage);
 
             Log.WriteLine("Done with: " + messageName, LogLevel.VERBOSE);
         }
         Log.WriteLine("Done posting channel messages on " +
             channelName + " id: " + channelId, LogLevel.VERBOSE);
 
-        await PostChannelMessages(interfaceMessagesWithIdsOnDatabase);
+        await PostChannelMessages(guild, databaseInterfaceChannel);
     }
-    public virtual Task PostChannelMessages(Dictionary<string, InterfaceMessage> _interfaceMessagesWithIdsOnDatabase)
+
+    public virtual async Task PostChannelMessages(SocketGuild _guild, 
+        InterfaceChannel _databaseInterfaceChannel)
     {
         Log.WriteLine("Starting to post channel messages on: " + channelName, LogLevel.VERBOSE);
 
@@ -163,25 +165,47 @@ public abstract class BaseChannel : InterfaceChannel
         if (guild == null)
         {
             Exceptions.BotGuildRefNull();
-            return Task.CompletedTask;
+            return;
         }
 
         Log.WriteLine("Finding channels: " + channelName + " parent category with id: " +
             channelsCategoryId, LogLevel.VERBOSE);
 
-        foreach (var interfaceMessageKvp in _interfaceMessagesWithIdsOnDatabase) 
+        foreach (var interfaceMessageKvp in _databaseInterfaceChannel.InterfaceMessagesWithIds) 
         {
             Log.WriteLine("Looping on message: " + interfaceMessageKvp.Value.MessageName + " with id: " +
                 interfaceMessageKvp.Key, LogLevel.VERBOSE);
 
             /*
-            if (interfaceChannelFromDatabase != null)
+
+            var channelMessages =
+                await _leagueRegistrationChannel.GetMessagesAsync(
+                    50, CacheMode.AllowDownload).FirstAsync();
+
+            Log.WriteLine("Searching: " + leagueNameString + " from: " + nameof(channelMessages) +
+                " with a count of: " + channelMessages.Count, LogLevel.VERBOSE);
+
+            foreach (var msg in channelMessages)
             {
-                Log.WriteLine("message found: " + interfaceChannelFromDatabase.InterfaceMessagesWithIds.Any(
-                        x => x.Key == interfaceMessageKvp.Key), LogLevel.VERBOSE);
+                Log.WriteLine("Looping on msg: " + msg.Content.ToString(), LogLevel.VERBOSE);
+                if (msg.Content.Contains(leagueNameString))
+                {
+                    Log.WriteLine($"contains: {msg.Content}", LogLevel.VERBOSE);
+                    //containsMessage = true;
+                }
             }*/
 
             var messageKey = interfaceMessagesWithIds[interfaceMessageKvp.Key];
+
+            // If the message doesn't exist, set it ID to 0 to regenerate it
+            var channel = _guild.GetTextChannel(_databaseInterfaceChannel.ChannelId);
+            var message = await channel.GetMessageAsync(interfaceMessageKvp.Value.MessageId);
+            if (message == null) 
+            {
+                Log.WriteLine("Message " + messageKey.MessageId +
+                    "not found! Setting it to 0 and regenerating", LogLevel.WARNING);
+                messageKey.MessageId = 0;
+            }
 
             if (messageKey.MessageId != 0) continue;
 
@@ -192,6 +216,6 @@ public abstract class BaseChannel : InterfaceChannel
 
             messageKey.MessageId = id;
         }
-        return Task.CompletedTask;
+        return;
     }
 }

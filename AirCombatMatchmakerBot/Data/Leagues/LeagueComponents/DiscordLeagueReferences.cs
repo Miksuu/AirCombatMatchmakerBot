@@ -3,6 +3,7 @@
 [DataContract]
 public class DiscordLeagueReferences
 {
+    /*
     public ulong LeagueRegistrationChannelMessageId
     {
         get
@@ -17,7 +18,7 @@ public class DiscordLeagueReferences
                 leagueRegistrationChannelMessageId + " to: " + value, LogLevel.VERBOSE);
             leagueRegistrationChannelMessageId = value;
         }
-    }
+    }*/
 
     public ulong LeagueCategoryId
     {
@@ -67,7 +68,7 @@ public class DiscordLeagueReferences
     }
 
     // The references to the message in the registration channel
-    [DataMember] private ulong leagueRegistrationChannelMessageId { get; set; }
+    //[DataMember] private ulong leagueRegistrationChannelMessageId { get; set; }
 
     // The reference to the category created by the system
     [DataMember] private ulong leagueCategoryId { get; set; }
