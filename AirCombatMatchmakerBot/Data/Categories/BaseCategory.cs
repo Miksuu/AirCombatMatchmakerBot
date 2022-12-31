@@ -153,7 +153,7 @@ public abstract class BaseCategory : InterfaceCategory
 
         foreach (ChannelName channelName in _interfaceCategory.ChannelNames)
         {
-
+            await CreateSpecificChannelFromChannelName(_guild, channelName);
         }
     }
 
