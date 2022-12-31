@@ -62,39 +62,4 @@ public class LeagueData
 
         return null;
     }
-
-    public string PostChallengeToThisLeague(
-        ulong _playerId, int _leaguePlayerCountPerTeam)
-    {
-        Team? team = FindActiveTeamByPlayerIdInAPredefinedLeague(_playerId);
-
-        if (team == null)
-        {
-            Log.WriteLine(nameof(team) +
-                " was null! Could not find the team.", LogLevel.CRITICAL);
-            return "Error! Team not found";
-        }
-
-        Log.WriteLine("Team found: " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
-            " adding it to the challenge queue: " +
-            challengeStatus.TeamsInTheQueue,
-            LogLevel.VERBOSE);
-
-        if (challengeStatus.TeamsInTheQueue.Any(x => x == team.GetTeamId()))
-        {
-            Log.WriteLine("Team " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
-                " was already in queue!", LogLevel.DEBUG);
-            return "alreadyInQueue";
-        }
-
-        challengeStatus.AddToTeamsInTheQueue(team);
-
-        string teamsInTheQueue =
-            challengeStatus.ReturnTeamsInTheQueueOfAChallenge(_leaguePlayerCountPerTeam, this);
-
-        Log.WriteLine(teamsInTheQueue, LogLevel.VERBOSE);
-
-        return teamsInTheQueue;
-    }
-
 }

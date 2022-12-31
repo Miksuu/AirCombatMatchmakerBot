@@ -63,8 +63,8 @@ public class CHALLENGEBUTTON : BaseButton
         }
 
         // Merge the message and the current challenge status in to one.
-        string postedChallengeMessage = dbLeagueInstance.LeagueData.PostChallengeToThisLeague(
-            _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam);
+        string postedChallengeMessage = dbLeagueInstance.LeagueData.ChallengeStatus.PostChallengeToThisLeague(
+            _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam, dbLeagueInstance.LeagueData);
 
         if (postedChallengeMessage == "alreadyInQueue")
         {
