@@ -160,21 +160,25 @@ public abstract class BaseChannel : InterfaceChannel
     {
         Log.WriteLine("Starting to post channel messages on: " + channelName, LogLevel.VERBOSE);
 
-        var guild = BotReference.GetGuildRef();
+        Log.WriteLine("Finding channel: " + channelName + " (" + _databaseInterfaceChannel.ChannelId +
+            ") parent category with id: " + channelsCategoryId, LogLevel.VERBOSE);
 
-        if (guild == null)
+        // Had to use client here instead of guild for searching the channel, otherwise didn't work (??)
+        var client = BotReference.GetClientRef();
+        if (client == null)
         {
-            Exceptions.BotGuildRefNull();
+            Exceptions.BotClientRefNull();
             return;
         }
-
-        Log.WriteLine("Finding channels: " + channelName + " parent category with id: " +
-            channelsCategoryId, LogLevel.VERBOSE);
-
+       
         // If the message doesn't exist, set it ID to 0 to regenerate it
-        var channel = _guild.GetTextChannel(_databaseInterfaceChannel.ChannelId) as ITextChannel;
-        Log.WriteLine("Channel found: " + channel.Name + " id: " + channel.Id, LogLevel.VERBOSE);
+        var channel = client.GetChannelAsync(_databaseInterfaceChannel.ChannelId).Result as ITextChannel;
+        Log.WriteLine("Channel found: " + channel + " id: " + channel.Id, LogLevel.VERBOSE);
         var channelMessages = await channel.GetMessagesAsync(50, CacheMode.AllowDownload).FirstAsync();
+
+        Log.WriteLine(nameof(_databaseInterfaceChannel.InterfaceMessagesWithIds) + " count: " +
+            _databaseInterfaceChannel.InterfaceMessagesWithIds.Count + " | " + nameof(channelMessages) +
+            " count: " + channelMessages.Count, LogLevel.VERBOSE);
 
         foreach (var interfaceMessageKvp in _databaseInterfaceChannel.InterfaceMessagesWithIds) 
         {
@@ -199,7 +203,7 @@ public abstract class BaseChannel : InterfaceChannel
             Log.WriteLine("Key was 0, message does not exist. Creating it.", LogLevel.VERBOSE);
 
             ulong id = interfaceMessageKvp.Value.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            guild, channelId, interfaceMessageKvp.Key).Result;
+            _guild, channelId, interfaceMessageKvp.Key).Result;
 
             messageKey.MessageId = id;
         }
