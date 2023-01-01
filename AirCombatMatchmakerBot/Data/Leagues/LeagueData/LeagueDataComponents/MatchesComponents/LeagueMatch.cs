@@ -38,6 +38,8 @@ public class LeagueMatch
     [DataMember] private int[] teamsInTheMatch { get; set; }
     [DataMember] private int matchId { get; set; }
 
+    public LeagueMatch() { }
+
     public LeagueMatch(int[] _teamsToFormMatchOn)
     {
         teamsInTheMatch = _teamsToFormMatchOn;

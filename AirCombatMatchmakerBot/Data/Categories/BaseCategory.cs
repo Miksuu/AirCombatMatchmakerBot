@@ -144,6 +144,8 @@ public abstract class BaseCategory : InterfaceCategory
             " Channel count: " + _interfaceCategory.ChannelNames.Count +
             " and setting the references", LogLevel.DEBUG);
 
+        socketCategoryChannelId = _socketCategoryChannelId;
+
         foreach (ChannelName channelName in _interfaceCategory.ChannelNames)
         {
             await CreateSpecificChannelFromChannelName(_guild, channelName, _socketCategoryChannelId);
