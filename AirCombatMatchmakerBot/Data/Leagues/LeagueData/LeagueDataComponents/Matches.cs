@@ -54,6 +54,7 @@ public class Matches
             Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
                 _interfaceLeague.LeagueCategoryName);
 
-        categoryKvp.Value.CreateSpecificChannelFromChannelName(guild, ChannelName.MATCHCHANNEL);
+        categoryKvp.Value.CreateSpecificChannelFromChannelName(
+            guild, ChannelName.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId);
     }
 }
