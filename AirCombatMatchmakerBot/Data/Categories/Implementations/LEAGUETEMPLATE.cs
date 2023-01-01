@@ -17,13 +17,17 @@ public class LEAGUETEMPLATE : BaseCategory
         };
     }
 
-    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
+    public override List<Overwrite> GetGuildPermissions(
+        SocketGuild _guild, SocketRole _role)
     {
         Log.WriteLine("executing permissions from LEAGUETEMPLATE", LogLevel.VERBOSE);
         return new List<Overwrite>
         {
             new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)),
+
+            new Overwrite(_role.Id, PermissionTarget.Role,
+                new OverwritePermissions(viewChannel: PermValue.Allow)),
         };
     }
 }

@@ -110,7 +110,7 @@ public static class CategoryAndChannelManager
             return;
         }
 
-        List<Overwrite> permissionsList = interfaceCategory.GetGuildPermissions(_guild);
+
         SocketCategoryChannel? socketCategoryChannel = null;
 
         bool contains = false;
@@ -161,9 +161,13 @@ public static class CategoryAndChannelManager
         // If the category doesn't exist at all, create it and add it to the database
         else
         {
+            SocketRole role =
+                RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
+                    _guild, finalCategoryName).Result;
+
             socketCategoryChannel =
                 await interfaceCategory.CreateANewSocketCategoryChannelAndReturnIt(
-                    _guild, finalCategoryName);
+                    _guild, finalCategoryName, role);
             if (socketCategoryChannel == null)
             {
                 Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);

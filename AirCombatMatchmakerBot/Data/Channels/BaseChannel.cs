@@ -90,7 +90,6 @@ public abstract class BaseChannel : InterfaceChannel
     protected List<MessageName> channelMessages;
     [DataMember] protected Dictionary<string, InterfaceMessage> interfaceMessagesWithIds;
 
-
     public BaseChannel()
     {
         channelMessages = new List<MessageName>();

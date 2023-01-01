@@ -87,23 +87,6 @@ public abstract class BaseCategory : InterfaceCategory
         }
     }
 
-    /*
-    SocketCategoryChannel InterfaceCategory.SocketCategoryChannel
-    {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(socketCategoryChannelRef) +
-                ": " + socketCategoryChannelRef, LogLevel.VERBOSE);
-            return socketCategoryChannelRef;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(socketCategoryChannelRef) +
-                socketCategoryChannelRef + " to: " + value, LogLevel.VERBOSE);
-            socketCategoryChannelRef = value;
-        }
-    }*/
-
     [DataMember] protected CategoryName categoryName;
     [DataMember] protected List<ChannelName> channelNames;
     [DataMember] protected List<InterfaceChannel> interfaceChannels;
@@ -115,16 +98,16 @@ public abstract class BaseCategory : InterfaceCategory
         interfaceChannels = new List<InterfaceChannel>();
     }
 
-    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
+    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 
     public async Task<SocketCategoryChannel?> CreateANewSocketCategoryChannelAndReturnIt(
-        SocketGuild _guild, string _categoryName)
+        SocketGuild _guild, string _categoryName, SocketRole _role)
     {
         Log.WriteLine("Starting to create a new category with name: " +
             _categoryName, LogLevel.VERBOSE);
 
         RestCategoryChannel newCategory = await _guild.CreateCategoryChannelAsync(
-            _categoryName, x => x.PermissionOverwrites = GetGuildPermissions(_guild));
+            _categoryName, x => x.PermissionOverwrites = GetGuildPermissions(_guild, _role));
         if (newCategory == null)
         {
             Log.WriteLine(nameof(newCategory) + " was null!", LogLevel.CRITICAL);
