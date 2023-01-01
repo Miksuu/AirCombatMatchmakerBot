@@ -86,7 +86,6 @@ public abstract class BaseCategory : InterfaceCategory
         }
     }
 
-
     [DataMember] protected CategoryName categoryName;
     [DataMember] protected List<ChannelName> channelNames;
     [DataMember] protected List<InterfaceChannel> interfaceChannels;
@@ -97,7 +96,7 @@ public abstract class BaseCategory : InterfaceCategory
 
     public BaseCategory()
     {
-        channelNames= new List<ChannelName>();
+        channelNames = new List<ChannelName>();
         interfaceChannels = new List<InterfaceChannel>();
     }
 
@@ -120,7 +119,8 @@ public abstract class BaseCategory : InterfaceCategory
         Log.WriteLine("Created a new RestCategoryChannel with ID: " +
             newCategory.Id, LogLevel.VERBOSE);
 
-        SocketCategoryChannel socketCategoryChannel = _guild.GetCategoryChannel(newCategory.Id);
+        SocketCategoryChannel socketCategoryChannel =
+            _guild.GetCategoryChannel(newCategory.Id);
 
         Log.WriteLine("socketCategoryId: " +
             socketCategoryChannel.Id.ToString(), LogLevel.VERBOSE);
@@ -139,8 +139,7 @@ public abstract class BaseCategory : InterfaceCategory
     }
 
     public async Task CreateChannelsForTheCategory(
-        InterfaceCategory _interfaceCategory,
-        SocketCategoryChannel _socketCategoryChannel,
+        InterfaceCategory _interfaceCategory, SocketCategoryChannel _socketCategoryChannel,
         SocketGuild _guild)
     {
         Log.WriteLine("Starting to create channels for: " + _socketCategoryChannel.Name +
@@ -148,6 +147,8 @@ public abstract class BaseCategory : InterfaceCategory
             _interfaceCategory.ChannelNames.Count +
             " and setting the references", LogLevel.DEBUG);
 
+        // Set the references to be used in CreateSpecificChannelFromChannelName()
+        // and for later use such as for match channel creation
         interfaceCategoryRef = _interfaceCategory;
         socketCategoryChannelRef = _socketCategoryChannel;
 

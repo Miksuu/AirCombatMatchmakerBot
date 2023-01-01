@@ -18,20 +18,24 @@ public class CHALLENGEBUTTON : BaseButton
     public void CreateTheButton(){}
 
     public override async Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, string _splitString, ulong _channelId, ulong _messageId, string _message)
+        SocketMessageComponent _component, string _splitString,
+        ulong _channelId, ulong _messageId, string _message)
     {
         Log.WriteLine("Starting processing a challenge by: " + _component.User.Id +
              " for league: " + _splitString, LogLevel.VERBOSE);
 
         // Find the category of the given button, temp, could optimise it here
         CategoryName? categoryName = null;
-        foreach (var interfaceCategoryKvp in Database.Instance.Categories.CreatedCategoriesWithChannels)
+        foreach (var interfaceCategoryKvp in 
+            Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
             Log.WriteLine("Loop on: " + interfaceCategoryKvp.Key + " | " +
                 interfaceCategoryKvp.Value.CategoryName, LogLevel.VERBOSE);
-            if (interfaceCategoryKvp.Value.InterfaceChannels.Any(x => x.ChannelId == _component.Channel.Id))
+            if (interfaceCategoryKvp.Value.InterfaceChannels.Any(
+                x => x.ChannelId == _component.Channel.Id))
             {
-                Log.WriteLine("Found category: " + interfaceCategoryKvp.Value.CategoryName, LogLevel.DEBUG);
+                Log.WriteLine("Found category: " +
+                    interfaceCategoryKvp.Value.CategoryName, LogLevel.DEBUG);
                 categoryName = interfaceCategoryKvp.Value.CategoryName;
                 break;
             }
@@ -63,8 +67,10 @@ public class CHALLENGEBUTTON : BaseButton
         }
 
         // Merge the message and the current challenge status in to one.
-        string postedChallengeMessage = dbLeagueInstance.LeagueData.ChallengeStatus.PostChallengeToThisLeague(
-            _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam, dbLeagueInstance.LeagueData);
+        string postedChallengeMessage =
+            dbLeagueInstance.LeagueData.ChallengeStatus.PostChallengeToThisLeague(
+                _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam,
+                dbLeagueInstance).Result;
 
         if (postedChallengeMessage == "alreadyInQueue")
         {

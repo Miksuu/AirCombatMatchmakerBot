@@ -19,11 +19,30 @@ public class Leagues
         }
     }
 
+    public int LeaguesMatchCounter
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(leaguesMatchCounter)
+                + ": " + leaguesMatchCounter, LogLevel.VERBOSE);
+            return leaguesMatchCounter;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(leaguesMatchCounter) +
+                leaguesMatchCounter + " to: " + value, LogLevel.VERBOSE);
+            leaguesMatchCounter = value;
+        }
+    }
+
+
     [DataMember] private List<InterfaceLeague> storedLeagues { get; set; }
+    [DataMember] private int leaguesMatchCounter { get; set; }
 
     public Leagues()
     {
         storedLeagues = new List<InterfaceLeague>();
+        leaguesMatchCounter = 1;
     }
 
     public bool CheckIfILeagueExistsByCategoryName(CategoryName _leagueCategoryName)

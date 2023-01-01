@@ -12,19 +12,6 @@ public class LEAGUEREGISTRATION : BaseChannel
     {
         channelName = ChannelName.LEAGUEREGISTRATION;
         channelMessages = new List<MessageName> { MessageName.LEAGUEREGISTRATIONMESSAGE };
-
-        /*
-        // Add that there will be same amount of league registration messages than done leagues
-        foreach (CategoryName leagueName in Enum.GetValues(typeof(CategoryName)))
-        {
-            Log.WriteLine("Looping on: " + leagueName.ToString(), LogLevel.VERBOSE);
-
-            // Skip all the non-leagues
-            int enumValue = (int)leagueName;
-            if (enumValue > 100) continue;
-            */
-        //channelMessages.Add(MessageName.LEAGUEREGISTRATIONMESSAGE);
-       // }
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)

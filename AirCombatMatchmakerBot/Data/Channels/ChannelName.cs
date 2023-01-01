@@ -22,4 +22,6 @@ public enum ChannelName
     LEAGUESTATUS,
     [EnumMember(Value = "challenge-channel")]
     CHALLENGE,
+    [EnumMember(Value = "match-channel")]
+    MATCHCHANNEL,
 }

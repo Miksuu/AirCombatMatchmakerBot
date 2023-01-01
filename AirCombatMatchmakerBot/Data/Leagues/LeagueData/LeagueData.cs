@@ -33,14 +33,30 @@ public class LeagueData
             challengeStatus = value;
         }
     }
+    public Matches Matches
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(matches), LogLevel.VERBOSE);
+            return matches;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(matches)
+                + " to: " + value, LogLevel.VERBOSE);
+            matches = value;
+        }
+    }
 
     [DataMember] private Teams teams { get; set; }
     [DataMember] private ChallengeStatus challengeStatus { get; set; }
+    [DataMember] private Matches matches { get; set; }
     [DataMember] private bool matchmakerActive { get; set; }
     public LeagueData()
     {
         teams = new();
         challengeStatus = new();
+        matches = new Matches();
     }
 
     public Team? FindActiveTeamByPlayerIdInAPredefinedLeague(ulong _playerId)

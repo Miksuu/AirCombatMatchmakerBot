@@ -17,4 +17,7 @@ public interface InterfaceCategory
         InterfaceCategory _interfaceCategory, 
         SocketCategoryChannel _socketCategoryChannel, 
         SocketGuild _guild);
+
+    public Task CreateSpecificChannelFromChannelName(
+    SocketGuild _guild, ChannelName _channelName);
 }

@@ -54,11 +54,11 @@ public class ChallengeStatus
         return teamsString;
     }
 
-
-    public string PostChallengeToThisLeague(
-        ulong _playerId, int _leaguePlayerCountPerTeam, LeagueData _leagueData)
+    public async Task<string> PostChallengeToThisLeague(
+        ulong _playerId, int _leaguePlayerCountPerTeam, InterfaceLeague _interfaceLeague)
     {
-        Team? team = _leagueData.FindActiveTeamByPlayerIdInAPredefinedLeague(_playerId);
+        Team? team =
+            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeague(_playerId);
 
         if (team == null)
         {
@@ -81,11 +81,49 @@ public class ChallengeStatus
 
         AddToTeamsInTheQueue(team);
 
-        string teamsInTheQueue =
-            ReturnTeamsInTheQueueOfAChallenge(_leaguePlayerCountPerTeam, _leagueData);
+        await CheckChallengeStatus(_interfaceLeague);
 
-        Log.WriteLine(teamsInTheQueue, LogLevel.VERBOSE);
+        string teamsInTheQueue =
+            ReturnTeamsInTheQueueOfAChallenge(_leaguePlayerCountPerTeam, _interfaceLeague.LeagueData);
+
+        Log.WriteLine("Teams in the queue: " + teamsInTheQueue, LogLevel.VERBOSE);
 
         return teamsInTheQueue;
+    }
+
+    public Task CheckChallengeStatus(InterfaceLeague _interfaceLeague)
+    {
+        int[] teamsToFormMatchOn = new int[2];
+
+        Log.WriteLine("Checking challenge status with team amount: " +
+            TeamsInTheQueue.Count, LogLevel.VERBOSE);
+
+        // Replace this with some method later on that calculates ELO between the teams in the queue
+        if (TeamsInTheQueue.Count < 2)
+        {
+            Log.WriteLine(nameof(teamsInTheQueue) + " count: " + TeamsInTheQueue.Count +
+                " is smaller than 2, returning.", LogLevel.DEBUG);
+            return Task.CompletedTask;
+        }
+
+        Log.WriteLine(nameof(teamsInTheQueue) + " count: " + teamsInTheQueue.Count +
+            ", match found!", LogLevel.DEBUG);
+
+        for (int t = 0; t < 2; t++)
+        {
+            Log.WriteLine("Looping on team index: " + t, LogLevel.VERBOSE);
+            teamsToFormMatchOn[t] = teamsInTheQueue.First();
+            Log.WriteLine("Done adding to " + nameof(teamsToFormMatchOn) +
+                ", Length: " + teamsToFormMatchOn.Length, LogLevel.VERBOSE);
+            teamsInTheQueue.RemoveAt(0);
+            Log.WriteLine("Done removing from " + nameof(teamsInTheQueue) +
+                ", count: " + teamsInTheQueue.Count, LogLevel.VERBOSE);
+        }
+
+        Log.WriteLine("Done looping.", LogLevel.VERBOSE);
+
+        _interfaceLeague.LeagueData.Matches.CreateAMatch(_interfaceLeague, teamsToFormMatchOn);
+
+        return Task.CompletedTask;
     }
 }
