@@ -50,11 +50,17 @@ public class Matches
         Log.WriteLine("Added to the " + nameof(matchesList) + " count is now: " +
             matchesList.Count, LogLevel.VERBOSE);
 
+        // Get the category by the league category name passed in the method
         var categoryKvp =
             Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
                 _interfaceLeague.LeagueCategoryName);
 
+        // Prep the channel name with match id
+        string overriddenMatchName = "match-" + newMatch.MatchId.ToString();
+
+        // Prepare the match with the ID of the current new match
         categoryKvp.Value.CreateSpecificChannelFromChannelName(
-            guild, ChannelName.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId);
+            guild, ChannelName.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
+            overriddenMatchName); // Override's the channel's name with the match name with that match-[id]
     }
 }

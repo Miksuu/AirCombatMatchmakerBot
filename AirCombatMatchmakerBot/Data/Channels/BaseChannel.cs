@@ -136,7 +136,7 @@ public abstract class BaseChannel : InterfaceChannel
 
         foreach (var messageName in channelMessages)
         {
-            Log.WriteLine("on: " + nameof(messageName) + messageName, LogLevel.VERBOSE);
+            Log.WriteLine("on: " + nameof(messageName) + " " + messageName, LogLevel.VERBOSE);
 
             InterfaceMessage interfaceMessage = (InterfaceMessage)EnumExtensions.GetInstance(messageName.ToString());
 

@@ -153,7 +153,9 @@ public abstract class BaseCategory : InterfaceCategory
     }
 
     public async Task CreateSpecificChannelFromChannelName(
-        SocketGuild _guild, ChannelName _channelName, ulong _socketCategoryChannelId)
+        SocketGuild _guild, ChannelName _channelName, ulong _socketCategoryChannelId,
+        string _overrideChannelName = "") // Keeps the functionality, but overrides the channel name
+        // It is used for creating matches with correct ID right now.
     {
         Log.WriteLine("Creating channel name: " + _channelName, LogLevel.DEBUG);
 
