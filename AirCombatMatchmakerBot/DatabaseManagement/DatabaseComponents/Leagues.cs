@@ -45,7 +45,7 @@ public class Leagues
         leaguesMatchCounter = 1;
     }
 
-    public bool CheckIfILeagueExistsByCategoryName(CategoryName _leagueCategoryName)
+    public bool CheckIfILeagueExistsByCategoryName(CategoryType _leagueCategoryName)
     {
         bool exists = false;
         Log.WriteLine("Checking if " + _leagueCategoryName + " exists.", LogLevel.VERBOSE);
@@ -55,7 +55,7 @@ public class Leagues
     }
 
     // Might want to add a check that it exists, use the method above
-    public InterfaceLeague GetILeagueByCategoryName(CategoryName? _leagueCategoryName)
+    public InterfaceLeague GetILeagueByCategoryName(CategoryType? _leagueCategoryName)
     {
         Log.WriteLine("Getting ILeague by category name: " + _leagueCategoryName, LogLevel.VERBOSE);
         InterfaceLeague FoundLeague = StoredLeagues.First(x => x.LeagueCategoryName == _leagueCategoryName);
@@ -131,7 +131,7 @@ public class Leagues
                             }
 
                             InterfaceLeague findLeagueCategoryType = GetILeagueByString(storedLeagueString);
-                            CategoryName leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
+                            CategoryType leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
                             var leagueInterface =
                                 LeagueManager.GetLeagueInstanceWithLeagueCategoryName(
@@ -213,7 +213,7 @@ public class Leagues
         KeyValuePair<ulong, InterfaceCategory> findLeagueCategoryType =
             Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithString(
                 _splitStringIdPart);
-        CategoryName leagueCategoryName = findLeagueCategoryType.Value.CategoryName;
+        CategoryType leagueCategoryName = findLeagueCategoryType.Value.CategoryType;
 
         Log.WriteLine("found: " + nameof(leagueCategoryName) + ": " +
             leagueCategoryName.ToString(), LogLevel.VERBOSE);

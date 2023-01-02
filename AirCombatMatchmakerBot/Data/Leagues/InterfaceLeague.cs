@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 [JsonObjectAttribute]
 public interface InterfaceLeague
 {
-    public CategoryName LeagueCategoryName { get; set; }
+    public CategoryType LeagueCategoryName { get; set; }
 
     public Era LeagueEra { get; set; }
     public int LeaguePlayerCountPerTeam { get; set; }

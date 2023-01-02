@@ -20,7 +20,7 @@ public class Categories
         }
     }
 
-    // Dictionary of channel categories and channelNames inside them
+    // Dictionary of channel categories and channelTypes inside them
     [DataMember] private Dictionary<ulong, InterfaceCategory> createdCategoriesWithChannels { get; set; }
 
     public Categories()
@@ -41,8 +41,8 @@ public class Categories
         string _idToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
-        var FoundCategoryKvp = CreatedCategoriesWithChannels.First(x => x.Value.CategoryName.ToString() == _idToSearchWith);
-        Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryName, LogLevel.VERBOSE);
+        var FoundCategoryKvp = CreatedCategoriesWithChannels.First(x => x.Value.CategoryType.ToString() == _idToSearchWith);
+        Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;
     }
 
@@ -51,23 +51,23 @@ public class Categories
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
         var FoundCategoryKvp = CreatedCategoriesWithChannels.First(x => x.Key == _idToSearchWith);
-        Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;
     }
 
     public KeyValuePair<ulong, InterfaceCategory> GetCreatedCategoryWithChannelKvpByCategoryName(
-        CategoryName? _categoryName)
+        CategoryType? _categoryName)
     {
         Log.WriteLine("Getting CategoryKvp by category name: " + _categoryName, LogLevel.VERBOSE);
         var FoundCategoryKvp = CreatedCategoriesWithChannels.First(
-                x => x.Value.CategoryName == _categoryName);
-        Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryName, LogLevel.VERBOSE);
+                x => x.Value.CategoryType == _categoryName);
+        Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;
     }
 
     public void AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(ulong _id, InterfaceCategory _InterfaceCategory)
     {
-        Log.WriteLine("Adding interfaceCategory: " + _InterfaceCategory.CategoryName +
+        Log.WriteLine("Adding interfaceCategory: " + _InterfaceCategory.CategoryType +
             "to the CreatedCategoriesWithChannels Dictionary" + " with id: " + _id, LogLevel.VERBOSE);
         CreatedCategoriesWithChannels.Add(_id, _InterfaceCategory);
         Log.WriteLine("Done adding, count is now: " + CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);

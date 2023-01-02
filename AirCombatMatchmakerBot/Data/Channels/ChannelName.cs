@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
 [JsonConverter(typeof(StringEnumConverter))]
-public enum ChannelName
+public enum ChannelType
 {
     // Registration category
     [EnumMember(Value = "registration")]

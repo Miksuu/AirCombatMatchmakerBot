@@ -29,7 +29,7 @@ public static class ChannelRestore
 
         dbKeyValue.InterfaceChannels.Remove(dbFinal);
 
-        Log.WriteLine("Channel " + _interfaceChannel.ChannelName +
+        Log.WriteLine("Channel " + _interfaceChannel.ChannelType +
             " not found, regenerating it...", LogLevel.ERROR);
 
         return false;

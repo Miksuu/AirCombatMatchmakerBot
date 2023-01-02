@@ -59,8 +59,8 @@ public class Matches
         string overriddenMatchName = "match-" + newMatch.MatchId.ToString();
 
         // Prepare the match with the ID of the current new match
-        categoryKvp.Value.CreateSpecificChannelFromChannelName(
-            guild, ChannelName.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
+        categoryKvp.Value.CreateSpecificChannelFromChannelType(
+            guild, ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
             overriddenMatchName); // Override's the channel's name with the match name with that match-[id]
     }
 }

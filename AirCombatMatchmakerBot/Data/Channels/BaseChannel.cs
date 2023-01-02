@@ -7,18 +7,18 @@ using System.Threading.Channels;
 [DataContract]
 public abstract class BaseChannel : InterfaceChannel
 {
-    ChannelName InterfaceChannel.ChannelName
+    ChannelType InterfaceChannel.ChannelType
     {
         get 
         {
-            Log.WriteLine("Getting " + nameof(ChannelName) + ": " + channelName, LogLevel.VERBOSE);
-            return channelName;
+            Log.WriteLine("Getting " + nameof(ChannelType) + ": " + channelType, LogLevel.VERBOSE);
+            return channelType;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(channelName) + channelName
+            Log.WriteLine("Setting " + nameof(channelType) + channelType
                 + " to: " + value, LogLevel.VERBOSE);
-            channelName = value;
+            channelType = value;
         }
     }
 
@@ -84,7 +84,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    [DataMember] protected ChannelName channelName;
+    [DataMember] protected ChannelType channelType;
     [DataMember] protected ulong channelId;
     [DataMember] protected ulong channelsCategoryId;
     protected List<MessageName> channelMessages;
@@ -100,25 +100,25 @@ public abstract class BaseChannel : InterfaceChannel
 
     public async Task CreateAChannelForTheCategory(SocketGuild _guild)
     {
-        Log.WriteLine("Creating a channel named: " + channelName +
+        Log.WriteLine("Creating a channel named: " + channelType +
             " for category: " + channelsCategoryId, LogLevel.VERBOSE);
 
-        string channelNameString = EnumExtensions.GetEnumMemberAttrValue(channelName);
+        string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(channelType);
 
-        var channel = await _guild.CreateTextChannelAsync(channelNameString, x => {
+        var channel = await _guild.CreateTextChannelAsync(channelTypeString, x => {
             x.PermissionOverwrites = GetGuildPermissions(_guild);
             x.CategoryId = channelsCategoryId;
         });
 
         channelId = channel.Id;
 
-        Log.WriteLine("Done creating a channel named: " + channelName + " with ID: " + channel.Id +
+        Log.WriteLine("Done creating a channel named: " + channelType + " with ID: " + channel.Id +
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
     }
 
     public virtual async Task PrepareChannelMessages()
     {
-        Log.WriteLine("Starting to prepare channel messages on: " + channelName, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to prepare channel messages on: " + channelType, LogLevel.VERBOSE);
 
         var guild = BotReference.GetGuildRef();
 
@@ -150,7 +150,7 @@ public abstract class BaseChannel : InterfaceChannel
             Log.WriteLine("Done with: " + messageName, LogLevel.VERBOSE);
         }
         Log.WriteLine("Done posting channel messages on " +
-            channelName + " id: " + channelId, LogLevel.VERBOSE);
+            channelType + " id: " + channelId, LogLevel.VERBOSE);
 
         await PostChannelMessages(guild, databaseInterfaceChannel);
     }
@@ -158,9 +158,9 @@ public abstract class BaseChannel : InterfaceChannel
     public virtual async Task PostChannelMessages(SocketGuild _guild, 
         InterfaceChannel _databaseInterfaceChannel)
     {
-        Log.WriteLine("Starting to post channel messages on: " + channelName, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to post channel messages on: " + channelType, LogLevel.VERBOSE);
 
-        Log.WriteLine("Finding channel: " + channelName + " (" + _databaseInterfaceChannel.ChannelId +
+        Log.WriteLine("Finding channel: " + channelType + " (" + _databaseInterfaceChannel.ChannelId +
             ") parent category with id: " + channelsCategoryId, LogLevel.VERBOSE);
 
         // Had to use client here instead of guild for searching the channel, otherwise didn't work (??)

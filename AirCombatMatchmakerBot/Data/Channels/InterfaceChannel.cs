@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 [JsonObjectAttribute]
 public interface InterfaceChannel
 {
-    public ChannelName ChannelName { get; set; }
+    public ChannelType ChannelType { get; set; }
     public ulong ChannelId { get; set; }
     public ulong ChannelsCategoryId { get; set; }
     public List<MessageName> ChannelMessages { get; set; }

@@ -9,7 +9,7 @@ public class MATCHCHANNEL : BaseChannel
 {
     public MATCHCHANNEL()
     {
-        channelName = ChannelName.MATCHCHANNEL;
+        channelType = ChannelType.MATCHCHANNEL;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)

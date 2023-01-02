@@ -5,8 +5,8 @@ using Newtonsoft.Json;
 [JsonObjectAttribute]
 public interface InterfaceCategory
 {
-    public CategoryName CategoryName { get; set; }
-    public List<ChannelName> ChannelNames { get; set; }
+    public CategoryType CategoryType { get; set; }
+    public List<ChannelType> ChannelTypes { get; set; }
     public List<InterfaceChannel> InterfaceChannels { get; set; }
     public ulong SocketCategoryChannelId { get; set; }
 
@@ -19,7 +19,7 @@ public interface InterfaceCategory
         InterfaceCategory _interfaceCategory, ulong _socketCategoryChannelId,
         SocketGuild _guild);
 
-    public Task CreateSpecificChannelFromChannelName(
-        SocketGuild _guild, ChannelName _channelName, ulong _socketCategoryChannelId,
+    public Task CreateSpecificChannelFromChannelType(
+        SocketGuild _guild, ChannelType _channelType, ulong _socketCategoryChannelId,
         string _overrideChannelName = "");
 }

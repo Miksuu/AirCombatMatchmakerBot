@@ -7,34 +7,34 @@ using System;
 [DataContract]
 public abstract class BaseCategory : InterfaceCategory
 {
-    CategoryName InterfaceCategory.CategoryName
+    CategoryType InterfaceCategory.CategoryType
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(categoryName) + ": " + categoryName, LogLevel.VERBOSE);
-            return categoryName;
+            Log.WriteLine("Getting " + nameof(categoryTypes) + ": " + categoryTypes, LogLevel.VERBOSE);
+            return categoryTypes;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(categoryName) + categoryName
+            Log.WriteLine("Setting " + nameof(categoryTypes) + categoryTypes
                 + " to: " + value, LogLevel.VERBOSE);
-            categoryName = value;
+            categoryTypes = value;
         }
     }
 
-    List<ChannelName> InterfaceCategory.ChannelNames
+    List<ChannelType> InterfaceCategory.ChannelTypes
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(channelNames) + " with count of: " +
-                channelNames.Count, LogLevel.VERBOSE);
-            return channelNames;
+            Log.WriteLine("Getting " + nameof(channelTypes) + " with count of: " +
+                channelTypes.Count, LogLevel.VERBOSE);
+            return channelTypes;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(channelNames)
+            Log.WriteLine("Setting " + nameof(channelTypes)
                 + " to: " + value, LogLevel.VERBOSE);
-            channelNames = value;
+            channelTypes = value;
         }
     }
 
@@ -54,23 +54,6 @@ public abstract class BaseCategory : InterfaceCategory
         }
     }
 
-    /*
-    InterfaceCategory InterfaceCategory.InterfaceCategoryRef
-    {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(interfaceCategoryRef) + ": " +
-                interfaceCategoryRef, LogLevel.VERBOSE);
-            return interfaceCategoryRef;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(interfaceCategoryRef) + interfaceCategoryRef
-                + " to: " + value, LogLevel.VERBOSE);
-            interfaceCategoryRef = value;
-        }
-    }*/
-
     ulong InterfaceCategory.SocketCategoryChannelId
     {
         get
@@ -87,14 +70,14 @@ public abstract class BaseCategory : InterfaceCategory
         }
     }
 
-    [DataMember] protected CategoryName categoryName;
-    [DataMember] protected List<ChannelName> channelNames;
+    [DataMember] protected CategoryType categoryTypes;
+    [DataMember] protected List<ChannelType> channelTypes;
     [DataMember] protected List<InterfaceChannel> interfaceChannels;
     [DataMember] protected ulong socketCategoryChannelId;
 
     public BaseCategory()
     {
-        channelNames = new List<ChannelName>();
+        channelTypes = new List<ChannelType>();
         interfaceChannels = new List<InterfaceChannel>();
     }
 
@@ -141,30 +124,30 @@ public abstract class BaseCategory : InterfaceCategory
         SocketGuild _guild)
     {
         Log.WriteLine("Starting to create channels for: " + _socketCategoryChannelId + ")" + 
-            " Channel count: " + _interfaceCategory.ChannelNames.Count +
+            " Channel count: " + _interfaceCategory.ChannelTypes.Count +
             " and setting the references", LogLevel.DEBUG);
 
         socketCategoryChannelId = _socketCategoryChannelId;
 
-        foreach (ChannelName channelName in _interfaceCategory.ChannelNames)
+        foreach (ChannelType channelType in _interfaceCategory.ChannelTypes)
         {
-            await CreateSpecificChannelFromChannelName(_guild, channelName, _socketCategoryChannelId);
+            await CreateSpecificChannelFromChannelType(_guild, channelType, _socketCategoryChannelId);
         }
     }
 
-    public async Task CreateSpecificChannelFromChannelName(
-        SocketGuild _guild, ChannelName _channelName, ulong _socketCategoryChannelId,
+    public async Task CreateSpecificChannelFromChannelType(
+        SocketGuild _guild, ChannelType _channelType, ulong _socketCategoryChannelId,
         string _overrideChannelName = "") // Keeps the functionality, but overrides the channel name
         // It is used for creating matches with correct ID right now.
     {
-        Log.WriteLine("Creating channel name: " + _channelName, LogLevel.DEBUG);
+        Log.WriteLine("Creating channel name: " + _channelType, LogLevel.DEBUG);
 
         bool channelExists = false;
         InterfaceChannel? interfaceChannel = null;
 
-        interfaceChannel = GetChannelInstance(_channelName.ToString());
+        interfaceChannel = GetChannelInstance(_channelType.ToString());
         Log.WriteLine("interfaceChanneltest: " +
-            interfaceChannel.ChannelName.ToString(), LogLevel.DEBUG);
+            interfaceChannel.ChannelType.ToString(), LogLevel.DEBUG);
 
         if (interfaceChannel == null)
         {
@@ -174,17 +157,17 @@ public abstract class BaseCategory : InterfaceCategory
 
         // Channel found from the basecategory (it exists)
         if (interfaceChannels.Any(
-            x => x.ChannelName == interfaceChannel.ChannelName))
+            x => x.ChannelType == interfaceChannel.ChannelType))
         {
             Log.WriteLine(nameof(interfaceChannels) +
-                " already contains channel: " + _channelName.ToString(), LogLevel.VERBOSE);
+                " already contains channel: " + _channelType.ToString(), LogLevel.VERBOSE);
 
             // Replace interfaceChannel with a one that is from the database
             interfaceChannel = interfaceChannels.First(
-                x => x.ChannelName == _channelName);
+                x => x.ChannelType == _channelType);
 
             Log.WriteLine("Replaced with: " +
-                interfaceChannel.ChannelName + " from db", LogLevel.DEBUG);
+                interfaceChannel.ChannelType + " from db", LogLevel.DEBUG);
 
             channelExists =
                await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
@@ -193,9 +176,9 @@ public abstract class BaseCategory : InterfaceCategory
         else
         {
             Log.WriteLine(nameof(interfaceChannels) +
-                " does not contain channel: " + _channelName.ToString() +
+                " does not contain channel: " + _channelType.ToString() +
                 ", getting instance of it", LogLevel.VERBOSE);
-            interfaceChannel = GetChannelInstance(_channelName.ToString());
+            interfaceChannel = GetChannelInstance(_channelType.ToString());
         }
 
         // Insert the category's ID for easier access for the channels later on
@@ -206,13 +189,13 @@ public abstract class BaseCategory : InterfaceCategory
         {
             List<Overwrite> permissionsList = interfaceChannel.GetGuildPermissions(_guild);
 
-            Log.WriteLine("Creating a channel named: " + interfaceChannel.ChannelName +
-                " for category: " + categoryName + " (" +
+            Log.WriteLine("Creating a channel named: " + interfaceChannel.ChannelType +
+                " for category: " + categoryTypes + " (" +
                 _socketCategoryChannelId + ")", LogLevel.VERBOSE);
 
             ulong categoryId =
                 Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
-                    categoryName).Key;
+                    categoryTypes).Key;
 
             await interfaceChannel.CreateAChannelForTheCategory(_guild);
 
@@ -222,7 +205,7 @@ public abstract class BaseCategory : InterfaceCategory
 
             Log.WriteLine("Done adding to the db. Count is now: " +
                 interfaceChannels.Count +
-                " for the list of category: " + categoryName.ToString() +
+                " for the list of category: " + categoryTypes.ToString() +
                 " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
         }
 
@@ -231,8 +214,8 @@ public abstract class BaseCategory : InterfaceCategory
         Log.WriteLine("Done looping through.", LogLevel.VERBOSE);
     }
 
-    private static InterfaceChannel GetChannelInstance(string _channelName)
+    private static InterfaceChannel GetChannelInstance(string _channelType)
     {
-        return (InterfaceChannel)EnumExtensions.GetInstance(_channelName);
+        return (InterfaceChannel)EnumExtensions.GetInstance(_channelType);
     }
 }

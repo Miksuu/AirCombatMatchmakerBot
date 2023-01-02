@@ -9,7 +9,7 @@ public class REGISTRATIONCHANNEL : BaseChannel
 {
     public REGISTRATIONCHANNEL()
     {
-        channelName = ChannelName.REGISTRATIONCHANNEL;
+        channelType = ChannelType.REGISTRATIONCHANNEL;
         channelMessages = new List<MessageName>
         {
             MessageName.REGISTRATIONMESSAGE, 

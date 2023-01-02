@@ -25,18 +25,18 @@ public class CHALLENGEBUTTON : BaseButton
              " for league: " + _splitString, LogLevel.VERBOSE);
 
         // Find the category of the given button, temp, could optimise it here
-        CategoryName? categoryName = null;
+        CategoryType? categoryName = null;
         foreach (var interfaceCategoryKvp in 
             Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
             Log.WriteLine("Loop on: " + interfaceCategoryKvp.Key + " | " +
-                interfaceCategoryKvp.Value.CategoryName, LogLevel.VERBOSE);
+                interfaceCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
             if (interfaceCategoryKvp.Value.InterfaceChannels.Any(
                 x => x.ChannelId == _component.Channel.Id))
             {
                 Log.WriteLine("Found category: " +
-                    interfaceCategoryKvp.Value.CategoryName, LogLevel.DEBUG);
-                categoryName = interfaceCategoryKvp.Value.CategoryName;
+                    interfaceCategoryKvp.Value.CategoryType, LogLevel.DEBUG);
+                categoryName = interfaceCategoryKvp.Value.CategoryType;
                 break;
             }
         }

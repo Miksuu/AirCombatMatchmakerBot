@@ -36,7 +36,7 @@ public class DiscordLeagueReferences
     }
 
 
-    public Dictionary<ChannelName, ulong> LeagueChannels
+    public Dictionary<ChannelType, ulong> LeagueChannels
     {
         get
         {
@@ -70,10 +70,10 @@ public class DiscordLeagueReferences
     // The reference to the category created by the system
     [DataMember] private ulong leagueCategoryId { get; set; }
 
-    // The references for the channelNames inside the category
-    [DataMember] private Dictionary<ChannelName, ulong> leagueChannels { get; set; }
+    // The references for the channelTypes inside the category
+    [DataMember] private Dictionary<ChannelType, ulong> leagueChannels { get; set; }
 
-    // Id of the role which gives access to the league channelNames
+    // Id of the role which gives access to the league channelTypes
     [DataMember] private ulong leagueRoleId { get; set; }
 
     public DiscordLeagueReferences()

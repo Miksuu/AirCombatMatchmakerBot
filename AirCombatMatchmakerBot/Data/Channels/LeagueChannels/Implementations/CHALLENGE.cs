@@ -9,7 +9,7 @@ public class CHALLENGE : BaseChannel
 {
     public CHALLENGE()
     {
-        channelName = ChannelName.CHALLENGE;
+        channelType = ChannelType.CHALLENGE;
         channelMessages = new List<MessageName>
         {
             MessageName.CHALLENGEMESSAGE,
@@ -67,10 +67,10 @@ public class CHALLENGE : BaseChannel
             Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
             Log.WriteLine("On league: " +
-                createdCategoriesKvp.Value.CategoryName, LogLevel.VERBOSE);
+                createdCategoriesKvp.Value.CategoryType, LogLevel.VERBOSE);
 
             string leagueName =
-                EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryName);
+                EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryType);
 
             Log.WriteLine("Full league name: " + leagueName, LogLevel.VERBOSE);
 

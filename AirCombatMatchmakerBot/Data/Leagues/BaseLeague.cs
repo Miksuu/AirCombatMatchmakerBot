@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
 {
-    CategoryName InterfaceLeague.LeagueCategoryName
+    CategoryType InterfaceLeague.LeagueCategoryName
     {
         get
         {
@@ -96,7 +96,7 @@ public abstract class BaseLeague : InterfaceLeague
     }
 
     // Generated based on the implementation
-    [DataMember] protected CategoryName leagueCategoryName;
+    [DataMember] protected CategoryType leagueCategoryName;
     [DataMember] protected Era leagueEra;
     [DataMember] protected int leaguePlayerCountPerTeam;
     [DataMember] protected List<UnitName> leagueUnits = new List<UnitName>();
@@ -180,8 +180,8 @@ public abstract class BaseLeague : InterfaceLeague
 
         // Find the category fo the message ID
         var channel = Database.Instance.Categories.CreatedCategoriesWithChannels.First(
-            x => x.Value.CategoryName == CategoryName.REGISTRATIONCATEGORY).Value.InterfaceChannels.First(
-                x => x.ChannelName == ChannelName.LEAGUEREGISTRATION);
+            x => x.Value.CategoryType == CategoryType.REGISTRATIONCATEGORY).Value.InterfaceChannels.First(
+                x => x.ChannelType == ChannelType.LEAGUEREGISTRATION);
 
         var messageId = channel.InterfaceMessagesWithIds.First(
             x => x.Key.ToString() == leagueCategoryName.ToString()).Value.MessageId;

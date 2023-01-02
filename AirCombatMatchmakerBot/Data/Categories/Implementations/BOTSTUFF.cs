@@ -9,11 +9,11 @@ public class BOTSTUFF : BaseCategory
 {
     public BOTSTUFF()
     {
-        categoryName = CategoryName.BOTSTUFF;
-        channelNames = new List<ChannelName>()
+        categoryTypes = CategoryType.BOTSTUFF;
+        channelTypes = new List<ChannelType>()
         {
-            ChannelName.BOTLOG,
-            ChannelName.BOTCOMMANDS
+            ChannelType.BOTLOG,
+            ChannelType.BOTCOMMANDS
         };
     }
 

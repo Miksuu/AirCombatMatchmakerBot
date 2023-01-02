@@ -7,11 +7,11 @@ public class REGISTRATIONCATEGORY : BaseCategory
 {
     public REGISTRATIONCATEGORY()
     {
-        categoryName = CategoryName.REGISTRATIONCATEGORY;
-        channelNames = new List<ChannelName>()
+        categoryTypes = CategoryType.REGISTRATIONCATEGORY;
+        channelTypes = new List<ChannelType>()
         {
-            ChannelName.REGISTRATIONCHANNEL,
-            ChannelName.LEAGUEREGISTRATION
+            ChannelType.REGISTRATIONCHANNEL,
+            ChannelType.LEAGUEREGISTRATION
         };
     }
 

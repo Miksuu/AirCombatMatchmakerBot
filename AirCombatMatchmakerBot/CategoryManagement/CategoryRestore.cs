@@ -19,7 +19,7 @@ public static class CategoryRestore
             return true;
         }
 
-        Log.WriteLine("Category " + _categoryKvp.Value.CategoryName +
+        Log.WriteLine("Category " + _categoryKvp.Value.CategoryType +
             " not found, regenerating it...", LogLevel.ERROR);
 
         // Delete the old entry from the database

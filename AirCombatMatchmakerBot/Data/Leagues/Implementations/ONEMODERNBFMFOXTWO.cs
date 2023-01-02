@@ -10,7 +10,7 @@ public class ONEMODERNBFMFOXTWO : BaseLeague
 {
     public ONEMODERNBFMFOXTWO()
     {
-        leagueCategoryName = CategoryName.ONEMODERNBFMFOXTWO;
+        leagueCategoryName = CategoryType.ONEMODERNBFMFOXTWO;
         leagueEra = Era.MODERN;
         leaguePlayerCountPerTeam = 1;
 

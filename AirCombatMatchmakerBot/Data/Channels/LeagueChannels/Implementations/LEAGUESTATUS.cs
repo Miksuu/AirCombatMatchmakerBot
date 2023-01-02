@@ -9,7 +9,7 @@ public class LEAGUESTATUS : BaseChannel
 {
     public LEAGUESTATUS()
     {
-        channelName = ChannelName.LEAGUESTATUS;
+        channelType = ChannelType.LEAGUESTATUS;
     }
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)

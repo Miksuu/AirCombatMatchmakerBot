@@ -10,7 +10,7 @@ public class LEAGUEREGISTRATION : BaseChannel
 {
     public LEAGUEREGISTRATION()
     {
-        channelName = ChannelName.LEAGUEREGISTRATION;
+        channelType = ChannelType.LEAGUEREGISTRATION;
         channelMessages = new List<MessageName> { MessageName.LEAGUEREGISTRATIONMESSAGE };
     }
 
@@ -28,7 +28,7 @@ public class LEAGUEREGISTRATION : BaseChannel
 
     public override async Task PrepareChannelMessages()
     {
-        Log.WriteLine("Starting to to prepare channel messages on " + channelName, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to to prepare channel messages on " + channelType, LogLevel.VERBOSE);
 
         var guild = BotReference.GetGuildRef();
 
@@ -46,7 +46,7 @@ public class LEAGUEREGISTRATION : BaseChannel
 
         Log.WriteLine("After db find", LogLevel.VERBOSE);
 
-        foreach (CategoryName leagueName in Enum.GetValues(typeof(CategoryName)))
+        foreach (CategoryType leagueName in Enum.GetValues(typeof(CategoryType)))
         {
             Log.WriteLine("Looping on: " + leagueName.ToString(), LogLevel.VERBOSE);
 

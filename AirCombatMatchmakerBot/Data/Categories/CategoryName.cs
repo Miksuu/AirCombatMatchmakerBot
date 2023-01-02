@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 // REMEMBER TO SET THE VALUES CORRECTLY HERE !!!
 
 [JsonConverter(typeof(StringEnumConverter))]
-public enum CategoryName
+public enum CategoryType
 {
     [EnumMember(Value = "1v1 Modern BFM Guns")]
     ONEMODERNBFMGUNS = 0,

@@ -9,11 +9,11 @@ public class LEAGUETEMPLATE : BaseCategory
 {
     public LEAGUETEMPLATE()
     {
-        categoryName = CategoryName.LEAGUETEMPLATE;
-        channelNames = new List<ChannelName>()
+        categoryTypes = CategoryType.LEAGUETEMPLATE;
+        channelTypes = new List<ChannelType>()
         {
-            ChannelName.LEAGUESTATUS,
-            ChannelName.CHALLENGE,
+            ChannelType.LEAGUESTATUS,
+            ChannelType.CHALLENGE,
         };
     }
 

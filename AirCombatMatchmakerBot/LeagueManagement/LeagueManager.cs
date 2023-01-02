@@ -4,7 +4,7 @@ using System;
 
 public static class LeagueManager
 {
-    public static InterfaceLeague GetCategoryInstance(CategoryName _leagueCategoryName)
+    public static InterfaceLeague GetCategoryInstance(CategoryType _leagueCategoryName)
     {
         return (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
@@ -22,10 +22,10 @@ public static class LeagueManager
         }
 
         // Get all of the league category names and loop through them to create the database entries
-        var categoryEnumValues = Enum.GetValues(typeof(CategoryName));
+        var categoryEnumValues = Enum.GetValues(typeof(CategoryType));
         Log.WriteLine(nameof(categoryEnumValues) +
             " length: " + categoryEnumValues.Length, LogLevel.VERBOSE);
-        foreach (CategoryName leagueCategoryName in categoryEnumValues)
+        foreach (CategoryType leagueCategoryName in categoryEnumValues)
         {
             Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString(), LogLevel.DEBUG);
 
@@ -74,7 +74,7 @@ public static class LeagueManager
         return Task.CompletedTask;
     }
 
-    public static InterfaceLeague GetLeagueInstanceWithLeagueCategoryName(CategoryName _leagueCategoryName)
+    public static InterfaceLeague GetLeagueInstanceWithLeagueCategoryName(CategoryType _leagueCategoryName)
     {
         Log.WriteLine("Getting a league instance with LeagueCategoryName: " +
             _leagueCategoryName, LogLevel.VERBOSE);

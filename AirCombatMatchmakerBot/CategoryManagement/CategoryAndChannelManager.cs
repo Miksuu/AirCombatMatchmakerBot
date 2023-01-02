@@ -9,8 +9,8 @@ public static class CategoryAndChannelManager
 {
     // Do not create these categories,
     // as they are used as template (such as generating a baseline league)
-    private static List<CategoryName> categoriesThatWontGetGenerated = new List<CategoryName> {
-        CategoryName.LEAGUETEMPLATE };
+    private static List<CategoryType> categoriesThatWontGetGenerated = new List<CategoryType> {
+        CategoryType.LEAGUETEMPLATE };
 
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
     {
@@ -26,9 +26,9 @@ public static class CategoryAndChannelManager
 
         // Get the values of the members of the specific enum type and
         // loop through the values of the categories
-        var values = Enum.GetValues(typeof(CategoryName));
+        var values = Enum.GetValues(typeof(CategoryType));
         Log.WriteLine(nameof(values) + " count: " + values.Length, LogLevel.VERBOSE);
-        foreach (CategoryName categoryName in values)
+        foreach (CategoryType categoryName in values)
         {
             Log.WriteLine("Looping on category name: " + categoryName, LogLevel.VERBOSE);
 
@@ -48,11 +48,11 @@ public static class CategoryAndChannelManager
     }
 
     private static async Task GenerateACategoryFromName(
-        SocketGuild _guild, CategoryName _categoryName)
+        SocketGuild _guild, CategoryType _categoryName)
     {
         string finalCategoryName = "";
         bool isLeague = false;
-        CategoryName? leagueCategoryName = null;
+        CategoryType? leagueCategoryName = null;
         InterfaceCategory? interfaceCategory = null;
 
         Log.WriteLine("Generating category named: " + _categoryName, LogLevel.VERBOSE);
@@ -69,8 +69,8 @@ public static class CategoryAndChannelManager
             Log.WriteLine("Got " + nameof(leagueInterface) +
                 leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-            interfaceCategory = GetCategoryInstance(CategoryName.LEAGUETEMPLATE);
-            interfaceCategory.CategoryName = _categoryName;
+            interfaceCategory = GetCategoryInstance(CategoryType.LEAGUETEMPLATE);
+            interfaceCategory.CategoryType = _categoryName;
 
             // Cached for later use (inserting the category ID)
             leagueCategoryName = leagueInterface.LeagueCategoryName;
@@ -93,13 +93,13 @@ public static class CategoryAndChannelManager
             }
 
             Log.WriteLine("interfaceCategory name: " +
-                interfaceCategory.CategoryName, LogLevel.DEBUG);
+                interfaceCategory.CategoryType, LogLevel.DEBUG);
 
-            Log.WriteLine(nameof(interfaceCategory.CategoryName) +
-                ": " + interfaceCategory.CategoryName, LogLevel.VERBOSE);
+            Log.WriteLine(nameof(interfaceCategory.CategoryType) +
+                ": " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
 
-            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryName);
-            Log.WriteLine("Category name is: " + interfaceCategory.CategoryName, LogLevel.VERBOSE);
+            finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryType);
+            Log.WriteLine("Category name is: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
         }
 
 
@@ -114,11 +114,11 @@ public static class CategoryAndChannelManager
         SocketCategoryChannel? socketCategoryChannel = null;
 
         bool contains = false;
-        Log.WriteLine("searching for categoryname: " + interfaceCategory.CategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("searching for categoryname: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
         foreach (var ct in Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
-            Log.WriteLine("categoryname:" + ct.Value.CategoryName, LogLevel.VERBOSE);
-            if (ct.Value.CategoryName == interfaceCategory.CategoryName)
+            Log.WriteLine("categoryname:" + ct.Value.CategoryType, LogLevel.VERBOSE);
+            if (ct.Value.CategoryType == interfaceCategory.CategoryType)
             {
                 // Checks if the channel is also in the discord server itself too, not only database
                 contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
@@ -136,7 +136,7 @@ public static class CategoryAndChannelManager
 
             var dbCategory =
                 Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
-                    interfaceCategory.CategoryName);
+                    interfaceCategory.CategoryType);
 
             interfaceCategory = dbCategory.Value;
 
@@ -149,7 +149,7 @@ public static class CategoryAndChannelManager
 
             Log.WriteLine("Found " + nameof(dbCategory) + " with id: " +
                 dbCategory.Key + " named: " +
-                dbCategory.Value.CategoryName, LogLevel.VERBOSE);
+                dbCategory.Value.CategoryType, LogLevel.VERBOSE);
 
             socketCategoryChannel = _guild.GetCategoryChannel(dbCategory.Key);
 
@@ -197,12 +197,12 @@ public static class CategoryAndChannelManager
     }
 
     // Maybe add inside the classes itself
-    private static InterfaceCategory GetCategoryInstance(CategoryName _categoryName)
+    private static InterfaceCategory GetCategoryInstance(CategoryType _categoryName)
     {
         return (InterfaceCategory)EnumExtensions.GetInstance(_categoryName.ToString());
     }
 
-    private static InterfaceLeague GetLeagueInstance(CategoryName _leagueCategoryName)
+    private static InterfaceLeague GetLeagueInstance(CategoryType _leagueCategoryName)
     {
         return (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
