@@ -56,16 +56,20 @@ public class Matches
             Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
                 _interfaceLeague.LeagueCategoryName);
 
-        CreateAMatchChannel(guild, newMatch, categoryKvp);
+        await CreateAMatchChannel(guild, newMatch, _interfaceLeague);
 
         await SerializationManager.SerializeDB();
     }
 
-    public async void CreateAMatchChannel(
+    public async Task CreateAMatchChannel(
         SocketGuild _guild,
         LeagueMatch _leagueMatch, 
-        KeyValuePair<ulong, InterfaceCategory> _categoryKvp)
+        InterfaceLeague _interfaceLeague)
     {
+        var categoryKvp =
+            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
+                _interfaceLeague.LeagueCategoryName);
+
         // Prep the channel name with match id
         string overriddenMatchName = "match-" + _leagueMatch.MatchId.ToString();
 
@@ -74,8 +78,8 @@ public class Matches
 
         // Prepare the match with the ID of the current new match
         _leagueMatch.MatchChannelId =
-            await _categoryKvp.Value.CreateSpecificChannelFromChannelType(
-                _guild, ChannelType.MATCHCHANNEL, _categoryKvp.Value.SocketCategoryChannelId,
+            await categoryKvp.Value.CreateSpecificChannelFromChannelType(
+                _guild, ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
                 overriddenMatchName); // Override's the channel's name with the match name with that match-[id]
     }
 }
