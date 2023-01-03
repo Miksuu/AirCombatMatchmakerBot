@@ -26,7 +26,7 @@ public class Matches
         matchesList = new List<LeagueMatch>();
     }
 
-    public void CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
+    public async void CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] +
             _teamsToFormMatchOn[1], LogLevel.VERBOSE);
@@ -59,8 +59,10 @@ public class Matches
         string overriddenMatchName = "match-" + newMatch.MatchId.ToString();
 
         // Prepare the match with the ID of the current new match
-        categoryKvp.Value.CreateSpecificChannelFromChannelType(
+        await categoryKvp.Value.CreateSpecificChannelFromChannelType(
             guild, ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
             overriddenMatchName); // Override's the channel's name with the match name with that match-[id]
+
+        await SerializationManager.SerializeDB();
     }
 }

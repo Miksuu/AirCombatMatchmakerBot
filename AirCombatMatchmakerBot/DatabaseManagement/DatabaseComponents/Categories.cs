@@ -41,7 +41,8 @@ public class Categories
         string _idToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
-        var FoundCategoryKvp = CreatedCategoriesWithChannels.First(x => x.Value.CategoryType.ToString() == _idToSearchWith);
+        var FoundCategoryKvp = CreatedCategoriesWithChannels.First(
+            x => x.Value.CategoryType.ToString() == _idToSearchWith);
         Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;
     }
@@ -56,27 +57,30 @@ public class Categories
     }
 
     public KeyValuePair<ulong, InterfaceCategory> GetCreatedCategoryWithChannelKvpByCategoryName(
-        CategoryType? _categoryName)
+        CategoryType? _categoryType)
     {
-        Log.WriteLine("Getting CategoryKvp by category name: " + _categoryName, LogLevel.VERBOSE);
+        Log.WriteLine("Getting CategoryKvp by category name: " + _categoryType, LogLevel.VERBOSE);
         var FoundCategoryKvp = CreatedCategoriesWithChannels.First(
-                x => x.Value.CategoryType == _categoryName);
+                x => x.Value.CategoryType == _categoryType);
         Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;
     }
 
-    public void AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(ulong _id, InterfaceCategory _InterfaceCategory)
+    public void AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(
+        ulong _id, InterfaceCategory _InterfaceCategory)
     {
         Log.WriteLine("Adding interfaceCategory: " + _InterfaceCategory.CategoryType +
             "to the CreatedCategoriesWithChannels Dictionary" + " with id: " + _id, LogLevel.VERBOSE);
         CreatedCategoriesWithChannels.Add(_id, _InterfaceCategory);
-        Log.WriteLine("Done adding, count is now: " + CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
+        Log.WriteLine("Done adding, count is now: " +
+            CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
     }
 
     public void RemoveFromCreatedCategoryWithChannelWithKey(ulong _id)
     {
         Log.WriteLine("Removing with id: " + _id, LogLevel.VERBOSE);
         CreatedCategoriesWithChannels.Remove(_id);
-        Log.WriteLine("Done removing, count is now: " + CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
+        Log.WriteLine("Done removing, count is now: " +
+            CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
     }
 }

@@ -43,7 +43,8 @@ public static class CategoryAndChannelManager
             await GenerateACategoryFromName(guild, categoryName);
         }
 
-        Log.WriteLine("Done looping through the category names, serialiazing.", LogLevel.VERBOSE);
+        Log.WriteLine("Done looping through the category names, serialiazing.",
+            LogLevel.VERBOSE);
         await SerializationManager.SerializeDB();
     }
 

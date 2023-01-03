@@ -22,6 +22,21 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
+    string InterfaceChannel.ChannelName
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(channelName) + ": " + channelName, LogLevel.VERBOSE);
+            return channelName;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(channelName) + channelName
+                + " to: " + value, LogLevel.VERBOSE);
+            channelName = value;
+        }
+    }
+
     ulong InterfaceChannel.ChannelId
     {
         get
@@ -85,6 +100,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     [DataMember] protected ChannelType channelType;
+    [DataMember] protected string channelName;
     [DataMember] protected ulong channelId;
     [DataMember] protected ulong channelsCategoryId;
     protected List<MessageName> channelMessages;
@@ -104,6 +120,13 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + channelsCategoryId, LogLevel.VERBOSE);
 
         string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(channelType);
+
+        // Temp fix perhaps unnecessary after the name has been set more properly 
+        // for non-match channels
+        if (channelName.Contains("match-"))
+        {
+            channelTypeString = channelName;
+        }
 
         var channel = await _guild.CreateTextChannelAsync(channelTypeString, x => {
             x.PermissionOverwrites = GetGuildPermissions(_guild);

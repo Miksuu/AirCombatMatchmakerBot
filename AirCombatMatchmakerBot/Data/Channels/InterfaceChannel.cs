@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 public interface InterfaceChannel
 {
     public ChannelType ChannelType { get; set; }
+    public string ChannelName { get; set; }
     public ulong ChannelId { get; set; }
     public ulong ChannelsCategoryId { get; set; }
     public List<MessageName> ChannelMessages { get; set; }

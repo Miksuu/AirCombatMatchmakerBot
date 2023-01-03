@@ -26,8 +26,8 @@ public class BotRuntimeManager
             Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
             //ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
-           
-            
+          
+            /*
             var guild = BotReference.GetGuildRef();
             foreach (var ch in guild.Channels)
             {
@@ -40,7 +40,7 @@ public class BotRuntimeManager
             {
                 Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
                 await cat.DeleteAsync();
-            }
+            }*/
 
             // Creates the league references to the database
             // (must be run before creating the channels)

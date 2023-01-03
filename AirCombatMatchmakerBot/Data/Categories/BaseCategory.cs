@@ -140,13 +140,14 @@ public abstract class BaseCategory : InterfaceCategory
         string _overrideChannelName = "") // Keeps the functionality, but overrides the channel name
         // It is used for creating matches with correct ID right now.
     {
+        bool channelExists = false;
+
         Log.WriteLine("Creating channel name: " + _channelType, LogLevel.DEBUG);
 
-        bool channelExists = false;
-        InterfaceChannel? interfaceChannel = null;
-
+        InterfaceChannel? interfaceChannel = GetChannelInstance(_channelType.ToString());
+        
         interfaceChannel = GetChannelInstance(_channelType.ToString());
-        Log.WriteLine("interfaceChanneltest: " +
+        Log.WriteLine("interfaceChannel initialsetup: " +
             interfaceChannel.ChannelType.ToString(), LogLevel.DEBUG);
 
         if (interfaceChannel == null)
@@ -157,10 +158,10 @@ public abstract class BaseCategory : InterfaceCategory
 
         // Channel found from the basecategory (it exists)
         if (interfaceChannels.Any(
-            x => x.ChannelType == interfaceChannel.ChannelType))
+            x => x.ChannelName == interfaceChannel.ChannelName))
         {
-            Log.WriteLine(nameof(interfaceChannels) +
-                " already contains channel: " + _channelType.ToString(), LogLevel.VERBOSE);
+            Log.WriteLine(nameof(interfaceChannels) + " already contains channel: " +
+                interfaceChannel.ChannelName, LogLevel.VERBOSE);
 
             // Replace interfaceChannel with a one that is from the database
             interfaceChannel = interfaceChannels.First(
@@ -173,12 +174,34 @@ public abstract class BaseCategory : InterfaceCategory
                await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
               _socketCategoryChannelId, interfaceChannel, _guild);
         }
+        /*
         else
         {
             Log.WriteLine(nameof(interfaceChannels) +
                 " does not contain channel: " + _channelType.ToString() +
                 ", getting instance of it", LogLevel.VERBOSE);
             interfaceChannel = GetChannelInstance(_channelType.ToString());
+        }*/
+
+        // Instance is set after here, do operations AFTER that code block above,
+        // otherwise they wont get saved
+
+        // Regular channels that don't appear many times in the category
+        if (_overrideChannelName == "")
+        {
+            // Maybe insert the name more properly here if needed later
+            interfaceChannel.ChannelName = _channelType.ToString();
+                //EnumExtensions.GetEnumMemberAttrValue(_channelType.ToString());
+            Log.WriteLine("Setup regular channel name to: " +
+                interfaceChannel.ChannelName, LogLevel.DEBUG);
+        }
+        // Channels such as the match channel, that have the same type,
+        // but different names
+        else
+        {
+            interfaceChannel.ChannelName = _overrideChannelName;
+            Log.WriteLine("Setup overriden channel name to: " +
+                interfaceChannel.ChannelName, LogLevel.DEBUG);
         }
 
         // Insert the category's ID for easier access for the channels later on
@@ -191,7 +214,8 @@ public abstract class BaseCategory : InterfaceCategory
 
             Log.WriteLine("Creating a channel named: " + interfaceChannel.ChannelType +
                 " for category: " + categoryTypes + " (" +
-                _socketCategoryChannelId + ")", LogLevel.VERBOSE);
+                _socketCategoryChannelId + ")" + " with name: " +
+                interfaceChannel.ChannelName, LogLevel.DEBUG);
 
             ulong categoryId =
                 Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
@@ -218,4 +242,6 @@ public abstract class BaseCategory : InterfaceCategory
     {
         return (InterfaceChannel)EnumExtensions.GetInstance(_channelType);
     }
+
+    
 }
