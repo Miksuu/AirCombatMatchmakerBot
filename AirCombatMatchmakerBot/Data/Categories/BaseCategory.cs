@@ -131,6 +131,13 @@ public abstract class BaseCategory : InterfaceCategory
 
         foreach (ChannelType channelType in _interfaceCategory.ChannelTypes)
         {
+            // Checks for missing match channels from the league category
+            if (channelType == ChannelType.MATCHCHANNEL)
+            {
+                await CreateTheMissingMatchChannels(_guild, socketCategoryChannelId);
+                continue;
+            }
+
             await CreateSpecificChannelFromChannelType(_guild, channelType, _socketCategoryChannelId);
         }
     }
@@ -217,6 +224,51 @@ public abstract class BaseCategory : InterfaceCategory
     private static InterfaceChannel GetChannelInstance(string _channelType)
     {
         return (InterfaceChannel)EnumExtensions.GetInstance(_channelType);
+    }
+
+    private async static Task CreateTheMissingMatchChannels(
+        SocketGuild _guild, ulong _socketCategoryChannelId)
+    {
+        Log.WriteLine("Checking for missing matches in: " + _socketCategoryChannelId, LogLevel.VERBOSE);
+
+        var client = BotReference.GetClientRef();
+        if (client == null)
+        {
+            Exceptions.BotClientRefNull();
+            return;
+        }
+
+        InterfaceLeague interfaceLeague =
+            Database.Instance.Leagues.GetILeagueByCategoryId(_socketCategoryChannelId);
+
+        if (interfaceLeague == null) 
+        {
+            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        Log.WriteLine("Found InterfaceLeague: " + interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+
+        Matches matches = interfaceLeague.LeagueData.Matches;
+
+        foreach (LeagueMatch match in matches.MatchesList)
+        {
+            Log.WriteLine("Looping on match id: " + match.MatchId +
+                " with channelId: " + match.MatchChannelId, LogLevel.VERBOSE);
+
+            var matchChannel = client.GetChannelAsync(match.MatchChannelId).Result as ITextChannel;
+
+            if (matchChannel != null)
+            {
+                Log.WriteLine("Found " + nameof(matchChannel) + matchChannel.Name, LogLevel.VERBOSE);
+                continue;
+            }
+
+            Log.WriteLine(nameof(matchChannel) + " was not found!" +
+                " Expected to find a channel with match id: " + match.MatchId, LogLevel.WARNING);
+
+            await matches.CreateAMatchChannel(_guild, match, interfaceLeague);
+        }
     }
 
     private static string GetChannelNameFromOverridenString(

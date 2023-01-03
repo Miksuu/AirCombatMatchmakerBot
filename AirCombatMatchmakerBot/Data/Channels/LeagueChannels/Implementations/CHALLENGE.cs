@@ -55,7 +55,6 @@ public class CHALLENGE : BaseChannel
         }
 
         await base.PostChannelMessages(guild, databaseInterfaceChannel);
-
     }
 
     public string GenerateChallengeQueueMessage()

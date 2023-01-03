@@ -73,6 +73,15 @@ public class Leagues
         return FoundLeague;
     }
 
+    public InterfaceLeague GetILeagueByCategoryId(ulong _leagueCategoryId)
+    {
+        Log.WriteLine("Getting ILeague by ID: " + _leagueCategoryId, LogLevel.VERBOSE);
+        InterfaceLeague FoundLeague = StoredLeagues.First(
+            x => x.DiscordLeagueReferences.LeagueCategoryId == _leagueCategoryId);
+        Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
+        return FoundLeague;
+    }
+
     public void AddToStoredLeagues(InterfaceLeague _ILeague)
     {
         Log.WriteLine("Adding ILeague: " + _ILeague.LeagueCategoryName +
@@ -80,13 +89,6 @@ public class Leagues
         StoredLeagues.Add(_ILeague);
         Log.WriteLine("Done adding, count is now: " + StoredLeagues.Count, LogLevel.VERBOSE);
     }
-
-    /*
-    public List<InterfaceLeague> GetListOfStoredLeagues()
-    {
-        Log.WriteLine("Getting list of ILeagues with count of: " + StoredLeagues.Count, LogLevel.VERBOSE);
-        return StoredLeagues;
-    }*/
 
     public async void HandleSettingTeamsInactiveThatUserWasIn(ulong _userId)
     {
