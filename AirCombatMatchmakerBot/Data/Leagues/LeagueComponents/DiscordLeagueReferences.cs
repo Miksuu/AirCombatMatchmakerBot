@@ -3,23 +3,6 @@
 [DataContract]
 public class DiscordLeagueReferences
 {
-    /*
-    public ulong LeagueRegistrationChannelMessageId
-    {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(leagueRegistrationChannelMessageId) +
-                leagueRegistrationChannelMessageId, LogLevel.VERBOSE);
-            return leagueRegistrationChannelMessageId;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(leagueRegistrationChannelMessageId) +
-                leagueRegistrationChannelMessageId + " to: " + value, LogLevel.VERBOSE);
-            leagueRegistrationChannelMessageId = value;
-        }
-    }*/
-
     public ulong LeagueCategoryId
     {
         get

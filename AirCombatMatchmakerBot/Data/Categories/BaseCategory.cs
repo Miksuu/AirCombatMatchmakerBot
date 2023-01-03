@@ -145,8 +145,7 @@ public abstract class BaseCategory : InterfaceCategory
         Log.WriteLine("Creating channel name: " + _channelType, LogLevel.DEBUG);
 
         InterfaceChannel? interfaceChannel = GetChannelInstance(_channelType.ToString());
-        
-        interfaceChannel = GetChannelInstance(_channelType.ToString());
+
         Log.WriteLine("interfaceChannel initialsetup: " +
             interfaceChannel.ChannelType.ToString(), LogLevel.DEBUG);
 
@@ -155,6 +154,8 @@ public abstract class BaseCategory : InterfaceCategory
             Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
             return;
         }
+
+        interfaceChannel.ChannelName = GetChannelNameFromOverridenString(_overrideChannelName, _channelType);
 
         // Channel found from the basecategory (it exists)
         if (interfaceChannels.Any(
@@ -187,22 +188,7 @@ public abstract class BaseCategory : InterfaceCategory
         // otherwise they wont get saved
 
         // Regular channels that don't appear many times in the category
-        if (_overrideChannelName == "")
-        {
-            // Maybe insert the name more properly here if needed later
-            interfaceChannel.ChannelName = _channelType.ToString();
-                //EnumExtensions.GetEnumMemberAttrValue(_channelType.ToString());
-            Log.WriteLine("Setup regular channel name to: " +
-                interfaceChannel.ChannelName, LogLevel.DEBUG);
-        }
-        // Channels such as the match channel, that have the same type,
-        // but different names
-        else
-        {
-            interfaceChannel.ChannelName = _overrideChannelName;
-            Log.WriteLine("Setup overriden channel name to: " +
-                interfaceChannel.ChannelName, LogLevel.DEBUG);
-        }
+
 
         // Insert the category's ID for easier access for the channels later on
         // (for channel specific features for example)
@@ -243,5 +229,26 @@ public abstract class BaseCategory : InterfaceCategory
         return (InterfaceChannel)EnumExtensions.GetInstance(_channelType);
     }
 
-    
+    private static string GetChannelNameFromOverridenString(
+        string _overrideChannelName, ChannelType _channelType)
+    {
+        if (_overrideChannelName == "")
+        {
+            Log.WriteLine("Settings regular channel name to: " +
+                _channelType.ToString(), LogLevel.DEBUG);
+            // Maybe insert the name more properly here if needed later
+            return _channelType.ToString();
+            //EnumExtensions.GetEnumMemberAttrValue(_channelType.ToString());
+
+        }
+        // Channels such as the match channel, that have the same type,
+        // but different names
+        else
+        {
+            Log.WriteLine("Setting overriden channel name to: " +
+                _overrideChannelName, LogLevel.DEBUG);
+            return _overrideChannelName;
+
+        }
+    }
 }
