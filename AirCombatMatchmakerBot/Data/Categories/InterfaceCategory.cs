@@ -19,7 +19,7 @@ public interface InterfaceCategory
         InterfaceCategory _interfaceCategory, ulong _socketCategoryChannelId,
         SocketGuild _guild);
 
-    public Task CreateSpecificChannelFromChannelType(
+    public Task<ulong> CreateSpecificChannelFromChannelType(
         SocketGuild _guild, ChannelType _channelType, ulong _socketCategoryChannelId,
         string _overrideChannelName = "");
 }

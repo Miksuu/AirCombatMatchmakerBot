@@ -35,8 +35,25 @@ public class LeagueMatch
         }
     }
 
+    public ulong MatchChannelId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(matchChannelId)
+                + ": " + matchChannelId, LogLevel.VERBOSE);
+            return matchChannelId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(matchChannelId) +
+                matchChannelId + " to: " + value, LogLevel.VERBOSE);
+            matchChannelId = value;
+        }
+    }
+
     [DataMember] private int[] teamsInTheMatch { get; set; }
     [DataMember] private int matchId { get; set; }
+    [DataMember] private ulong matchChannelId { get; set; }
 
     public LeagueMatch() { }
 

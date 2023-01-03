@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Discord.WebSocket;
+using System.Runtime.Serialization;
 
 [DataContract]
 public class Matches
@@ -55,14 +56,26 @@ public class Matches
             Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
                 _interfaceLeague.LeagueCategoryName);
 
-        // Prep the channel name with match id
-        string overriddenMatchName = "match-" + newMatch.MatchId.ToString();
-
-        // Prepare the match with the ID of the current new match
-        await categoryKvp.Value.CreateSpecificChannelFromChannelType(
-            guild, ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
-            overriddenMatchName); // Override's the channel's name with the match name with that match-[id]
+        CreateAMatchChannel(guild, newMatch, categoryKvp);
 
         await SerializationManager.SerializeDB();
+    }
+
+    public async void CreateAMatchChannel(
+        SocketGuild _guild,
+        LeagueMatch _leagueMatch, 
+        KeyValuePair<ulong, InterfaceCategory> _categoryKvp)
+    {
+        // Prep the channel name with match id
+        string overriddenMatchName = "match-" + _leagueMatch.MatchId.ToString();
+
+        Log.WriteLine("Starting to create a new match channel: " +
+            overriddenMatchName, LogLevel.VERBOSE);
+
+        // Prepare the match with the ID of the current new match
+        _leagueMatch.MatchChannelId =
+            await _categoryKvp.Value.CreateSpecificChannelFromChannelType(
+                _guild, ChannelType.MATCHCHANNEL, _categoryKvp.Value.SocketCategoryChannelId,
+                overriddenMatchName); // Override's the channel's name with the match name with that match-[id]
     }
 }

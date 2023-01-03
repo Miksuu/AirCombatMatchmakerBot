@@ -135,10 +135,10 @@ public abstract class BaseCategory : InterfaceCategory
         }
     }
 
-    public async Task CreateSpecificChannelFromChannelType(
+    public async Task<ulong> CreateSpecificChannelFromChannelType(
         SocketGuild _guild, ChannelType _channelType, ulong _socketCategoryChannelId,
         string _overrideChannelName = "") // Keeps the functionality, but overrides the channel name
-        // It is used for creating matches with correct ID right now.
+        // It is used for creating matches with correct name ID right now.
     {
         bool channelExists = false;
 
@@ -152,10 +152,11 @@ public abstract class BaseCategory : InterfaceCategory
         if (interfaceChannel == null)
         {
             Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-            return;
+            return 0;
         }
 
-        interfaceChannel.ChannelName = GetChannelNameFromOverridenString(_overrideChannelName, _channelType);
+        interfaceChannel.ChannelName =
+            GetChannelNameFromOverridenString(_overrideChannelName, _channelType);
 
         // Channel found from the basecategory (it exists)
         if (interfaceChannels.Any(
@@ -175,23 +176,7 @@ public abstract class BaseCategory : InterfaceCategory
                await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
               _socketCategoryChannelId, interfaceChannel, _guild);
         }
-        /*
-        else
-        {
-            Log.WriteLine(nameof(interfaceChannels) +
-                " does not contain channel: " + _channelType.ToString() +
-                ", getting instance of it", LogLevel.VERBOSE);
-            interfaceChannel = GetChannelInstance(_channelType.ToString());
-        }*/
 
-        // Instance is set after here, do operations AFTER that code block above,
-        // otherwise they wont get saved
-
-        // Regular channels that don't appear many times in the category
-
-
-        // Insert the category's ID for easier access for the channels later on
-        // (for channel specific features for example)
         interfaceChannel.ChannelsCategoryId = _socketCategoryChannelId;
 
         if (!channelExists)
@@ -221,7 +206,12 @@ public abstract class BaseCategory : InterfaceCategory
 
         await interfaceChannel.PrepareChannelMessages();
 
-        Log.WriteLine("Done looping through.", LogLevel.VERBOSE);
+        Log.WriteLine("Done creating channel: " + interfaceChannel.ChannelId + " with name: " 
+            + interfaceChannel.ChannelName, LogLevel.VERBOSE);
+
+        return interfaceChannel.ChannelId;
+
+
     }
 
     private static InterfaceChannel GetChannelInstance(string _channelType)
