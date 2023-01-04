@@ -144,8 +144,9 @@ public abstract class BaseCategory : InterfaceCategory
 
     public async Task<ulong> CreateSpecificChannelFromChannelType(
         SocketGuild _guild, ChannelType _channelType, ulong _socketCategoryChannelId,
-        string _overrideChannelName = "") // Keeps the functionality, but overrides the channel name
-        // It is used for creating matches with correct name ID right now.
+        string _overrideChannelName = "",// Keeps the functionality, but overrides the channel name
+                                         // It is used for creating matches with correct name ID right now.
+        params ulong[] _allowedUsersIdsArray)
     {
         bool channelExists = false;
 
@@ -188,7 +189,7 @@ public abstract class BaseCategory : InterfaceCategory
 
         if (!channelExists)
         {
-            List<Overwrite> permissionsList = interfaceChannel.GetGuildPermissions(_guild);
+            //List<Overwrite> permissionsList = interfaceChannel.GetGuildPermissions(_guild);
 
             Log.WriteLine("Creating a channel named: " + interfaceChannel.ChannelType +
                 " for category: " + categoryTypes + " (" +
@@ -199,7 +200,7 @@ public abstract class BaseCategory : InterfaceCategory
                 Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
                     categoryTypes).Key;
 
-            await interfaceChannel.CreateAChannelForTheCategory(_guild);
+            await interfaceChannel.CreateAChannelForTheCategory(_guild, _allowedUsersIdsArray);
 
             interfaceChannel.InterfaceMessagesWithIds.Clear();
 
@@ -217,8 +218,6 @@ public abstract class BaseCategory : InterfaceCategory
             + interfaceChannel.ChannelName, LogLevel.VERBOSE);
 
         return interfaceChannel.ChannelId;
-
-
     }
 
     private static InterfaceChannel GetChannelInstance(string _channelType)

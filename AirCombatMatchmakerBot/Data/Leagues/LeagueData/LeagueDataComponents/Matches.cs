@@ -76,10 +76,13 @@ public class Matches
         Log.WriteLine("Starting to create a new match channel: " +
             overriddenMatchName, LogLevel.VERBOSE);
 
+
+
         // Prepare the match with the ID of the current new match
         _leagueMatch.MatchChannelId =
             await categoryKvp.Value.CreateSpecificChannelFromChannelType(
                 _guild, ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
-                overriddenMatchName); // Override's the channel's name with the match name with that match-[id]
+                overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
+                _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague));
     }
 }

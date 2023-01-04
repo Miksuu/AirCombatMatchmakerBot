@@ -67,4 +67,43 @@ public class LeagueMatch
         Log.WriteLine("Constructed a new match with teams ids: " + teamsInTheMatch[0] +
             teamsInTheMatch[1] + " with matchId of: " + matchId, LogLevel.DEBUG);
     }
+    
+    public ulong[] GetIdsOfThePlayersInTheMatchAsArray(InterfaceLeague _interfaceLeague)
+    {
+        int playerCounter = 0;
+
+        // Calculate how many users need to be granted roles
+        int userAmountToGrantRolesTo = _interfaceLeague.LeaguePlayerCountPerTeam * 2;
+        ulong[] allowedUserIds = new ulong[userAmountToGrantRolesTo];
+
+        Log.WriteLine(nameof(allowedUserIds) + " length: " +
+            allowedUserIds.Length, LogLevel.VERBOSE);
+
+        foreach (int teamId in TeamsInTheMatch)
+        {
+            Log.WriteLine("Looping on team id: " + teamId, LogLevel.VERBOSE);
+            Team foundTeam = _interfaceLeague.LeagueData.Teams.FindTeamById(teamId);
+
+            if (foundTeam == null)
+            {
+                Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.ERROR);
+                continue;
+            }
+
+            foreach (Player player in foundTeam.GetListOfPlayersInATeam())
+            {
+                /*
+                Log.WriteLine("Inserting player: " + player.GetPlayerDiscordId() + " to: " + nameof(allowedUserIds) +
+                    " with int: " + playerCounter + " That is length of: " + allowedUserIds.Length, LogLevel.DEBUG);*/
+                allowedUserIds[playerCounter] = player.GetPlayerDiscordId();
+                Log.WriteLine("Added " + allowedUserIds[playerCounter] + " to: " +
+                    nameof(allowedUserIds) + ". " + nameof(playerCounter) + " is now: " +
+                    playerCounter+1 + " out of: " + (allowedUserIds.Length - 1).ToString(), LogLevel.VERBOSE);
+
+                playerCounter++;
+            }
+        }
+
+        return allowedUserIds;
+    }
 }

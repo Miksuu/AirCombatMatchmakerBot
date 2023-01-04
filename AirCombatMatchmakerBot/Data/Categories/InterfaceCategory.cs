@@ -21,5 +21,5 @@ public interface InterfaceCategory
 
     public Task<ulong> CreateSpecificChannelFromChannelType(
         SocketGuild _guild, ChannelType _channelType, ulong _socketCategoryChannelId,
-        string _overrideChannelName = "");
+        string _overrideChannelName = "", params ulong[] _allowedUsersIdsArray);
 }

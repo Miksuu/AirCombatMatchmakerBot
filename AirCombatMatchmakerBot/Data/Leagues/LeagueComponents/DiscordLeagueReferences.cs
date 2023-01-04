@@ -18,7 +18,6 @@ public class DiscordLeagueReferences
         }
     }
 
-
     public Dictionary<ChannelType, ulong> LeagueChannels
     {
         get

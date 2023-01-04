@@ -112,9 +112,11 @@ public abstract class BaseChannel : InterfaceChannel
         interfaceMessagesWithIds = new Dictionary<string, InterfaceMessage>();
     }
 
-    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
+    public abstract List<Overwrite> GetGuildPermissions(
+        SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
 
-    public async Task CreateAChannelForTheCategory(SocketGuild _guild)
+    public async Task CreateAChannelForTheCategory(SocketGuild _guild,
+         params ulong[] _allowedUsersIdsArray)
     {
         Log.WriteLine("Creating a channel named: " + channelType +
             " for category: " + channelsCategoryId, LogLevel.VERBOSE);
@@ -129,7 +131,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var channel = await _guild.CreateTextChannelAsync(channelTypeString, x => {
-            x.PermissionOverwrites = GetGuildPermissions(_guild);
+            x.PermissionOverwrites = GetGuildPermissions(_guild, _allowedUsersIdsArray);
             x.CategoryId = channelsCategoryId;
         });
 
@@ -161,14 +163,17 @@ public abstract class BaseChannel : InterfaceChannel
         {
             Log.WriteLine("on: " + nameof(messageName) + " " + messageName, LogLevel.VERBOSE);
 
-            InterfaceMessage interfaceMessage = (InterfaceMessage)EnumExtensions.GetInstance(messageName.ToString());
+            InterfaceMessage interfaceMessage =
+                (InterfaceMessage)EnumExtensions.GetInstance(messageName.ToString());
 
-            if (databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(messageName.ToString())) continue;
+            if (databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(
+                messageName.ToString())) continue;
 
             Log.WriteLine("Does not contain the key: " +
                 messageName + ", continuing", LogLevel.VERBOSE);
 
-            databaseInterfaceChannel.InterfaceMessagesWithIds.Add(messageName.ToString(), interfaceMessage);
+            databaseInterfaceChannel.InterfaceMessagesWithIds.Add(
+                messageName.ToString(), interfaceMessage);
 
             Log.WriteLine("Done with: " + messageName, LogLevel.VERBOSE);
         }

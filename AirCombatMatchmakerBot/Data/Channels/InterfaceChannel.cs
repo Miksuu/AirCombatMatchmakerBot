@@ -12,9 +12,11 @@ public interface InterfaceChannel
     public List<MessageName> ChannelMessages { get; set; }
     public Dictionary<string, InterfaceMessage> InterfaceMessagesWithIds { get; set; }
 
-    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild);
+    public abstract List<Overwrite> GetGuildPermissions(
+        SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
 
-    public Task CreateAChannelForTheCategory(SocketGuild _guild);
+    public Task CreateAChannelForTheCategory(
+        SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
     public Task PrepareChannelMessages();
     public Task PostChannelMessages(SocketGuild _guild,
         InterfaceChannel _databaseInterfaceChannel);

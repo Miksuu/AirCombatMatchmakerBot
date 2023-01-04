@@ -12,11 +12,30 @@ public class MATCHCHANNEL : BaseChannel
         channelType = ChannelType.MATCHCHANNEL;
     }
 
-    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
+    public override List<Overwrite> GetGuildPermissions(
+        SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
-        return new List<Overwrite>
+        List<Overwrite> listOfOverwrites = new List<Overwrite>();
+
+        Log.WriteLine("Overwriting permissions for: " + channelName +
+            " users that will be allowed access count: " + 
+            _allowedUsersIdsArray.Length, LogLevel.VERBOSE);
+
+        listOfOverwrites.Add(new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
+                new OverwritePermissions(viewChannel: PermValue.Deny)));
+
+        foreach (ulong userId in _allowedUsersIdsArray)
         {
-        };
+            Log.WriteLine("Adding " + userId + " to the permission allowed list on: " +
+                channelName, LogLevel.VERBOSE);
+
+
+            listOfOverwrites.Add(
+                new Overwrite(userId, PermissionTarget.User,
+                    new OverwritePermissions(viewChannel: PermValue.Allow)));
+        }
+
+        return listOfOverwrites;
     }
 
     /*

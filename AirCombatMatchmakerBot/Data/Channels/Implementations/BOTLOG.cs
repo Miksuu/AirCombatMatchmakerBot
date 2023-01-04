@@ -12,7 +12,8 @@ public class BOTLOG : BaseChannel
         channelType = ChannelType.BOTLOG;
     }
 
-    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
+    public override List<Overwrite> GetGuildPermissions(
+        SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
         return new List<Overwrite>
         {

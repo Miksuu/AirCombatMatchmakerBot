@@ -14,7 +14,8 @@ public class LEAGUEREGISTRATION : BaseChannel
         channelMessages = new List<MessageName> { MessageName.LEAGUEREGISTRATIONMESSAGE };
     }
 
-    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild)
+    public override List<Overwrite> GetGuildPermissions(
+        SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
         return new List<Overwrite>
         {
