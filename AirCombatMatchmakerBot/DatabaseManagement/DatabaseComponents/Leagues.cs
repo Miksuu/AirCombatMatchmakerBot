@@ -122,7 +122,8 @@ public class Leagues
                             team.SetTheActive(false);
 
                             teamFound = true;
-                            Log.WriteLine("Set team: " + team.GetTeamName() + " deactive in league: " +
+                            Log.WriteLine("Set team: " + team.GetTeamName(
+                                storedLeague.LeaguePlayerCountPerTeam) + " deactive in league: " +
                                 storedLeague.LeagueCategoryName + " because " + player.GetPlayerNickname() +
                                 " left", LogLevel.DEBUG);
 

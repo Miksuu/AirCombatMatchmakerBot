@@ -34,31 +34,13 @@ public class CHALLENGE : BaseChannel
             return;
         }
 
-        var databaseInterfaceChannel =
-            Database.Instance.Categories.CreatedCategoriesWithChannels.First(
-                x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
-                    x => x.ChannelId == channelId);
-
-        InterfaceMessage interfaceMessage =
-            (InterfaceMessage)EnumExtensions.GetInstance(channelMessages[0].ToString());
-
-        if (!databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(
-            channelMessages[0].ToString()))
-        {
-            Log.WriteLine("Does not contain the key: " +
-                channelMessages[0] + ", continuing", LogLevel.VERBOSE);
-
-            // Generate the initial message
-            interfaceMessage.Message = GenerateChallengeQueueMessage();
-
-            databaseInterfaceChannel.InterfaceMessagesWithIds.Add(
-                channelMessages[0].ToString(), interfaceMessage);
-        }
+        var databaseInterfaceChannel = 
+            await base.PrepareCustomChannelMessages(GenerateChallengeQueueMessage());
 
         await base.PostChannelMessages(guild, databaseInterfaceChannel);
     }
 
-    public string GenerateChallengeQueueMessage()
+    private string GenerateChallengeQueueMessage()
     {
         Log.WriteLine("Generating a challenge queue message with _channelId: " +
             channelId, LogLevel.VERBOSE);

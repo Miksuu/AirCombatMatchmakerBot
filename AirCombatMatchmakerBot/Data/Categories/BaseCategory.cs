@@ -138,11 +138,20 @@ public abstract class BaseCategory : InterfaceCategory
                 continue;
             }
 
-            await CreateSpecificChannelFromChannelType(_guild, channelType, _socketCategoryChannelId);
+            InterfaceChannel? interfaceChannel = 
+                await CreateSpecificChannelFromChannelType(_guild, channelType, _socketCategoryChannelId);
+
+            if (interfaceChannel == null)
+            {
+                Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
+                continue;
+            }
+
+            await interfaceChannel.PrepareChannelMessages();
         }
     }
 
-    public async Task<ulong> CreateSpecificChannelFromChannelType(
+    public async Task<InterfaceChannel?> CreateSpecificChannelFromChannelType(
         SocketGuild _guild, ChannelType _channelType, ulong _socketCategoryChannelId,
         string _overrideChannelName = "",// Keeps the functionality, but overrides the channel name
                                          // It is used for creating matches with correct name ID right now.
@@ -160,7 +169,7 @@ public abstract class BaseCategory : InterfaceCategory
         if (interfaceChannel == null)
         {
             Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-            return 0;
+            return null;
         }
 
         interfaceChannel.ChannelName =
@@ -189,8 +198,6 @@ public abstract class BaseCategory : InterfaceCategory
 
         if (!channelExists)
         {
-            //List<Overwrite> permissionsList = interfaceChannel.GetGuildPermissions(_guild);
-
             Log.WriteLine("Creating a channel named: " + interfaceChannel.ChannelType +
                 " for category: " + categoryTypes + " (" +
                 _socketCategoryChannelId + ")" + " with name: " +
@@ -212,12 +219,12 @@ public abstract class BaseCategory : InterfaceCategory
                 " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
         }
 
-        await interfaceChannel.PrepareChannelMessages();
+        //await interfaceChannel.PrepareChannelMessages();
 
         Log.WriteLine("Done creating channel: " + interfaceChannel.ChannelId + " with name: " 
             + interfaceChannel.ChannelName, LogLevel.VERBOSE);
 
-        return interfaceChannel.ChannelId;
+        return interfaceChannel;
     }
 
     private static InterfaceChannel GetChannelInstance(string _channelType)

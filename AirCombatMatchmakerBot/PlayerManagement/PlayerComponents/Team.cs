@@ -38,7 +38,7 @@ public class Team
         string playersInATeam = string.Empty;
         for (int p = 0; p < Players.Count; p++)
         {
-            playersInATeam += Players[p];
+            playersInATeam += Players[p].GetPlayerIdAsMention();
             if (p !=  Players.Count - 1) playersInATeam += ", ";
         }
         return playersInATeam;
@@ -51,9 +51,20 @@ public class Team
         return Players;
     }
 
-    public string GetTeamName()
+    public string GetTeamName(int _leagueTeamSize, bool _getAsMention = false)
     {
-        Log.WriteLine("Getting team name: " + teamName, LogLevel.VERBOSE);
+        Log.WriteLine("Getting team name: " + teamName +
+            " with mention: " + _getAsMention, LogLevel.VERBOSE);
+
+        if (_leagueTeamSize < 2 && _getAsMention)
+        {
+            Player player = Players.First();
+            Log.WriteLine("Found player: " + player.GetPlayerNickname() +
+                " (" + player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
+
+            return player.GetPlayerIdAsMention();
+        }
+
         return teamName;
     }
 
@@ -62,6 +73,23 @@ public class Team
         Log.WriteLine("Getting if the team: " + teamName + " is active: " +
             teamActive, LogLevel.VERBOSE);
         return teamActive;
+    }
+
+    public string GetTeamSkillRatingAndNameInAString(
+        int _leagueTeamSize)
+    {
+        string result = string.Empty;
+
+        result += "[" + GetTeamSkillRating() + "] " + GetTeamName(_leagueTeamSize, true);
+        if (_leagueTeamSize > 1)
+        {
+            result += " (" + GetTeamMembersInAString() + ")";
+        }
+
+        Log.WriteLine("Final result of a team's string with skillrating: " +
+            result, LogLevel.VERBOSE);
+
+        return result;
     }
 
     public void SetTheActive(bool _active)

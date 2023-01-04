@@ -69,10 +69,11 @@ public static class UserManager
     }
 
     public static async void SetPlayerActiveAndGrantHimTheRole(
-        InterfaceLeague _dbLeagueInstance, ulong _playerId)
+        InterfaceLeague _interfaceLeague, ulong _playerId)
     {
-       _dbLeagueInstance.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_playerId).SetTheActive(true);
+       _interfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(
+           _interfaceLeague.LeaguePlayerCountPerTeam, _playerId).SetTheActive(true);
         await RoleManager.GrantUserAccessWithId(
-            _playerId, _dbLeagueInstance.DiscordLeagueReferences.LeagueRoleId);
+            _playerId, _interfaceLeague.DiscordLeagueReferences.LeagueRoleId);
     }
 }

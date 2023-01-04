@@ -43,17 +43,14 @@ public class ChallengeStatus
         string teamsString = string.Empty;
         foreach (int teamInt in teamsInTheQueue)
         {
-            Team team = _leagueData.Teams.FindTeamById(teamInt);
-            teamsString += "[" + team.GetTeamSkillRating() + "] " + team.GetTeamName();
-            if (_leagueTeamSize > 1)
-            {
-                teamsString += " (" + team.GetTeamMembersInAString() + ")";
-            }
+            Team team = _leagueData.Teams.FindTeamById(_leagueTeamSize, teamInt);
+            teamsString += team.GetTeamSkillRatingAndNameInAString(_leagueTeamSize);
             teamsString += "\n";
         }
         return teamsString;
     }
 
+    // Remove the _leaguePlayerCountPerTeam param, might be useless
     public async Task<string> PostChallengeToThisLeague(
         ulong _playerId, int _leaguePlayerCountPerTeam, InterfaceLeague _interfaceLeague)
     {
@@ -67,15 +64,14 @@ public class ChallengeStatus
             return "Error! Team not found";
         }
 
-        Log.WriteLine("Team found: " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
-            " adding it to the challenge queue: " +
-            TeamsInTheQueue,
-            LogLevel.VERBOSE);
+        Log.WriteLine("Team found: " + team.GetTeamName(_leaguePlayerCountPerTeam) +
+            " (" + team.GetTeamId() + ")" +" adding it to the challenge queue: " +
+            TeamsInTheQueue, LogLevel.VERBOSE);
 
         if (TeamsInTheQueue.Any(x => x == team.GetTeamId()))
         {
-            Log.WriteLine("Team " + team.GetTeamName() + " (" + team.GetTeamId() + ")" +
-                " was already in queue!", LogLevel.DEBUG);
+            Log.WriteLine("Team " + team.GetTeamName(_leaguePlayerCountPerTeam) +
+                " (" + team.GetTeamId() + ")" + " was already in queue!", LogLevel.DEBUG);
             return "alreadyInQueue";
         }
 

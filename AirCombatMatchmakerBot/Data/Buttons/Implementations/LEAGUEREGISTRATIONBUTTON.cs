@@ -24,18 +24,18 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
-        InterfaceLeague? dbLeagueInstance = 
+        InterfaceLeague? interfaceLeague = 
             Database.Instance.Leagues.FindLeagueInterfaceWithSplitStringPart(_splitString);
 
-        if (dbLeagueInstance == null)
+        if (interfaceLeague == null)
         {
-            Log.WriteLine(nameof(dbLeagueInstance) +
+            Log.WriteLine(nameof(interfaceLeague) +
                 " was null! Could not find the league.", LogLevel.CRITICAL);
             return "";
         }
 
-        Log.WriteLine("found: " + nameof(dbLeagueInstance) +
-            dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("found: " + nameof(interfaceLeague) +
+            interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
         // Check that the player is in the PlayerData
         // (should be, he doesn't see this button before, except if hes admin)
@@ -55,8 +55,8 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
             Log.WriteLine("Found player: " + player.GetPlayerNickname() +
                 " (" + player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
 
-            if (!dbLeagueInstance.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
-                _component.User.Id))
+            if (!interfaceLeague.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
+                interfaceLeague.LeaguePlayerCountPerTeam, _component.User.Id))
             {
                 Log.WriteLine(
                     "The player was not found in any team in the league", LogLevel.VERBOSE);
@@ -66,34 +66,34 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 Team newTeam = new Team(
                     new List<Player> { player },
                     player.GetPlayerNickname(),
-                    dbLeagueInstance.LeagueData.Teams.CurrentTeamInt);
+                    interfaceLeague.LeagueData.Teams.CurrentTeamInt);
 
-                if (dbLeagueInstance.LeaguePlayerCountPerTeam < 2)
+                if (interfaceLeague.LeaguePlayerCountPerTeam < 2)
                 {
                     Log.WriteLine("This league is solo", LogLevel.VERBOSE);
 
-                    dbLeagueInstance.LeagueData.Teams.AddToListOfTeams(newTeam);
+                    interfaceLeague.LeagueData.Teams.AddToListOfTeams(newTeam);
                 }
                 else
                 {
                     // Not implemented yet
                     Log.WriteLine("This league is team based with number of players per team: " +
-                        dbLeagueInstance.LeaguePlayerCountPerTeam, LogLevel.ERROR);
+                        interfaceLeague.LeaguePlayerCountPerTeam, LogLevel.ERROR);
                     return "";
                 }
 
                 // Add the role for the player for the specific league and set him teamActive
                 UserManager.SetPlayerActiveAndGrantHimTheRole(
-                    dbLeagueInstance, _component.User.Id);
+                    interfaceLeague, _component.User.Id);
 
                 // Modify the message to have the new player count
-                await dbLeagueInstance.ModifyLeagueRegisterationChannelMessage();
+                await interfaceLeague.ModifyLeagueRegisterationChannelMessage();
 
 
                 Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
-                    dbLeagueInstance.LeagueData.Teams.TeamsList.Count, LogLevel.DEBUG);
+                    interfaceLeague.LeagueData.Teams.TeamsList.Count, LogLevel.DEBUG);
 
-                dbLeagueInstance.LeagueData.Teams.IncrementCurrentTeamInt();
+                interfaceLeague.LeagueData.Teams.IncrementCurrentTeamInt();
                 await SerializationManager.SerializeDB();
             }
             else
@@ -104,9 +104,9 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                     " Setting him active", LogLevel.DEBUG);
 
                 UserManager.SetPlayerActiveAndGrantHimTheRole(
-                    dbLeagueInstance, _component.User.Id);
+                    interfaceLeague, _component.User.Id);
 
-                await dbLeagueInstance.ModifyLeagueRegisterationChannelMessage();
+                await interfaceLeague.ModifyLeagueRegisterationChannelMessage();
             }
         }
         else

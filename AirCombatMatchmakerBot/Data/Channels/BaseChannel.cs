@@ -130,7 +130,8 @@ public abstract class BaseChannel : InterfaceChannel
             channelTypeString = channelName;
         }
 
-        var channel = await _guild.CreateTextChannelAsync(channelTypeString, x => {
+        var channel = await _guild.CreateTextChannelAsync(channelTypeString, x =>
+        {
             x.PermissionOverwrites = GetGuildPermissions(_guild, _allowedUsersIdsArray);
             x.CategoryId = channelsCategoryId;
         });
@@ -139,6 +140,32 @@ public abstract class BaseChannel : InterfaceChannel
 
         Log.WriteLine("Done creating a channel named: " + channelType + " with ID: " + channel.Id +
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
+    }
+
+    public async Task<InterfaceChannel> PrepareCustomChannelMessages(string _inputOfTheFirstMessage)
+    {
+        var databaseInterfaceChannel =
+            Database.Instance.Categories.CreatedCategoriesWithChannels.First(
+                x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
+                    x => x.ChannelId == channelId);
+
+        InterfaceMessage interfaceMessage =
+            (InterfaceMessage)EnumExtensions.GetInstance(channelMessages[0].ToString());
+
+        if (!databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(
+            channelMessages[0].ToString()))
+        {
+            Log.WriteLine("Does not contain the key: " +
+                channelMessages[0] + ", continuing", LogLevel.VERBOSE);
+
+            // Generate the initial message
+            interfaceMessage.Message = _inputOfTheFirstMessage;
+
+            databaseInterfaceChannel.InterfaceMessagesWithIds.Add(
+                channelMessages[0].ToString(), interfaceMessage);
+        }
+
+        return databaseInterfaceChannel;
     }
 
     public virtual async Task PrepareChannelMessages()

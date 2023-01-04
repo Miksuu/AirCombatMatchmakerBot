@@ -35,4 +35,12 @@ public class Player
         Log.WriteLine("Getting " + nameof(playerDiscordId) + ": " + playerDiscordId, LogLevel.VERBOSE);
         return playerDiscordId;
     }
+
+    public string GetPlayerIdAsMention()
+    {
+        Log.WriteLine("Getting player: " + playerNickName + " (" +
+            playerDiscordId + ") as a mention", LogLevel.VERBOSE);
+
+        return "<@" + playerDiscordId.ToString() + ">";
+    }
 }

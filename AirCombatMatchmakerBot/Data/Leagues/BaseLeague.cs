@@ -147,7 +147,7 @@ public abstract class BaseLeague : InterfaceLeague
 
         foreach (Team team in leagueData.Teams.TeamsList)
         {
-            string teamName = team.GetTeamName();
+            string teamName = team.GetTeamName(leaguePlayerCountPerTeam);
 
             if (team.GetIfTheTeamIsActive())
             {

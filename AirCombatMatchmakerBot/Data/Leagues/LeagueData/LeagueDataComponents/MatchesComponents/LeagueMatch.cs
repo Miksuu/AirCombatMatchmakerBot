@@ -41,6 +41,14 @@ public class LeagueMatch
         {
             Log.WriteLine("Getting " + nameof(matchChannelId)
                 + ": " + matchChannelId, LogLevel.VERBOSE);
+
+            /*
+            if (matchChannelId == 0)
+            {
+                Log.WriteLine(nameof(matchChannelId) + " was 0!", LogLevel.CRITICAL);
+                return 0;
+            }*/
+
             return matchChannelId;
         }
         set
@@ -82,7 +90,8 @@ public class LeagueMatch
         foreach (int teamId in TeamsInTheMatch)
         {
             Log.WriteLine("Looping on team id: " + teamId, LogLevel.VERBOSE);
-            Team foundTeam = _interfaceLeague.LeagueData.Teams.FindTeamById(teamId);
+            Team foundTeam = _interfaceLeague.LeagueData.Teams.FindTeamById(
+                _interfaceLeague.LeaguePlayerCountPerTeam, teamId);
 
             if (foundTeam == null)
             {
@@ -92,9 +101,6 @@ public class LeagueMatch
 
             foreach (Player player in foundTeam.GetListOfPlayersInATeam())
             {
-                /*
-                Log.WriteLine("Inserting player: " + player.GetPlayerDiscordId() + " to: " + nameof(allowedUserIds) +
-                    " with int: " + playerCounter + " That is length of: " + allowedUserIds.Length, LogLevel.DEBUG);*/
                 allowedUserIds[playerCounter] = player.GetPlayerDiscordId();
                 Log.WriteLine("Added " + allowedUserIds[playerCounter] + " to: " +
                     nameof(allowedUserIds) + ". " + nameof(playerCounter) + " is now: " +
