@@ -11,7 +11,7 @@ public class REGISTRATIONCATEGORY : BaseCategory
         channelTypes = new List<ChannelType>()
         {
             ChannelType.REGISTRATIONCHANNEL,
-            ChannelType.LEAGUEREGISTRATION
+            ChannelType.LEAGUEREGISTRATION,
         };
     }
 

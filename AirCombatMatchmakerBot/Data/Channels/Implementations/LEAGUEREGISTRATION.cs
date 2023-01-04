@@ -86,7 +86,6 @@ public class LEAGUEREGISTRATION : BaseChannel
             Log.WriteLine(nameof(leagueInterfaceFromDatabase) + " before creating leagueButtonRegisterationCustomId: "
                 + leagueInterfaceFromDatabase.ToString(), LogLevel.VERBOSE);
 
-
             InterfaceMessage interfaceMessage =
                 (InterfaceMessage)EnumExtensions.GetInstance(channelMessages.ElementAt(0).ToString());
             Log.WriteLine("Created interfaceMessage instance: " +

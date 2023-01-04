@@ -28,14 +28,6 @@ public class Categories
         createdCategoriesWithChannels = new();
     }
 
-    /*
-    public Dictionary<ulong, InterfaceCategory> GetDictionaryOfCreatedCategoriesWithChannels()
-    {
-        Log.WriteLine("Getting list of cachedUserIDs with count of: " +
-            createdCategoriesWithChannels.Count, LogLevel.VERBOSE);
-        return createdCategoriesWithChannels;
-    }*/
-
     // Searches it with string, not ID. Maybe change this
     public KeyValuePair<ulong, InterfaceCategory> GetCreatedCategoryWithChannelKvpWithString(
         string _idToSearchWith)
