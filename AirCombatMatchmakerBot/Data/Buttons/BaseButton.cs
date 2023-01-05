@@ -1,6 +1,7 @@
 ﻿using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
+using System.Reflection.Emit;
 
 [DataContract]
 public abstract class BaseButton : InterfaceButton
@@ -57,10 +58,17 @@ public abstract class BaseButton : InterfaceButton
     [DataMember] protected string buttonLabel = "";
     [DataMember] protected ButtonStyle buttonStyle;
 
-    public Discord.ButtonBuilder CreateTheButton(string _customId)
+    public Discord.ButtonBuilder CreateTheButton(string _customId, int _buttonIndex)
     {
         Log.WriteLine("Creating a button: " + buttonName + " | label: " +
             buttonLabel + " | custom-id:" + _customId + " with style: " + buttonStyle, LogLevel.VERBOSE);
+
+        if (buttonName == ButtonName.REPORTSCOREBUTTON)
+        {
+            buttonLabel = _buttonIndex.ToString();
+            Log.WriteLine("is: " + nameof(buttonName) +
+                " set label to: " + buttonLabel, LogLevel.VERBOSE);
+        }
 
         var button = new Discord.ButtonBuilder()
         {

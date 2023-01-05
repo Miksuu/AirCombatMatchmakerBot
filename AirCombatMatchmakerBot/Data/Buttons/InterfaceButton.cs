@@ -10,7 +10,7 @@ public interface InterfaceButton
     public string ButtonLabel { get; set; }
     public ButtonStyle ButtonStyle { get; set; }
 
-    public Discord.ButtonBuilder CreateTheButton(string _customId);
+    public Discord.ButtonBuilder CreateTheButton(string _customId, int _buttonIndex);
     public abstract Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, ulong _channelId,
         ulong _messageId, string _message, string[] _splitStrings);

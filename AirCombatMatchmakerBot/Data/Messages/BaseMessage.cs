@@ -123,7 +123,7 @@ public abstract class BaseMessage : InterfaceMessage
 
             for (int b = 0; b < buttonNameWithAmount.Value; ++b)
             {
-                string finalCustomId = ";"
+                string finalCustomId = "";
 
                 Log.WriteLine("Button number: " + b, LogLevel.VERBOSE);
                 InterfaceButton interfaceButton =
@@ -135,7 +135,7 @@ public abstract class BaseMessage : InterfaceMessage
 
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
-                component.WithButton(interfaceButton.CreateTheButton(finalCustomId));
+                component.WithButton(interfaceButton.CreateTheButton(finalCustomId, b));
             }
         }
 
