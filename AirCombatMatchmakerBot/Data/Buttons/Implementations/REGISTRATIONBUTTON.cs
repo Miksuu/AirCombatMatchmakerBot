@@ -17,8 +17,8 @@ public class REGISTRATIONBUTTON : BaseButton
     public void CreateTheButton(){}
 
     public override async Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, string _splitString,
-        ulong _channelId, ulong _messageId, string _message)
+        SocketMessageComponent _component, ulong _channelId,
+        ulong _messageId, string _message, string[] _splitStrings)
     {
         string response = "";
         // Checks that the player does not exist in the database already, true if this is not the case

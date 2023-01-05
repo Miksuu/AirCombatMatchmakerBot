@@ -73,5 +73,6 @@ public abstract class BaseButton : InterfaceButton
     }
 
     public abstract Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, string _splitString, ulong _channelId, ulong _messageId, string _message);
+        SocketMessageComponent _component, ulong _channelId,
+        ulong _messageId, string _message, string[] _splitStrings);
 }

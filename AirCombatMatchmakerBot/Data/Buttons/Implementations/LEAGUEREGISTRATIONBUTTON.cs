@@ -17,15 +17,15 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
     public void CreateTheButton(){}
 
     public override async Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, string _splitString,
-                ulong _channelId, ulong _messageId, string _message)
+        SocketMessageComponent _component, ulong _channelId,
+        ulong _messageId, string _message, string[] _splitStrings)
     {
         string responseMsg = "";
 
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
-        InterfaceLeague? interfaceLeague = 
-            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(_splitString);
+        InterfaceLeague? interfaceLeague =
+            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(_splitStrings[1]);
 
         if (interfaceLeague == null)
         {
