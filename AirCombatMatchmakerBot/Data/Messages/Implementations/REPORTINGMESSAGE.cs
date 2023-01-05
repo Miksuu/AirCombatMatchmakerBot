@@ -12,9 +12,9 @@ public class REPORTINGMESSAGE : BaseMessage
     {
         messageName = MessageName.REPORTINGMESSAGE;
         showOnChannelGeneration = true;
-        messageButtonNames = new List<ButtonName>
+        messageButtonNamesWithAmount = new Dictionary<ButtonName, int>
         {
-            ButtonName.REPORTSCOREBUTTON,
+            { ButtonName.REPORTSCOREBUTTON, 4 }
         };
         message = "Insert the reporting message here";
     }

@@ -10,7 +10,7 @@ public class REPORTSCOREBUTTON : BaseButton
 {
     public REPORTSCOREBUTTON()
     {
-        buttonName = ButtonName.REGISTRATIONBUTTON;
+        buttonName = ButtonName.REPORTSCOREBUTTON;
         buttonLabel = "0";
         buttonStyle = ButtonStyle.Primary;
     }
@@ -21,5 +21,6 @@ public class REPORTSCOREBUTTON : BaseButton
         SocketMessageComponent _component, string _splitString,
         ulong _channelId, ulong _messageId, string _message)
     {
+        return "pressed: " + _component.Id;
     }
 }

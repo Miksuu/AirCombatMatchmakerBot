@@ -12,9 +12,9 @@ public class CHALLENGEMESSAGE : BaseMessage
     {
         messageName = MessageName.CHALLENGEMESSAGE;
         showOnChannelGeneration = true;
-        messageButtonNames = new List<ButtonName> 
+        messageButtonNamesWithAmount = new Dictionary<ButtonName, int> 
         {
-            ButtonName.CHALLENGEBUTTON,
+            { ButtonName.CHALLENGEBUTTON, 1 }
         };
         message = "Insert the challenge message here";
     }

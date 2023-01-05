@@ -12,9 +12,9 @@ public class REGISTRATIONMESSAGE : BaseMessage
     {
         messageName = MessageName.REGISTRATIONMESSAGE;
         showOnChannelGeneration = true;
-        messageButtonNames = new List<ButtonName> 
+        messageButtonNamesWithAmount = new Dictionary<ButtonName, int> 
         {
-            ButtonName.REGISTRATIONBUTTON,
+            { ButtonName.REGISTRATIONBUTTON, 1 },
         };
         message = "Click this button to register!";
     }

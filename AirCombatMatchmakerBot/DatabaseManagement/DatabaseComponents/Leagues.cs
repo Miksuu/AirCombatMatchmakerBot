@@ -206,7 +206,7 @@ public class Leagues
             return _leagueInterface;
         }
     }
-    public InterfaceLeague? FindLeagueInterfaceWithSplitStringPart(
+    public InterfaceLeague? FindLeagueInterfaceWithCategoryNameString(
         string _splitStringIdPart)
     {
         Log.WriteLine("Starting to find Ileague from db with: " +

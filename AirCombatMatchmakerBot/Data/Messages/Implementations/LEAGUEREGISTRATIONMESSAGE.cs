@@ -12,9 +12,9 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
     {
         messageName = MessageName.LEAGUEREGISTRATIONMESSAGE;
         showOnChannelGeneration = true;
-        messageButtonNames = new List<ButtonName> 
+        messageButtonNamesWithAmount = new Dictionary<ButtonName, int> 
         {
-            ButtonName.LEAGUEREGISTRATIONBUTTON,
+            { ButtonName.LEAGUEREGISTRATIONBUTTON, 1 }
         };
         message = "Insert league registration message here";
     }

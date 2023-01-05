@@ -13,7 +13,8 @@ public class MATCHCHANNEL : BaseChannel
         channelType = ChannelType.MATCHCHANNEL;
         channelMessages = new List<MessageName>
         {
-            MessageName.MATCHSTARTMESSAGE,
+            //MessageName.MATCHSTARTMESSAGE,
+            MessageName.REPORTINGMESSAGE,
         };
     }
 

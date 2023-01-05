@@ -25,7 +25,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
         InterfaceLeague? interfaceLeague = 
-            Database.Instance.Leagues.FindLeagueInterfaceWithSplitStringPart(_splitString);
+            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(_splitString);
 
         if (interfaceLeague == null)
         {

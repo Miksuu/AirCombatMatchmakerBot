@@ -21,8 +21,8 @@ public class CHALLENGEBUTTON : BaseButton
         SocketMessageComponent _component, string _splitString,
         ulong _channelId, ulong _messageId, string _message)
     {
-        Log.WriteLine("Starting processing a challenge by: " + _component.User.Id +
-             " for league: " + _splitString, LogLevel.VERBOSE);
+        Log.WriteLine("Starting processing a challenge by: " +
+            _component.User.Id , LogLevel.VERBOSE);
 
         // Find the category of the given button, temp, could optimise it here
         CategoryType? categoryName = null;
@@ -57,7 +57,7 @@ public class CHALLENGEBUTTON : BaseButton
         Log.WriteLine("categoryNameString: " + categoryNameString, LogLevel.VERBOSE);
 
         InterfaceLeague? dbLeagueInstance = 
-            Database.Instance.Leagues.FindLeagueInterfaceWithSplitStringPart(categoryNameString);
+            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(categoryNameString);
 
         if (dbLeagueInstance == null)
         {

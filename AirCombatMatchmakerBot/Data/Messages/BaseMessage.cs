@@ -37,19 +37,19 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    List<ButtonName> InterfaceMessage.MessageButtonNames
+    Dictionary<ButtonName, int> InterfaceMessage.MessageButtonNamesWithAmount
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(messageButtonNames) + " with count of: " +
-                messageButtonNames.Count, LogLevel.VERBOSE);
-            return messageButtonNames;
+            Log.WriteLine("Getting " + nameof(messageButtonNamesWithAmount) + " with count of: " +
+                messageButtonNamesWithAmount.Count, LogLevel.VERBOSE);
+            return messageButtonNamesWithAmount;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(messageButtonNames)
+            Log.WriteLine("Setting " + nameof(messageButtonNamesWithAmount)
                 + " to: " + value, LogLevel.VERBOSE);
-            messageButtonNames = value;
+            messageButtonNamesWithAmount = value;
         }
     }
 
@@ -87,13 +87,13 @@ public abstract class BaseMessage : InterfaceMessage
 
     [DataMember] protected MessageName messageName;
     [DataMember] protected bool showOnChannelGeneration;
-    [DataMember] protected List<ButtonName> messageButtonNames;
+    [DataMember] protected Dictionary<ButtonName, int> messageButtonNamesWithAmount;
     [DataMember] protected string message = "";
     [DataMember] protected ulong messageId;
 
     public BaseMessage()
     {
-        messageButtonNames = new List<ButtonName>();
+        messageButtonNamesWithAmount = new Dictionary<ButtonName, int>();
     }
 
     public async Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
@@ -114,34 +114,32 @@ public abstract class BaseMessage : InterfaceMessage
 
         Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
 
-        Log.WriteLine("messageButtonNames.Count: " + messageButtonNames.Count, LogLevel.VERBOSE);
+        Log.WriteLine("messageButtonNames.Count: " + messageButtonNamesWithAmount.Count, LogLevel.VERBOSE);
 
-        foreach (ButtonName buttonName in messageButtonNames)
+        foreach (var buttonNameWithAmount in messageButtonNamesWithAmount)
         {
-            InterfaceButton interfaceButton =
-                (InterfaceButton)EnumExtensions.GetInstance(buttonName.ToString());
-            Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " + 
-                interfaceButton.ButtonName, LogLevel.VERBOSE);
+            Log.WriteLine("Looping through button name: " + buttonNameWithAmount.Key + 
+                " with amount: " + buttonNameWithAmount.Value, LogLevel.DEBUG);
 
-            component.WithButton(interfaceButton.CreateTheButton(_customIdForButton));
+            for (int b = 0; b < buttonNameWithAmount.Value; ++b)
+            {
+                Log.WriteLine("Button number: " + b, LogLevel.VERBOSE);
+                InterfaceButton interfaceButton =
+                     (InterfaceButton)EnumExtensions.GetInstance(buttonNameWithAmount.Key.ToString());
+                Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " +
+                    interfaceButton.ButtonName, LogLevel.DEBUG);
+
+                _customIdForButton = _customIdForButton + "_" + b;
+
+                Log.WriteLine(nameof(_customIdForButton) + ": " + _customIdForButton, LogLevel.DEBUG);
+
+                component.WithButton(interfaceButton.CreateTheButton(_customIdForButton));
+            }
         }
 
         var newMessage = await textChannel.SendMessageAsync(
             message, components: component.Build());
         ulong newMessageId = newMessage.Id;
-
-        /*
-        foreach (InterfaceButton button in tempInterfaceButtons)
-        {
-            button.ChannelId = _channelId;
-            button.MessageId = newMessageId;
-
-            // Temp, maybe not the best way to look it up with name?
-            // cant have 2 same named buttons in same message
-            if (interfaceButtons.Any(x => x.ButtonName == button.ButtonName)) continue;
-
-            interfaceButtons.Add(button);
-        }*/
 
         Log.WriteLine("Created a new message with id: " + newMessageId,LogLevel.VERBOSE);
 
