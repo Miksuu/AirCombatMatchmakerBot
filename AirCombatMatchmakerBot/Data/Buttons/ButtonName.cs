@@ -14,4 +14,7 @@ public enum ButtonName
 
     [EnumMember(Value = "CHALLENGEBUTTON")]
     CHALLENGEBUTTON = 2,
+
+    [EnumMember(Value = "REPORTSCOREBUTTON")]
+    REPORTSCOREBUTTON = 3,
 }

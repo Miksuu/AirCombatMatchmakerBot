@@ -22,16 +22,23 @@ public static class ButtonHandler
 
         foreach (var interfaceCategoryKvp in Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
-            if (interfaceCategoryKvp.Value.InterfaceChannels.Any(x => x.ChannelId == _component.Channel.Id))
+            if (interfaceCategoryKvp.Value.InterfaceChannels.Any(
+                x => x.ChannelId == _component.Channel.Id))
             {
-                var interfaceChannelTemp = interfaceCategoryKvp.Value.InterfaceChannels.First(x => x.ChannelId == _component.Channel.Id);
-                if (!interfaceChannelTemp.InterfaceMessagesWithIds.Any(x => x.Value.MessageId == _component.Message.Id))
+                var interfaceChannelTemp =
+                    interfaceCategoryKvp.Value.InterfaceChannels.First(
+                        x => x.ChannelId == _component.Channel.Id);
+
+                if (!interfaceChannelTemp.InterfaceMessagesWithIds.Any(
+                    x => x.Value.MessageId == _component.Message.Id))
                 {
                     Log.WriteLine("message not found! with " + _component.Message.Id, LogLevel.ERROR);
                     continue;
                 }
 
-                var interfaceMessageKvp = interfaceChannelTemp.InterfaceMessagesWithIds.First(x => x.Value.MessageId == _component.Message.Id);
+                var interfaceMessageKvp =
+                    interfaceChannelTemp.InterfaceMessagesWithIds.First(
+                        x => x.Value.MessageId == _component.Message.Id);
 
                 channelId = interfaceChannelTemp.ChannelId;
                 messageId = interfaceMessageKvp.Value.MessageId;
@@ -39,7 +46,7 @@ public static class ButtonHandler
             }
         }
 
-        Log.WriteLine("Found: " + channelId + " | " + messageId, LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + channelId + " | " + messageId + " | " + message, LogLevel.DEBUG);
 
         if (channelId == 0 || messageId == 0 || message == "")
         {
@@ -47,7 +54,8 @@ public static class ButtonHandler
         }
 
         InterfaceButton interfaceButton = (InterfaceButton)EnumExtensions.GetInstance(splitString[0]);
-        response = interfaceButton.ActivateButtonFunction(_component, splitString[1], channelId, messageId, message).Result;
+        response = interfaceButton.ActivateButtonFunction(
+            _component, splitString[1], channelId, messageId, message).Result;
 
         await SerializationManager.SerializeDB();
 

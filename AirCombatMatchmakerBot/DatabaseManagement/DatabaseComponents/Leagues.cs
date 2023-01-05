@@ -35,7 +35,6 @@ public class Leagues
         }
     }
 
-
     [DataMember] private List<InterfaceLeague> storedLeagues { get; set; }
     [DataMember] private int leaguesMatchCounter { get; set; }
 

@@ -16,4 +16,7 @@ public enum MessageName
 
     [EnumMember(Value = "MATCH START MESSAGE")]
     MATCHSTARTMESSAGE = 3,
+
+    [EnumMember(Value = "REPORTING MESSAGE")]
+    REPORTINGMESSAGE = 4,
 }
