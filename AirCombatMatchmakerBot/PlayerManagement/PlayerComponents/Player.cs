@@ -48,25 +48,6 @@ public class Player
         playerDiscordId = _playerID;
     }
 
-    /*
-    public string GetPlayerNickname()
-    {
-        Log.WriteLine("Getting " + nameof(playerNickName) + ": " + playerNickName, LogLevel.VERBOSE);
-        return playerNickName;
-    }
-    public void SetPlayerNickname(string _nickNameToSetTo)
-    {
-        Log.WriteLine("Setting " + nameof(playerNickName) + ": " + playerNickName + " to:" +
-            _nickNameToSetTo, LogLevel.VERBOSE);
-        playerNickName = _nickNameToSetTo;
-    }
-
-    public ulong GetPlayerDiscordId()
-    {
-        Log.WriteLine("Getting " + nameof(playerDiscordId) + ": " + playerDiscordId, LogLevel.VERBOSE);
-        return playerDiscordId;
-    }
-    */
     public string GetPlayerIdAsMention()
     {
         Log.WriteLine("Getting player: " + playerNickName + " (" +

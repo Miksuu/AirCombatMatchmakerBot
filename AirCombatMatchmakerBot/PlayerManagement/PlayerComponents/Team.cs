@@ -173,45 +173,4 @@ public class Team
 
         return null;
     }
-
-        /*
-    public float GetTeamSkillRating()
-    {
-        Log.WriteLine("Getting team's: " + teamName + " skill rating: " +
-            skillRating, LogLevel.VERBOSE);
-        return skillRating;
-    }*/
-
-        /*
-    public List<Player> GetListOfPlayersInATeam()
-    {
-        Log.WriteLine("Getting list of Players with count of: " +
-            players.Count, LogLevel.VERBOSE);
-        return players;
-    }*/
-
-    /*
-    public bool GetIfTheTeamIsActive()
-    {
-        Log.WriteLine("Getting if the team: " + teamName + " is active: " +
-            teamActive, LogLevel.VERBOSE);
-        return teamActive;
-    }*/
-
-
-    /*
-    public void SetTheActive(bool _active)
-    {
-        Log.WriteLine("Setting: " + teamActive + " to: " + _active, LogLevel.VERBOSE);
-        teamActive = _active;    
-    }*/
-
-
-
-    /*
-    public int GetTeamId()
-    {
-        Log.WriteLine("Getting team's: " + TeamName + " teamId:" + TeamId, LogLevel.VERBOSE);
-        return TeamId;
-    }*/
 }
