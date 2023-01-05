@@ -46,7 +46,7 @@ public class Teams
     public void AddToListOfTeams(Team _Team)
     {
         Log.WriteLine(
-            "Adding Team: " + _Team + " (" + _Team.GetTeamId() + ") to the Teams list", LogLevel.VERBOSE);
+            "Adding Team: " + _Team + " (" + _Team.TeamId + ") to the Teams list", LogLevel.VERBOSE);
         teamsList.Add(_Team);
         Log.WriteLine("Done adding the team. Count is now: " + teamsList.Count, LogLevel.VERBOSE);
     }
@@ -76,12 +76,11 @@ public class Teams
     {
         foreach (Team team in teamsList)
         {
-            List<Player> Players = team.GetListOfPlayersInATeam();
+            //List<Player> Players = team.Players;
 
-            Log.WriteLine("Searching team: " + team.GetTeamName(
-                _leagueTeamSize) + " with " + Players.Count, LogLevel.VERBOSE);
+            Log.WriteLine("Searching team: " + team.GetTeamName(_leagueTeamSize), LogLevel.VERBOSE);
 
-            foreach (Player teamPlayer in Players)
+            foreach (Player teamPlayer in team.Players)
             {
                 Log.WriteLine("Checking player: " + teamPlayer.GetPlayerNickname() +
                     " (" + teamPlayer.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
@@ -104,7 +103,7 @@ public class Teams
     {
         foreach (Team team in teamsList)
         {
-            List<Player> Players = team.GetListOfPlayersInATeam();
+            List<Player> Players = team.Players;
 
             Log.WriteLine("Searching team: " + team.GetTeamName(
                 _leagueTeamSize) + " with " + Players.Count, LogLevel.VERBOSE);
@@ -131,17 +130,17 @@ public class Teams
     {
         Log.WriteLine("Finding team by id: " + _id, LogLevel.VERBOSE);
 
-        if (!teamsList.Any(x => x.GetTeamId() == _id))
+        if (!teamsList.Any(x => x.TeamId == _id))
         {
             Log.WriteLine("Trying to get a team by id: + " + _id +
                 " that is nonexistent!", LogLevel.ERROR);
             return new Team();
         }
 
-        Team foundTeam = teamsList.First(x => x.GetTeamId() == _id);
+        Team foundTeam = teamsList.First(x => x.TeamId == _id);
 
         Log.WriteLine("Found team: " + foundTeam.GetTeamName(
-            _leagueTeamSize) +" id: " + foundTeam.GetTeamId() + 
+            _leagueTeamSize) +" id: " + foundTeam.TeamId + 
             " with members: " + foundTeam.GetTeamMembersInAString(), LogLevel.DEBUG);
 
         return foundTeam;

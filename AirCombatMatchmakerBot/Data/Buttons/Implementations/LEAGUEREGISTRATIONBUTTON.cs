@@ -83,7 +83,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 }
 
                 // Add the role for the player for the specific league and set him teamActive
-                UserManager.SetPlayerActiveAndGrantHimTheRole(
+                UserManager.SetTeamActiveAndGrantThePlayerRole(
                     interfaceLeague, _component.User.Id);
 
                 // Modify the message to have the new player count
@@ -103,7 +103,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 Log.WriteLine("The player was already in a team in that league!" +
                     " Setting him active", LogLevel.DEBUG);
 
-                UserManager.SetPlayerActiveAndGrantHimTheRole(
+                UserManager.SetTeamActiveAndGrantThePlayerRole(
                     interfaceLeague, _component.User.Id);
 
                 await interfaceLeague.ModifyLeagueRegisterationChannelMessage();

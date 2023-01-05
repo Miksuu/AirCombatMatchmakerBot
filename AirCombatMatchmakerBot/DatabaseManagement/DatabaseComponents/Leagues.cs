@@ -113,13 +113,13 @@ public class Leagues
             {
                 if (!teamFound)
                 {
-                    foreach (Player player in team.GetListOfPlayersInATeam())
+                    foreach (Player player in team.Players)
                     {
                         Log.WriteLine("Looping through player: " + player.GetPlayerNickname() + " (" +
                             player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
                         if (player.GetPlayerDiscordId() == _userId)
                         {
-                            team.SetTheActive(false);
+                            team.TeamActive = false;
 
                             teamFound = true;
                             Log.WriteLine("Set team: " + team.GetTeamName(

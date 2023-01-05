@@ -68,11 +68,12 @@ public static class UserManager
         await SerializationManager.SerializeDB();
     }
 
-    public static async void SetPlayerActiveAndGrantHimTheRole(
+    // Need to make this support teams
+    public static async void SetTeamActiveAndGrantThePlayerRole(
         InterfaceLeague _interfaceLeague, ulong _playerId)
     {
        _interfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(
-           _interfaceLeague.LeaguePlayerCountPerTeam, _playerId).SetTheActive(true);
+           _interfaceLeague.LeaguePlayerCountPerTeam, _playerId).TeamActive = true;
         await RoleManager.GrantUserAccessWithId(
             _playerId, _interfaceLeague.DiscordLeagueReferences.LeagueRoleId);
     }

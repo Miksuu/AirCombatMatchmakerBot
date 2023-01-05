@@ -99,7 +99,7 @@ public class LeagueMatch
                 continue;
             }
 
-            foreach (Player player in foundTeam.GetListOfPlayersInATeam())
+            foreach (Player player in foundTeam.Players)
             {
                 allowedUserIds[playerCounter] = player.GetPlayerDiscordId();
                 Log.WriteLine("Added " + allowedUserIds[playerCounter] + " to: " +

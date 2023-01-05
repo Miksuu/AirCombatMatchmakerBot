@@ -30,8 +30,8 @@ public class ChallengeStatus
     public void AddToTeamsInTheQueue(Team _Team)
     {
         Log.WriteLine("Adding Team: " + _Team + " (" + 
-            _Team.GetTeamId() + ") to the queue", LogLevel.VERBOSE);
-        teamsInTheQueue.Add(_Team.GetTeamId());
+            _Team.TeamId + ") to the queue", LogLevel.VERBOSE);
+        teamsInTheQueue.Add(_Team.TeamId);
         Log.WriteLine("Done adding the team to the queue. Count is now: " +
             teamsInTheQueue.Count, LogLevel.VERBOSE);
     }
@@ -65,13 +65,13 @@ public class ChallengeStatus
         }
 
         Log.WriteLine("Team found: " + team.GetTeamName(_leaguePlayerCountPerTeam) +
-            " (" + team.GetTeamId() + ")" +" adding it to the challenge queue: " +
+            " (" + team.TeamId + ")" +" adding it to the challenge queue: " +
             TeamsInTheQueue, LogLevel.VERBOSE);
 
-        if (TeamsInTheQueue.Any(x => x == team.GetTeamId()))
+        if (TeamsInTheQueue.Any(x => x == team.TeamId))
         {
             Log.WriteLine("Team " + team.GetTeamName(_leaguePlayerCountPerTeam) +
-                " (" + team.GetTeamId() + ")" + " was already in queue!", LogLevel.DEBUG);
+                " (" + team.TeamId + ")" + " was already in queue!", LogLevel.DEBUG);
             return "alreadyInQueue";
         }
 

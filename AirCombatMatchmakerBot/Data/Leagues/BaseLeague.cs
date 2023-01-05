@@ -149,7 +149,7 @@ public abstract class BaseLeague : InterfaceLeague
         {
             string teamName = team.GetTeamName(leaguePlayerCountPerTeam);
 
-            if (team.GetIfTheTeamIsActive())
+            if (team.TeamActive)
             {
                 count++;
                 Log.WriteLine("team: " + teamName +
