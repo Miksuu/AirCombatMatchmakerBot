@@ -14,10 +14,10 @@ public class PlayerData
 
     public void AddAPlayerProfile(Player _Player)
     {
-        Log.WriteLine("Adding a player profile: " + _Player.GetPlayerNickname() + " (" +
-            _Player.GetPlayerDiscordId() + ") to the PlayerIDs list", LogLevel.VERBOSE);
+        Log.WriteLine("Adding a player profile: " + _Player.PlayerNickName + " (" +
+            _Player.PlayerDiscordId + ") to the PlayerIDs list", LogLevel.VERBOSE);
 
-        PlayerIDs.Add(_Player.GetPlayerDiscordId(), _Player);
+        PlayerIDs.Add(_Player.PlayerDiscordId, _Player);
         Log.WriteLine("Done adding, count is now: " + PlayerIDs.Count, LogLevel.VERBOSE);
     }
 
@@ -121,8 +121,8 @@ public class PlayerData
     {
         Log.WriteLine("Getting Player by ID: " + _playerId, LogLevel.VERBOSE);
         Player FoundPlayer = PlayerIDs.First(x => x.Key == _playerId).Value;
-        Log.WriteLine("Found: " + FoundPlayer.GetPlayerNickname() + " (" +
-            FoundPlayer.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + FoundPlayer.PlayerNickName + " (" +
+            FoundPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
         return FoundPlayer;
     }
 
@@ -140,7 +140,7 @@ public class PlayerData
         }
 
         // This should not be empty, since it's being looked up from the database
-        string playerValueNickName = playerValue.GetPlayerNickname();
+        string playerValueNickName = playerValue.PlayerNickName;
 
         string socketGuildUserAfterNickName =
             CheckIfNickNameIsEmptyAndReturnUsername(_socketGuildUserAfter.Id);
@@ -149,7 +149,7 @@ public class PlayerData
             + _socketGuildUserAfter.Id + ")" + " | name: " + playerValueNickName +
             " -> " + socketGuildUserAfterNickName, LogLevel.DEBUG);
 
-        playerValue.SetPlayerNickname(socketGuildUserAfterNickName);
+        playerValue.PlayerNickName = socketGuildUserAfterNickName;
         await SerializationManager.SerializeDB();
     }
 

@@ -23,7 +23,7 @@ public class Team
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(skillRating), LogLevel.VERBOSE);
+            Log.WriteLine("Getting " + nameof(teamName), LogLevel.VERBOSE);
             return teamName;
         }
         set
@@ -121,8 +121,8 @@ public class Team
         if (_leagueTeamSize < 2 && _getAsMention)
         {
             Player player = players.First();
-            Log.WriteLine("Found player: " + player.GetPlayerNickname() +
-                " (" + player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
+            Log.WriteLine("Found player: " + player.PlayerNickName +
+                " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
 
             return player.GetPlayerIdAsMention();
         }
@@ -151,7 +151,7 @@ public class Team
     {
         bool contains = false;
         Log.WriteLine("Checking if " + _playerId + " if is in the team.", LogLevel.VERBOSE);
-        contains = players.Any(x => x.GetPlayerDiscordId() == _playerId);
+        contains = players.Any(x => x.PlayerDiscordId == _playerId);
         Log.WriteLine(_playerId + " contains: " + contains, LogLevel.VERBOSE);
         return contains;
     }

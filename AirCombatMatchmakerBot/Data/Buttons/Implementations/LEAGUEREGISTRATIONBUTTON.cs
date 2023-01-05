@@ -45,15 +45,15 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
             Player player = Database.Instance.PlayerData.GetAPlayerProfileById(
                 _component.User.Id);
 
-            if (player.GetPlayerDiscordId() == 0)
+            if (player.PlayerDiscordId == 0)
             {
-                Log.WriteLine("Player's: " + player.GetPlayerNickname() +
+                Log.WriteLine("Player's: " + player.PlayerNickName +
                     " id was 0!", LogLevel.CRITICAL);
                 return "";
             }
 
-            Log.WriteLine("Found player: " + player.GetPlayerNickname() +
-                " (" + player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
+            Log.WriteLine("Found player: " + player.PlayerNickName +
+                " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
 
             if (!interfaceLeague.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
                 interfaceLeague.LeaguePlayerCountPerTeam, _component.User.Id))
@@ -65,7 +65,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 // after the data has been serialized
                 Team newTeam = new Team(
                     new List<Player> { player },
-                    player.GetPlayerNickname(),
+                    player.PlayerNickName,
                     interfaceLeague.LeagueData.Teams.CurrentTeamInt);
 
                 if (interfaceLeague.LeaguePlayerCountPerTeam < 2)

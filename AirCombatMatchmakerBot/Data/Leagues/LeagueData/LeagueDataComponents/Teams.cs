@@ -82,10 +82,10 @@ public class Teams
 
             foreach (Player teamPlayer in team.Players)
             {
-                Log.WriteLine("Checking player: " + teamPlayer.GetPlayerNickname() +
-                    " (" + teamPlayer.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
+                Log.WriteLine("Checking player: " + teamPlayer.PlayerNickName +
+                    " (" + teamPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
 
-                if (teamPlayer.GetPlayerDiscordId() == _idToSearchFor)
+                if (teamPlayer.PlayerDiscordId == _idToSearchFor)
                 {
                     return true;
                 }
@@ -110,10 +110,10 @@ public class Teams
 
             foreach (Player teamPlayer in Players)
             {
-                Log.WriteLine("Checking player: " + teamPlayer.GetPlayerNickname() +
-                    " (" + teamPlayer.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
+                Log.WriteLine("Checking player: " + teamPlayer.PlayerNickName +
+                    " (" + teamPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
 
-                if (teamPlayer.GetPlayerDiscordId() == _idToSearchFor)
+                if (teamPlayer.PlayerDiscordId == _idToSearchFor)
                 {
                     return team;
                 }

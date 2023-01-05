@@ -115,16 +115,16 @@ public class Leagues
                 {
                     foreach (Player player in team.Players)
                     {
-                        Log.WriteLine("Looping through player: " + player.GetPlayerNickname() + " (" +
-                            player.GetPlayerDiscordId() + ")", LogLevel.VERBOSE);
-                        if (player.GetPlayerDiscordId() == _userId)
+                        Log.WriteLine("Looping through player: " + player.PlayerNickName + " (" +
+                            player.PlayerDiscordId + ")", LogLevel.VERBOSE);
+                        if (player.PlayerDiscordId == _userId)
                         {
                             team.TeamActive = false;
 
                             teamFound = true;
                             Log.WriteLine("Set team: " + team.GetTeamName(
                                 storedLeague.LeaguePlayerCountPerTeam) + " deactive in league: " +
-                                storedLeague.LeagueCategoryName + " because " + player.GetPlayerNickname() +
+                                storedLeague.LeagueCategoryName + " because " + player.PlayerNickName +
                                 " left", LogLevel.DEBUG);
 
                             if (storedLeagueString == null)

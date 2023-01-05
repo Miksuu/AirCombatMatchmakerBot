@@ -101,7 +101,7 @@ public class LeagueMatch
 
             foreach (Player player in foundTeam.Players)
             {
-                allowedUserIds[playerCounter] = player.GetPlayerDiscordId();
+                allowedUserIds[playerCounter] = player.PlayerDiscordId;
                 Log.WriteLine("Added " + allowedUserIds[playerCounter] + " to: " +
                     nameof(allowedUserIds) + ". " + nameof(playerCounter) + " is now: " +
                     playerCounter+1 + " out of: " + (allowedUserIds.Length - 1).ToString(), LogLevel.VERBOSE);
