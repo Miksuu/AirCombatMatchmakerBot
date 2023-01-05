@@ -123,17 +123,19 @@ public abstract class BaseMessage : InterfaceMessage
 
             for (int b = 0; b < buttonNameWithAmount.Value; ++b)
             {
+                string finalCustomId = ";"
+
                 Log.WriteLine("Button number: " + b, LogLevel.VERBOSE);
                 InterfaceButton interfaceButton =
                      (InterfaceButton)EnumExtensions.GetInstance(buttonNameWithAmount.Key.ToString());
                 Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " +
                     interfaceButton.ButtonName, LogLevel.DEBUG);
 
-                _customIdForButton = _customIdForButton + "_" + b;
+                finalCustomId = _customIdForButton + "_" + b;
 
-                Log.WriteLine(nameof(_customIdForButton) + ": " + _customIdForButton, LogLevel.DEBUG);
+                Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
-                component.WithButton(interfaceButton.CreateTheButton(_customIdForButton));
+                component.WithButton(interfaceButton.CreateTheButton(finalCustomId));
             }
         }
 
