@@ -23,21 +23,4 @@ public class CHALLENGE : BaseChannel
         {
         };
     }
-
-    /*
-    public override async Task PrepareChannelMessages()
-    {
-        var guild = BotReference.GetGuildRef();
-
-        if (guild == null)
-        {
-            Exceptions.BotGuildRefNull();
-            return;
-        }
-
-        var databaseInterfaceChannel = 
-            await base.PrepareCustomChannelMessages(GenerateChallengeQueueMessage());
-
-        await base.PostChannelMessages(guild, databaseInterfaceChannel);
-    }*/
 }

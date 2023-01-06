@@ -42,27 +42,4 @@ public class MATCHCHANNEL : BaseChannel
 
         return listOfOverwrites;
     }
-
-    /*
-    public override async Task PrepareChannelMessages()
-    {
-        var guild = BotReference.GetGuildRef();
-
-        if (guild == null)
-        {
-            Exceptions.BotGuildRefNull();
-            return;
-        }
-
-        InterfaceChannel databaseInterfaceChannel =
-            await base.PrepareCustomChannelMessages(GenerateMatchInitiationMessage());
-
-        await base.PostChannelMessages(guild, databaseInterfaceChannel);
-    }*/
-
-    /*
-        public Task PostChannelMessages()
-    {
-        return Task.CompletedTask;
-    }*/
 }
