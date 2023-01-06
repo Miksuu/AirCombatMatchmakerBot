@@ -262,7 +262,7 @@ public abstract class BaseChannel : InterfaceChannel
             Log.WriteLine("Key was 0, message does not exist. Creating it.", LogLevel.VERBOSE);
 
             ulong id = interfaceMessageKvp.Value.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            _guild, channelId, interfaceMessageKvp.Key).Result;
+            _guild, channelId, interfaceMessageKvp.Key, channelsCategoryId).Result;
 
             messageKey.MessageId = id;
         }

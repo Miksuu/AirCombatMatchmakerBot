@@ -98,7 +98,8 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     public async Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        Discord.WebSocket.SocketGuild _guild, ulong _channelId, string _customIdForButton)
+        Discord.WebSocket.SocketGuild _guild, ulong _channelId,
+        string _customIdForButton, ulong _channelCategoryId)
     {
         var component = new ComponentBuilder();
 
@@ -141,7 +142,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
 
         var newMessage = await textChannel.SendMessageAsync(
-            message, components: component.Build());
+            GenerateMessage(_channelId, _channelCategoryId), components: component.Build());
         ulong newMessageId = newMessage.Id;
 
         Log.WriteLine("Created a new message with id: " + newMessageId,LogLevel.VERBOSE);
