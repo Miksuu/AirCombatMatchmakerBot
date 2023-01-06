@@ -142,27 +142,31 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
     }
 
-    public async Task<InterfaceChannel> PrepareCustomChannelMessages(string _inputOfTheFirstMessage)
+    public async Task<InterfaceChannel> PrepareCustomChannelMessages()
     {
         var databaseInterfaceChannel =
             Database.Instance.Categories.CreatedCategoriesWithChannels.First(
                 x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
                     x => x.ChannelId == channelId);
 
-        InterfaceMessage interfaceMessage =
-            (InterfaceMessage)EnumExtensions.GetInstance(channelMessages[0].ToString());
-
-        if (!databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(
-            channelMessages[0].ToString()))
+        for (int m = 0; m < channelMessages.Count; ++m)
         {
-            Log.WriteLine("Does not contain the key: " +
-                channelMessages[0] + ", continuing", LogLevel.VERBOSE);
+            InterfaceMessage interfaceMessage =
+                (InterfaceMessage)EnumExtensions.GetInstance(channelMessages[m].ToString());
 
-            // Generate the initial message
-            interfaceMessage.Message = _inputOfTheFirstMessage;
+            if (!databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(
+                channelMessages[m].ToString()))
+            {
+                Log.WriteLine("Does not contain the key: " +
+                    channelMessages[m] + ", continuing", LogLevel.VERBOSE);
 
-            databaseInterfaceChannel.InterfaceMessagesWithIds.Add(
-                channelMessages[0].ToString(), interfaceMessage);
+                // Generate the initial message from the inherited class
+                interfaceMessage.Message = 
+                    interfaceMessage.GenerateMessage(channelId, channelsCategoryId);
+
+                databaseInterfaceChannel.InterfaceMessagesWithIds.Add(
+                    channelMessages[m].ToString(), interfaceMessage);
+            }
         }
 
         return databaseInterfaceChannel;

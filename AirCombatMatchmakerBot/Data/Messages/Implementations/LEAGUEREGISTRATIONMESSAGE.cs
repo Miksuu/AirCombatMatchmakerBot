@@ -18,4 +18,9 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         };
         message = "Insert league registration message here";
     }
+
+    public override string GenerateMessage(ulong _channelId, ulong _channelCategoryId)
+    {
+        return message;
+    }
 }

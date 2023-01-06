@@ -1,6 +1,7 @@
 ﻿//using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
+using System.Threading.Channels;
 
 [DataContract]
 public abstract class BaseMessage : InterfaceMessage
@@ -147,4 +148,6 @@ public abstract class BaseMessage : InterfaceMessage
 
         return newMessageId;
     }
+
+    public abstract string GenerateMessage(ulong _channelId, ulong _channelCategoryId);
 }

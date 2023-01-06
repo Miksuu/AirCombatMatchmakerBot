@@ -18,4 +18,9 @@ public class REPORTINGMESSAGE : BaseMessage
         };
         message = "Insert the reporting message here";
     }
+
+    public override string GenerateMessage(ulong _channelId, ulong _channelCategoryId)
+    {
+        return message;
+    }
 }

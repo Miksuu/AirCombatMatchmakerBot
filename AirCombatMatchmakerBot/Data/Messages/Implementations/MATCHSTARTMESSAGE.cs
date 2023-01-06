@@ -14,4 +14,40 @@ public class MATCHSTARTMESSAGE : BaseMessage
         showOnChannelGeneration = true;
         message = "Insert the match start message here";
     }
+
+    public override string GenerateMessage(ulong _channelId, ulong _channelCategoryId)
+    {
+        string generatedMessage = "";
+        bool firstTeam = true;
+
+        Log.WriteLine("Starting to generate match initiation message on channel: with id: " +
+            _channelId + " under category ID: " + _channelCategoryId, LogLevel.VERBOSE);
+
+        InterfaceLeague interfaceLeague =
+            Database.Instance.Leagues.GetILeagueByCategoryId(_channelCategoryId);
+        LeagueMatch? foundMatch =
+            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_channelId);
+
+        if (foundMatch == null)
+        {
+            Log.WriteLine(nameof(foundMatch) + " was null!", LogLevel.ERROR);
+            return null;
+        }
+
+        foreach (int teamId in foundMatch.TeamsInTheMatch)
+        {
+            Team team = interfaceLeague.LeagueData.Teams.FindTeamById(
+                interfaceLeague.LeaguePlayerCountPerTeam, teamId);
+
+            string teamMembers =
+                team.GetTeamSkillRatingAndNameInAString(
+                    interfaceLeague.LeaguePlayerCountPerTeam);
+
+            generatedMessage += teamMembers;
+
+            if (firstTeam) { generatedMessage += " vs "; firstTeam = false; }
+        }
+
+        return generatedMessage;
+    }
 }

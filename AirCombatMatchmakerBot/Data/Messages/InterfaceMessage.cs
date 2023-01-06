@@ -14,4 +14,6 @@ public interface InterfaceMessage
 
     public Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
         SocketGuild _guild, ulong _channelId, string _customIdForButton);
+
+    public abstract string GenerateMessage(ulong _channelId, ulong _channelCategoryId);
 }

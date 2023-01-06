@@ -18,4 +18,9 @@ public class REGISTRATIONMESSAGE : BaseMessage
         };
         message = "Click this button to register!";
     }
+
+    public override string GenerateMessage(ulong _channelId, ulong _channelCategoryId)
+    {
+        return message;
+    }
 }
