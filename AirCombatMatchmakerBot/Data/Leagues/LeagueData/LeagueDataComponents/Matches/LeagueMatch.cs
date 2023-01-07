@@ -41,14 +41,6 @@ public class LeagueMatch
         {
             Log.WriteLine("Getting " + nameof(matchChannelId)
                 + ": " + matchChannelId, LogLevel.VERBOSE);
-
-            /*
-            if (matchChannelId == 0)
-            {
-                Log.WriteLine(nameof(matchChannelId) + " was 0!", LogLevel.CRITICAL);
-                return 0;
-            }*/
-
             return matchChannelId;
         }
         set
@@ -59,9 +51,27 @@ public class LeagueMatch
         }
     }
 
+
+    public MatchReporting MatchReporting
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(matchReporting)
+                + ": " + matchReporting, LogLevel.VERBOSE);
+            return matchReporting;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(matchReporting) +
+                matchReporting + " to: " + value, LogLevel.VERBOSE);
+            matchReporting = value;
+        }
+    }
+
     [DataMember] private int[] teamsInTheMatch { get; set; }
     [DataMember] private int matchId { get; set; }
     [DataMember] private ulong matchChannelId { get; set; }
+    [DataMember] private MatchReporting matchReporting { get; set; }
 
     public LeagueMatch() { }
 
@@ -71,6 +81,8 @@ public class LeagueMatch
 
         matchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
+
+        MatchReporting = new MatchReporting();   
 
         Log.WriteLine("Constructed a new match with teams ids: " + teamsInTheMatch[0] +
             teamsInTheMatch[1] + " with matchId of: " + matchId, LogLevel.DEBUG);
