@@ -19,4 +19,7 @@ public enum MessageName
 
     [EnumMember(Value = "REPORTING MESSAGE")]
     REPORTINGMESSAGE = 4,
+
+    [EnumMember(Value = "CONFIRMATION MESSAGE")]
+    CONFIRMATIONMESSAGE = 5,
 }

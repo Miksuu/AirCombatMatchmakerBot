@@ -21,22 +21,6 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    bool InterfaceMessage.ShowOnChannelGeneration
-    {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(showOnChannelGeneration) 
-                + ": " + showOnChannelGeneration, LogLevel.VERBOSE);
-            return showOnChannelGeneration;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(showOnChannelGeneration) +
-                showOnChannelGeneration + " to: " + value, LogLevel.VERBOSE);
-            showOnChannelGeneration = value;
-        }
-    }
-
     Dictionary<ButtonName, int> InterfaceMessage.MessageButtonNamesWithAmount
     {
         get
@@ -86,7 +70,6 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     [DataMember] protected MessageName messageName;
-    [DataMember] protected bool showOnChannelGeneration;
     [DataMember] protected Dictionary<ButtonName, int> messageButtonNamesWithAmount;
     [DataMember] protected string message = "";
     [DataMember] protected ulong messageId;

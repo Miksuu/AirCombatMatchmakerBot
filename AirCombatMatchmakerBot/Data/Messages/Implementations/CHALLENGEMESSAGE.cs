@@ -11,7 +11,6 @@ public class CHALLENGEMESSAGE : BaseMessage
     public CHALLENGEMESSAGE()
     {
         messageName = MessageName.CHALLENGEMESSAGE;
-        showOnChannelGeneration = true;
         messageButtonNamesWithAmount = new Dictionary<ButtonName, int> 
         {
             { ButtonName.CHALLENGEBUTTON, 1 }

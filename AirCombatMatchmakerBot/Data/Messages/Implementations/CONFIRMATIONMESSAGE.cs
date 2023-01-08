@@ -6,11 +6,11 @@ using Discord.WebSocket;
 using System.Threading.Channels;
 
 [DataContract]
-public class REPORTINGMESSAGE : BaseMessage
+public class CONFIRMATIONMESSAGE : BaseMessage
 {
-    public REPORTINGMESSAGE()
+    public CONFIRMATIONMESSAGE()
     {
-        messageName = MessageName.REPORTINGMESSAGE;
+        messageName = MessageName.CONFIRMATIONMESSAGE;
         messageButtonNamesWithAmount = new Dictionary<ButtonName, int>
         {
             { ButtonName.REPORTSCOREBUTTON, 4 }

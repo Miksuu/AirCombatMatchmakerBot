@@ -11,7 +11,6 @@ public class REGISTRATIONMESSAGE : BaseMessage
     public REGISTRATIONMESSAGE()
     {
         messageName = MessageName.REGISTRATIONMESSAGE;
-        showOnChannelGeneration = true;
         messageButtonNamesWithAmount = new Dictionary<ButtonName, int> 
         {
             { ButtonName.REGISTRATIONBUTTON, 1 },

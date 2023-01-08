@@ -11,7 +11,6 @@ public class MATCHSTARTMESSAGE : BaseMessage
     public MATCHSTARTMESSAGE()
     {
         messageName = MessageName.MATCHSTARTMESSAGE;
-        showOnChannelGeneration = true;
         message = "Insert the match start message here";
     }
 
