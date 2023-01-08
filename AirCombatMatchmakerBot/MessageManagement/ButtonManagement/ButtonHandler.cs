@@ -1,4 +1,4 @@
-﻿using Discord.WebSocket;
+using Discord.WebSocket;
 
 public static class ButtonHandler
 {
@@ -57,13 +57,6 @@ public static class ButtonHandler
             _component, channelId, messageId, message, splitStrings).Result;
 
         await SerializationManager.SerializeDB();
-
-        /*
-        if (splitString[0] != "leagueRegistration")
-        {
-            Log.WriteLine(response, logLevel);
-        }
-        */
 
         if (response != "EMPTY") await _component.RespondAsync(response, ephemeral: true);
         else { Log.WriteLine("the response was: " + response, LogLevel.CRITICAL); }
