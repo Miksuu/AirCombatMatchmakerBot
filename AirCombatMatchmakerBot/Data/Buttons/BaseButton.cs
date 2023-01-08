@@ -54,14 +54,35 @@ public abstract class BaseButton : InterfaceButton
         }
     }
 
+    ulong InterfaceButton.ButtonCategoryId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(buttonCategoryId)
+                + ": " + buttonCategoryId, LogLevel.VERBOSE);
+            return buttonCategoryId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(buttonCategoryId) +
+                buttonCategoryId + " to: " + value, LogLevel.VERBOSE);
+            buttonCategoryId = value;
+        }
+    }
+
     [DataMember] protected ButtonName buttonName;
     [DataMember] protected string buttonLabel = "";
     [DataMember] protected ButtonStyle buttonStyle;
+    [DataMember] protected ulong buttonCategoryId;
 
-    public Discord.ButtonBuilder CreateTheButton(string _customId, int _buttonIndex)
+    public Discord.ButtonBuilder CreateTheButton(string _customId, int _buttonIndex, ulong _buttonCategoryId)
     {
         Log.WriteLine("Creating a button: " + buttonName + " | label: " +
-            buttonLabel + " | custom-id:" + _customId + " with style: " + buttonStyle, LogLevel.VERBOSE);
+            buttonLabel + " | custom-id:" + _customId + " with style: " +
+            buttonStyle + " | category-id: " + _buttonCategoryId, LogLevel.VERBOSE);
+
+        // Insert the button category id for faster reference later
+        buttonCategoryId = _buttonCategoryId;
 
         if (buttonName == ButtonName.REPORTSCOREBUTTON)
         {

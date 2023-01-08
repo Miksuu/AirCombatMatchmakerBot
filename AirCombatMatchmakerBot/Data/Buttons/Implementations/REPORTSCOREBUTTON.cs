@@ -21,6 +21,15 @@ public class REPORTSCOREBUTTON : BaseButton
         SocketMessageComponent _component, ulong _channelId,
         ulong _messageId, string _message, string[] _splitStrings)
     {
+        ulong userId = _component.User.Id;
+
+        Log.WriteLine("Pressed by: " + userId + " in: " + _channelId, LogLevel.DEBUG);
+
+        foreach (var item in _splitStrings)
+        {
+            Log.WriteLine(item, LogLevel.DEBUG);
+        }
+
         return "pressed: " + _component.Id;
     }
 }

@@ -73,6 +73,7 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected Dictionary<ButtonName, int> messageButtonNamesWithAmount;
     [DataMember] protected string message = "";
     [DataMember] protected ulong messageId;
+    // Insert category ID here if needed
 
     public BaseMessage()
     {
@@ -119,7 +120,7 @@ public abstract class BaseMessage : InterfaceMessage
 
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
-                component.WithButton(interfaceButton.CreateTheButton(finalCustomId, b));
+                component.WithButton(interfaceButton.CreateTheButton(finalCustomId, b, _channelCategoryId));
             }
         }
 
