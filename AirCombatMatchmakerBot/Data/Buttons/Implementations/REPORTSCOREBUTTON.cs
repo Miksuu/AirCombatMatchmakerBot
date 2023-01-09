@@ -16,7 +16,6 @@ public class REPORTSCOREBUTTON : BaseButton
         buttonStyle = ButtonStyle.Primary;
     }
 
-
     public void CreateTheButton(){}
 
     public override async Task<string> ActivateButtonFunction(
@@ -24,10 +23,10 @@ public class REPORTSCOREBUTTON : BaseButton
         ulong _messageId, string _message, string[] _splitStrings)
     {
         string finalResponse = "Something went wrong with the reporting the match result of: " +
-            buttonLabel + ". An admin has been informed";
+            _splitStrings[2] + ". An admin has been informed";
 
         ulong playerId = _component.User.Id;
-        int playerReportedResult = int.Parse(buttonLabel);
+        int playerReportedResult = int.Parse(_splitStrings[2]);
 
         Log.WriteLine("Pressed by: " + playerId + " in: " + _channelId + 
             " with label int: " + playerReportedResult + " in category: " +

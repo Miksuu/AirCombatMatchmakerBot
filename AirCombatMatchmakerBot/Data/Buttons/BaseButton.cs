@@ -74,6 +74,7 @@ public abstract class BaseButton : InterfaceButton
     [DataMember] protected string buttonLabel = "";
     [DataMember] protected ButtonStyle buttonStyle;
     [DataMember] protected ulong buttonCategoryId;
+    //[DataMember] protected string buttonComponentId;
 
     public Discord.ButtonBuilder CreateTheButton(string _customId, int _buttonIndex, ulong _buttonCategoryId)
     {
@@ -97,6 +98,8 @@ public abstract class BaseButton : InterfaceButton
             CustomId = buttonName.ToString() + "_" + _customId,
             Style = buttonStyle,
         };
+
+        //buttonComponentId = button.CustomId;
 
         return button;
     }

@@ -69,15 +69,33 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
+    List<InterfaceButton> InterfaceMessage.ButtonsInTheMessage
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(buttonsInTheMessage) + " with count of: " +
+                buttonsInTheMessage.Count, LogLevel.VERBOSE);
+            return buttonsInTheMessage;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(buttonsInTheMessage)
+                + " to: " + value, LogLevel.VERBOSE);
+            buttonsInTheMessage = value;
+        }
+    }
+
     [DataMember] protected MessageName messageName;
     [DataMember] protected Dictionary<ButtonName, int> messageButtonNamesWithAmount;
     [DataMember] protected string message = "";
     [DataMember] protected ulong messageId;
+    [DataMember] protected List<InterfaceButton> buttonsInTheMessage;
     // Insert category ID here if needed
 
     public BaseMessage()
     {
         messageButtonNamesWithAmount = new Dictionary<ButtonName, int>();
+        buttonsInTheMessage = new List<InterfaceButton>();
     }
 
     public async Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
@@ -121,6 +139,8 @@ public abstract class BaseMessage : InterfaceMessage
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
                 component.WithButton(interfaceButton.CreateTheButton(finalCustomId, b, _channelCategoryId));
+
+                buttonsInTheMessage.Add(interfaceButton);
             }
         }
 
