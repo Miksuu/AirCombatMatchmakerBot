@@ -128,13 +128,14 @@ public abstract class BaseMessage : InterfaceMessage
             {
                 string finalCustomId = "";
 
-                Log.WriteLine("Button number: " + b, LogLevel.VERBOSE);
                 InterfaceButton interfaceButton =
                      (InterfaceButton)EnumExtensions.GetInstance(buttonNameWithAmount.Key.ToString());
+
                 Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " +
                     interfaceButton.ButtonName, LogLevel.DEBUG);
 
-                finalCustomId = _customIdForButton + "_" + b;
+                finalCustomId = _channelCategoryId + "_" + _channelId + "_" +
+                    messageId + "_" + interfaceButton.ButtonName + "_" + b;
 
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 

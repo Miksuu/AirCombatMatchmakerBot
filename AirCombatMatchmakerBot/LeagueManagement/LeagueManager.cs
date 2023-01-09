@@ -74,13 +74,13 @@ public static class LeagueManager
         return Task.CompletedTask;
     }
 
-    public static InterfaceLeague GetLeagueInstanceWithLeagueCategoryName(CategoryType _leagueCategoryName)
+    public static InterfaceLeague GetLeagueInstanceWithLeagueCategoryName(CategoryType _leagueCategoryType)
     {
         Log.WriteLine("Getting a league instance with LeagueCategoryName: " +
-            _leagueCategoryName, LogLevel.VERBOSE);
+            _leagueCategoryType, LogLevel.VERBOSE);
 
-        var leagueInstance = (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
-        leagueInstance.LeagueCategoryName = _leagueCategoryName;
+        var leagueInstance = (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryType.ToString());
+        leagueInstance.LeagueCategoryName = _leagueCategoryType;
         Log.WriteLine(nameof(leagueInstance) + ": " + leagueInstance.ToString(),LogLevel.VERBOSE);
         return leagueInstance;
     }

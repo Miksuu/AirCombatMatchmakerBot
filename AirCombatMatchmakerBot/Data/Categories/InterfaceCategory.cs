@@ -7,7 +7,7 @@ public interface InterfaceCategory
 {
     public CategoryType CategoryType { get; set; }
     public List<ChannelType> ChannelTypes { get; set; }
-    public List<InterfaceChannel> InterfaceChannels { get; set; }
+    public Dictionary<ulong, InterfaceChannel> InterfaceChannels { get; set; }
     public ulong SocketCategoryChannelId { get; set; }
 
     public abstract List<Overwrite> GetGuildPermissions(

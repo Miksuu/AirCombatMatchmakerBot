@@ -34,7 +34,7 @@ public class Categories
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
         var FoundCategoryKvp = CreatedCategoriesWithChannels.First(
-            x => x.Value.CategoryType.ToString() == _idToSearchWith);
+            x => x.Key.ToString() == _idToSearchWith.ToString());
         Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;
     }

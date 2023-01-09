@@ -35,11 +35,11 @@ public class CHALLENGEMESSAGE : BaseMessage
             Log.WriteLine("Full league name: " + leagueName, LogLevel.VERBOSE);
 
             if (createdCategoriesKvp.Value.InterfaceChannels.Any(
-                    x => x.ChannelId == _channelId))
+                    x => x.Value.ChannelId == _channelId))
             {
                 ulong channelIdToLookFor =
                     createdCategoriesKvp.Value.InterfaceChannels.First(
-                        x => x.ChannelId == _channelId).ChannelId;
+                        x => x.Value.ChannelId == _channelId).Value.ChannelId;
 
                 Log.WriteLine("Looping on league: " + leagueName +
                     " looking for id: " + channelIdToLookFor, LogLevel.VERBOSE);

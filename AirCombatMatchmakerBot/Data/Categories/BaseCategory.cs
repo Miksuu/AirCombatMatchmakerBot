@@ -38,7 +38,7 @@ public abstract class BaseCategory : InterfaceCategory
         }
     }
 
-    List<InterfaceChannel> InterfaceCategory.InterfaceChannels
+    Dictionary<ulong, InterfaceChannel> InterfaceCategory.InterfaceChannels
     {
         get
         {
@@ -72,13 +72,13 @@ public abstract class BaseCategory : InterfaceCategory
 
     [DataMember] protected CategoryType categoryTypes;
     [DataMember] protected List<ChannelType> channelTypes;
-    [DataMember] protected List<InterfaceChannel> interfaceChannels;
+    [DataMember] protected Dictionary<ulong, InterfaceChannel> interfaceChannels;
     [DataMember] protected ulong socketCategoryChannelId;
 
     public BaseCategory()
     {
         channelTypes = new List<ChannelType>();
-        interfaceChannels = new List<InterfaceChannel>();
+        interfaceChannels = new Dictionary<ulong, InterfaceChannel>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
@@ -174,14 +174,14 @@ public abstract class BaseCategory : InterfaceCategory
 
         // Channel found from the basecategory (it exists)
         if (interfaceChannels.Any(
-            x => x.ChannelName == interfaceChannel.ChannelName))
+            x => x.Value.ChannelName == interfaceChannel.ChannelName))
         {
             Log.WriteLine(nameof(interfaceChannels) + " already contains channel: " +
                 interfaceChannel.ChannelName, LogLevel.VERBOSE);
 
             // Replace interfaceChannel with a one that is from the database
             interfaceChannel = interfaceChannels.First(
-                x => x.ChannelType == _channelType);
+                x => x.Value.ChannelType == _channelType).Value;
 
             Log.WriteLine("Replaced with: " +
                 interfaceChannel.ChannelType + " from db", LogLevel.DEBUG);
@@ -208,7 +208,7 @@ public abstract class BaseCategory : InterfaceCategory
 
             interfaceChannel.InterfaceMessagesWithIds.Clear();
 
-            interfaceChannels.Add(interfaceChannel);
+            interfaceChannels.Add(interfaceChannel.ChannelId, interfaceChannel);
 
             Log.WriteLine("Done adding to the db. Count is now: " +
                 interfaceChannels.Count +
