@@ -15,6 +15,7 @@ public static class ButtonHandler
         string response = "EMPTY";
         LogLevel logLevel = LogLevel.DEBUG;
 
+        ulong categoryId = 0;
         ulong channelId = 0;
         ulong messageId = 0;
         string message = "";
@@ -39,18 +40,23 @@ public static class ButtonHandler
                     interfaceChannelTemp.InterfaceMessagesWithIds.First(
                         x => x.Value.MessageId == _component.Message.Id);
 
+                categoryId = interfaceCategoryKvp.Key;
                 channelId = interfaceChannelTemp.ChannelId;
                 messageId = interfaceMessageKvp.Value.MessageId;
                 message = interfaceMessageKvp.Value.Message;
+
+                var buttonCached = interfaceMessageKvp.Value.
             }
         }
 
         Log.WriteLine("Found: " + channelId + " | " + messageId + " | " + message, LogLevel.DEBUG);
 
-        if (channelId == 0 || messageId == 0 || message == "")
+        if (categoryId == 0 || channelId == 0 || messageId == 0 || message == "")
         {
             Log.WriteLine("Channel id, msg or it's id was null!", LogLevel.ERROR);
         }
+
+
 
         InterfaceButton interfaceButton = (InterfaceButton)EnumExtensions.GetInstance(splitStrings[0]);
         response = interfaceButton.ActivateButtonFunction(
