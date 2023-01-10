@@ -90,7 +90,6 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected string message = "";
     [DataMember] protected ulong messageId;
     [DataMember] protected List<InterfaceButton> buttonsInTheMessage;
-    // Insert category ID here if needed
 
     public BaseMessage()
     {
@@ -99,12 +98,13 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     public async Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        Discord.WebSocket.SocketGuild _guild, ulong _channelId, ulong _channelCategoryId)
+        Discord.WebSocket.SocketGuild _guild, ulong _channelId, ulong _channelCategoryId,
+        string _messageKey)
     {
         var component = new ComponentBuilder();
 
         Log.WriteLine("Creating the channel message with id: "
-            + _channelId, LogLevel.VERBOSE);
+            + _channelId + " with categoryID: " + _channelCategoryId, LogLevel.VERBOSE);
 
         var textChannel = _guild.GetChannel(_channelId) as ITextChannel;
 
@@ -137,7 +137,7 @@ public abstract class BaseMessage : InterfaceMessage
 
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
-                component.WithButton(interfaceButton.CreateTheButton(finalCustomId, b, _channelCategoryId));
+                component.WithButton(interfaceButton.CreateTheButton(finalCustomId, b, _channelCategoryId, _messageKey));
 
                 buttonsInTheMessage.Add(interfaceButton);
             }

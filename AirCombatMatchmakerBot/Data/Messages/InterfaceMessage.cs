@@ -13,7 +13,7 @@ public interface InterfaceMessage
     public List<InterfaceButton> ButtonsInTheMessage { get; set; }
 
     public Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        SocketGuild _guild, ulong _channelId, ulong _channelCategoryId);
+        SocketGuild _guild, ulong _channelId, ulong _channelCategoryId, string _messageKey);
 
     public abstract string GenerateMessage(ulong _channelId, ulong _channelCategoryId);
 }

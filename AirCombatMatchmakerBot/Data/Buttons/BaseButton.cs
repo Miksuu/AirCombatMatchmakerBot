@@ -92,15 +92,11 @@ public abstract class BaseButton : InterfaceButton
     [DataMember] protected ulong buttonCategoryId;
     [DataMember] protected string buttonCustomId;
 
-    public Discord.ButtonBuilder CreateTheButton(string _customId, int _buttonIndex, ulong _buttonCategoryId)
+    public Discord.ButtonBuilder CreateTheButton(string _customId, int _buttonIndex, ulong _buttonCategoryId, string _messageKey)
     {
         Log.WriteLine("Creating a button: " + buttonName + " | label: " +
             buttonLabel + " | custom-id:" + _customId + " with style: " +
             buttonStyle + " | category-id: " + _buttonCategoryId, LogLevel.VERBOSE);
-
-        // Insert the button category id for faster reference later
-        buttonCategoryId = _buttonCategoryId;
-        buttonCustomId = _customId;
 
         // Report score specific stuff, add the index as label
         if (buttonName == ButtonName.REPORTSCOREBUTTON)
@@ -109,6 +105,18 @@ public abstract class BaseButton : InterfaceButton
             Log.WriteLine("is: " + nameof(buttonName) +
                 " set label to: " + buttonLabel, LogLevel.VERBOSE);
         }
+
+        // Create the button to match the league category id, for easier later referencing
+        if (buttonName == ButtonName.LEAGUEREGISTRATIONBUTTON)
+        {
+            _customId = _messageKey + "_" + _buttonIndex;
+            Log.WriteLine("Setting league-registration button custom id to: " + 
+                _customId, LogLevel.DEBUG);
+        }
+
+        // Insert the button category id for faster reference later
+        buttonCategoryId = _buttonCategoryId;
+        buttonCustomId = _customId;
 
         var button = new Discord.ButtonBuilder()
         {

@@ -28,6 +28,7 @@ public class Categories
         createdCategoriesWithChannels = new();
     }
 
+    /*
     // Searches it with string, not ID. Maybe change this
     public KeyValuePair<ulong, InterfaceCategory> GetCreatedCategoryWithChannelKvpWithString(
         string _idToSearchWith)
@@ -37,12 +38,18 @@ public class Categories
             x => x.Key.ToString() == _idToSearchWith.ToString());
         Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;
-    }
+    }*/
 
     public KeyValuePair<ulong, InterfaceCategory> GetCreatedCategoryWithChannelKvpWithId(
         ulong _idToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
+
+        foreach (var item in CreatedCategoriesWithChannels)
+        {
+            Log.WriteLine(item.Key.ToString(), LogLevel.VERBOSE);
+        }
+
         var FoundCategoryKvp = CreatedCategoriesWithChannels.First(x => x.Key == _idToSearchWith);
         Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;

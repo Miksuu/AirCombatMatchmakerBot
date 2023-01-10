@@ -74,7 +74,6 @@ public class LEAGUEREGISTRATION : BaseChannel
             var leagueInterfaceFromDatabase =
                 Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
 
-
             Log.WriteLine("Starting to create a league join button for: " + leagueNameString, LogLevel.VERBOSE);
 
             if (leagueInterfaceFromDatabase == null)
@@ -95,9 +94,11 @@ public class LEAGUEREGISTRATION : BaseChannel
 
             Log.WriteLine("interfaceMessage message: " + interfaceMessage.Message, LogLevel.VERBOSE);
 
-            if (databaseInterfaceChannel.Value.InterfaceMessagesWithIds.ContainsKey(leagueName.ToString())) continue;
+            if (databaseInterfaceChannel.Value.InterfaceMessagesWithIds.ContainsKey(
+                leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId.ToString())) continue;
 
-            databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Add(leagueName.ToString(), interfaceMessage);
+            databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Add(
+                leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId.ToString(), interfaceMessage);
 
             Log.WriteLine("Added to the dictionary, count is now: " +
                 databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);

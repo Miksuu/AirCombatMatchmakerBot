@@ -207,14 +207,14 @@ public class Leagues
         }
     }
     public InterfaceLeague? FindLeagueInterfaceWithCategoryNameString(
-        string _splitStringIdPart)
+        ulong _leagueCategoryId)
     {
         Log.WriteLine("Starting to find Ileague from db with: " +
-            _splitStringIdPart, LogLevel.VERBOSE);
+            _leagueCategoryId, LogLevel.VERBOSE);
 
         KeyValuePair<ulong, InterfaceCategory> findLeagueCategoryType =
-            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithString(
-                _splitStringIdPart);
+            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithId(
+                _leagueCategoryId);
         CategoryType leagueCategoryName = findLeagueCategoryType.Value.CategoryType;
 
         Log.WriteLine("found: " + nameof(leagueCategoryName) + ": " +

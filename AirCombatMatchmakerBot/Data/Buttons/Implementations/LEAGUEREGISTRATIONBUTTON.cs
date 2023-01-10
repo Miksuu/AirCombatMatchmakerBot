@@ -24,10 +24,10 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
-        string[] splitStrings = buttonCustomId.Split('_');
+        string[] splitStrings = _component.Data.CustomId.Split('_');
 
         InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(splitStrings[0]);
+            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(ulong.Parse(splitStrings[0]));
 
         if (interfaceLeague == null)
         {

@@ -245,7 +245,6 @@ public abstract class BaseChannel : InterfaceChannel
             _databaseInterfaceChannel.InterfaceMessagesWithIds.Count + " | " + nameof(channelMessages) +
             " count: " + channelMessages.Count, LogLevel.VERBOSE);
 
-
         foreach (var interfaceMessageKvp in _databaseInterfaceChannel.InterfaceMessagesWithIds)
         {
             Log.WriteLine("Looping on message: " + interfaceMessageKvp.Value.MessageName + " with id: " +
@@ -269,7 +268,7 @@ public abstract class BaseChannel : InterfaceChannel
             Log.WriteLine("Key was 0, message does not exist. Creating it.", LogLevel.VERBOSE);
 
             ulong id = interfaceMessageKvp.Value.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            _guild, channelId, channelsCategoryId).Result;
+            _guild, channelId, channelsCategoryId, interfaceMessageKvp.Key).Result;
 
             messageKey.MessageId = id;
         }

@@ -47,6 +47,12 @@ public static class RoleManager
             return;
         }
 
+        if (user.RoleIds.Contains(role.Id))
+        {
+            Log.WriteLine("User already had that role!", LogLevel.DEBUG);
+            return;
+        }
+
         // Add the role to the user
         await user.AddRoleAsync(role);
 

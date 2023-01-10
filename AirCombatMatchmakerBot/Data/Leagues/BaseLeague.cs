@@ -1,6 +1,7 @@
 ﻿using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
+using Newtonsoft.Json.Linq;
 
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
@@ -179,12 +180,32 @@ public abstract class BaseLeague : InterfaceLeague
             leagueCategoryName, LogLevel.VERBOSE);
 
         // Find the category fo the message ID
-        var channel = Database.Instance.Categories.CreatedCategoriesWithChannels.First(
-            x => x.Value.CategoryType == CategoryType.REGISTRATIONCATEGORY).Value.InterfaceChannels.First(
+        var category = Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
+            x => x.Value.CategoryType == CategoryType.REGISTRATIONCATEGORY);
+
+        if (category.Value == null)
+        {
+            Log.WriteLine(nameof(category) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        Log.WriteLine("Found category: " + category.Value.CategoryType, LogLevel.DEBUG);
+
+        var channel = category.Value.InterfaceChannels.FirstOrDefault(
                 x => x.Value.ChannelType == ChannelType.LEAGUEREGISTRATION);
 
-        var messageId = channel.Value.InterfaceMessagesWithIds.First(
+        if (channel.Value == null)
+        {
+            Log.WriteLine(nameof(channel) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        Log.WriteLine("Found channel: " + channel.Value.ChannelName, LogLevel.DEBUG);
+
+        var messageId = channel.Value.InterfaceMessagesWithIds.FirstOrDefault(
             x => x.Key.ToString() == leagueCategoryName.ToString()).Value.MessageId;
+
+        Log.WriteLine("Found messageId: " + messageId, LogLevel.DEBUG);
 
         await MessageManager.ModifyMessage(
             channel.Value.ChannelId, messageId, GenerateALeagueJoinButtonMessage());

@@ -57,7 +57,7 @@ public class CHALLENGEBUTTON : BaseButton
         Log.WriteLine("categoryNameString: " + categoryNameString, LogLevel.VERBOSE);
 
         InterfaceLeague? dbLeagueInstance = 
-            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(categoryNameString);
+            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(buttonCategoryId);
 
         if (dbLeagueInstance == null)
         {
