@@ -120,15 +120,24 @@ public class PlayerData
     public Player GetAPlayerProfileById(ulong _playerId)
     {
         Log.WriteLine("Getting Player by ID: " + _playerId, LogLevel.VERBOSE);
+
         Player FoundPlayer = PlayerIDs.FirstOrDefault(x => x.Key == _playerId).Value;
         Log.WriteLine("Found: " + FoundPlayer.PlayerNickName + " (" +
             FoundPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
+
         return FoundPlayer;
     }
 
-    public async Task HandleGuildMemberUpdated(
+    public async Task HandleRegisteredMemberUpdated(
     Cacheable<SocketGuildUser, ulong> before, SocketGuildUser _socketGuildUserAfter)
     {
+        if (!PlayerIDs.ContainsKey(_socketGuildUserAfter.Id))
+        {
+            Log.WriteLine("PlayerId's does not contain key: " + _socketGuildUserAfter.Id +
+                " disregarding", LogLevel.VERBOSE);
+            return;
+        }
+
         var playerValue =
             Database.Instance.PlayerData.GetAPlayerProfileById(_socketGuildUserAfter.Id);
 
