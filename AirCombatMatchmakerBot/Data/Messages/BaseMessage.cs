@@ -133,7 +133,7 @@ public abstract class BaseMessage : InterfaceMessage
                 Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " +
                     interfaceButton.ButtonName, LogLevel.DEBUG);
 
-                finalCustomId = _channelCategoryId + "_" + _channelId + "_" + interfaceButton.ButtonName + "_" + b;
+                finalCustomId = interfaceButton.ButtonName + "_" + b;
 
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 

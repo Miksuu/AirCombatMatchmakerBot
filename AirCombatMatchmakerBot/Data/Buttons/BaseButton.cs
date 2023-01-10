@@ -70,11 +70,27 @@ public abstract class BaseButton : InterfaceButton
         }
     }
 
+    string InterfaceButton.ButtonCustomId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(buttonCustomId) + ": " +
+                buttonCustomId, LogLevel.VERBOSE);
+            return buttonCustomId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(buttonCustomId) + buttonCustomId
+                + " to: " + value, LogLevel.VERBOSE);
+            buttonCustomId = value;
+        }
+    }
+
     [DataMember] protected ButtonName buttonName;
     [DataMember] protected string buttonLabel = "";
     [DataMember] protected ButtonStyle buttonStyle;
     [DataMember] protected ulong buttonCategoryId;
-    //[DataMember] protected string buttonComponentId;
+    [DataMember] protected string buttonCustomId;
 
     public Discord.ButtonBuilder CreateTheButton(string _customId, int _buttonIndex, ulong _buttonCategoryId)
     {
@@ -84,6 +100,7 @@ public abstract class BaseButton : InterfaceButton
 
         // Insert the button category id for faster reference later
         buttonCategoryId = _buttonCategoryId;
+        buttonCustomId = _customId;
 
         if (buttonName == ButtonName.REPORTSCOREBUTTON)
         {
