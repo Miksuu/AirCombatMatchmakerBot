@@ -99,8 +99,7 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     public async Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        Discord.WebSocket.SocketGuild _guild, ulong _channelId,
-        string _customIdForButton, ulong _channelCategoryId)
+        Discord.WebSocket.SocketGuild _guild, ulong _channelId, ulong _channelCategoryId)
     {
         var component = new ComponentBuilder();
 
@@ -128,13 +127,13 @@ public abstract class BaseMessage : InterfaceMessage
             {
                 string finalCustomId = "";
 
-                Log.WriteLine("Button number: " + b, LogLevel.VERBOSE);
                 InterfaceButton interfaceButton =
                      (InterfaceButton)EnumExtensions.GetInstance(buttonNameWithAmount.Key.ToString());
+
                 Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " +
                     interfaceButton.ButtonName, LogLevel.DEBUG);
 
-                finalCustomId = _customIdForButton + "_" + b;
+                finalCustomId = _channelCategoryId + "_" + _channelId + "_" + interfaceButton.ButtonName + "_" + b;
 
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
