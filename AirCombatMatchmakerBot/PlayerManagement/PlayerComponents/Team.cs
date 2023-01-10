@@ -120,7 +120,13 @@ public class Team
 
         if (_leagueTeamSize < 2 && _getAsMention)
         {
-            Player player = players.FirstOrDefault();
+            Player? player = players.FirstOrDefault();
+            if (player == null)
+            {
+                Log.WriteLine(nameof(player) + " was null!", LogLevel.CRITICAL);
+                return "";
+            }
+
             Log.WriteLine("Found player: " + player.PlayerNickName +
                 " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
 

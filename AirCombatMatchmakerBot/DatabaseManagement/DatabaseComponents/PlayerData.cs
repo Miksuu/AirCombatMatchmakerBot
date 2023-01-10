@@ -134,7 +134,7 @@ public class PlayerData
         if (!PlayerIDs.ContainsKey(_socketGuildUserAfter.Id))
         {
             Log.WriteLine("PlayerId's does not contain key: " + _socketGuildUserAfter.Id +
-                " disregarding", LogLevel.VERBOSE);
+                " disregarding (player is not registered)", LogLevel.VERBOSE);
             return;
         }
 

@@ -117,7 +117,7 @@ public static class ButtonHandler
         Log.WriteLine("To match with: " + _component.Data.CustomId, LogLevel.DEBUG);
 
         // Find multiple buttons where the button name is the one being looked for
-        InterfaceButton foundButton = databaseMessage.Value.ButtonsInTheMessage.FirstOrDefault(
+        InterfaceButton? foundButton = databaseMessage.Value.ButtonsInTheMessage.FirstOrDefault(
             b => b.ButtonCustomId == _component.Data.CustomId);
         if (foundButton == null)
         {

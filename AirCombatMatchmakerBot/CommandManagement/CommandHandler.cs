@@ -27,16 +27,23 @@ public static class CommandHandler
     {
         Log.WriteLine("Start of SlashCommandHandler", LogLevel.VERBOSE);
 
-        string? firstOptionValue = null;
+        string? firstOptionString = null;
 
         Log.WriteLine("OptionsCount: " + _command.Data.Options.Count, LogLevel.VERBOSE);
 
         if (_command.Data.Options.Count > 0)
         {
-            firstOptionValue = _command.Data.Options.FirstOrDefault().Value.ToString();
+            var firstOption = _command.Data.Options.FirstOrDefault();
+            if(firstOption == null)
+            {
+                Log.WriteLine(nameof(firstOption) + " was null! ", LogLevel.ERROR);
+                return;
+            }
+
+            firstOptionString = firstOption.Value.ToString();
 
             Log.WriteLine("The command " + _command.Data.Name + " had " + _command.Data.Options.Count + " options in it." +
-    "            The first command had an argument: " + firstOptionValue, LogLevel.DEBUG);
+    "            The first command had an argument: " + firstOptionString, LogLevel.DEBUG);
 
             // Add a for loop here to print the command arguments, if multiple later on.
         }
@@ -59,26 +66,26 @@ public static class CommandHandler
                 if (Database.Instance.Admins.CheckIfCommandSenderWasAnAdmin(_command))
                 {
                     Log.WriteLine("Admin check pass", LogLevel.VERBOSE);
-                    if (firstOptionValue != null)
+                    if (firstOptionString != null)
                     {
                         Log.WriteLine("firstOptionValue is not null", LogLevel.VERBOSE);
                         // Registers the player profile and returns a bool as task if if was succesful,
                         // otherwise inform the user the user that he tried to register in to the database was already in it
 
-                        if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(UInt64.Parse(firstOptionValue)).Result)
+                        if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(UInt64.Parse(firstOptionString)).Result)
                         {
-                            response = "Added: " + firstOptionValue + " to the database.";
+                            response = "Added: " + firstOptionString + " to the database.";
                         }
                         // Did find the user from the database
                         else
                         {
-                            response = "Player id: " + firstOptionValue + " is already present in the database!";
+                            response = "Player id: " + firstOptionString + " is already present in the database!";
                         }
                         Log.WriteLine("register response: " + response, LogLevel.VERBOSE);
                     }
                     else
                     {
-                        response = nameof(firstOptionValue) + " was null!";
+                        response = nameof(firstOptionString) + " was null!";
                     }
                 }
                 // Inform the non-admin
@@ -92,23 +99,23 @@ public static class CommandHandler
                 // Check if the user is admin
                 if (Database.Instance.Admins.CheckIfCommandSenderWasAnAdmin(_command))
                 {
-                    if (firstOptionValue != null)
+                    if (firstOptionString != null)
                     {
                         // Deletes the player profile and returns a bool as task if if was succesful,
                         // otherwise inform the user that it didn't exist in the database
-                        if (Database.Instance.PlayerData.DeletePlayerProfile(firstOptionValue).Result)
+                        if (Database.Instance.PlayerData.DeletePlayerProfile(firstOptionString).Result)
                         {
-                            response = "Deleted: " + firstOptionValue + " from the database.";
+                            response = "Deleted: " + firstOptionString + " from the database.";
                         }
                         // Didn't find it from the DB
                         else
                         {
-                            response = "Unknown player id: " + firstOptionValue + " could not find it from the database.";
+                            response = "Unknown player id: " + firstOptionString + " could not find it from the database.";
                         }
                     }
                     else
                     {
-                        response = nameof(firstOptionValue) + " was null!";
+                        response = nameof(firstOptionString) + " was null!";
                     }
                 }
                 // Inform the non-admin

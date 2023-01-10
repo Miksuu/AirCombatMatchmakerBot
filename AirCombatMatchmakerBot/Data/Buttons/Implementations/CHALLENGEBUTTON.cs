@@ -81,6 +81,8 @@ public class CHALLENGEBUTTON : BaseButton
 
         await MessageManager.ModifyMessage(_channelId, _messageId, newMessage);
 
+        Log.WriteLine("After modifying message", LogLevel.VERBOSE);
+
         return "";
     }
 }

@@ -100,7 +100,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     [DataMember] protected ChannelType channelType;
-    [DataMember] protected string channelName;
+    [DataMember] protected string channelName = "";
     [DataMember] protected ulong channelId;
     [DataMember] protected ulong channelsCategoryId;
     protected List<MessageName> channelMessages;
@@ -142,7 +142,7 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
     }
 
-    public async Task<InterfaceChannel> PrepareCustomChannelMessages()
+    public Task<InterfaceChannel> PrepareCustomChannelMessages()
     {
         var databaseInterfaceChannel =
             Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
@@ -169,7 +169,7 @@ public abstract class BaseChannel : InterfaceChannel
             }
         }
 
-        return databaseInterfaceChannel.Value;
+        return Task.FromResult(databaseInterfaceChannel.Value);
     }
 
     public virtual async Task PrepareChannelMessages()
@@ -240,6 +240,11 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var channelMessages = await channel.GetMessagesAsync(50, CacheMode.AllowDownload).FirstOrDefaultAsync();
+        if (channelMessages == null)
+        {
+            Log.WriteLine(nameof(channelMessages) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
 
         Log.WriteLine(nameof(_databaseInterfaceChannel.InterfaceMessagesWithIds) + " count: " +
             _databaseInterfaceChannel.InterfaceMessagesWithIds.Count + " | " + nameof(channelMessages) +

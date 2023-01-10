@@ -4,7 +4,7 @@ using System;
 
 public static class ChannelRestore
 {
-    public static async Task<bool> CheckIfChannelHasBeenDeletedAndRestoreForCategory(
+    public static bool CheckIfChannelHasBeenDeletedAndRestoreForCategory(
         ulong _categoryId,
         InterfaceChannel _interfaceChannel,
         SocketGuild _guild)

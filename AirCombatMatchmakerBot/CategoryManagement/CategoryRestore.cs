@@ -4,8 +4,7 @@ using System;
 
 public static class CategoryRestore
 {
-    public static async Task<bool>
-        CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
+    public static bool CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
         System.Collections.Generic.KeyValuePair<
         ulong, InterfaceCategory> _categoryKvp,
         SocketGuild _guild)

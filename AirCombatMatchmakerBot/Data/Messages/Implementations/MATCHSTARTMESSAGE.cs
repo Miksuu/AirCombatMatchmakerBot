@@ -22,15 +22,21 @@ public class MATCHSTARTMESSAGE : BaseMessage
         Log.WriteLine("Starting to generate match initiation message on channel: with id: " +
             _channelId + " under category ID: " + _channelCategoryId, LogLevel.VERBOSE);
 
-        InterfaceLeague interfaceLeague =
+        InterfaceLeague? interfaceLeague =
             Database.Instance.Leagues.GetILeagueByCategoryId(_channelCategoryId);
+        if (interfaceLeague == null)
+        {
+            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.ERROR);
+            return "";
+        }
+
         LeagueMatch? foundMatch =
             interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_channelId);
 
         if (foundMatch == null)
         {
             Log.WriteLine(nameof(foundMatch) + " was null!", LogLevel.ERROR);
-            return null;
+            return "";
         }
 
         foreach (int teamId in foundMatch.TeamsInTheMatch)

@@ -54,29 +54,50 @@ public class Leagues
     }
 
     // Might want to add a check that it exists, use the method above
-    public InterfaceLeague GetILeagueByCategoryName(CategoryType? _leagueCategoryName)
+    public InterfaceLeague? GetILeagueByCategoryName(CategoryType? _leagueCategoryName)
     {
         Log.WriteLine("Getting ILeague by category name: " + _leagueCategoryName, LogLevel.VERBOSE);
-        InterfaceLeague FoundLeague = StoredLeagues.FirstOrDefault(x => x.LeagueCategoryName == _leagueCategoryName);
+        InterfaceLeague? FoundLeague = StoredLeagues.FirstOrDefault(x => x.LeagueCategoryName == _leagueCategoryName);
+
+        if (FoundLeague == null)
+        {
+            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
         Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
         return FoundLeague;
     }
 
     // Maybe unnecessary to get it by string
-    public InterfaceLeague GetILeagueByString(string _leagueCategoryNameString)
+    public InterfaceLeague? GetILeagueByString(string _leagueCategoryNameString)
     {
         Log.WriteLine("Getting ILeague by string: " + _leagueCategoryNameString, LogLevel.VERBOSE);
-        InterfaceLeague FoundLeague = StoredLeagues.FirstOrDefault(
+        InterfaceLeague? FoundLeague = StoredLeagues.FirstOrDefault(
             x => x.LeagueCategoryName.ToString() == _leagueCategoryNameString);
+
+        if (FoundLeague == null)
+        {
+            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
         Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
         return FoundLeague;
     }
 
-    public InterfaceLeague GetILeagueByCategoryId(ulong _leagueCategoryId)
+    public InterfaceLeague? GetILeagueByCategoryId(ulong _leagueCategoryId)
     {
         Log.WriteLine("Getting ILeague by ID: " + _leagueCategoryId, LogLevel.VERBOSE);
-        InterfaceLeague FoundLeague = StoredLeagues.FirstOrDefault(
+        InterfaceLeague? FoundLeague = StoredLeagues.FirstOrDefault(
             x => x.DiscordLeagueReferences.LeagueCategoryId == _leagueCategoryId);
+
+        if (FoundLeague == null)
+        {
+            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
         Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
         return FoundLeague;
     }
@@ -89,7 +110,7 @@ public class Leagues
         Log.WriteLine("Done adding, count is now: " + StoredLeagues.Count, LogLevel.VERBOSE);
     }
 
-    public async void HandleSettingTeamsInactiveThatUserWasIn(ulong _userId)
+    public void HandleSettingTeamsInactiveThatUserWasIn(ulong _userId)
     {
         Log.WriteLine("Starting to set teams inactive that " + _userId + " was in.", LogLevel.VERBOSE);
 
@@ -132,7 +153,14 @@ public class Leagues
                                 continue;
                             }
 
-                            InterfaceLeague findLeagueCategoryType = GetILeagueByString(storedLeagueString);
+                            InterfaceLeague? findLeagueCategoryType = GetILeagueByString(storedLeagueString);
+
+                            if (findLeagueCategoryType == null)
+                            {
+                                Log.WriteLine(nameof(findLeagueCategoryType) + " was null!", LogLevel.CRITICAL);
+                                return;
+                            }
+
                             CategoryType leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
                             var leagueInterface =
@@ -151,7 +179,7 @@ public class Leagues
                                 continue;
                             }
 
-                            await dbLeagueInstance.ModifyLeagueRegisterationChannelMessage();
+                            dbLeagueInstance.ModifyLeagueRegisterationChannelMessage();
 
                             break;
                         }

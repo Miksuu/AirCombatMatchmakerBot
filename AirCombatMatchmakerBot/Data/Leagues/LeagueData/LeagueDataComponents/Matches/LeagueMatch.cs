@@ -73,7 +73,11 @@ public class LeagueMatch
     [DataMember] private ulong matchChannelId { get; set; }
     [DataMember] private MatchReporting matchReporting { get; set; }
 
-    public LeagueMatch() { }
+    public LeagueMatch()
+    {
+        teamsInTheMatch = new int[0];
+        matchReporting = new MatchReporting();
+    }
 
     public LeagueMatch(int[] _teamsToFormMatchOn)
     {
@@ -82,7 +86,7 @@ public class LeagueMatch
         matchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
-        MatchReporting = new MatchReporting();   
+        matchReporting = new MatchReporting();   
 
         Log.WriteLine("Constructed a new match with teams ids: " + teamsInTheMatch[0] +
             teamsInTheMatch[1] + " with matchId of: " + matchId, LogLevel.DEBUG);

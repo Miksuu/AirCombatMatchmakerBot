@@ -123,7 +123,7 @@ public static class CategoryAndChannelManager
             {
                 // Checks if the channel is also in the discord server itself too, not only database
                 contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
-                    ct, _guild).Result;
+                    ct, _guild);
                 break;
             }
         }

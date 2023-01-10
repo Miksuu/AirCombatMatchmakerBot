@@ -16,7 +16,7 @@ public class REGISTRATIONBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override async Task<string> ActivateButtonFunction(
+    public override Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, ulong _channelId,
         ulong _messageId, string _message)
     {
@@ -42,6 +42,6 @@ public class REGISTRATIONBUTTON : BaseButton
                     " You are already registered!",
                     _component.Channel.Name);
         }
-        return response;
+        return Task.FromResult(response);
     }
 }

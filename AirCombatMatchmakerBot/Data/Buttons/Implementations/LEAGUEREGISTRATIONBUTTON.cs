@@ -89,7 +89,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                     interfaceLeague, _component.User.Id);
 
                 // Modify the message to have the new player count
-                await interfaceLeague.ModifyLeagueRegisterationChannelMessage();
+                interfaceLeague.ModifyLeagueRegisterationChannelMessage();
 
 
                 Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
@@ -108,7 +108,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 UserManager.SetTeamActiveAndGrantThePlayerRole(
                     interfaceLeague, _component.User.Id);
 
-                await interfaceLeague.ModifyLeagueRegisterationChannelMessage();
+                interfaceLeague.ModifyLeagueRegisterationChannelMessage();
             }
         }
         else

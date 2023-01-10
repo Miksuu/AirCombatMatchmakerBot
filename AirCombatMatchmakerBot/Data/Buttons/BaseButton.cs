@@ -90,7 +90,7 @@ public abstract class BaseButton : InterfaceButton
     [DataMember] protected string buttonLabel = "";
     [DataMember] protected ButtonStyle buttonStyle;
     [DataMember] protected ulong buttonCategoryId;
-    [DataMember] protected string buttonCustomId;
+    [DataMember] protected string buttonCustomId = "";
 
     public Discord.ButtonBuilder CreateTheButton(string _customId, int _buttonIndex, ulong _buttonCategoryId, string _messageKey)
     {

@@ -25,7 +25,7 @@ public class Admins
     public Admins()
     {
         // Load this from json
-        AdminIDs = new List<ulong> {
+        adminIDs = new List<ulong> {
             111788167195033600
         };
     }

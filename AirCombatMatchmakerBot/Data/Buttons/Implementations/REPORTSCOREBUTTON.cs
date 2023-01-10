@@ -18,7 +18,7 @@ public class REPORTSCOREBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override async Task<string> ActivateButtonFunction(
+    public override Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, ulong _channelId,
         ulong _messageId, string _message)
     {
@@ -46,17 +46,16 @@ public class REPORTSCOREBUTTON : BaseButton
         if (league == null)
         {
             Log.WriteLine("League with: " + buttonCategoryId + " was not found!", LogLevel.CRITICAL);
-            return finalResponse;
+            return Task.FromResult(finalResponse);
         }
 
         Log.WriteLine("Found league: " + league.LeagueCategoryName, LogLevel.VERBOSE);
 
-        // Cache the match for later use
-        LeagueMatch foundMatch = league.LeagueData.Matches.MatchesList.FirstOrDefault(m => m.MatchChannelId == _channelId);
+        LeagueMatch? foundMatch = league.LeagueData.Matches.MatchesList.FirstOrDefault(m => m.MatchChannelId == _channelId);
         if (foundMatch == null)
         {
             Log.WriteLine("Match with: " + _channelId + " was not found.", LogLevel.CRITICAL);
-            return finalResponse;
+            return Task.FromResult(finalResponse);
         }
 
         Log.WriteLine("Found match: " + foundMatch.MatchId +
@@ -72,7 +71,7 @@ public class REPORTSCOREBUTTON : BaseButton
         {
             Log.WriteLine("Error! " + nameof(teamsWithThePlayerIdInTheLeagueThatThePlayerIsIn) +
                 " was null or empty!", LogLevel.CRITICAL);
-            return finalResponse;
+            return Task.FromResult(finalResponse);
         }
 
         Log.WriteLine("count: " + teamsWithThePlayerIdInTheLeagueThatThePlayerIsIn.Count +
@@ -91,7 +90,7 @@ public class REPORTSCOREBUTTON : BaseButton
         if (isActiveInTeams == null || isActiveInTeams.Count < 1)
         {
             Log.WriteLine("Error! " + nameof(isActiveInTeams) + " was null or empty!", LogLevel.CRITICAL);
-            return finalResponse;
+            return Task.FromResult(finalResponse);
         }
 
         Log.WriteLine("count: " + isActiveInTeams.Count + " of all teams: ", LogLevel.VERBOSE);
@@ -113,7 +112,13 @@ public class REPORTSCOREBUTTON : BaseButton
             // Might be something that doesn't need to be handled if the system is proven to work fine
         }
 
-        Team foundTeam = isActiveInTeams.FirstOrDefault();
+        Team? foundTeam = isActiveInTeams.FirstOrDefault();
+
+        if (foundTeam == null)
+        {
+            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
+            return Task.FromResult("");
+        }
 
         Log.WriteLine("Found team: " + foundTeam.TeamName + " with id: " + foundTeam.TeamId +
             " that should be active: " + foundTeam.TeamActive, LogLevel.DEBUG);
@@ -152,6 +157,6 @@ public class REPORTSCOREBUTTON : BaseButton
 
         Log.WriteLine("Reached end before the return with player id: " + playerId, LogLevel.DEBUG);
 
-        return finalResponse;
+        return Task.FromResult(finalResponse);
     }
 }

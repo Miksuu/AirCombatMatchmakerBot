@@ -174,7 +174,7 @@ public abstract class BaseLeague : InterfaceLeague
         }
     }
 
-    public async Task ModifyLeagueRegisterationChannelMessage()
+    public async void ModifyLeagueRegisterationChannelMessage()
     {
         Log.WriteLine("Modifying league registration channel message with: " +
             leagueCategoryName, LogLevel.VERBOSE);

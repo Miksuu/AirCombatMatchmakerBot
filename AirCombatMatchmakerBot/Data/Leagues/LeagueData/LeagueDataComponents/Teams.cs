@@ -133,11 +133,17 @@ public class Teams
         if (!teamsList.Any(x => x.TeamId == _id))
         {
             Log.WriteLine("Trying to get a team by id: + " + _id +
-                " that is nonexistent!", LogLevel.ERROR);
+                " that is nonexistent!", LogLevel.CRITICAL);
             return new Team();
         }
 
-        Team foundTeam = teamsList.FirstOrDefault(x => x.TeamId == _id);
+        Team? foundTeam = teamsList.FirstOrDefault(x => x.TeamId == _id);
+
+        if (foundTeam == null)
+        {
+            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
+            return new Team();
+        }
 
         Log.WriteLine("Found team: " + foundTeam.GetTeamName(
             _leagueTeamSize) +" id: " + foundTeam.TeamId + 

@@ -19,6 +19,6 @@ public interface InterfaceLeague
     public string GenerateALeagueJoinButtonMessage();
     public string GetAllowedUnitsAsString();
     public string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface();
-    public Task ModifyLeagueRegisterationChannelMessage();
+    public void ModifyLeagueRegisterationChannelMessage();
     public string GenerateALeagueChallengeButtonMessage();
 }

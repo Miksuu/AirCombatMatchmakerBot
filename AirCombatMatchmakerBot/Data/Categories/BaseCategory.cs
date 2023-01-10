@@ -186,9 +186,8 @@ public abstract class BaseCategory : InterfaceCategory
             Log.WriteLine("Replaced with: " +
                 interfaceChannel.ChannelType + " from db", LogLevel.DEBUG);
 
-            channelExists =
-               await ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
-              _socketCategoryChannelId, interfaceChannel, _guild);
+            channelExists = ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
+                                _socketCategoryChannelId, interfaceChannel, _guild);
         }
 
         interfaceChannel.ChannelsCategoryId = _socketCategoryChannelId;
@@ -241,7 +240,7 @@ public abstract class BaseCategory : InterfaceCategory
             return;
         }
 
-        InterfaceLeague interfaceLeague =
+        InterfaceLeague? interfaceLeague =
             Database.Instance.Leagues.GetILeagueByCategoryId(_socketCategoryChannelId);
 
         if (interfaceLeague == null) 
