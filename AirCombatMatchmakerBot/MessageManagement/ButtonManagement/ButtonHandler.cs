@@ -4,21 +4,26 @@ public static class ButtonHandler
 {
     public static async Task HandleButtonPress(SocketMessageComponent _component)
     {
+        string response = "EMPTY";
+
         Log.WriteLine("Button press detected by: " + _component.User.Id, LogLevel.VERBOSE);
 
         // Splits the button press action and the user ID
-        string[] splitStrings = _component.Data.CustomId.Split('_');
+        string[] splitStrings = _component.Data.CustomId.Split("_");
 
-        Log.WriteLine("splitStrings: " +
-            splitStrings[0] + " | " + splitStrings[1] + " | " + splitStrings[2], LogLevel.DEBUG);
+        foreach (var item in splitStrings)
+        {
+            Log.WriteLine(item, LogLevel.VERBOSE);
+        }
 
-        string response = "EMPTY";
+        /*
         LogLevel logLevel = LogLevel.DEBUG;
 
         ulong categoryId = 0;
         ulong channelId = 0;
         ulong messageId = 0;
         string message = "";
+
 
         foreach (var interfaceCategoryKvp in Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
@@ -54,7 +59,7 @@ public static class ButtonHandler
             Log.WriteLine("Channel id, msg or it's id was null!", LogLevel.ERROR);
         }
 
-
+        */
 
         InterfaceButton interfaceButton = (InterfaceButton)EnumExtensions.GetInstance(splitStrings[0]);
         response = interfaceButton.ActivateButtonFunction(
@@ -66,37 +71,30 @@ public static class ButtonHandler
         else { Log.WriteLine("the response was: " + response, LogLevel.CRITICAL); }
     }
 
-    private static void FindInterfaceButtonFromTheDatabase(string _customId)
+    private static InterfaceButton? FindInterfaceButtonFromTheDatabase(string[] _splitStrings)
     {
-        string[] splitStrings = _customId.Split("_");
-
-        foreach (var item in splitStrings)
-        {
-            Log.WriteLine(item, LogLevel.VERBOSE);
-        }
-
-        //ulong categoryIdToLookFor = ulong.Parse(splitStrings[0]);
-        ulong channelIdToLookFor = ulong.Parse(splitStrings[1]);
-        ulong messageIdToLookfor = ulong.Parse(splitStrings[2]);
-        string buttonNameToLookFor = splitStrings[3];
-        int buttonIndexToLookFor = int.Parse(splitStrings[4]);
+        //ulong categoryIdToLookFor = ulong.Parse(_splitStrings[0]);
+        //ulong channelIdToLookFor = ulong.Parse(_splitStrings[1]);
+        //ulong messageIdToLookfor = ulong.Parse(_splitStrings[2]);
+        string buttonNameToLookFor = _splitStrings[2];
+        int buttonIndexToLookFor = int.Parse(_splitStrings[3]);
 
         // Find the categoryId
         var databaseCategory = Database.Instance.Categories.CreatedCategoriesWithChannels.First(
-            c => c.Key == ulong.Parse(splitStrings[0]));
+            c => c.Key == ulong.Parse(_splitStrings[0]));
         if (databaseCategory.Value == null)
         {
             Log.WriteLine(nameof(databaseCategory.Value) + " was null!", LogLevel.CRITICAL);
-            return;
+            return null;
         }
 
         // Find the categoryId
-        var databaseChannelId = databaseCategory.Value.InterfaceChannels.First(
-            c => c.Value.ChannelId == ulong.Parse(splitStrings[1]));
-        if (databaseChannelId.Value == null)
+        var databaseChannel = databaseCategory.Value.InterfaceChannels.First(
+            c => c.Value.ChannelId == ulong.Parse(_splitStrings[1]));
+        if (databaseChannel.Value == null)
         {
-            Log.WriteLine(nameof(databaseChannelId) + " was null!", LogLevel.CRITICAL);
-            return;
+            Log.WriteLine(nameof(databaseChannel) + " was null!", LogLevel.CRITICAL);
+            return null;
         }
 
     }
