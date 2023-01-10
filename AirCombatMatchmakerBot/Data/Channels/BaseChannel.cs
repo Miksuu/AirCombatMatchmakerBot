@@ -260,6 +260,8 @@ public abstract class BaseChannel : InterfaceChannel
             {
                 Log.WriteLine("Message " + messageKey.MessageId +
                     "not found! Setting it to 0 and regenerating", LogLevel.WARNING);
+
+                messageKey.ButtonsInTheMessage.Clear();
                 messageKey.MessageId = 0;
             }
 
