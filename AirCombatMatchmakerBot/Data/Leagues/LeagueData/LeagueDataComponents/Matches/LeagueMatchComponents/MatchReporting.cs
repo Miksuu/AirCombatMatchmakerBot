@@ -24,5 +24,6 @@ public class MatchReporting
 
     public MatchReporting()
     {
+        teamIdWithReportedResult = new Dictionary<int, int>();
     }
 }

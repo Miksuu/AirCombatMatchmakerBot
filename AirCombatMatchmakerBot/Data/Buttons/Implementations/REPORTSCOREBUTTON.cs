@@ -130,7 +130,7 @@ public class REPORTSCOREBUTTON : BaseButton
         {
             Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
             foundMatch.MatchReporting.TeamIdWithReportedResult[foundTeam.TeamId] = playerReportedResult;
-            finalResponse = "You replaced the reported score of: " + playerReportedResult;
+            finalResponse = "You replaced the reported score to: " + playerReportedResult;
         }
 
         foreach (var reportedTeamKvp in foundMatch.MatchReporting.TeamIdWithReportedResult)
