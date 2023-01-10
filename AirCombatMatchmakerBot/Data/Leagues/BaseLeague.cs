@@ -202,8 +202,14 @@ public abstract class BaseLeague : InterfaceLeague
 
         Log.WriteLine("Found channel: " + channel.Value.ChannelName, LogLevel.DEBUG);
 
+        /*
+        foreach (var item in channel.Value.InterfaceMessagesWithIds)
+        {
+            Log.WriteLine(item.Key + " | " + item.Value.MessageName.ToString(), LogLevel.VERBOSE);
+        }*/
+
         var messageId = channel.Value.InterfaceMessagesWithIds.FirstOrDefault(
-            x => x.Key.ToString() == leagueCategoryName.ToString()).Value.MessageId;
+            x => x.Key == discordleagueReferences.LeagueCategoryId.ToString()).Value.MessageId;
 
         Log.WriteLine("Found messageId: " + messageId, LogLevel.DEBUG);
 
