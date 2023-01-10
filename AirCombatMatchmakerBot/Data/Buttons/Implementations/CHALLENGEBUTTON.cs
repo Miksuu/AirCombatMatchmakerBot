@@ -19,7 +19,7 @@ public class CHALLENGEBUTTON : BaseButton
 
     public override async Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, ulong _channelId,
-        ulong _messageId, string _message, string[] _splitStrings)
+        ulong _messageId, string _message)
     {
         Log.WriteLine("Starting processing a challenge by: " +
             _component.User.Id , LogLevel.VERBOSE);

@@ -16,5 +16,5 @@ public interface InterfaceButton
         string _customId, int _buttonIndex, ulong _buttonCategoryId);
     public abstract Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, ulong _channelId,
-        ulong _messageId, string _message, string[] _splitStrings);
+        ulong _messageId, string _message);
 }

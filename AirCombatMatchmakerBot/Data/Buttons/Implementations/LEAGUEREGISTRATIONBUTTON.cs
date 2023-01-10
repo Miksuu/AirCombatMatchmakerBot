@@ -18,14 +18,16 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
     public override async Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, ulong _channelId,
-        ulong _messageId, string _message, string[] _splitStrings)
+        ulong _messageId, string _message)
     {
         string responseMsg = "";
 
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
+        string[] splitStrings = buttonCustomId.Split('_');
+
         InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(_splitStrings[1]);
+            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(splitStrings[0]);
 
         if (interfaceLeague == null)
         {

@@ -102,6 +102,7 @@ public abstract class BaseButton : InterfaceButton
         buttonCategoryId = _buttonCategoryId;
         buttonCustomId = _customId;
 
+        // Report score specific stuff, add the index as label
         if (buttonName == ButtonName.REPORTSCOREBUTTON)
         {
             buttonLabel = _buttonIndex.ToString();
@@ -112,16 +113,14 @@ public abstract class BaseButton : InterfaceButton
         var button = new Discord.ButtonBuilder()
         {
             Label = buttonLabel,
-            CustomId = buttonName.ToString() + "_" + _customId,
+            CustomId = _customId,
             Style = buttonStyle,
         };
-
-        //buttonComponentId = button.CustomId;
 
         return button;
     }
 
     public abstract Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, ulong _channelId,
-        ulong _messageId, string _message, string[] _splitStrings);
+        ulong _messageId, string _message);
 }

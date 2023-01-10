@@ -18,8 +18,10 @@ public class REGISTRATIONBUTTON : BaseButton
 
     public override async Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, ulong _channelId,
-        ulong _messageId, string _message, string[] _splitStrings)
+        ulong _messageId, string _message)
     {
+        Log.WriteLine("Starting player registration", LogLevel.DEBUG);
+
         string response = "";
         // Checks that the player does not exist in the database already, true if this is not the case
         if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)

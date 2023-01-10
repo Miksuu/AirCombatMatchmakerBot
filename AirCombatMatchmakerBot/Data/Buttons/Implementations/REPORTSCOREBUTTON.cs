@@ -20,19 +20,21 @@ public class REPORTSCOREBUTTON : BaseButton
 
     public override async Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, ulong _channelId,
-        ulong _messageId, string _message, string[] _splitStrings)
+        ulong _messageId, string _message)
     {
+        string[] splitStrings = buttonCustomId.Split('_');
+
         string finalResponse = "Something went wrong with the reporting the match result of: " +
-            _splitStrings[2] + ". An admin has been informed";
+            splitStrings[1] + ". An admin has been informed";
 
         ulong playerId = _component.User.Id;
-        int playerReportedResult = int.Parse(_splitStrings[2]);
+        int playerReportedResult = int.Parse(splitStrings[1]);
 
         Log.WriteLine("Pressed by: " + playerId + " in: " + _channelId + 
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
-        foreach (var item in _splitStrings)
+        foreach (var item in splitStrings)
         {
             Log.WriteLine(item, LogLevel.DEBUG);
         }

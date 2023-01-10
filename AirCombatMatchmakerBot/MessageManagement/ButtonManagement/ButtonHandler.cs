@@ -1,4 +1,5 @@
 using Discord.WebSocket;
+using System.Diagnostics;
 
 public static class ButtonHandler
 {
@@ -58,7 +59,7 @@ public static class ButtonHandler
         }
 
         response = databaseButton.ActivateButtonFunction(
-            _component, channelId, messageId, message, splitStrings).Result;
+            _component, channelId, messageId, message).Result;
 
         await SerializationManager.SerializeDB();
 
@@ -67,7 +68,7 @@ public static class ButtonHandler
     }
 
     private static InterfaceButton? FindInterfaceButtonFromTheDatabase(
-        SocketMessageComponent _component, string[] _splitStrings, ulong _categoryId)
+        SocketMessageComponent _component, ulong _categoryId)
     {
         //ulong categoryIdToLookFor = ulong.Parse(_splitStrings[0]);
         //ulong channelIdToLookFor = ulong.Parse(_splitStrings[1]);
@@ -108,20 +109,16 @@ public static class ButtonHandler
 
         Log.WriteLine("Found channel: " + databaseMessage.Value.MessageName, LogLevel.VERBOSE);
 
-        // Find multiple buttons where the button name is the one being looked for
-        var databaseButtons = databaseMessage.Value.ButtonsInTheMessage.First(
-            b => b.ToString() == _splitStrings[0]).ToList();
-        if (databaseButtons == null || databaseButtons.Count == 0)
+        foreach (var item in databaseMessage.Value.ButtonsInTheMessage)
         {
-            Log.WriteLine(nameof(databaseButtons) + " was null, or count was 0", LogLevel.CRITICAL);
-            return null;
+            Log.WriteLine("customid's of the buttons: " + item.ButtonCustomId, LogLevel.VERBOSE);
         }
 
-        Log.WriteLine("Found buttons count: " + databaseButtons.Count, LogLevel.VERBOSE);
+        Log.WriteLine("To match with: " + _component.Data.CustomId, LogLevel.DEBUG);
 
-        InterfaceButton foundButton = databaseButtons.First(
-            b => b.ButtonLabel == _splitStrings[1]);
-
+        // Find multiple buttons where the button name is the one being looked for
+        InterfaceButton foundButton = databaseMessage.Value.ButtonsInTheMessage.First(
+            b => b.ButtonCustomId == _component.Data.CustomId);
         if (foundButton == null)
         {
             Log.WriteLine(nameof(foundButton) + " was null", LogLevel.CRITICAL);
