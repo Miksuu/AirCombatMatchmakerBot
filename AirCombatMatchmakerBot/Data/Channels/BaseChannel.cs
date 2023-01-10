@@ -229,17 +229,24 @@ public abstract class BaseChannel : InterfaceChannel
             Exceptions.BotClientRefNull();
             return;
         }
-       
+
         // If the message doesn't exist, set it ID to 0 to regenerate it
         var channel = client.GetChannelAsync(_databaseInterfaceChannel.ChannelId).Result as ITextChannel;
-        Log.WriteLine("Channel found: " + channel + " id: " + channel.Id, LogLevel.VERBOSE);
+
+        if (channel == null)
+        {
+            Log.WriteLine(nameof(channel) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
         var channelMessages = await channel.GetMessagesAsync(50, CacheMode.AllowDownload).FirstAsync();
 
         Log.WriteLine(nameof(_databaseInterfaceChannel.InterfaceMessagesWithIds) + " count: " +
             _databaseInterfaceChannel.InterfaceMessagesWithIds.Count + " | " + nameof(channelMessages) +
             " count: " + channelMessages.Count, LogLevel.VERBOSE);
 
-        foreach (var interfaceMessageKvp in _databaseInterfaceChannel.InterfaceMessagesWithIds) 
+
+        foreach (var interfaceMessageKvp in _databaseInterfaceChannel.InterfaceMessagesWithIds)
         {
             Log.WriteLine("Looping on message: " + interfaceMessageKvp.Value.MessageName + " with id: " +
                 interfaceMessageKvp.Key, LogLevel.VERBOSE);
