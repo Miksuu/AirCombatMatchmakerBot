@@ -180,7 +180,7 @@ public abstract class BaseCategory : InterfaceCategory
                 interfaceChannel.ChannelName, LogLevel.VERBOSE);
 
             // Replace interfaceChannel with a one that is from the database
-            interfaceChannel = interfaceChannels.First(
+            interfaceChannel = interfaceChannels.FirstOrDefault(
                 x => x.Value.ChannelType == _channelType).Value;
 
             Log.WriteLine("Replaced with: " +

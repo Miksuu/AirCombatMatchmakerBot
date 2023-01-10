@@ -33,7 +33,7 @@ public static class CommandHandler
 
         if (_command.Data.Options.Count > 0)
         {
-            firstOptionValue = _command.Data.Options.First().Value.ToString();
+            firstOptionValue = _command.Data.Options.FirstOrDefault().Value.ToString();
 
             Log.WriteLine("The command " + _command.Data.Name + " had " + _command.Data.Options.Count + " options in it." +
     "            The first command had an argument: " + firstOptionValue, LogLevel.DEBUG);

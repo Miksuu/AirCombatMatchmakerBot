@@ -93,7 +93,7 @@ public class Matches
             Log.WriteLine("ChannelID debug: " + item.MatchChannelId, LogLevel.DEBUG);
         }
 
-        LeagueMatch foundMatch = MatchesList.First(x => x.MatchChannelId == _channelId);
+        LeagueMatch foundMatch = MatchesList.FirstOrDefault(x => x.MatchChannelId == _channelId);
 
         if (foundMatch == null) 
         {

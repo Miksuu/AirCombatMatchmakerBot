@@ -120,7 +120,7 @@ public class Team
 
         if (_leagueTeamSize < 2 && _getAsMention)
         {
-            Player player = players.First();
+            Player player = players.FirstOrDefault();
             Log.WriteLine("Found player: " + player.PlayerNickName +
                 " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
 

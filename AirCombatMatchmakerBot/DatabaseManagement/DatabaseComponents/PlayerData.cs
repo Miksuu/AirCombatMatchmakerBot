@@ -120,7 +120,7 @@ public class PlayerData
     public Player GetAPlayerProfileById(ulong _playerId)
     {
         Log.WriteLine("Getting Player by ID: " + _playerId, LogLevel.VERBOSE);
-        Player FoundPlayer = PlayerIDs.First(x => x.Key == _playerId).Value;
+        Player FoundPlayer = PlayerIDs.FirstOrDefault(x => x.Key == _playerId).Value;
         Log.WriteLine("Found: " + FoundPlayer.PlayerNickName + " (" +
             FoundPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
         return FoundPlayer;

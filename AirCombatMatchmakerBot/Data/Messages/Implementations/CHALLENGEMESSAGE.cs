@@ -38,7 +38,7 @@ public class CHALLENGEMESSAGE : BaseMessage
                     x => x.Value.ChannelId == _channelId))
             {
                 ulong channelIdToLookFor =
-                    createdCategoriesKvp.Value.InterfaceChannels.First(
+                    createdCategoriesKvp.Value.InterfaceChannels.FirstOrDefault(
                         x => x.Value.ChannelId == _channelId).Value.ChannelId;
 
                 Log.WriteLine("Looping on league: " + leagueName +

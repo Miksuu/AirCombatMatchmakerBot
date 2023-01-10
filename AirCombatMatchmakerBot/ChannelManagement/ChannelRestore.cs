@@ -24,7 +24,7 @@ public static class ChannelRestore
             Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithId(
                 _categoryId).Value;
 
-        var dbFinal = dbKeyValue.InterfaceChannels.First(
+        var dbFinal = dbKeyValue.InterfaceChannels.FirstOrDefault(
             ic => ic.Value.ChannelId == _interfaceChannel.ChannelId);
 
         dbKeyValue.InterfaceChannels.Remove(dbFinal.Value.ChannelId);

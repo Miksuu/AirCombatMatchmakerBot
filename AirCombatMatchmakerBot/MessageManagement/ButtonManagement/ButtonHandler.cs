@@ -22,7 +22,7 @@ public static class ButtonHandler
                 x => x.Value.ChannelId == _component.Channel.Id))
             {
                 var interfaceChannelTemp =
-                    interfaceCategoryKvp.Value.InterfaceChannels.First(
+                    interfaceCategoryKvp.Value.InterfaceChannels.FirstOrDefault(
                         x => x.Value.ChannelId == _component.Channel.Id);
 
                 if (!interfaceChannelTemp.Value.InterfaceMessagesWithIds.Any(
@@ -33,7 +33,7 @@ public static class ButtonHandler
                 }
 
                 var interfaceMessageKvp =
-                    interfaceChannelTemp.Value.InterfaceMessagesWithIds.First(
+                    interfaceChannelTemp.Value.InterfaceMessagesWithIds.FirstOrDefault(
                         x => x.Value.MessageId == _component.Message.Id);
 
                 categoryId = interfaceCategoryKvp.Key;
@@ -77,7 +77,7 @@ public static class ButtonHandler
         //int buttonIndexToLookFor = int.Parse(_splitStrings[1]);
 
         // Find the category by id
-        var databaseCategory = Database.Instance.Categories.CreatedCategoriesWithChannels.First(
+        var databaseCategory = Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
             c => c.Key == _categoryId);
         if (databaseCategory.Value == null)
         {
@@ -88,7 +88,7 @@ public static class ButtonHandler
         Log.WriteLine("Found category: " + databaseCategory.Value.CategoryType, LogLevel.VERBOSE);
 
         // Find the channel by id
-        var databaseChannel = databaseCategory.Value.InterfaceChannels.First(
+        var databaseChannel = databaseCategory.Value.InterfaceChannels.FirstOrDefault(
             c => c.Value.ChannelId == _component.Channel.Id);
         if (databaseChannel.Value == null)
         {
@@ -99,7 +99,7 @@ public static class ButtonHandler
         Log.WriteLine("Found channel: " + databaseChannel.Value.ChannelType, LogLevel.VERBOSE);
 
         // Find the database message
-        var databaseMessage = databaseChannel.Value.InterfaceMessagesWithIds.First(
+        var databaseMessage = databaseChannel.Value.InterfaceMessagesWithIds.FirstOrDefault(
             m => m.Value.MessageId == _component.Message.Id);
         if (databaseMessage.Value == null)
         {
@@ -117,7 +117,7 @@ public static class ButtonHandler
         Log.WriteLine("To match with: " + _component.Data.CustomId, LogLevel.DEBUG);
 
         // Find multiple buttons where the button name is the one being looked for
-        InterfaceButton foundButton = databaseMessage.Value.ButtonsInTheMessage.First(
+        InterfaceButton foundButton = databaseMessage.Value.ButtonsInTheMessage.FirstOrDefault(
             b => b.ButtonCustomId == _component.Data.CustomId);
         if (foundButton == null)
         {

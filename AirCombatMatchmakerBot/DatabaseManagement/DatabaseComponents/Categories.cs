@@ -34,7 +34,7 @@ public class Categories
         string _idToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
-        var FoundCategoryKvp = CreatedCategoriesWithChannels.First(
+        var FoundCategoryKvp = CreatedCategoriesWithChannels.FirstOrDefault(
             x => x.Key.ToString() == _idToSearchWith.ToString());
         Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;
@@ -50,7 +50,7 @@ public class Categories
             Log.WriteLine(item.Key.ToString(), LogLevel.VERBOSE);
         }
 
-        var FoundCategoryKvp = CreatedCategoriesWithChannels.First(x => x.Key == _idToSearchWith);
+        var FoundCategoryKvp = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Key == _idToSearchWith);
         Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;
     }
@@ -59,7 +59,7 @@ public class Categories
         CategoryType? _categoryType)
     {
         Log.WriteLine("Getting CategoryKvp by category name: " + _categoryType, LogLevel.VERBOSE);
-        var FoundCategoryKvp = CreatedCategoriesWithChannels.First(
+        var FoundCategoryKvp = CreatedCategoriesWithChannels.FirstOrDefault(
                 x => x.Value.CategoryType == _categoryType);
         Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
         return FoundCategoryKvp;

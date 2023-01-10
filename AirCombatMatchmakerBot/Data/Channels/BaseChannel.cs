@@ -145,8 +145,8 @@ public abstract class BaseChannel : InterfaceChannel
     public async Task<InterfaceChannel> PrepareCustomChannelMessages()
     {
         var databaseInterfaceChannel =
-            Database.Instance.Categories.CreatedCategoriesWithChannels.First(
-                x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
+            Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
+                x => x.Key == channelsCategoryId).Value.InterfaceChannels.FirstOrDefault(
                     x => x.Value.ChannelId == channelId);
 
         for (int m = 0; m < channelMessages.Count; ++m)
@@ -186,8 +186,8 @@ public abstract class BaseChannel : InterfaceChannel
 
         // Add to a method later
         var databaseInterfaceChannel =
-            Database.Instance.Categories.CreatedCategoriesWithChannels.First(
-                x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
+            Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
+                x => x.Key == channelsCategoryId).Value.InterfaceChannels.FirstOrDefault(
                     x => x.Value.ChannelId == channelId);
 
         foreach (var messageName in channelMessages)
@@ -239,7 +239,7 @@ public abstract class BaseChannel : InterfaceChannel
             return;
         }
 
-        var channelMessages = await channel.GetMessagesAsync(50, CacheMode.AllowDownload).FirstAsync();
+        var channelMessages = await channel.GetMessagesAsync(50, CacheMode.AllowDownload).FirstOrDefaultAsync();
 
         Log.WriteLine(nameof(_databaseInterfaceChannel.InterfaceMessagesWithIds) + " count: " +
             _databaseInterfaceChannel.InterfaceMessagesWithIds.Count + " | " + nameof(channelMessages) +

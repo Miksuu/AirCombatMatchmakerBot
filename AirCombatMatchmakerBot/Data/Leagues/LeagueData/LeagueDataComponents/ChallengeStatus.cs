@@ -108,7 +108,7 @@ public class ChallengeStatus
         for (int t = 0; t < 2; t++)
         {
             Log.WriteLine("Looping on team index: " + t, LogLevel.VERBOSE);
-            teamsToFormMatchOn[t] = teamsInTheQueue.First();
+            teamsToFormMatchOn[t] = teamsInTheQueue.FirstOrDefault();
             Log.WriteLine("Done adding to " + nameof(teamsToFormMatchOn) +
                 ", Length: " + teamsToFormMatchOn.Length, LogLevel.VERBOSE);
             teamsInTheQueue.RemoveAt(0);

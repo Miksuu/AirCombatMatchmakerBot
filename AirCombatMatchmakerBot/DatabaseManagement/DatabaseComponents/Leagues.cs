@@ -57,7 +57,7 @@ public class Leagues
     public InterfaceLeague GetILeagueByCategoryName(CategoryType? _leagueCategoryName)
     {
         Log.WriteLine("Getting ILeague by category name: " + _leagueCategoryName, LogLevel.VERBOSE);
-        InterfaceLeague FoundLeague = StoredLeagues.First(x => x.LeagueCategoryName == _leagueCategoryName);
+        InterfaceLeague FoundLeague = StoredLeagues.FirstOrDefault(x => x.LeagueCategoryName == _leagueCategoryName);
         Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
         return FoundLeague;
     }
@@ -66,7 +66,7 @@ public class Leagues
     public InterfaceLeague GetILeagueByString(string _leagueCategoryNameString)
     {
         Log.WriteLine("Getting ILeague by string: " + _leagueCategoryNameString, LogLevel.VERBOSE);
-        InterfaceLeague FoundLeague = StoredLeagues.First(
+        InterfaceLeague FoundLeague = StoredLeagues.FirstOrDefault(
             x => x.LeagueCategoryName.ToString() == _leagueCategoryNameString);
         Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
         return FoundLeague;
@@ -75,7 +75,7 @@ public class Leagues
     public InterfaceLeague GetILeagueByCategoryId(ulong _leagueCategoryId)
     {
         Log.WriteLine("Getting ILeague by ID: " + _leagueCategoryId, LogLevel.VERBOSE);
-        InterfaceLeague FoundLeague = StoredLeagues.First(
+        InterfaceLeague FoundLeague = StoredLeagues.FirstOrDefault(
             x => x.DiscordLeagueReferences.LeagueCategoryId == _leagueCategoryId);
         Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
         return FoundLeague;

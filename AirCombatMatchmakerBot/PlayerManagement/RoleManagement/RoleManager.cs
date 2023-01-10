@@ -13,7 +13,7 @@ public static class RoleManager
             return "null";
         }
 
-        return guild.Roles.First(r => r.Id == _roleId).Name;
+        return guild.Roles.FirstOrDefault(r => r.Id == _roleId).Name;
     }
 
     public static async Task GrantUserAccessWithId(ulong _userId, ulong _roleId)
@@ -40,7 +40,7 @@ public static class RoleManager
             return;
         }
 
-        var role = guild.Roles.First(x => x.Name == _roleName);
+        var role = guild.Roles.FirstOrDefault(x => x.Name == _roleName);
         if (role == null)
         {
             Log.WriteLine("Role " + _roleName + "was null!", LogLevel.CRITICAL);
@@ -77,7 +77,7 @@ public static class RoleManager
             return;
         }
 
-        var role = guild.Roles.First(x => x.Name == _roleName);
+        var role = guild.Roles.FirstOrDefault(x => x.Name == _roleName);
         if (role == null)
         {
             Log.WriteLine("Role " + _roleName + "was null!", LogLevel.CRITICAL);

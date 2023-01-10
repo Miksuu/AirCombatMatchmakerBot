@@ -41,8 +41,8 @@ public class LEAGUEREGISTRATION : BaseChannel
 
         // Add to a method later
         var databaseInterfaceChannel =
-            Database.Instance.Categories.CreatedCategoriesWithChannels.First(
-                x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
+            Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
+                x => x.Key == channelsCategoryId).Value.InterfaceChannels.FirstOrDefault(
                     x => x.Value.ChannelId == channelId);
 
         Log.WriteLine("After db find", LogLevel.VERBOSE);

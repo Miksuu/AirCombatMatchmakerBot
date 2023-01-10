@@ -137,7 +137,7 @@ public class Teams
             return new Team();
         }
 
-        Team foundTeam = teamsList.First(x => x.TeamId == _id);
+        Team foundTeam = teamsList.FirstOrDefault(x => x.TeamId == _id);
 
         Log.WriteLine("Found team: " + foundTeam.GetTeamName(
             _leagueTeamSize) +" id: " + foundTeam.TeamId + 
