@@ -181,13 +181,13 @@ public abstract class BaseLeague : InterfaceLeague
         // Find the category fo the message ID
         var channel = Database.Instance.Categories.CreatedCategoriesWithChannels.First(
             x => x.Value.CategoryType == CategoryType.REGISTRATIONCATEGORY).Value.InterfaceChannels.First(
-                x => x.ChannelType == ChannelType.LEAGUEREGISTRATION);
+                x => x.Value.ChannelType == ChannelType.LEAGUEREGISTRATION);
 
-        var messageId = channel.InterfaceMessagesWithIds.First(
+        var messageId = channel.Value.InterfaceMessagesWithIds.First(
             x => x.Key.ToString() == leagueCategoryName.ToString()).Value.MessageId;
 
         await MessageManager.ModifyMessage(
-            channel.ChannelId, messageId, GenerateALeagueJoinButtonMessage());
+            channel.Value.ChannelId, messageId, GenerateALeagueJoinButtonMessage());
     }
 
     public string GenerateALeagueChallengeButtonMessage()

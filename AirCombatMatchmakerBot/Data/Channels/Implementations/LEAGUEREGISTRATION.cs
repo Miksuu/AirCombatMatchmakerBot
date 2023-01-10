@@ -43,7 +43,7 @@ public class LEAGUEREGISTRATION : BaseChannel
         var databaseInterfaceChannel =
             Database.Instance.Categories.CreatedCategoriesWithChannels.First(
                 x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
-                    x => x.ChannelId == channelId);
+                    x => x.Value.ChannelId == channelId);
 
         Log.WriteLine("After db find", LogLevel.VERBOSE);
 
@@ -95,17 +95,17 @@ public class LEAGUEREGISTRATION : BaseChannel
 
             Log.WriteLine("interfaceMessage message: " + interfaceMessage.Message, LogLevel.VERBOSE);
 
-            if (databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(leagueName.ToString())) continue;
+            if (databaseInterfaceChannel.Value.InterfaceMessagesWithIds.ContainsKey(leagueName.ToString())) continue;
 
-            databaseInterfaceChannel.InterfaceMessagesWithIds.Add(leagueName.ToString(), interfaceMessage);
+            databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Add(leagueName.ToString(), interfaceMessage);
 
             Log.WriteLine("Added to the dictionary, count is now: " +
-                databaseInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+                databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
 
             Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
         }
 
         Log.WriteLine("Before entering PostChannelMessages", LogLevel.VERBOSE);
-        await base.PostChannelMessages(guild, databaseInterfaceChannel);
+        await base.PostChannelMessages(guild, databaseInterfaceChannel.Value);
     }
 }

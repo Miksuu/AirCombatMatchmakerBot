@@ -147,14 +147,14 @@ public abstract class BaseChannel : InterfaceChannel
         var databaseInterfaceChannel =
             Database.Instance.Categories.CreatedCategoriesWithChannels.First(
                 x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
-                    x => x.ChannelId == channelId);
+                    x => x.Value.ChannelId == channelId);
 
         for (int m = 0; m < channelMessages.Count; ++m)
         {
             InterfaceMessage interfaceMessage =
                 (InterfaceMessage)EnumExtensions.GetInstance(channelMessages[m].ToString());
 
-            if (!databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(
+            if (!databaseInterfaceChannel.Value.InterfaceMessagesWithIds.ContainsKey(
                 channelMessages[m].ToString()))
             {
                 Log.WriteLine("Does not contain the key: " +
@@ -164,12 +164,12 @@ public abstract class BaseChannel : InterfaceChannel
                 interfaceMessage.Message = 
                     interfaceMessage.GenerateMessage(channelId, channelsCategoryId);
 
-                databaseInterfaceChannel.InterfaceMessagesWithIds.Add(
+                databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Add(
                     channelMessages[m].ToString(), interfaceMessage);
             }
         }
 
-        return databaseInterfaceChannel;
+        return databaseInterfaceChannel.Value;
     }
 
     public virtual async Task PrepareChannelMessages()
@@ -188,7 +188,7 @@ public abstract class BaseChannel : InterfaceChannel
         var databaseInterfaceChannel =
             Database.Instance.Categories.CreatedCategoriesWithChannels.First(
                 x => x.Key == channelsCategoryId).Value.InterfaceChannels.First(
-                    x => x.ChannelId == channelId);
+                    x => x.Value.ChannelId == channelId);
 
         foreach (var messageName in channelMessages)
         {
@@ -197,13 +197,13 @@ public abstract class BaseChannel : InterfaceChannel
             InterfaceMessage interfaceMessage =
                 (InterfaceMessage)EnumExtensions.GetInstance(messageName.ToString());
 
-            if (databaseInterfaceChannel.InterfaceMessagesWithIds.ContainsKey(
+            if (databaseInterfaceChannel.Value.InterfaceMessagesWithIds.ContainsKey(
                 messageName.ToString())) continue;
 
             Log.WriteLine("Does not contain the key: " +
                 messageName + ", continuing", LogLevel.VERBOSE);
 
-            databaseInterfaceChannel.InterfaceMessagesWithIds.Add(
+            databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Add(
                 messageName.ToString(), interfaceMessage);
 
             Log.WriteLine("Done with: " + messageName, LogLevel.VERBOSE);
@@ -211,7 +211,7 @@ public abstract class BaseChannel : InterfaceChannel
         Log.WriteLine("Done posting channel messages on " +
             channelType + " id: " + channelId, LogLevel.VERBOSE);
 
-        await PostChannelMessages(guild, databaseInterfaceChannel);
+        await PostChannelMessages(guild, databaseInterfaceChannel.Value);
     }
 
     public virtual async Task PostChannelMessages(SocketGuild _guild, 

@@ -32,7 +32,7 @@ public class CHALLENGEBUTTON : BaseButton
             Log.WriteLine("Loop on: " + interfaceCategoryKvp.Key + " | " +
                 interfaceCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
             if (interfaceCategoryKvp.Value.InterfaceChannels.Any(
-                x => x.ChannelId == _component.Channel.Id))
+                x => x.Value.ChannelId == _component.Channel.Id))
             {
                 Log.WriteLine("Found category: " +
                     interfaceCategoryKvp.Value.CategoryType, LogLevel.DEBUG);
