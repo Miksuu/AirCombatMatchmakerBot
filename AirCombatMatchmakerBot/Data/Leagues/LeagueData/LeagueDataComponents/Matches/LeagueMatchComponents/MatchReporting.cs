@@ -127,7 +127,10 @@ public class MatchReporting
         {
             winnerIndex = 1;
         }
-        else winnerIndex = 2;
+        else if (TeamIdsWithReportedResult.ElementAt(1).Value == TeamIdsWithReportedResult.ElementAt(0).Value)
+        {
+            winnerIndex = 2;
+        }
 
         Log.WriteLine("winnerIndex is = " + winnerIndex, LogLevel.VERBOSE);
 
