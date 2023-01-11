@@ -21,7 +21,23 @@ public class MatchReporting
         }
     }
 
+    public bool MatchDone
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(matchDone), LogLevel.VERBOSE);
+            return matchDone;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(matchDone)
+                + " to: " + value, LogLevel.VERBOSE);
+            matchDone = value;
+        }
+    }
+
     [DataMember] private Dictionary<int, int> teamIdsWithReportedResult { get; set; }
+    [DataMember] private bool matchDone { get; set; }
 
     public MatchReporting()
     {
@@ -33,7 +49,15 @@ public class MatchReporting
     {
         string response = string.Empty;
 
-        Team? reportingTeam = _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+        if (matchDone)
+        {
+            Log.WriteLine(_playerId + " requested to report the match," +
+                " when it was already over.", LogLevel.VERBOSE);
+            return Task.FromResult("Match is already done!");
+        }
+
+        Team? reportingTeam =
+            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
         if (reportingTeam == null)
         {
             Log.WriteLine(nameof(reportingTeam) + " was null!", LogLevel.CRITICAL);
@@ -75,7 +99,7 @@ public class MatchReporting
 
         if (reportedTeamsCount == 2)
         {
-            Log.WriteLine("count is 2", LogLevel.DEBUG);
+            MatchDone = true;
             response = CalculateFinalMatchResult(_interfaceLeague, reportingTeam);
         }
 
@@ -84,11 +108,8 @@ public class MatchReporting
 
     private string CalculateFinalMatchResult(InterfaceLeague _interfaceLeague, Team _reportingTeam)
     {
-        
-        /*
         Log.WriteLine("Starting to calculate the final match result with teams: " +
-            TeamIdsWithReportedResult[0] + " and: " + TeamIdsWithReportedResult[1], LogLevel.VERBOSE);
-        */
+            TeamIdsWithReportedResult.ElementAt(0) + " and: " + TeamIdsWithReportedResult.ElementAt(1), LogLevel.DEBUG);   
 
         Team[] teamsInTheMatch = new Team[2];
         teamsInTheMatch[0] = _reportingTeam;
@@ -153,11 +174,12 @@ public class MatchReporting
             return "The match cannot be a draw!";
         }
 
+        /*
         if (_interfaceLeague == null)
         {
             Log.WriteLine(nameof(_interfaceLeague) + " was null!", LogLevel.CRITICAL);
             return "";
-        }
+        }*/
 
         int eloDelta = (int)(32 * (1 - winnerIndex - ExpectationToWin(
             _teamsInTheMatch[0].SkillRating, _teamsInTheMatch[1].SkillRating)));
