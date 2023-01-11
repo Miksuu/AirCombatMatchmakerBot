@@ -215,7 +215,7 @@ public class MatchReporting
         Log.WriteLine("Done calculating and changing elo points for: " + databaseTeamOne.SkillRating +
             " | " + databaseTeamTwo.SkillRating, LogLevel.DEBUG);
 
-        return "Success";
+        return "";
     }
 
     private double ExpectationToWin(float _playerOneRating, float _playerTwoRating)

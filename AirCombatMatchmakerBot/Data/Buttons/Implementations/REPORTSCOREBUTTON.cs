@@ -42,7 +42,6 @@ public class REPORTSCOREBUTTON : BaseButton
         // Find the league with the cached category ID
         InterfaceLeague? interfaceLeague =
             Database.Instance.Leagues.GetILeagueByCategoryId(buttonCategoryId);
-
         if (interfaceLeague == null)
         {
             Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);

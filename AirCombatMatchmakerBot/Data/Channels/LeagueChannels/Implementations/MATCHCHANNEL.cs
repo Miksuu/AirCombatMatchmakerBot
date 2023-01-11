@@ -15,6 +15,7 @@ public class MATCHCHANNEL : BaseChannel
         {
             MessageName.MATCHSTARTMESSAGE,
             MessageName.REPORTINGMESSAGE,
+            MessageName.REPORTINGSTATUSMESSAGE,
         };
     }
 

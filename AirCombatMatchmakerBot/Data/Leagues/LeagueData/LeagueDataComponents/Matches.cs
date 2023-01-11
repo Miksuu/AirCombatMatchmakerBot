@@ -88,10 +88,11 @@ public class Matches
     {
         Log.WriteLine("Getting match by channelId: " + _channelId, LogLevel.VERBOSE);
 
+        /*
         foreach (var item in MatchesList)
         {
             Log.WriteLine("ChannelID debug: " + item.MatchChannelId, LogLevel.DEBUG);
-        }
+        }*/
 
         LeagueMatch? foundMatch = MatchesList.FirstOrDefault(x => x.MatchChannelId == _channelId);
 

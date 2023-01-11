@@ -32,7 +32,6 @@ public class MATCHSTARTMESSAGE : BaseMessage
 
         LeagueMatch? foundMatch =
             interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_channelId);
-
         if (foundMatch == null)
         {
             Log.WriteLine(nameof(foundMatch) + " was null!", LogLevel.ERROR);
