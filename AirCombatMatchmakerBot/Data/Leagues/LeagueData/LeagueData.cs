@@ -59,11 +59,11 @@ public class LeagueData
         matches = new Matches();
     }
 
-    public Team? FindActiveTeamByPlayerIdInAPredefinedLeague(ulong _playerId)
+    public Team? FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)
     {
         Log.WriteLine("Starting to find a active team by player id: " + _playerId, LogLevel.VERBOSE);
 
-        foreach (Team team in teams.TeamsList)
+        foreach (Team team in Teams.TeamsList)
         {
             Team? foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
 
@@ -77,6 +77,23 @@ public class LeagueData
             " of a league that he's not registered to?", LogLevel.WARNING);
 
         return null;
+    }
+
+    public Team? FindTeamWithTeamId(int _teamId)
+    {
+        Log.WriteLine("Starting to find team with id: " + _teamId, LogLevel.VERBOSE);
+
+        Team? foundTeam = Teams.TeamsList.FirstOrDefault(t => t.TeamId == _teamId);
+
+        if (foundTeam == null)
+        {
+            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        Log.WriteLine("Found team: " + foundTeam.TeamName + " with id: " + _teamId, LogLevel.VERBOSE);
+
+        return foundTeam;
     }
 
     public Team? FindTeamInWhichThePlayerIsActiveIn(InterfaceLeague _interfaceLeague, ulong _playerId)

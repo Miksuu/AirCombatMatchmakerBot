@@ -55,7 +55,7 @@ public class ChallengeStatus
         ulong _playerId, int _leaguePlayerCountPerTeam, InterfaceLeague _interfaceLeague)
     {
         Team? team =
-            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeague(_playerId);
+            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
 
         if (team == null)
         {
