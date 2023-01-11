@@ -38,14 +38,14 @@ public class MATCHSTARTMESSAGE : BaseMessage
             return "";
         }
 
-        foreach (int teamId in foundMatch.TeamsInTheMatch)
+        foreach (var teamKvp in foundMatch.TeamsInTheMatch)
         {
             Team team = interfaceLeague.LeagueData.Teams.FindTeamById(
-                interfaceLeague.LeaguePlayerCountPerTeam, teamId);
+                interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key);
 
             string teamMembers =
-                team.GetTeamSkillRatingAndNameInAString(
-                    interfaceLeague.LeaguePlayerCountPerTeam);
+                team.GetTeamInAString(
+                    true, interfaceLeague.LeaguePlayerCountPerTeam);
 
             generatedMessage += teamMembers;
 

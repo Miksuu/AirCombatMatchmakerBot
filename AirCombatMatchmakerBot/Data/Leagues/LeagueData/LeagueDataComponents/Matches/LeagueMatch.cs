@@ -5,12 +5,12 @@ using System.Text.RegularExpressions;
 [DataContract]
 public class LeagueMatch
 {
-    public int[] TeamsInTheMatch
+    public Dictionary<int, string> TeamsInTheMatch
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(teamsInTheMatch) + " with Length of: " +
-                teamsInTheMatch.Length, LogLevel.VERBOSE);
+            Log.WriteLine("Getting " + nameof(teamsInTheMatch) + " with count of: " +
+                teamsInTheMatch.Count, LogLevel.VERBOSE);
             return teamsInTheMatch;
         }
         set
@@ -70,20 +70,27 @@ public class LeagueMatch
         }
     }
 
-    [DataMember] private int[] teamsInTheMatch { get; set; }
+    [DataMember] private Dictionary<int, string> teamsInTheMatch { get; set; }
     [DataMember] private int matchId { get; set; }
     [DataMember] private ulong matchChannelId { get; set; }
     [DataMember] private MatchReporting matchReporting { get; set; }
 
     public LeagueMatch()
     {
-        teamsInTheMatch = new int[0];
+        teamsInTheMatch = new Dictionary<int, string>();
         matchReporting = new MatchReporting();
     }
 
-    public LeagueMatch(int[] _teamsToFormMatchOn)
+    public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
-        teamsInTheMatch = _teamsToFormMatchOn;
+        Dictionary<int, string> _newTeamsDataWithNames = new Dictionary<int, string>();
+
+        foreach (int teamId in _teamsToFormMatchOn)
+        {
+
+        }
+
+        teamsInTheMatch = _newTeamsDataWithNames;
 
         matchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
@@ -105,11 +112,11 @@ public class LeagueMatch
         Log.WriteLine(nameof(allowedUserIds) + " length: " +
             allowedUserIds.Length, LogLevel.VERBOSE);
 
-        foreach (int teamId in TeamsInTheMatch)
+        foreach (var teamKvp in TeamsInTheMatch)
         {
-            Log.WriteLine("Looping on team id: " + teamId, LogLevel.VERBOSE);
+            Log.WriteLine("Looping on team id: " + teamKvp.Key, LogLevel.VERBOSE);
             Team foundTeam = _interfaceLeague.LeagueData.Teams.FindTeamById(
-                _interfaceLeague.LeaguePlayerCountPerTeam, teamId);
+                _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key);
 
             if (foundTeam == null)
             {

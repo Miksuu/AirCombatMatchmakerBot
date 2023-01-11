@@ -45,7 +45,7 @@ public class Matches
             Log.WriteLine("Warning! teams Length was not 2!", LogLevel.ERROR);
         }
 
-        LeagueMatch newMatch = new(_teamsToFormMatchOn);
+        LeagueMatch newMatch = new(_interfaceLeague, _teamsToFormMatchOn);
         MatchesList.Add(newMatch);
         Log.WriteLine("Added to the " + nameof(matchesList) + " count is now: " +
             matchesList.Count, LogLevel.VERBOSE);

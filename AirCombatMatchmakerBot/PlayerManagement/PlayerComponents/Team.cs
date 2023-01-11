@@ -136,12 +136,14 @@ public class Team
         return teamName;
     }
 
-    public string GetTeamSkillRatingAndNameInAString(
-    int _leagueTeamSize)
+    public string GetTeamInAString(
+    bool _includeSkillRating, int _leagueTeamSize)
     {
         string result = string.Empty;
 
-        result += "[" + SkillRating + "] " + GetTeamName(_leagueTeamSize, true);
+        if (_includeSkillRating) result += "[" + SkillRating + "] ";
+
+        result += GetTeamName(_leagueTeamSize, true);
         if (_leagueTeamSize > 1)
         {
             result += " (" + GetTeamMembersInAString() + ")";

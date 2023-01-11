@@ -44,7 +44,7 @@ public class ChallengeStatus
         foreach (int teamInt in teamsInTheQueue)
         {
             Team team = _leagueData.Teams.FindTeamById(_leagueTeamSize, teamInt);
-            teamsString += team.GetTeamSkillRatingAndNameInAString(_leagueTeamSize);
+            teamsString += team.GetTeamInAString(true, _leagueTeamSize);
             teamsString += "\n";
         }
         return teamsString;
