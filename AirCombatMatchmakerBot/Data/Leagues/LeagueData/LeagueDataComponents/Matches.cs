@@ -101,7 +101,8 @@ public class Matches
             return null;
         }
 
-        Log.WriteLine("Found: " + foundMatch.MatchId, LogLevel.VERBOSE);
+        Log.WriteLine("Found Match: " + foundMatch.MatchId + " with channelId: " +
+            _channelId, LogLevel.VERBOSE);
 
         return foundMatch;
     }

@@ -78,4 +78,71 @@ public class LeagueData
 
         return null;
     }
+
+    public Team? FindTeamInWhichThePlayerIsActiveIn(InterfaceLeague _interfaceLeague, ulong _playerId)
+    {
+        // Find the teams that the players is in the league that was selected earlier
+        List<Team> teamsWithThePlayerIdInTheLeagueThatThePlayerIsIn =
+            _interfaceLeague.LeagueData.Teams.TeamsList.Where(
+                t => t.CheckIfATeamContainsAPlayerById(_playerId)).ToList();
+
+        if (teamsWithThePlayerIdInTheLeagueThatThePlayerIsIn == null ||
+            teamsWithThePlayerIdInTheLeagueThatThePlayerIsIn.Count < 1)
+        {
+            Log.WriteLine("Error! " + nameof(teamsWithThePlayerIdInTheLeagueThatThePlayerIsIn) +
+                " was null or empty!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        Log.WriteLine("count: " + teamsWithThePlayerIdInTheLeagueThatThePlayerIsIn.Count +
+            " of all teams: ", LogLevel.VERBOSE);
+
+        foreach (Team team in teamsWithThePlayerIdInTheLeagueThatThePlayerIsIn)
+        {
+            Log.WriteLine("Team: " + team.TeamName + " with id: " + team.TeamId +
+                " active: " + team.TeamActive, LogLevel.VERBOSE);
+        }
+
+        List<Team> isActiveInTeams =
+            teamsWithThePlayerIdInTheLeagueThatThePlayerIsIn.Where(
+                t => t.TeamActive).ToList();
+
+        if (isActiveInTeams == null || isActiveInTeams.Count < 1)
+        {
+            Log.WriteLine("Error! " + nameof(isActiveInTeams) + " was null or empty!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        Log.WriteLine("count: " + isActiveInTeams.Count + " of all teams: ", LogLevel.VERBOSE);
+
+        // Should be always only one, because the player should be able to parcipiate only with one team at the time
+        if (isActiveInTeams.Count != 1)
+        {
+            Log.WriteLine("count was not 1!!", LogLevel.DEBUG);
+
+            foreach (Team team in isActiveInTeams)
+            {
+                Log.WriteLine("Team: " + team.TeamName + " with id: " + team.TeamId +
+                    " active: " + team.TeamActive, LogLevel.DEBUG);
+            }
+
+            Log.WriteLine("Error! The player was active in two teams at the same time.", LogLevel.ERROR);
+
+            // Handle error, take in the ID's of the current teams in the match and pick the player from there
+            // Might be something that doesn't need to be handled if the system is proven to work fine
+        }
+
+        Team? foundTeam = isActiveInTeams.FirstOrDefault();
+
+        if (foundTeam == null)
+        {
+            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        Log.WriteLine("Found team: " + foundTeam.TeamName + " with id: " + foundTeam.TeamId +
+            " that should be active: " + foundTeam.TeamActive, LogLevel.DEBUG);
+
+        return foundTeam;
+    }
 }

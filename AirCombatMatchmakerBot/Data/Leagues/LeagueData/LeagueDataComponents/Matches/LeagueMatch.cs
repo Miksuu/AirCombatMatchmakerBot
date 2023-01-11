@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using Discord.WebSocket;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 [DataContract]
 public class LeagueMatch
@@ -86,12 +88,12 @@ public class LeagueMatch
         matchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
-        matchReporting = new MatchReporting();   
+        matchReporting = new MatchReporting();
 
         Log.WriteLine("Constructed a new match with teams ids: " + teamsInTheMatch[0] +
             teamsInTheMatch[1] + " with matchId of: " + matchId, LogLevel.DEBUG);
     }
-    
+
     public ulong[] GetIdsOfThePlayersInTheMatchAsArray(InterfaceLeague _interfaceLeague)
     {
         int playerCounter = 0;
@@ -120,7 +122,7 @@ public class LeagueMatch
                 allowedUserIds[playerCounter] = player.PlayerDiscordId;
                 Log.WriteLine("Added " + allowedUserIds[playerCounter] + " to: " +
                     nameof(allowedUserIds) + ". " + nameof(playerCounter) + " is now: " +
-                    playerCounter+1 + " out of: " + (allowedUserIds.Length - 1).ToString(), LogLevel.VERBOSE);
+                    playerCounter + 1 + " out of: " + (allowedUserIds.Length - 1).ToString(), LogLevel.VERBOSE);
 
                 playerCounter++;
             }
