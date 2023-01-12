@@ -282,8 +282,6 @@ public abstract class BaseCategory : InterfaceCategory
                 _channelType.ToString(), LogLevel.DEBUG);
             // Maybe insert the name more properly here if needed later
             return _channelType.ToString();
-            //EnumExtensions.GetEnumMemberAttrValue(_channelType.ToString());
-
         }
         // Channels such as the match channel, that have the same type,
         // but different names
@@ -292,7 +290,16 @@ public abstract class BaseCategory : InterfaceCategory
             Log.WriteLine("Setting overriden channel name to: " +
                 _overrideChannelName, LogLevel.DEBUG);
             return _overrideChannelName;
-
         }
+    }
+
+    public InterfaceChannel FindInterfaceChannelWithIdInTheCategory(
+        ulong _idToSearchWith)
+    {
+        Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
+
+        var foundInterfaceChannel = interfaceChannels.FirstOrDefault(x => x.Key == _idToSearchWith);
+        Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName, LogLevel.VERBOSE);
+        return foundInterfaceChannel.Value;
     }
 }

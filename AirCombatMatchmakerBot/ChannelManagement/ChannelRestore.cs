@@ -21,7 +21,7 @@ public static class ChannelRestore
 
         // Handles deleting the old value
         var dbKeyValue =
-            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithId(
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 _categoryId).Value;
 
         var dbFinal = dbKeyValue.InterfaceChannels.FirstOrDefault(

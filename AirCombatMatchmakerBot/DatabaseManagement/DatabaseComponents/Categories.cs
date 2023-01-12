@@ -40,15 +40,16 @@ public class Categories
         return FoundCategoryKvp;
     }*/
 
-    public KeyValuePair<ulong, InterfaceCategory> GetCreatedCategoryWithChannelKvpWithId(
+    public KeyValuePair<ulong, InterfaceCategory> FindCreatedCategoryWithChannelKvpWithId(
         ulong _idToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
 
+        /*
         foreach (var item in CreatedCategoriesWithChannels)
         {
             Log.WriteLine(item.Key.ToString(), LogLevel.VERBOSE);
-        }
+        }*/
 
         var FoundCategoryKvp = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Key == _idToSearchWith);
         Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);

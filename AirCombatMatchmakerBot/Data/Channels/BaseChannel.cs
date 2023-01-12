@@ -142,37 +142,6 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
     }
 
-    /*
-    public Task<InterfaceChannel> PrepareCustomChannelMessages()
-    {
-        var databaseInterfaceChannel =
-            Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
-                x => x.Key == channelsCategoryId).Value.InterfaceChannels.FirstOrDefault(
-                    x => x.Value.ChannelId == channelId);
-
-        for (int m = 0; m < channelMessages.Count; ++m)
-        {
-            InterfaceMessage interfaceMessage =
-                (InterfaceMessage)EnumExtensions.GetInstance(channelMessages[m].ToString());
-
-            if (!databaseInterfaceChannel.Value.InterfaceMessagesWithIds.ContainsKey(
-                channelMessages[m].ToString()))
-            {
-                Log.WriteLine("Does not contain the key: " +
-                    channelMessages[m] + ", continuing", LogLevel.VERBOSE);
-
-                // Generate the initial message from the inherited class
-                interfaceMessage.Message = 
-                    interfaceMessage.GenerateMessage();
-
-                databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Add(
-                    channelMessages[m].ToString(), interfaceMessage);
-            }
-        }
-
-        return Task.FromResult(databaseInterfaceChannel.Value);
-    }*/
-
     public virtual async Task PrepareChannelMessages()
     {
         Log.WriteLine("Starting to prepare channel messages on: " + channelType, LogLevel.VERBOSE);
@@ -187,7 +156,7 @@ public abstract class BaseChannel : InterfaceChannel
 
         // Add to a method later
         var databaseInterfaceChannel =
-            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithId(channelsCategoryId).
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(channelsCategoryId).
                 Value.InterfaceChannels.FirstOrDefault(
                     x => x.Value.ChannelId == channelId);
 
@@ -282,5 +251,16 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         return;
+    }
+
+    public InterfaceMessage FindInterfaceMessageWithNameInTheChannel(
+        MessageName _messageName)
+    {
+        Log.WriteLine("Getting CategoryKvp with id: " + _messageName, LogLevel.VERBOSE);
+
+        var foundInterfaceMessage = interfaceMessagesWithIds.FirstOrDefault(
+            x => x.Value.MessageName == _messageName);
+        Log.WriteLine("Found: " + foundInterfaceMessage.Value.MessageName, LogLevel.VERBOSE);
+        return foundInterfaceMessage.Value;
     }
 }

@@ -153,7 +153,8 @@ public abstract class BaseMessage : InterfaceMessage
 
         Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
 
-        Log.WriteLine("messageButtonNames.Count: " + messageButtonNamesWithAmount.Count, LogLevel.VERBOSE);
+        Log.WriteLine("messageButtonNames.Count: " +
+            messageButtonNamesWithAmount.Count, LogLevel.VERBOSE);
 
         foreach (var buttonNameWithAmount in messageButtonNamesWithAmount)
         {
@@ -165,7 +166,8 @@ public abstract class BaseMessage : InterfaceMessage
                 string finalCustomId = "";
 
                 InterfaceButton interfaceButton =
-                     (InterfaceButton)EnumExtensions.GetInstance(buttonNameWithAmount.Key.ToString());
+                     (InterfaceButton)EnumExtensions.GetInstance(
+                         buttonNameWithAmount.Key.ToString());
 
                 Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " +
                     interfaceButton.ButtonName, LogLevel.DEBUG);
@@ -174,7 +176,8 @@ public abstract class BaseMessage : InterfaceMessage
 
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
-                component.WithButton(interfaceButton.CreateTheButton(finalCustomId, b, _channelCategoryId, _messageKey));
+                component.WithButton(interfaceButton.CreateTheButton(
+                    finalCustomId, b, _channelCategoryId, _messageKey));
 
                 buttonsInTheMessage.Add(interfaceButton);
             }
@@ -193,8 +196,8 @@ public abstract class BaseMessage : InterfaceMessage
     {
         message = _newContent;
 
-        Log.WriteLine("Modifying a message on channel id: " + messageChannelId + " that has msg id: " +
-            messageId + " with content: " + message, LogLevel.DEBUG);
+        Log.WriteLine("Modifying a message on channel id: " + messageChannelId +
+            " that has msg id: " + messageId + " with content: " + message, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
 

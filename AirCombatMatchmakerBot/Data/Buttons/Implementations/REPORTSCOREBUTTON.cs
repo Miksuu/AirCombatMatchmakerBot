@@ -21,6 +21,12 @@ public class REPORTSCOREBUTTON : BaseButton
     public override async Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
+        InterfaceMessage reportingStatusMessage =
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                    _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
+                        MessageName.REPORTINGSTATUSMESSAGE);
+
         string[] splitStrings = buttonCustomId.Split('_');
 
         string finalResponse = "Something went wrong with the reporting the match result of: " +
@@ -29,7 +35,7 @@ public class REPORTSCOREBUTTON : BaseButton
         ulong playerId = _component.User.Id;
         int playerReportedResult = int.Parse(splitStrings[1]);
 
-        Log.WriteLine("Pressed by: " + playerId + " in: " + _interfaceMessage.MessageChannelId + 
+        Log.WriteLine("Pressed by: " + playerId + " in: " + reportingStatusMessage.MessageChannelId + 
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
@@ -48,15 +54,17 @@ public class REPORTSCOREBUTTON : BaseButton
         }
 
         LeagueMatch? foundMatch = 
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_interfaceMessage.MessageChannelId);
+            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(
+                reportingStatusMessage.MessageChannelId);
         if (foundMatch == null)
         {
-            Log.WriteLine("Match with: " + _interfaceMessage.MessageChannelId + " was not found.", LogLevel.CRITICAL);
+            Log.WriteLine("Match with: " + reportingStatusMessage.MessageChannelId +
+                " was not found.", LogLevel.CRITICAL);
             return finalResponse;
         }
 
         finalResponse = foundMatch.MatchReporting.ReportMatchResult(
-            interfaceLeague, playerId, playerReportedResult, _interfaceMessage).Result;
+            interfaceLeague, playerId, playerReportedResult, reportingStatusMessage).Result;
 
         Log.WriteLine("Reached end before the return with player id: " + playerId, LogLevel.DEBUG);
 

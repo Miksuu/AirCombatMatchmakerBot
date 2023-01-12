@@ -241,7 +241,7 @@ public class Leagues
             _leagueCategoryId, LogLevel.VERBOSE);
 
         KeyValuePair<ulong, InterfaceCategory> findLeagueCategoryType =
-            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithId(
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 _leagueCategoryId);
         CategoryType leagueCategoryName = findLeagueCategoryType.Value.CategoryType;
 
