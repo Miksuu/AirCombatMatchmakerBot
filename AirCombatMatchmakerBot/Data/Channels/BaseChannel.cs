@@ -187,8 +187,8 @@ public abstract class BaseChannel : InterfaceChannel
 
         // Add to a method later
         var databaseInterfaceChannel =
-            Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
-                x => x.Key == channelsCategoryId).Value.InterfaceChannels.FirstOrDefault(
+            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpWithId(channelsCategoryId).
+                Value.InterfaceChannels.FirstOrDefault(
                     x => x.Value.ChannelId == channelId);
 
         foreach (var messageName in channelMessages)
