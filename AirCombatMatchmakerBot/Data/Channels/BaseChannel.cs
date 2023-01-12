@@ -162,7 +162,7 @@ public abstract class BaseChannel : InterfaceChannel
 
                 // Generate the initial message from the inherited class
                 interfaceMessage.Message = 
-                    interfaceMessage.GenerateMessage(channelId, channelsCategoryId);
+                    interfaceMessage.GenerateMessage();
 
                 databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Add(
                     channelMessages[m].ToString(), interfaceMessage);

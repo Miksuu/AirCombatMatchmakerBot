@@ -69,6 +69,38 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
+    ulong InterfaceMessage.MessageChannelId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(messageChannelId)
+                + ": " + messageChannelId, LogLevel.VERBOSE);
+            return messageChannelId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(messageChannelId) +
+                messageChannelId + " to: " + value, LogLevel.VERBOSE);
+            messageChannelId = value;
+        }
+    }
+
+    ulong InterfaceMessage.MessageCategoryId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(messageCategoryId)
+                + ": " + messageCategoryId, LogLevel.VERBOSE);
+            return messageCategoryId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(messageCategoryId) +
+                messageCategoryId + " to: " + value, LogLevel.VERBOSE);
+            messageCategoryId = value;
+        }
+    }
+
     List<InterfaceButton> InterfaceMessage.ButtonsInTheMessage
     {
         get
@@ -89,6 +121,8 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected Dictionary<ButtonName, int> messageButtonNamesWithAmount;
     [DataMember] protected string message = "";
     [DataMember] protected ulong messageId;
+    [DataMember] protected ulong messageChannelId;
+    [DataMember] protected ulong messageCategoryId;
     [DataMember] protected List<InterfaceButton> buttonsInTheMessage;
 
     public BaseMessage()
@@ -101,6 +135,9 @@ public abstract class BaseMessage : InterfaceMessage
         Discord.WebSocket.SocketGuild _guild, ulong _channelId, ulong _channelCategoryId,
         string _messageKey)
     {
+        messageChannelId = _channelId;
+        messageCategoryId = _channelCategoryId;
+
         var component = new ComponentBuilder();
 
         Log.WriteLine("Creating the channel message with id: "
@@ -144,7 +181,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
 
         var newMessage = await textChannel.SendMessageAsync(
-            GenerateMessage(_channelId, _channelCategoryId), components: component.Build());
+            GenerateMessage(), components: component.Build());
         ulong newMessageId = newMessage.Id;
 
         Log.WriteLine("Created a new message with id: " + newMessageId,LogLevel.VERBOSE);
@@ -152,5 +189,5 @@ public abstract class BaseMessage : InterfaceMessage
         return newMessageId;
     }
 
-    public abstract string GenerateMessage(ulong _channelId, ulong _channelCategoryId);
+    public abstract string GenerateMessage();
 }

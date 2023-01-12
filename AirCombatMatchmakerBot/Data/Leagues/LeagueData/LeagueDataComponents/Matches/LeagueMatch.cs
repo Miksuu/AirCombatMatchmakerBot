@@ -84,10 +84,16 @@ public class LeagueMatch
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
         Dictionary<int, string> _newTeamsDataWithNames = new Dictionary<int, string>();
+        int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
 
+        // Add the team's name to the dictionary as a value
         foreach (int teamId in _teamsToFormMatchOn)
         {
+            Team foundTeam =
+                _interfaceLeague.LeagueData.Teams.FindTeamById(
+                    leagueTeamSize, teamId);
 
+            _newTeamsDataWithNames.Add(teamId, foundTeam.GetTeamInAString(false, leagueTeamSize));
         }
 
         teamsInTheMatch = _newTeamsDataWithNames;

@@ -19,7 +19,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         message = "Insert the confirmation message here";
     }
 
-    public override string GenerateMessage(ulong _channelId, ulong _channelCategoryId)
+    public override string GenerateMessage()
     {
         return message;
     }

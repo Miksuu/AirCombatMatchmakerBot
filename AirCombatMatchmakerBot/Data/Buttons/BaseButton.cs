@@ -92,7 +92,8 @@ public abstract class BaseButton : InterfaceButton
     [DataMember] protected ulong buttonCategoryId;
     [DataMember] protected string buttonCustomId = "";
 
-    public Discord.ButtonBuilder CreateTheButton(string _customId, int _buttonIndex, ulong _buttonCategoryId, string _messageKey)
+    public Discord.ButtonBuilder CreateTheButton(
+        string _customId, int _buttonIndex, ulong _buttonCategoryId, string _messageKey)
     {
         Log.WriteLine("Creating a button: " + buttonName + " | label: " +
             buttonLabel + " | custom-id:" + _customId + " with style: " +
@@ -129,6 +130,5 @@ public abstract class BaseButton : InterfaceButton
     }
 
     public abstract Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, ulong _channelId,
-        ulong _messageId, string _message);
+        SocketMessageComponent _component, ulong _channelId, InterfaceMessage _interfaceMessage);
 }

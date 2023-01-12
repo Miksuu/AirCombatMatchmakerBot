@@ -15,12 +15,12 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         message = "Insert the reporting status message here";
     }
 
-    public override string GenerateMessage(ulong _channelId, ulong _channelCategoryId)
+    public override string GenerateMessage()
     {
         string reportingStatusMessage = string.Empty;
 
         InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.GetILeagueByCategoryId(_channelCategoryId);
+            Database.Instance.Leagues.GetILeagueByCategoryId(messageCategoryId);
         if (interfaceLeague == null)
         {
             Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.ERROR);
@@ -28,19 +28,36 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         }
 
         LeagueMatch? foundMatch =
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_channelId);
+            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(messageChannelId);
         if (foundMatch == null)
         {
             Log.WriteLine(nameof(foundMatch) + " was null!", LogLevel.ERROR);
             return "";
         }
 
-        foreach (var item in foundMatch.TeamsInTheMatch)
+        foreach (var teamKvp in foundMatch.TeamsInTheMatch)
         {
+            string reportingStatus = teamKvp.Value + ": ";
 
+            // Contains the reporting result, add to the message
+            if (foundMatch.MatchReporting.TeamIdsWithReportedResult.ContainsKey(teamKvp.Key))
+            {
+                var reportedResult = foundMatch.MatchReporting.TeamIdsWithReportedResult[teamKvp.Key];
+
+                Log.WriteLine("Found team's: " + teamKvp.Key + " (" + teamKvp.Value + ")" +
+                    " reported result: " + reportedResult, LogLevel.VERBOSE);
+
+                reportingStatusMessage += reportedResult;
+            }
+            // Does not contain the reporting result, just add "none"
+            else
+            {
+                reportingStatusMessage += "Not reported yet";
+            }
         }
 
+        Log.WriteLine("Returning: " + reportingStatusMessage, LogLevel.DEBUG);
 
-        return message;
+        return reportingStatusMessage;
     }
 }

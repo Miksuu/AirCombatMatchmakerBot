@@ -44,8 +44,9 @@ public class MatchReporting
         teamIdsWithReportedResult = new Dictionary<int, int>();
     }
 
-    public Task<string> ReportMatchResult(
-        InterfaceLeague _interfaceLeague, ulong _playerId, int _playerReportedResult)
+    public async Task<string> ReportMatchResult(
+        InterfaceLeague _interfaceLeague, ulong _playerId, 
+        int _playerReportedResult, InterfaceMessage _interfaceMessage)
     {
         string response = string.Empty;
 
@@ -53,7 +54,7 @@ public class MatchReporting
         {
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already over.", LogLevel.VERBOSE);
-            return Task.FromResult("Match is already done!");
+            return Task.FromResult("Match is already done!").Result;
         }
 
         Team? reportingTeam =
@@ -61,7 +62,7 @@ public class MatchReporting
         if (reportingTeam == null)
         {
             Log.WriteLine(nameof(reportingTeam) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(response);
+            return Task.FromResult(response).Result;
         }
 
         // First time pressing the report button for the team
@@ -94,7 +95,7 @@ public class MatchReporting
             Log.WriteLine("Count was: " + reportedTeamsCount + ", Error!", LogLevel.ERROR);
 
             // Maybe handle the error
-            return Task.FromResult(response);
+            return Task.FromResult(response).Result;
         }
 
         if (reportedTeamsCount == 2)
@@ -103,7 +104,12 @@ public class MatchReporting
             response = CalculateFinalMatchResult(_interfaceLeague, reportingTeam);
         }
 
-        return Task.FromResult(response);
+        // Maybe move this to one method
+        _interfaceMessage.Message = _interfaceMessage.GenerateMessage();
+        await MessageManager.ModifyMessage(
+            _interfaceMessage.MessageChannelId, _interfaceMessage.MessageId, _interfaceMessage.Message);
+
+        return Task.FromResult(response).Result;
     }
 
     private string CalculateFinalMatchResult(InterfaceLeague _interfaceLeague, Team _reportingTeam)

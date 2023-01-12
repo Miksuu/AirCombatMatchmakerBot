@@ -18,8 +18,7 @@ public class CHALLENGEBUTTON : BaseButton
     public void CreateTheButton(){}
 
     public override async Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, ulong _channelId,
-        ulong _messageId, string _message)
+        SocketMessageComponent _component, ulong _channelId, InterfaceMessage _interfaceMessage)
     {
         Log.WriteLine("Starting processing a challenge by: " +
             _component.User.Id , LogLevel.VERBOSE);
@@ -77,9 +76,9 @@ public class CHALLENGEBUTTON : BaseButton
             return "You are already in the queue!";
         }
 
-        string newMessage = _message + postedChallengeMessage;
+        string newMessage = _interfaceMessage.Message + postedChallengeMessage;
 
-        await MessageManager.ModifyMessage(_channelId, _messageId, newMessage);
+        await MessageManager.ModifyMessage(_channelId, _interfaceMessage.MessageId, newMessage);
 
         Log.WriteLine("After modifying message", LogLevel.VERBOSE);
 

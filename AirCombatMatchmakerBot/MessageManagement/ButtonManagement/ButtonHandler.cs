@@ -14,8 +14,10 @@ public static class ButtonHandler
         // Maybe get this of this and make a method getting the button's message object
         ulong categoryId = 0;
         ulong channelId = 0;
-        ulong messageId = 0;
-        string message = "";
+        //ulong messageId = 0;
+        //string message = "";
+        InterfaceMessage? interfaceMessage = null;
+
         foreach (var interfaceCategoryKvp in Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
             if (interfaceCategoryKvp.Value.InterfaceChannels.Any(
@@ -38,14 +40,21 @@ public static class ButtonHandler
 
                 categoryId = interfaceCategoryKvp.Key;
                 channelId = interfaceChannelTemp.Value.ChannelId;
-                messageId = interfaceMessageKvp.Value.MessageId;
-                message = interfaceMessageKvp.Value.Message;
+                //messageId = interfaceMessageKvp.Value.MessageId;
+                //message = interfaceMessageKvp.Value.Message;
+                interfaceMessage = interfaceMessageKvp.Value;
             }
         }
 
-        Log.WriteLine("Found: " + channelId + " | " + messageId + " | " + message, LogLevel.DEBUG);
+        if (interfaceMessage == null)
+        {
+            Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
 
-        if (categoryId == 0 || channelId == 0 || messageId == 0 || message == "")
+        Log.WriteLine("Found: " + channelId + " | " + interfaceMessage.MessageId + " | " + interfaceMessage.Message, LogLevel.DEBUG);
+
+        if (categoryId == 0 || channelId == 0 || interfaceMessage.MessageId == 0 || interfaceMessage.Message == "")
         {
             Log.WriteLine("Channel id, msg or it's id was null!", LogLevel.ERROR);
         }
@@ -59,7 +68,7 @@ public static class ButtonHandler
         }
 
         response = databaseButton.ActivateButtonFunction(
-            _component, channelId, messageId, message).Result;
+            _component, channelId, interfaceMessage).Result;
 
         await SerializationManager.SerializeDB();
 

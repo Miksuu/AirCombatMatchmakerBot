@@ -18,7 +18,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         message = "Insert league registration message here";
     }
 
-    public override string GenerateMessage(ulong _channelId, ulong _channelCategoryId)
+    public override string GenerateMessage()
     {
         return message;
     }

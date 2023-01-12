@@ -15,6 +15,5 @@ public interface InterfaceButton
     public Discord.ButtonBuilder CreateTheButton(
         string _customId, int _buttonIndex, ulong _buttonCategoryId, string _messageKey);
     public abstract Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, ulong _channelId,
-        ulong _messageId, string _message);
+        SocketMessageComponent _component, ulong _channelId, InterfaceMessage _interfaceMessage);
 }

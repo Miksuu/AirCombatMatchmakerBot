@@ -14,16 +14,16 @@ public class MATCHSTARTMESSAGE : BaseMessage
         message = "Insert the match start message here";
     }
 
-    public override string GenerateMessage(ulong _channelId, ulong _channelCategoryId)
+    public override string GenerateMessage()
     {
         string generatedMessage = "";
         bool firstTeam = true;
 
         Log.WriteLine("Starting to generate match initiation message on channel: with id: " +
-            _channelId + " under category ID: " + _channelCategoryId, LogLevel.VERBOSE);
+            messageChannelId + " under category ID: " + messageCategoryId, LogLevel.VERBOSE);
 
         InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.GetILeagueByCategoryId(_channelCategoryId);
+            Database.Instance.Leagues.GetILeagueByCategoryId(messageCategoryId);
         if (interfaceLeague == null)
         {
             Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.ERROR);
@@ -31,7 +31,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
         }
 
         LeagueMatch? foundMatch =
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_channelId);
+            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(messageChannelId);
         if (foundMatch == null)
         {
             Log.WriteLine(nameof(foundMatch) + " was null!", LogLevel.ERROR);

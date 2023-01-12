@@ -18,10 +18,10 @@ public class CHALLENGEMESSAGE : BaseMessage
         message = "Insert the challenge message here";
     }
 
-    public override string GenerateMessage(ulong _channelId, ulong _channelCategoryId)
+    public override string GenerateMessage()
     {
         Log.WriteLine("Generating a challenge queue message with _channelId: " +
-            _channelId, LogLevel.VERBOSE);
+            messageChannelId + " on category: " + messageCategoryId, LogLevel.VERBOSE);
 
         foreach (var createdCategoriesKvp in
             Database.Instance.Categories.CreatedCategoriesWithChannels)
@@ -35,16 +35,16 @@ public class CHALLENGEMESSAGE : BaseMessage
             Log.WriteLine("Full league name: " + leagueName, LogLevel.VERBOSE);
 
             if (createdCategoriesKvp.Value.InterfaceChannels.Any(
-                    x => x.Value.ChannelId == _channelId))
+                    x => x.Value.ChannelId == messageChannelId))
             {
                 ulong channelIdToLookFor =
                     createdCategoriesKvp.Value.InterfaceChannels.FirstOrDefault(
-                        x => x.Value.ChannelId == _channelId).Value.ChannelId;
+                        x => x.Value.ChannelId == messageChannelId).Value.ChannelId;
 
                 Log.WriteLine("Looping on league: " + leagueName +
                     " looking for id: " + channelIdToLookFor, LogLevel.VERBOSE);
 
-                if (_channelId == channelIdToLookFor)
+                if (messageChannelId == channelIdToLookFor)
                 {
                     Log.WriteLine("Found: " + channelIdToLookFor +
                         " is league: " + leagueName, LogLevel.DEBUG);

@@ -17,8 +17,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
     public void CreateTheButton(){}
 
     public override async Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, ulong _channelId,
-        ulong _messageId, string _message)
+        SocketMessageComponent _component, ulong _channelId, InterfaceMessage _interfaceMessage)
     {
         string responseMsg = "";
 
