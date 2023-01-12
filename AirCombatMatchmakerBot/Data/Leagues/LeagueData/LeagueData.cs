@@ -96,6 +96,7 @@ public class LeagueData
         return foundTeam;
     }
 
+    /*
     public Team? FindTeamInWhichThePlayerIsActiveIn(InterfaceLeague _interfaceLeague, ulong _playerId)
     {
         // Find the teams that the players is in the league that was selected earlier
@@ -161,5 +162,5 @@ public class LeagueData
             " that should be active: " + foundTeam.TeamActive, LogLevel.DEBUG);
 
         return foundTeam;
-    }
+    }*/
 }
