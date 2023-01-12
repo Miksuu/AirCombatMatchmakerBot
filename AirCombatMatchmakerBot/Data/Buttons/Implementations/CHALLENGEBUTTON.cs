@@ -78,7 +78,7 @@ public class CHALLENGEBUTTON : BaseButton
 
         string newMessage = _interfaceMessage.Message + postedChallengeMessage;
 
-        await MessageManager.ModifyMessage(_channelId, _interfaceMessage.MessageId, newMessage);
+        await _interfaceMessage.ModifyMessage(newMessage);
 
         Log.WriteLine("After modifying message", LogLevel.VERBOSE);
 

@@ -142,6 +142,7 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
     }
 
+    /*
     public Task<InterfaceChannel> PrepareCustomChannelMessages()
     {
         var databaseInterfaceChannel =
@@ -170,7 +171,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         return Task.FromResult(databaseInterfaceChannel.Value);
-    }
+    }*/
 
     public virtual async Task PrepareChannelMessages()
     {
@@ -217,7 +218,7 @@ public abstract class BaseChannel : InterfaceChannel
     public virtual async Task PostChannelMessages(SocketGuild _guild, 
         InterfaceChannel _databaseInterfaceChannel)
     {
-        Log.WriteLine("Starting to post channel messages on: " + channelType, LogLevel.VERBOSE);
+        //Log.WriteLine("Starting to post channel messages on: " + channelType, LogLevel.VERBOSE);
 
         Log.WriteLine("Finding channel: " + channelType + " (" + _databaseInterfaceChannel.ChannelId +
             ") parent category with id: " + channelsCategoryId, LogLevel.VERBOSE);

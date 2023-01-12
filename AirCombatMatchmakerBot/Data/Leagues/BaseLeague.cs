@@ -202,19 +202,12 @@ public abstract class BaseLeague : InterfaceLeague
 
         Log.WriteLine("Found channel: " + channel.Value.ChannelName, LogLevel.DEBUG);
 
-        /*
-        foreach (var item in channel.Value.InterfaceMessagesWithIds)
-        {
-            Log.WriteLine(item.Key + " | " + item.Value.MessageName.ToString(), LogLevel.VERBOSE);
-        }*/
+        InterfaceMessage interfaceMessage = channel.Value.InterfaceMessagesWithIds.FirstOrDefault(
+            x => x.Key == discordleagueReferences.LeagueCategoryId.ToString()).Value;
 
-        var messageId = channel.Value.InterfaceMessagesWithIds.FirstOrDefault(
-            x => x.Key == discordleagueReferences.LeagueCategoryId.ToString()).Value.MessageId;
+        Log.WriteLine("Found messageId: " + interfaceMessage.MessageId, LogLevel.VERBOSE);
 
-        Log.WriteLine("Found messageId: " + messageId, LogLevel.DEBUG);
-
-        await MessageManager.ModifyMessage(
-            channel.Value.ChannelId, messageId, GenerateALeagueJoinButtonMessage());
+        await interfaceMessage.ModifyMessage(GenerateALeagueJoinButtonMessage());
     }
 
     public string GenerateALeagueChallengeButtonMessage()

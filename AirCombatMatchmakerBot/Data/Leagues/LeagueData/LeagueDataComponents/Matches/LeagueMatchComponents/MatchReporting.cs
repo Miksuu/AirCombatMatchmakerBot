@@ -104,10 +104,7 @@ public class MatchReporting
             response = CalculateFinalMatchResult(_interfaceLeague, reportingTeam);
         }
 
-        // Maybe move this to one method
-        _interfaceMessage.Message = _interfaceMessage.GenerateMessage();
-        await MessageManager.ModifyMessage(
-            _interfaceMessage.MessageChannelId, _interfaceMessage.MessageId, _interfaceMessage.Message);
+        await _interfaceMessage.ModifyMessage(_interfaceMessage.GenerateMessage());
 
         return Task.FromResult(response).Result;
     }

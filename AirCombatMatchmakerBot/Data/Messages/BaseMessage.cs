@@ -189,5 +189,27 @@ public abstract class BaseMessage : InterfaceMessage
         return newMessageId;
     }
 
+    public async Task ModifyMessage(string _newContent)
+    {
+        message = _newContent;
+
+        Log.WriteLine("Modifying a message on channel id: " + messageChannelId + " that has msg id: " +
+            messageId + " with content: " + message, LogLevel.DEBUG);
+
+        var guild = BotReference.GetGuildRef();
+
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
+        var channel = guild.GetTextChannel(messageChannelId) as ITextChannel;
+
+        await channel.ModifyMessageAsync(messageId, m => m.Content = message);
+
+        Log.WriteLine("Modifying the message: " + messageId + " done.", LogLevel.VERBOSE);
+    }
+
     public abstract string GenerateMessage();
 }
