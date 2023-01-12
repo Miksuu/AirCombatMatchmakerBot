@@ -37,7 +37,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
         foreach (var teamKvp in foundMatch.TeamsInTheMatch)
         {
-            string reportingStatus = teamKvp.Value + ": ";
+            string reportingStatusPerTeam = teamKvp.Value + ": ";
 
             // Contains the reporting result, add to the message
             if (foundMatch.MatchReporting.TeamIdsWithReportedResult.ContainsKey(teamKvp.Key))
@@ -47,13 +47,17 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 Log.WriteLine("Found team's: " + teamKvp.Key + " (" + teamKvp.Value + ")" +
                     " reported result: " + reportedResult, LogLevel.VERBOSE);
 
-                reportingStatusMessage += reportedResult;
+                reportingStatusPerTeam += reportedResult;
             }
             // Does not contain the reporting result, just add "none"
             else
             {
-                reportingStatusMessage += "Not reported yet";
+                reportingStatusPerTeam += "Not reported yet";
             }
+
+            Log.WriteLine("Done looping through team: " + teamKvp.Key + " (" + teamKvp.Value +
+                ")" + "with message: " + reportingStatusPerTeam, LogLevel.VERBOSE);
+            reportingStatusMessage += reportingStatusPerTeam + "\n";
         }
 
         Log.WriteLine("Returning: " + reportingStatusMessage, LogLevel.DEBUG);
