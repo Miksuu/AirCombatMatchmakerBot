@@ -68,7 +68,7 @@ public static class ButtonHandler
         }
 
         response = databaseButton.ActivateButtonFunction(
-            _component, channelId, interfaceMessage).Result;
+            _component, interfaceMessage).Result;
 
         await SerializationManager.SerializeDB();
 

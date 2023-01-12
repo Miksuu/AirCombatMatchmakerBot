@@ -130,5 +130,5 @@ public abstract class BaseButton : InterfaceButton
     }
 
     public abstract Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, ulong _channelId, InterfaceMessage _interfaceMessage);
+        SocketMessageComponent _component, InterfaceMessage _interfaceMessage);
 }

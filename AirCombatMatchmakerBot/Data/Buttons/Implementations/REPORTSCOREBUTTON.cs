@@ -19,7 +19,7 @@ public class REPORTSCOREBUTTON : BaseButton
     public void CreateTheButton(){}
 
     public override async Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, ulong _channelId, InterfaceMessage _interfaceMessage)
+        SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         string[] splitStrings = buttonCustomId.Split('_');
 
@@ -29,7 +29,7 @@ public class REPORTSCOREBUTTON : BaseButton
         ulong playerId = _component.User.Id;
         int playerReportedResult = int.Parse(splitStrings[1]);
 
-        Log.WriteLine("Pressed by: " + playerId + " in: " + _channelId + 
+        Log.WriteLine("Pressed by: " + playerId + " in: " + _interfaceMessage.MessageChannelId + 
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
@@ -48,10 +48,10 @@ public class REPORTSCOREBUTTON : BaseButton
         }
 
         LeagueMatch? foundMatch = 
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_channelId);
+            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_interfaceMessage.MessageChannelId);
         if (foundMatch == null)
         {
-            Log.WriteLine("Match with: " + _channelId + " was not found.", LogLevel.CRITICAL);
+            Log.WriteLine("Match with: " + _interfaceMessage.MessageChannelId + " was not found.", LogLevel.CRITICAL);
             return finalResponse;
         }
 

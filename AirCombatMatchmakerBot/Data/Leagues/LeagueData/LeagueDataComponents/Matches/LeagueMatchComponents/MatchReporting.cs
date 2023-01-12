@@ -177,13 +177,6 @@ public class MatchReporting
             return "The match cannot be a draw!";
         }
 
-        /*
-        if (_interfaceLeague == null)
-        {
-            Log.WriteLine(nameof(_interfaceLeague) + " was null!", LogLevel.CRITICAL);
-            return "";
-        }*/
-
         int eloDelta = (int)(32 * (1 - winnerIndex - ExpectationToWin(
             _teamsInTheMatch[0].SkillRating, _teamsInTheMatch[1].SkillRating)));
 
