@@ -83,7 +83,7 @@ public class LeagueMatch
 
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
-        Dictionary<int, string> _newTeamsDataWithNames = new Dictionary<int, string>();
+        teamsInTheMatch = new Dictionary<int, string>();
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
 
         // Add the team's name to the dictionary as a value
@@ -93,18 +93,16 @@ public class LeagueMatch
                 _interfaceLeague.LeagueData.Teams.FindTeamById(
                     leagueTeamSize, teamId);
 
-            _newTeamsDataWithNames.Add(teamId, foundTeam.GetTeamInAString(false, leagueTeamSize));
+            teamsInTheMatch.Add(teamId, foundTeam.GetTeamInAString(false, leagueTeamSize));
         }
-
-        teamsInTheMatch = _newTeamsDataWithNames;
 
         matchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
         matchReporting = new MatchReporting();
 
-        Log.WriteLine("Constructed a new match with teams ids: " + teamsInTheMatch[0] +
-            teamsInTheMatch[1] + " with matchId of: " + matchId, LogLevel.DEBUG);
+        Log.WriteLine("Constructed a new match with teams ids: " + teamsInTheMatch.ElementAt(0) +
+            teamsInTheMatch.ElementAt(1) + " with matchId of: " + matchId, LogLevel.DEBUG);
     }
 
     public ulong[] GetIdsOfThePlayersInTheMatchAsArray(InterfaceLeague _interfaceLeague)
