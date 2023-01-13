@@ -31,7 +31,6 @@ public static class ButtonHandler
                     interfaceChannelTemp.Value.InterfaceMessagesWithIds.FirstOrDefault(
                         x => x.Value.MessageId == _component.Message.Id);
 
-                //categoryId = interfaceCategoryKvp.Key;
                 interfaceMessage = interfaceMessageKvp.Value;
             }
         }

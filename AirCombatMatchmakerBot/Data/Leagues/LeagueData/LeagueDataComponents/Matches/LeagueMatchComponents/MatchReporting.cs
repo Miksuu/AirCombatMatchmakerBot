@@ -259,33 +259,6 @@ public class MatchReporting
                     _socketMessage.Channel.Id).FindInterfaceMessageWithNameInTheChannel(
                         MessageName.REPORTINGSTATUSMESSAGE);
 
-        /*
-        foreach (var interfaceCategoryKvp in Database.Instance.Categories.CreatedCategoriesWithChannels)
-        {
-            if (interfaceCategoryKvp.Value.InterfaceChannels.Any(
-                x => x.Value.ChannelId == _socketMessage.Channel.Id))
-            {
-                var interfaceChannelTemp =
-                    interfaceCategoryKvp.Value.InterfaceChannels.FirstOrDefault(
-                        x => x.Value.ChannelId == _socketMessage.Channel.Id);
-
-
-
-                if (!interfaceChannelTemp.Value.InterfaceMessagesWithIds.Any(
-                    x => x.Value.MessageId == ))
-                {
-                    Log.WriteLine("message not found! with " + _socketMessage.Id, LogLevel.ERROR);
-                    continue;
-                }
-
-                var interfaceMessageKvp =
-                    interfaceChannelTemp.Value.InterfaceMessagesWithIds.FirstOrDefault(
-                        x => x.Value.MessageId == _socketMessage.Id);
-
-                reportingStatusMessage = interfaceMessageKvp.Value;
-            }
-        }*/
-
         if (reportingStatusMessage == null)
         {
             Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
