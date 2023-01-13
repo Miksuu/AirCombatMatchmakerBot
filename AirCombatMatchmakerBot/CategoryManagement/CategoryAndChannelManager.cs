@@ -12,10 +12,6 @@ public static class CategoryAndChannelManager
     private static List<CategoryType> categoriesThatWontGetGenerated = new List<CategoryType> {
         CategoryType.LEAGUETEMPLATE };
 
-    public static List<ulong> channelsThatBelongToTheBot = new List<ulong>();
-    public static Dictionary<ulong, ulong> matchChannelsIdWithCategoryId =
-        new Dictionary<ulong, ulong>();
-
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
     {
         Log.WriteLine("Starting to create categories and channels for" +

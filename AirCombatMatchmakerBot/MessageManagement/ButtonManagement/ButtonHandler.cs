@@ -9,13 +9,6 @@ public static class ButtonHandler
 
         Log.WriteLine("Button press detected by: " + _component.User.Id, LogLevel.VERBOSE);
 
-        //LogLevel logLevel = LogLevel.DEBUG;
-
-        // Maybe get this of this and make a method getting the button's message object
-        ulong categoryId = 0;
-        ulong channelId = 0;
-        //ulong messageId = 0;
-        //string message = "";
         InterfaceMessage? interfaceMessage = null;
 
         foreach (var interfaceCategoryKvp in Database.Instance.Categories.CreatedCategoriesWithChannels)
@@ -38,10 +31,7 @@ public static class ButtonHandler
                     interfaceChannelTemp.Value.InterfaceMessagesWithIds.FirstOrDefault(
                         x => x.Value.MessageId == _component.Message.Id);
 
-                categoryId = interfaceCategoryKvp.Key;
-                channelId = interfaceChannelTemp.Value.ChannelId;
-                //messageId = interfaceMessageKvp.Value.MessageId;
-                //message = interfaceMessageKvp.Value.Message;
+                //categoryId = interfaceCategoryKvp.Key;
                 interfaceMessage = interfaceMessageKvp.Value;
             }
         }
@@ -52,14 +42,14 @@ public static class ButtonHandler
             return;
         }
 
-        Log.WriteLine("Found: " + channelId + " | " + interfaceMessage.MessageId + " | " + interfaceMessage.Message, LogLevel.DEBUG);
+        Log.WriteLine("Found: " + interfaceMessage.MessageChannelId + " | " + interfaceMessage.MessageId + " | " + interfaceMessage.Message, LogLevel.DEBUG);
 
-        if (categoryId == 0 || channelId == 0 || interfaceMessage.MessageId == 0 || interfaceMessage.Message == "")
+        if (interfaceMessage.MessageCategoryId == 0 || interfaceMessage.MessageChannelId == 0 || interfaceMessage.MessageId == 0 || interfaceMessage.Message == "")
         {
             Log.WriteLine("Channel id, msg or it's id was null!", LogLevel.ERROR);
         }
 
-        InterfaceButton? databaseButton = FindInterfaceButtonFromTheDatabase(_component, categoryId);
+        InterfaceButton? databaseButton = FindInterfaceButtonFromTheDatabase(_component, interfaceMessage.MessageCategoryId);
 
         if (databaseButton == null)
         {
@@ -111,14 +101,6 @@ public static class ButtonHandler
         }
 
         Log.WriteLine("Found channel: " + databaseMessage.Value.MessageName, LogLevel.VERBOSE);
-
-        /*
-        foreach (var item in databaseMessage.Value.ButtonsInTheMessage)
-        {
-            Log.WriteLine("customid's of the buttons: " + item.ButtonCustomId, LogLevel.VERBOSE);
-        }
-
-        Log.WriteLine("To match with: " + _component.Data.CustomId, LogLevel.DEBUG);*/
 
         // Find multiple buttons where the button name is the one being looked for
         InterfaceButton? foundButton = databaseMessage.Value.ButtonsInTheMessage.FirstOrDefault(

@@ -20,12 +20,30 @@ public class Categories
         }
     }
 
+    public Dictionary<ulong, ulong> MatchChannelsIdWithCategoryId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(matchChannelsIdWithCategoryId) + " with count of: " +
+                matchChannelsIdWithCategoryId.Count, LogLevel.VERBOSE);
+            return matchChannelsIdWithCategoryId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(matchChannelsIdWithCategoryId)
+                + " to: " + value, LogLevel.VERBOSE);
+            matchChannelsIdWithCategoryId = value;
+        }
+    }
+
     // Dictionary of channel categories and channelTypes inside them
     [DataMember] private Dictionary<ulong, InterfaceCategory> createdCategoriesWithChannels { get; set; }
+    [DataMember] private Dictionary<ulong, ulong> matchChannelsIdWithCategoryId = new Dictionary<ulong, ulong>();
 
     public Categories()
     {
         createdCategoriesWithChannels = new();
+        matchChannelsIdWithCategoryId = new();
     }
 
     /*

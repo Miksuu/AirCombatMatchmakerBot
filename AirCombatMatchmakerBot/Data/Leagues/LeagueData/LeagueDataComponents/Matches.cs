@@ -79,6 +79,13 @@ public class Matches
 
         _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
+        if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
+            interfaceChannel.ChannelId))
+        {
+            Database.Instance.Categories.MatchChannelsIdWithCategoryId.Add(
+                interfaceChannel.ChannelId, categoryKvp.Value.SocketCategoryChannelId);
+        }
+
         await interfaceChannel.PrepareChannelMessages();
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);

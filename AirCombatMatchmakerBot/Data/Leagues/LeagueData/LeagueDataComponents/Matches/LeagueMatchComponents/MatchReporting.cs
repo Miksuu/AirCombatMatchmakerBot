@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using System.Net.Mail;
 using System.Runtime.Serialization;
+using System.Threading.Channels;
 
 [DataContract]
 public class MatchReporting
@@ -227,20 +228,10 @@ public class MatchReporting
         return 1 / (1 + Math.Pow(10, (_playerTwoRating - _playerOneRating) / 400.0));
     }
 
-    public void ProcessTacviewSentByTheUser(InterfaceLeague _interfaceLeague, SocketMessage _socketMessage, string _attachmentUrl)
+    public async Task ProcessTacviewSentByTheUser(InterfaceLeague _interfaceLeague, SocketMessage _socketMessage, string _attachmentUrl)
     {
         Log.WriteLine("Starting to process tacview send request by: " + _socketMessage.Author.Id +
             " in league: " + _interfaceLeague.LeagueCategoryName + " with url: " + _attachmentUrl, LogLevel.VERBOSE);
-
-        /*
-        if (!matchDone)
-        {
-            _socketMessage.Channel.SendMessageAsync(
-                _socketMessage.Author.Mention + ", make sure only include one attachment in the message," +
-                " with the .acmi file of the match!");
-
-            return;
-        }*/
 
         Team? reportingTeam =
             _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
@@ -261,5 +252,39 @@ public class MatchReporting
         }
 
         TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink = _attachmentUrl;
+
+        InterfaceMessage? interfaceMessage = null;
+
+        foreach (var interfaceCategoryKvp in Database.Instance.Categories.CreatedCategoriesWithChannels)
+        {
+            if (interfaceCategoryKvp.Value.InterfaceChannels.Any(
+                x => x.Value.ChannelId == _socketMessage.Channel.Id))
+            {
+                var interfaceChannelTemp =
+                    interfaceCategoryKvp.Value.InterfaceChannels.FirstOrDefault(
+                        x => x.Value.ChannelId == _socketMessage.Channel.Id);
+
+                if (!interfaceChannelTemp.Value.InterfaceMessagesWithIds.Any(
+                    x => x.Value.MessageId == _socketMessage.Id))
+                {
+                    Log.WriteLine("message not found! with " + _socketMessage.Id, LogLevel.ERROR);
+                    continue;
+                }
+
+                var interfaceMessageKvp =
+                    interfaceChannelTemp.Value.InterfaceMessagesWithIds.FirstOrDefault(
+                        x => x.Value.MessageId == _socketMessage.Id);
+
+                interfaceMessage = interfaceMessageKvp.Value;
+            }
+        }
+
+        if (interfaceMessage == null)
+        {
+            Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        await interfaceMessage.ModifyMessage(interfaceMessage.GenerateMessage());
     }
 }

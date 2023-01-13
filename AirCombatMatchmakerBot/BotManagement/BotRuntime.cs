@@ -76,19 +76,28 @@ public class BotRuntimeManager
         };
         
         // Receiving the tacview files
-        client.MessageReceived += (_socketMessage) =>
+        client.MessageReceived += async (_socketMessage) =>
         {
+            /*
+            Log.WriteLine("Looking for: " + _socketMessage.Channel.Id, LogLevel.DEBUG);
+            foreach (var item in CategoryAndChannelManager.matchChannelsIdWithCategoryId)
+            {
+                Log.WriteLine(item.Key + " | " + item.Value, LogLevel.DEBUG);
+            }*/
+
             // Disregards any message that's not inside the bot's match channels
-            if (!CategoryAndChannelManager.matchChannelsIdWithCategoryId.ContainsKey(
+            if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
                 _socketMessage.Channel.Id))
             {
-                return Task.CompletedTask;
+                return;
             }
+
+            //Log.WriteLine("Found: " + _socketMessage.Channel.Id, LogLevel.DEBUG);
 
             // Checks for any attachments
             if (!_socketMessage.Attachments.Any())
             {
-                return Task.CompletedTask;
+                return;
             }
 
             Log.WriteLine("Message: " + _socketMessage.Id + " + detected in: " +
@@ -108,14 +117,14 @@ public class BotRuntimeManager
 
                 _socketMessage.DeleteAsync();
 
-                return Task.CompletedTask;
+                return;
             }
 
             var attachment = _socketMessage.Attachments.FirstOrDefault();
             if (attachment == null)
             {
                 Log.WriteLine(nameof(attachment) + " was null!", LogLevel.CRITICAL);
-                return Task.CompletedTask;
+                return;
             }
 
             Log.WriteLine("Found attachment: " + attachment.Filename, LogLevel.VERBOSE);
@@ -126,23 +135,23 @@ public class BotRuntimeManager
                     " tried to send a file that is not a .acmi file!" +
                     " URL:" + attachment.Url, LogLevel.WARNING);
 
-                _socketMessage.Channel.SendMessageAsync(
-                    _socketMessage.Author.Mention +
-                    ", make sure the attachment you are sending is in .acmi format!");
+                await _socketMessage.Channel.SendMessageAsync(
+                          _socketMessage.Author.Mention +
+                          ", make sure the attachment you are sending is in .acmi format!");
 
-                _socketMessage.DeleteAsync();
+                await _socketMessage.DeleteAsync();
 
-                return Task.CompletedTask;
+                return;
             }
 
             // Find the league with the cached category ID
             InterfaceLeague? interfaceLeague =
                 Database.Instance.Leagues.GetILeagueByCategoryId(
-                    CategoryAndChannelManager.matchChannelsIdWithCategoryId[_socketMessage.Channel.Id]);
+                    Database.Instance.Categories.MatchChannelsIdWithCategoryId[_socketMessage.Channel.Id]);
             if (interfaceLeague == null)
             {
                 Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
-                return Task.CompletedTask;
+                return;
             }
 
             LeagueMatch? foundMatch =
@@ -152,14 +161,15 @@ public class BotRuntimeManager
             {
                 Log.WriteLine("Match with: " + _socketMessage.Channel.Id +
                     " was not found.", LogLevel.CRITICAL);
-                return Task.CompletedTask;
+                return;
             }
 
-            foundMatch.MatchReporting.ProcessTacviewSentByTheUser(
-                interfaceLeague, _socketMessage, attachment.Url);
+            await foundMatch.MatchReporting.ProcessTacviewSentByTheUser(
+                     interfaceLeague, _socketMessage, attachment.Url);
 
+            await SerializationManager.SerializeDB();
 
-            return Task.CompletedTask;
+            return;
         };
 
         // Listens for the commandService
