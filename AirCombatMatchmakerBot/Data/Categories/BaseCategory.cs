@@ -120,6 +120,8 @@ public abstract class BaseCategory : InterfaceCategory
         InterfaceCategory _interfaceCategory, ulong _socketCategoryChannelId,
         SocketGuild _guild)
     {
+        bool isMatchChannel = false;
+
         Log.WriteLine("Starting to create channels for: " + _socketCategoryChannelId + ")" + 
             " Channel count: " + _interfaceCategory.ChannelTypes.Count +
             " and setting the references", LogLevel.DEBUG);
@@ -132,6 +134,7 @@ public abstract class BaseCategory : InterfaceCategory
             if (channelType == ChannelType.MATCHCHANNEL)
             {
                 await CreateTheMissingMatchChannels(_guild, socketCategoryChannelId);
+                isMatchChannel = true;
                 continue;
             }
 
@@ -143,6 +146,15 @@ public abstract class BaseCategory : InterfaceCategory
                 Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
                 continue;
             }
+
+            // Add to the list that the bot accepts for tacviews
+            if (isMatchChannel)
+            {
+                CategoryAndChannelManager.matchChannelsIdWithCategoryId.Add(
+                    interfaceChannel.ChannelId, socketCategoryChannelId);
+            }
+            //CategoryAndChannelManager.matchChannelsIdWithCategoryId.Add();
+            //CategoryAndChannelManager.channelsThatBelongToTheBot.Add(interfaceChannel.ChannelId);
 
             await interfaceChannel.PrepareChannelMessages();
         }

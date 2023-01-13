@@ -53,7 +53,6 @@ public class LeagueMatch
         }
     }
 
-
     public MatchReporting MatchReporting
     {
         get

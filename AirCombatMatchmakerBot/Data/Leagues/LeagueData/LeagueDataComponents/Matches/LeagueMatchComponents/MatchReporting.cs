@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using System.Net.Mail;
 using System.Runtime.Serialization;
 
 [DataContract]
@@ -66,11 +67,14 @@ public class MatchReporting
             return Task.FromResult(response).Result;
         }
 
+        // Prevent from anyone else than the team reporting here
+
         // First time pressing the report button for the team
         if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
         {
             Log.WriteLine("Key wasn't found, the team is first time reporting.", LogLevel.VERBOSE);
-            TeamIdsWithReportData.Add(reportingTeam.TeamId, new ReportData(_playerReportedResult));
+            TeamIdsWithReportData.Add(
+                reportingTeam.TeamId, new ReportData(_playerReportedResult, reportingTeam.TeamName));
             response = "You reported score of: " + _playerReportedResult;
         }
         // Replacing the result
@@ -101,7 +105,7 @@ public class MatchReporting
 
         if (reportedTeamsCount == 2)
         {
-            MatchDone = true;
+            //MatchDone = true;
             response = CalculateFinalMatchResult(_interfaceLeague, reportingTeam);
         }
 
@@ -221,5 +225,41 @@ public class MatchReporting
     private double ExpectationToWin(float _playerOneRating, float _playerTwoRating)
     {
         return 1 / (1 + Math.Pow(10, (_playerTwoRating - _playerOneRating) / 400.0));
+    }
+
+    public void ProcessTacviewSentByTheUser(InterfaceLeague _interfaceLeague, SocketMessage _socketMessage, string _attachmentUrl)
+    {
+        Log.WriteLine("Starting to process tacview send request by: " + _socketMessage.Author.Id +
+            " in league: " + _interfaceLeague.LeagueCategoryName + " with url: " + _attachmentUrl, LogLevel.VERBOSE);
+
+        /*
+        if (!matchDone)
+        {
+            _socketMessage.Channel.SendMessageAsync(
+                _socketMessage.Author.Mention + ", make sure only include one attachment in the message," +
+                " with the .acmi file of the match!");
+
+            return;
+        }*/
+
+        Team? reportingTeam =
+            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
+                _socketMessage.Author.Id);
+        if (reportingTeam == null)
+        {
+            Log.WriteLine(nameof(reportingTeam) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        Log.WriteLine("Reporting team id: " + reportingTeam.TeamId, LogLevel.VERBOSE);
+
+        if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
+        {
+            Log.WriteLine("Did not contain key: " + reportingTeam.TeamId + " admin?: " +
+                _socketMessage.Author.Id + " trying to post a tacview to a match channel that he's not part of?", LogLevel.WARNING);
+            return;
+        }
+
+        TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink = _attachmentUrl;
     }
 }

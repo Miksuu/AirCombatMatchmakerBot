@@ -8,9 +8,13 @@ using System.Threading.Channels;
 public static class CategoryAndChannelManager
 {
     // Do not create these categories,
-    // as they are used as template (such as generating a baseline league)
+    // as they are used as template (such as generating from a league template)
     private static List<CategoryType> categoriesThatWontGetGenerated = new List<CategoryType> {
         CategoryType.LEAGUETEMPLATE };
+
+    public static List<ulong> channelsThatBelongToTheBot = new List<ulong>();
+    public static Dictionary<ulong, ulong> matchChannelsIdWithCategoryId =
+        new Dictionary<ulong, ulong>();
 
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()
     {
@@ -103,14 +107,12 @@ public static class CategoryAndChannelManager
             Log.WriteLine("Category name is: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
         }
 
-
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory).ToString() +
                 " was null!", LogLevel.CRITICAL);
             return;
         }
-
 
         SocketCategoryChannel? socketCategoryChannel = null;
 

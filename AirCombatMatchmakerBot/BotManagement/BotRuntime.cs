@@ -29,7 +29,7 @@ public class BotRuntimeManager
 
                 //ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
 
-                
+                /*
                 var guild = BotReference.GetGuildRef();
                 foreach (var ch in guild.Channels)
                 {
@@ -42,7 +42,7 @@ public class BotRuntimeManager
                 {
                     Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
                     await cat.DeleteAsync();
-                }
+                }*/
 
                 // Creates the league references to the database
                 // (must be run before creating the channels)
@@ -72,6 +72,94 @@ public class BotRuntimeManager
             {
                 Log.WriteLine("Bot was already connected!", LogLevel.WARNING);
             }
+
+        };
+        
+        // Receiving the tacview files
+        client.MessageReceived += (_socketMessage) =>
+        {
+            // Disregards any message that's not inside the bot's match channels
+            if (!CategoryAndChannelManager.matchChannelsIdWithCategoryId.ContainsKey(
+                _socketMessage.Channel.Id))
+            {
+                return Task.CompletedTask;
+            }
+
+            // Checks for any attachments
+            if (!_socketMessage.Attachments.Any())
+            {
+                return Task.CompletedTask;
+            }
+
+            Log.WriteLine("Message: " + _socketMessage.Id + " + detected in: " +
+                _socketMessage.Channel.Id + " by: " + _socketMessage.Author.Id, LogLevel.VERBOSE);
+
+            //var socketMessageComponent = _socketMessage.ToComponent();
+
+            // Check if the message contains a file and only one file
+            if (_socketMessage.Attachments.Count != 1)
+            {
+                Log.WriteLine("Message: " + _socketMessage.Id +
+                    " contained more than 1 attachment!", LogLevel.VERBOSE);
+
+                _socketMessage.Channel.SendMessageAsync(
+                    _socketMessage.Author.Mention + ", make sure only include one attachment in the message," +
+                    " with the .acmi file of the match!");
+
+                _socketMessage.DeleteAsync();
+
+                return Task.CompletedTask;
+            }
+
+            var attachment = _socketMessage.Attachments.FirstOrDefault();
+            if (attachment == null)
+            {
+                Log.WriteLine(nameof(attachment) + " was null!", LogLevel.CRITICAL);
+                return Task.CompletedTask;
+            }
+
+            Log.WriteLine("Found attachment: " + attachment.Filename, LogLevel.VERBOSE);
+
+            if (!attachment.Filename.EndsWith(".acmi"))
+            {
+                Log.WriteLine(_socketMessage.Author.Id +
+                    " tried to send a file that is not a .acmi file!" +
+                    " URL:" + attachment.Url, LogLevel.WARNING);
+
+                _socketMessage.Channel.SendMessageAsync(
+                    _socketMessage.Author.Mention +
+                    ", make sure the attachment you are sending is in .acmi format!");
+
+                _socketMessage.DeleteAsync();
+
+                return Task.CompletedTask;
+            }
+
+            // Find the league with the cached category ID
+            InterfaceLeague? interfaceLeague =
+                Database.Instance.Leagues.GetILeagueByCategoryId(
+                    CategoryAndChannelManager.matchChannelsIdWithCategoryId[_socketMessage.Channel.Id]);
+            if (interfaceLeague == null)
+            {
+                Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
+                return Task.CompletedTask;
+            }
+
+            LeagueMatch? foundMatch =
+                interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(
+                    _socketMessage.Channel.Id);
+            if (foundMatch == null)
+            {
+                Log.WriteLine("Match with: " + _socketMessage.Channel.Id +
+                    " was not found.", LogLevel.CRITICAL);
+                return Task.CompletedTask;
+            }
+
+            foundMatch.MatchReporting.ProcessTacviewSentByTheUser(
+                interfaceLeague, _socketMessage, attachment.Url);
+
+
+            return Task.CompletedTask;
         };
 
         // Listens for the commandService

@@ -17,7 +17,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
-        string reportingStatusMessage = string.Empty;
+        string reportingStatusMessage = "Current reporting status: \n";
 
         InterfaceLeague? interfaceLeague =
             Database.Instance.Leagues.GetILeagueByCategoryId(messageCategoryId);
@@ -42,12 +42,15 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
             // Contains the reporting result, add to the message
             if (foundMatch.MatchReporting.TeamIdsWithReportData.ContainsKey(teamKvp.Key))
             {
-                var reportedResult = foundMatch.MatchReporting.TeamIdsWithReportData[teamKvp.Key];
+                var teamReportData = foundMatch.MatchReporting.TeamIdsWithReportData[teamKvp.Key];
+                var reportedResult = teamReportData.ReportedResult;
+                var tacviewLink = teamReportData.TacviewLink;
 
                 Log.WriteLine("Found team's: " + teamKvp.Key + " (" + teamKvp.Value + ")" +
                     " reported result: " + reportedResult, LogLevel.VERBOSE);
 
                 reportingStatusPerTeam += reportedResult;
+                if (tacviewLink != "") reportingStatusPerTeam += tacviewLink;
             }
             // Does not contain the reporting result, just add "none"
             else

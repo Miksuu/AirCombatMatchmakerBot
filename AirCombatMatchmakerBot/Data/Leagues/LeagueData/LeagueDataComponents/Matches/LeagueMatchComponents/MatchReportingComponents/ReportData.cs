@@ -18,10 +18,43 @@ public class ReportData
         }
     }
 
-    [DataMember] private int reportedResult { get; set; }
+    public string TeamName
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(teamName), LogLevel.VERBOSE);
+            return teamName;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(teamName)
+                + " to: " + value, LogLevel.VERBOSE);
+            teamName = value;
+        }
+    }
 
-    public ReportData(int _playerReportedResult)
+    public string TacviewLink
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(tacviewLink), LogLevel.VERBOSE);
+            return tacviewLink;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(tacviewLink)
+                + " to: " + value, LogLevel.VERBOSE);
+            tacviewLink = value;
+        }
+    }
+
+    [DataMember] private int reportedResult { get; set; }
+    [DataMember] private string teamName { get; set; }
+    [DataMember] private string tacviewLink { get; set; }
+
+    public ReportData(int _playerReportedResult, string _reportingTeamName)
     {
         reportedResult = _playerReportedResult;
+        teamName = _reportingTeamName;
     }
 }

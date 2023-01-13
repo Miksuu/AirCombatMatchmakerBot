@@ -39,10 +39,11 @@ public class REPORTSCOREBUTTON : BaseButton
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
+        /*
         foreach (var item in splitStrings)
         {
             Log.WriteLine(item, LogLevel.DEBUG);
-        }
+        }*/
 
         // Find the league with the cached category ID
         InterfaceLeague? interfaceLeague =
