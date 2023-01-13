@@ -50,7 +50,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                     " reported result: " + reportedResult, LogLevel.VERBOSE);
 
                 reportingStatusPerTeam += reportedResult;
-                if (tacviewLink != "") reportingStatusPerTeam += tacviewLink;
+                if (tacviewLink != "") reportingStatusPerTeam += " | " + tacviewLink;
             }
             // Does not contain the reporting result, just add "none"
             else

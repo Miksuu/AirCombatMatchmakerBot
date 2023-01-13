@@ -253,8 +253,13 @@ public class MatchReporting
 
         TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink = _attachmentUrl;
 
-        InterfaceMessage? interfaceMessage = null;
+        InterfaceMessage reportingStatusMessage =
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                    _socketMessage.Channel.Id).FindInterfaceMessageWithNameInTheChannel(
+                        MessageName.REPORTINGSTATUSMESSAGE);
 
+        /*
         foreach (var interfaceCategoryKvp in Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
             if (interfaceCategoryKvp.Value.InterfaceChannels.Any(
@@ -264,8 +269,10 @@ public class MatchReporting
                     interfaceCategoryKvp.Value.InterfaceChannels.FirstOrDefault(
                         x => x.Value.ChannelId == _socketMessage.Channel.Id);
 
+
+
                 if (!interfaceChannelTemp.Value.InterfaceMessagesWithIds.Any(
-                    x => x.Value.MessageId == _socketMessage.Id))
+                    x => x.Value.MessageId == ))
                 {
                     Log.WriteLine("message not found! with " + _socketMessage.Id, LogLevel.ERROR);
                     continue;
@@ -275,16 +282,16 @@ public class MatchReporting
                     interfaceChannelTemp.Value.InterfaceMessagesWithIds.FirstOrDefault(
                         x => x.Value.MessageId == _socketMessage.Id);
 
-                interfaceMessage = interfaceMessageKvp.Value;
+                reportingStatusMessage = interfaceMessageKvp.Value;
             }
-        }
+        }*/
 
-        if (interfaceMessage == null)
+        if (reportingStatusMessage == null)
         {
-            Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
             return;
         }
 
-        await interfaceMessage.ModifyMessage(interfaceMessage.GenerateMessage());
+        await reportingStatusMessage.ModifyMessage(reportingStatusMessage.GenerateMessage());
     }
 }
