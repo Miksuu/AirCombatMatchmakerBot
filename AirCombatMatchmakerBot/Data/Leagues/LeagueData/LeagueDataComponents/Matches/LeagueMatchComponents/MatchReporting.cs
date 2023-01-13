@@ -5,19 +5,19 @@ using System.Runtime.Serialization;
 [DataContract]
 public class MatchReporting
 {
-    public Dictionary<int, int> TeamIdsWithReportedResult
+    public Dictionary<int, ReportData> TeamIdsWithReportData
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(teamIdsWithReportedResult) + " with count of: " +
-                teamIdsWithReportedResult.Count, LogLevel.VERBOSE);
-            return teamIdsWithReportedResult;
+            Log.WriteLine("Getting " + nameof(teamIdsWithReportData) + " with count of: " +
+                teamIdsWithReportData.Count, LogLevel.VERBOSE);
+            return teamIdsWithReportData;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(teamIdsWithReportedResult)
+            Log.WriteLine("Setting " + nameof(teamIdsWithReportData)
                 + " to: " + value, LogLevel.VERBOSE);
-            teamIdsWithReportedResult = value;
+            teamIdsWithReportData = value;
         }
     }
 
@@ -36,12 +36,12 @@ public class MatchReporting
         }
     }
 
-    [DataMember] private Dictionary<int, int> teamIdsWithReportedResult { get; set; }
+    [DataMember] private Dictionary<int, ReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool matchDone { get; set; }
 
     public MatchReporting()
     {
-        teamIdsWithReportedResult = new Dictionary<int, int>();
+        teamIdsWithReportData = new Dictionary<int, ReportData>();
     }
 
     public async Task<string> ReportMatchResult(
@@ -58,7 +58,8 @@ public class MatchReporting
         }
 
         Team? reportingTeam =
-            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
+                _playerId);
         if (reportingTeam == null)
         {
             Log.WriteLine(nameof(reportingTeam) + " was null!", LogLevel.CRITICAL);
@@ -66,27 +67,27 @@ public class MatchReporting
         }
 
         // First time pressing the report button for the team
-        if (!TeamIdsWithReportedResult.ContainsKey(reportingTeam.TeamId))
+        if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
         {
             Log.WriteLine("Key wasn't found, the team is first time reporting.", LogLevel.VERBOSE);
-            TeamIdsWithReportedResult.Add(reportingTeam.TeamId, _playerReportedResult);
+            TeamIdsWithReportData.Add(reportingTeam.TeamId, new ReportData(_playerReportedResult));
             response = "You reported score of: " + _playerReportedResult;
         }
         // Replacing the result
         else
         {
             Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
-            TeamIdsWithReportedResult[reportingTeam.TeamId] = _playerReportedResult;
+            TeamIdsWithReportData[reportingTeam.TeamId].ReportedResult = _playerReportedResult;
             response = "You replaced the reported score to: " + _playerReportedResult;
         }
 
-        foreach (var reportedTeamKvp in TeamIdsWithReportedResult)
+        foreach (var reportedTeamKvp in TeamIdsWithReportData)
         {
             Log.WriteLine("Reported team: " + reportedTeamKvp.Key +
                 " with value: " + reportedTeamKvp.Value, LogLevel.VERBOSE);
         }
 
-        int reportedTeamsCount = TeamIdsWithReportedResult.Count;
+        int reportedTeamsCount = TeamIdsWithReportData.Count;
 
         Log.WriteLine("Reported teams count: " + reportedTeamsCount, LogLevel.VERBOSE);
 
@@ -112,7 +113,8 @@ public class MatchReporting
     private string CalculateFinalMatchResult(InterfaceLeague _interfaceLeague, Team _reportingTeam)
     {
         Log.WriteLine("Starting to calculate the final match result with teams: " +
-            TeamIdsWithReportedResult.ElementAt(0) + " and: " + TeamIdsWithReportedResult.ElementAt(1), LogLevel.DEBUG);   
+            TeamIdsWithReportData.ElementAt(0) + " and: " +
+            TeamIdsWithReportData.ElementAt(1), LogLevel.DEBUG);   
 
         Team[] teamsInTheMatch = new Team[2];
         teamsInTheMatch[0] = _reportingTeam;
@@ -138,7 +140,7 @@ public class MatchReporting
             return null;
         }
 
-        int otherTeamId = TeamIdsWithReportedResult.FirstOrDefault(t => t.Key != _excludedTeamId).Key;
+        int otherTeamId = TeamIdsWithReportData.FirstOrDefault(t => t.Key != _excludedTeamId).Key;
         Log.WriteLine("Found other team id: " + otherTeamId, LogLevel.VERBOSE);
         return _interfaceLeague.LeagueData.FindTeamWithTeamId(otherTeamId);
     }
@@ -147,11 +149,13 @@ public class MatchReporting
     {
         int winnerIndex = 0;
 
-        if (TeamIdsWithReportedResult.ElementAt(1).Value > TeamIdsWithReportedResult.ElementAt(0).Value)
+        if (TeamIdsWithReportData.ElementAt(1).Value.ReportedResult >
+            TeamIdsWithReportData.ElementAt(0).Value.ReportedResult)
         {
             winnerIndex = 1;
         }
-        else if (TeamIdsWithReportedResult.ElementAt(1).Value == TeamIdsWithReportedResult.ElementAt(0).Value)
+        else if (TeamIdsWithReportData.ElementAt(1).Value.ReportedResult ==
+            TeamIdsWithReportData.ElementAt(0).Value.ReportedResult)
         {
             winnerIndex = 2;
         }

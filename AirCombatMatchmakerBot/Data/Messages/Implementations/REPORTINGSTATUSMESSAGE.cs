@@ -40,9 +40,9 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
             string reportingStatusPerTeam = teamKvp.Value + ": ";
 
             // Contains the reporting result, add to the message
-            if (foundMatch.MatchReporting.TeamIdsWithReportedResult.ContainsKey(teamKvp.Key))
+            if (foundMatch.MatchReporting.TeamIdsWithReportData.ContainsKey(teamKvp.Key))
             {
-                var reportedResult = foundMatch.MatchReporting.TeamIdsWithReportedResult[teamKvp.Key];
+                var reportedResult = foundMatch.MatchReporting.TeamIdsWithReportData[teamKvp.Key];
 
                 Log.WriteLine("Found team's: " + teamKvp.Key + " (" + teamKvp.Value + ")" +
                     " reported result: " + reportedResult, LogLevel.VERBOSE);

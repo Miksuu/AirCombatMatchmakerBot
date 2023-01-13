@@ -21,7 +21,7 @@ public class REGISTRATIONBUTTON : BaseButton
     {
         Log.WriteLine("Starting player registration", LogLevel.DEBUG);
 
-        string response = "";
+        string response = string.Empty;
         // Checks that the player does not exist in the database already, true if this is not the case
         if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
         {
