@@ -164,8 +164,10 @@ public class BotRuntimeManager
                 return;
             }
 
+            // Process the tacview file, and delete the original message by the user
             await foundMatch.MatchReporting.ProcessTacviewSentByTheUser(
                      interfaceLeague, _socketMessage, attachment.Url);
+            await _socketMessage.DeleteAsync();
 
             await SerializationManager.SerializeDB();
 
