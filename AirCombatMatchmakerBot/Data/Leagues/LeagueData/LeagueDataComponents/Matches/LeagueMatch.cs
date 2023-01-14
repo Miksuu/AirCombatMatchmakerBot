@@ -98,7 +98,7 @@ public class LeagueMatch
         matchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
-        matchReporting = new MatchReporting();
+        matchReporting = new MatchReporting(teamsInTheMatch);
 
         Log.WriteLine("Constructed a new match with teams ids: " + teamsInTheMatch.ElementAt(0) +
             teamsInTheMatch.ElementAt(1) + " with matchId of: " + matchId, LogLevel.DEBUG);

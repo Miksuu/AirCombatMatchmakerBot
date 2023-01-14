@@ -41,14 +41,17 @@ public static class ButtonHandler
             return;
         }
 
-        Log.WriteLine("Found: " + interfaceMessage.MessageChannelId + " | " + interfaceMessage.MessageId + " | " + interfaceMessage.Message, LogLevel.DEBUG);
+        Log.WriteLine("Found: " + interfaceMessage.MessageChannelId + " | " +
+            interfaceMessage.MessageId + " | " + interfaceMessage.Message, LogLevel.DEBUG);
 
-        if (interfaceMessage.MessageCategoryId == 0 || interfaceMessage.MessageChannelId == 0 || interfaceMessage.MessageId == 0 || interfaceMessage.Message == "")
+        if (interfaceMessage.MessageCategoryId == 0 || interfaceMessage.MessageChannelId == 0 ||
+            interfaceMessage.MessageId == 0 || interfaceMessage.Message == "")
         {
             Log.WriteLine("Channel id, msg or it's id was null!", LogLevel.ERROR);
         }
 
-        InterfaceButton? databaseButton = FindInterfaceButtonFromTheDatabase(_component, interfaceMessage.MessageCategoryId);
+        InterfaceButton? databaseButton = FindInterfaceButtonFromTheDatabase(
+            _component, interfaceMessage.MessageCategoryId);
 
         if (databaseButton == null)
         {

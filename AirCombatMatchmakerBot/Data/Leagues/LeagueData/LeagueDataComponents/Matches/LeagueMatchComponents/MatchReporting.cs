@@ -46,6 +46,24 @@ public class MatchReporting
         teamIdsWithReportData = new Dictionary<int, ReportData>();
     }
 
+    public MatchReporting(Dictionary<int, string> _teamsInTheMatch)
+    {
+        teamIdsWithReportData = new Dictionary<int, ReportData>();
+
+        foreach (var teamKvp in _teamsInTheMatch)
+        {
+            if (TeamIdsWithReportData.ContainsKey(teamKvp.Key))
+            {
+                Log.WriteLine("Already contains the key: " + teamKvp.Key, LogLevel.DEBUG);
+                continue;
+            }
+
+            Log.WriteLine("Adding team: " + teamKvp.Key + " | " + teamKvp.Value, LogLevel.VERBOSE);
+
+            TeamIdsWithReportData.Add(teamKvp.Key, new ReportData(teamKvp.Value));
+        }
+    }
+
     public async Task<string> ReportMatchResult(
         InterfaceLeague _interfaceLeague, ulong _playerId, 
         int _playerReportedResult, InterfaceMessage _interfaceMessage)
@@ -64,26 +82,24 @@ public class MatchReporting
                 _playerId);
         if (reportingTeam == null)
         {
-            Log.WriteLine(nameof(reportingTeam) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(reportingTeam) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
             return Task.FromResult(response).Result;
         }
 
-        // Prevent from anyone else than the team reporting here
 
         // First time pressing the report button for the team
         if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
         {
-            Log.WriteLine("Key wasn't found, the team is first time reporting.", LogLevel.VERBOSE);
-            TeamIdsWithReportData.Add(
-                reportingTeam.TeamId, new ReportData(_playerReportedResult, reportingTeam.TeamName));
-            response = "You reported score of: " + _playerReportedResult;
+            Log.WriteLine("Key wasn't found! by player:" + _playerId, LogLevel.WARNING);
+
+            return "";
         }
         // Replacing the result
         else
         {
             Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
-            TeamIdsWithReportData[reportingTeam.TeamId].ReportedResult = _playerReportedResult;
-            response = "You replaced the reported score to: " + _playerReportedResult;
+            TeamIdsWithReportData[reportingTeam.TeamId].ReportedScore = (_playerReportedResult, true);
+            response = "You reported score of: " + _playerReportedResult;
         }
 
         foreach (var reportedTeamKvp in TeamIdsWithReportData)
@@ -154,13 +170,13 @@ public class MatchReporting
     {
         int winnerIndex = 0;
 
-        if (TeamIdsWithReportData.ElementAt(1).Value.ReportedResult >
-            TeamIdsWithReportData.ElementAt(0).Value.ReportedResult)
+        if (TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.Item1 >
+            TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.Item1)
         {
             winnerIndex = 1;
         }
-        else if (TeamIdsWithReportData.ElementAt(1).Value.ReportedResult ==
-            TeamIdsWithReportData.ElementAt(0).Value.ReportedResult)
+        else if (TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.Item1 ==
+            TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.Item1)
         {
             winnerIndex = 2;
         }
@@ -228,10 +244,12 @@ public class MatchReporting
         return 1 / (1 + Math.Pow(10, (_playerTwoRating - _playerOneRating) / 400.0));
     }
 
-    public async Task ProcessTacviewSentByTheUser(InterfaceLeague _interfaceLeague, SocketMessage _socketMessage, string _attachmentUrl)
+    public async Task ProcessTacviewSentByTheUser(
+        InterfaceLeague _interfaceLeague, SocketMessage _socketMessage, string _attachmentUrl)
     {
         Log.WriteLine("Starting to process tacview send request by: " + _socketMessage.Author.Id +
-            " in league: " + _interfaceLeague.LeagueCategoryName + " with url: " + _attachmentUrl, LogLevel.VERBOSE);
+            " in league: " + _interfaceLeague.LeagueCategoryName + " with url: " +
+            _attachmentUrl, LogLevel.VERBOSE);
 
         Team? reportingTeam =
             _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
@@ -247,11 +265,12 @@ public class MatchReporting
         if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
         {
             Log.WriteLine("Did not contain key: " + reportingTeam.TeamId + " admin?: " +
-                _socketMessage.Author.Id + " trying to post a tacview to a match channel that he's not part of?", LogLevel.WARNING);
+                _socketMessage.Author.Id + " trying to post a tacview to a match channel" +
+                " that he's not part of?", LogLevel.WARNING);
             return;
         }
 
-        TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink = _attachmentUrl;
+        TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink = (_attachmentUrl, true);
 
         InterfaceMessage reportingStatusMessage =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(

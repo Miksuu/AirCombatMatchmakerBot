@@ -3,21 +3,6 @@
 [DataContract]
 public class ReportData
 {
-    public int ReportedResult
-    {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(reportedResult), LogLevel.VERBOSE);
-            return reportedResult;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(reportedResult)
-                + " to: " + value, LogLevel.VERBOSE);
-            reportedResult = value;
-        }
-    }
-
     public string TeamName
     {
         get
@@ -33,7 +18,22 @@ public class ReportData
         }
     }
 
-    public string TacviewLink
+    public (int, bool) ReportedScore
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(reportedScore), LogLevel.VERBOSE);
+            return reportedScore;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(reportedScore)
+                + " to: " + value, LogLevel.VERBOSE);
+            reportedScore = value;
+        }
+    }
+
+    public (string, bool) TacviewLink
     {
         get
         {
@@ -48,13 +48,13 @@ public class ReportData
         }
     }
 
-    [DataMember] private int reportedResult { get; set; }
     [DataMember] private string teamName { get; set; }
-    [DataMember] private string tacviewLink { get; set; }
+    [DataMember] private (int, bool) reportedScore { get; set; }
+    [DataMember] private (string, bool) tacviewLink { get; set; }
+    [DataMember] private (string, bool) commentByTheUser { get; set; }
 
-    public ReportData(int _playerReportedResult, string _reportingTeamName)
+    public ReportData(string _reportingTeamName)
     {
-        reportedResult = _playerReportedResult;
         teamName = _reportingTeamName;
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 using System.Threading.Channels;
+using System.Reflection;
 
 [DataContract]
 public class REPORTINGSTATUSMESSAGE : BaseMessage
@@ -39,23 +40,46 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         {
             string reportingStatusPerTeam = teamKvp.Value + ": ";
 
-            // Contains the reporting result, add to the message
-            if (foundMatch.MatchReporting.TeamIdsWithReportData.ContainsKey(teamKvp.Key))
+            if (!foundMatch.MatchReporting.TeamIdsWithReportData.ContainsKey(teamKvp.Key))
             {
-                var teamReportData = foundMatch.MatchReporting.TeamIdsWithReportData[teamKvp.Key];
-                var reportedResult = teamReportData.ReportedResult;
-                var tacviewLink = teamReportData.TacviewLink;
-
-                Log.WriteLine("Found team's: " + teamKvp.Key + " (" + teamKvp.Value + ")" +
-                    " reported result: " + reportedResult, LogLevel.VERBOSE);
-
-                reportingStatusPerTeam += reportedResult;
-                if (tacviewLink != "") reportingStatusPerTeam += " | " + tacviewLink;
+                Log.WriteLine("Does not contain reporting data on: " + teamKvp.Key + " named: " +
+                    teamKvp.Value, LogLevel.CRITICAL);
+                continue;
             }
+
+            /*
             // Does not contain the reporting result, just add "none"
             else
             {
                 reportingStatusPerTeam += "Not reported yet";
+            }*/
+
+            var teamReportData = foundMatch.MatchReporting.TeamIdsWithReportData[teamKvp.Key];
+            //var reportedResult = teamReportData.ReportedResult;
+            var tacviewLink = teamReportData.TacviewLink;
+
+            /*
+            Log.WriteLine("Found team's: " + teamKvp.Key + " (" + teamKvp.Value + ")" +
+                " reported result: " + reportedResult, LogLevel.VERBOSE);
+
+            reportingStatusPerTeam += reportedResult; */
+            //if (tacviewLink != "") reportingStatusPerTeam += " | " + tacviewLink;
+
+            FieldInfo[] fields = typeof(ReportData).GetFields();
+
+            Log.WriteLine("fields count: " + fields.Length, LogLevel.DEBUG);
+
+            foreach (FieldInfo field in fields)
+            {
+                Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
+
+                if (field.FieldType == typeof(Tuple<,>))
+                {
+                    Log.WriteLine(field.Name, LogLevel.VERBOSE);
+
+                    Log.WriteLine(field.GetValue(this).ToString(), LogLevel.DEBUG);
+
+                }
             }
 
             Log.WriteLine("Done looping through team: " + teamKvp.Key + " (" + teamKvp.Value +
