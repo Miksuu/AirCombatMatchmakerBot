@@ -51,7 +51,7 @@ public class ReportData
     [DataMember] private string teamName { get; set; }
     [DataMember] private (int, bool) reportedScore { get; set; }
     [DataMember] private (string, bool) tacviewLink { get; set; }
-    [DataMember] private (string, bool) commentByTheUser { get; set; }
+    //[DataMember] private (string, bool) commentByTheUser { get; set; }
 
     public ReportData(string _reportingTeamName)
     {

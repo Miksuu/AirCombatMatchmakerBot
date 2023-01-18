@@ -4,6 +4,7 @@ using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 using System.Threading.Channels;
+using System.Reflection;
 
 [DataContract]
 public class REPORTINGMESSAGE : BaseMessage
@@ -21,5 +22,10 @@ public class REPORTINGMESSAGE : BaseMessage
     public override string GenerateMessage()
     {
         return message;
+    }
+
+    public override bool GenerateTuple<T>(FieldInfo _field)
+    {
+        throw new NotImplementedException();
     }
 }

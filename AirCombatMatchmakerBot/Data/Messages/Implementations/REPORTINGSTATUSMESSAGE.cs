@@ -65,7 +65,8 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
             reportingStatusPerTeam += reportedResult; */
             //if (tacviewLink != "") reportingStatusPerTeam += " | " + tacviewLink;
 
-            FieldInfo[] fields = typeof(ReportData).GetFields();
+            FieldInfo[] fields = typeof(ReportData).GetFields(
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
 
             Log.WriteLine("fields count: " + fields.Length, LogLevel.DEBUG);
 
@@ -73,12 +74,21 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
             {
                 Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
 
-                if (field.FieldType == typeof(Tuple<,>))
+                // Add any other non tuple here, kinda temp fix
+                if (field.FieldType == typeof(string)) continue;
+
+                Log.WriteLine("expecting something like: " + typeof(Tuple<int, bool>), LogLevel.DEBUG);
+
+                if (field.FieldType == typeof(Tuple<int, bool>).BaseType)
                 {
-                    Log.WriteLine(field.Name, LogLevel.VERBOSE);
+                    Log.WriteLine("Type is tuple<int, bool>", LogLevel.VERBOSE);
+                    GenerateTuple<int>(field);
+                }
 
-                    Log.WriteLine(field.GetValue(this).ToString(), LogLevel.DEBUG);
-
+                if (field.FieldType == typeof(Tuple<string, bool>).BaseType)
+                {
+                    Log.WriteLine("Type is tuple<string, bool>", LogLevel.VERBOSE);
+                    GenerateTuple<string>(field);
                 }
             }
 
@@ -90,5 +100,46 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         Log.WriteLine("Returning: " + reportingStatusMessage, LogLevel.DEBUG);
 
         return reportingStatusMessage;
+    }
+
+    public override bool GenerateTuple<T>(FieldInfo _field)
+    {
+        var dataMember = _field.GetCustomAttribute<DataMemberAttribute>();
+        if (dataMember == null)
+        {
+            Log.WriteLine(_field.Name + " was null!", LogLevel.CRITICAL);
+            return false;
+        }
+
+        Log.WriteLine(_field.Name, LogLevel.VERBOSE);
+
+        var fieldValue = _field.GetValue(this);
+        if (fieldValue == null)
+        {
+            Log.WriteLine(nameof(fieldValue) + " was null!", LogLevel.CRITICAL);
+            return false;
+        }
+
+        string? fieldValueString = fieldValue.ToString();
+        if (fieldValueString == null)
+        {
+            Log.WriteLine(nameof(fieldValue) + "string was null!", LogLevel.CRITICAL);
+            return false;
+        }
+
+        Log.WriteLine(fieldValueString, LogLevel.DEBUG);
+        Tuple<T, bool> instanceValue = (Tuple<T, bool>)EnumExtensions.GetInstance(fieldValueString);
+
+        Log.WriteLine(nameof(instanceValue) + " type: " + instanceValue.GetType(), LogLevel.DEBUG);
+
+        var itemOneValueInString = instanceValue.Item1.ToString();
+        var itemtwo = instanceValue.Item2.ToString();
+        var itemtwobool = bool.Parse(itemtwo);
+
+        var tupleInstanceValue = new Tuple<string, bool>(itemOneValueInString, itemtwobool);
+
+        Log.WriteLine("Final tuple: " + tupleInstanceValue.Item1 + " | " + tupleInstanceValue.Item2, LogLevel.DEBUG);
+
+        return true;
     }
 }

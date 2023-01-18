@@ -1,4 +1,5 @@
 ﻿using Discord;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading.Channels;
 
@@ -183,7 +184,7 @@ public abstract class BaseMessage : InterfaceMessage
             }
         }
 
-        var newMessage = await textChannel.SendMessageAsync(
+        dynamic newMessage = await textChannel.SendMessageAsync(
             GenerateMessage(), components: component.Build());
         ulong newMessageId = newMessage.Id;
 
@@ -215,4 +216,5 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     public abstract string GenerateMessage();
+    public abstract bool GenerateTuple<T>(FieldInfo _field);
 }

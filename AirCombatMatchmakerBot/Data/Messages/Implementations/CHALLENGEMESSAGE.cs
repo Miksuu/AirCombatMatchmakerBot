@@ -4,6 +4,7 @@ using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 using System.Threading.Channels;
+using System.Reflection;
 
 [DataContract]
 public class CHALLENGEMESSAGE : BaseMessage
@@ -60,5 +61,10 @@ public class CHALLENGEMESSAGE : BaseMessage
         Log.WriteLine("Did not find a channel id to generate a challenge" +
             " queue message on!", LogLevel.ERROR);
         return string.Empty;
+    }
+
+    public override bool GenerateTuple<T>(FieldInfo _field)
+    {
+        throw new NotImplementedException();
     }
 }

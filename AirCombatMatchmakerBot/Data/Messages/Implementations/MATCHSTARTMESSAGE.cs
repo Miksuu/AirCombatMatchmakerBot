@@ -4,6 +4,7 @@ using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 using System.Threading.Channels;
+using System.Reflection;
 
 [DataContract]
 public class MATCHSTARTMESSAGE : BaseMessage
@@ -53,5 +54,10 @@ public class MATCHSTARTMESSAGE : BaseMessage
         }
 
         return generatedMessage;
+    }
+
+    public override bool GenerateTuple<T>(FieldInfo _field)
+    {
+        throw new NotImplementedException();
     }
 }

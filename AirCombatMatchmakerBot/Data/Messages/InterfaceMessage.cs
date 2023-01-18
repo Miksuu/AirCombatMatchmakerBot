@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using Newtonsoft.Json;
+using System.Reflection;
 using System.Runtime.Serialization;
 
 [JsonObjectAttribute]
@@ -19,4 +20,5 @@ public interface InterfaceMessage
 
     public Task ModifyMessage(string _newContent);
     public abstract string GenerateMessage();
+    public abstract bool GenerateTuple<T>(FieldInfo _field);
 }
