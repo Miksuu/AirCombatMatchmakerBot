@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using Discord.WebSocket;
 using System.Threading.Channels;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 [DataContract]
 public class REPORTINGSTATUSMESSAGE : BaseMessage
@@ -70,6 +71,8 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
             Log.WriteLine("fields count: " + fields.Length, LogLevel.DEBUG);
 
+            teamReportData.
+
             foreach (FieldInfo field in fields)
             {
                 Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
@@ -77,18 +80,19 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 // Add any other non tuple here, kinda temp fix
                 if (field.FieldType == typeof(string)) continue;
 
-                Log.WriteLine("expecting something like: " + typeof(Tuple<int, bool>), LogLevel.DEBUG);
-
-                if (field.FieldType == typeof(Tuple<int, bool>).BaseType)
+                var intTupleType = ("1", false).GetType();
+                if (field.FieldType.IsAssignableFrom(intTupleType))
                 {
                     Log.WriteLine("Type is tuple<int, bool>", LogLevel.VERBOSE);
-                    GenerateTuple<int>(field);
+                    GenerateTuple<int>(field.FieldType);
                 }
 
-                if (field.FieldType == typeof(Tuple<string, bool>).BaseType)
+                var stringTupleType = ("asd", false).GetType();
+                if (field.FieldType.IsAssignableFrom(stringTupleType))
                 {
                     Log.WriteLine("Type is tuple<string, bool>", LogLevel.VERBOSE);
-                    GenerateTuple<string>(field);
+                    Log.WriteLine(field.FieldType.IsAssignableFrom(("asd", false).GetType()).ToString(), LogLevel.DEBUG);
+                    GenerateTuple<string>(field.FieldType);
                 }
             }
 
@@ -102,18 +106,19 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         return reportingStatusMessage;
     }
 
-    public override bool GenerateTuple<T>(FieldInfo _field)
+    public override bool GenerateTuple<T>(Type _tupleType)
     {
+        
+        /*
         var dataMember = _field.GetCustomAttribute<DataMemberAttribute>();
         if (dataMember == null)
         {
-            Log.WriteLine(_field.Name + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(dataMember + " was null!", LogLevel.CRITICAL);
             return false;
         }
-
-        Log.WriteLine(_field.Name, LogLevel.VERBOSE);
-
-        var fieldValue = _field.GetValue(this);
+        
+        
+        var fieldValue = _field.GetValue(_field);
         if (fieldValue == null)
         {
             Log.WriteLine(nameof(fieldValue) + " was null!", LogLevel.CRITICAL);
@@ -125,10 +130,10 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         {
             Log.WriteLine(nameof(fieldValue) + "string was null!", LogLevel.CRITICAL);
             return false;
-        }
+        }*/
 
-        Log.WriteLine(fieldValueString, LogLevel.DEBUG);
-        Tuple<T, bool> instanceValue = (Tuple<T, bool>)EnumExtensions.GetInstance(fieldValueString);
+        Log.WriteLine("tupleType: " + _tupleType, LogLevel.DEBUG);
+        Tuple<T, bool> instanceValue = (Tuple<T, bool>)EnumExtensions.GetInstance(_tupleType.ToString());
 
         Log.WriteLine(nameof(instanceValue) + " type: " + instanceValue.GetType(), LogLevel.DEBUG);
 
@@ -139,7 +144,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         var tupleInstanceValue = new Tuple<string, bool>(itemOneValueInString, itemtwobool);
 
         Log.WriteLine("Final tuple: " + tupleInstanceValue.Item1 + " | " + tupleInstanceValue.Item2, LogLevel.DEBUG);
-
+        
         return true;
     }
 }
