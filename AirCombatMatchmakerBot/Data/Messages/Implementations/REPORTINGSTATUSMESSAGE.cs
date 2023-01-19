@@ -71,8 +71,6 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
             Log.WriteLine("fields count: " + fields.Length, LogLevel.DEBUG);
 
-            teamReportData.
-
             foreach (FieldInfo field in fields)
             {
                 Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
@@ -80,19 +78,17 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 // Add any other non tuple here, kinda temp fix
                 if (field.FieldType == typeof(string)) continue;
 
-                var intTupleType = ("1", false).GetType();
-                if (field.FieldType.IsAssignableFrom(intTupleType))
+                if (field.FieldType.IsAssignableFrom(("1", false).GetType()))
                 {
                     Log.WriteLine("Type is tuple<int, bool>", LogLevel.VERBOSE);
-                    GenerateTuple<int>(field.FieldType);
+                    GenerateTuple<int>(field, teamReportData);
                 }
 
-                var stringTupleType = ("asd", false).GetType();
-                if (field.FieldType.IsAssignableFrom(stringTupleType))
+                if (field.FieldType.IsAssignableFrom(("asd", false).GetType()))
                 {
                     Log.WriteLine("Type is tuple<string, bool>", LogLevel.VERBOSE);
                     Log.WriteLine(field.FieldType.IsAssignableFrom(("asd", false).GetType()).ToString(), LogLevel.DEBUG);
-                    GenerateTuple<string>(field.FieldType);
+                    GenerateTuple<string>(field, teamReportData);
                 }
             }
 
@@ -106,9 +102,11 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         return reportingStatusMessage;
     }
 
-    public override bool GenerateTuple<T>(Type _tupleType)
+    public override bool GenerateTuple<T>(FieldInfo _field, ReportData _reportData)
     {
-        
+
+        _field.GetValue(_reportData.TeamName);
+
         /*
         var dataMember = _field.GetCustomAttribute<DataMemberAttribute>();
         if (dataMember == null)
@@ -130,9 +128,9 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         {
             Log.WriteLine(nameof(fieldValue) + "string was null!", LogLevel.CRITICAL);
             return false;
-        }*/
+        }
 
-        Log.WriteLine("tupleType: " + _tupleType, LogLevel.DEBUG);
+        //Log.WriteLine("tupleType: " + _tupleType, LogLevel.DEBUG);
         Tuple<T, bool> instanceValue = (Tuple<T, bool>)EnumExtensions.GetInstance(_tupleType.ToString());
 
         Log.WriteLine(nameof(instanceValue) + " type: " + instanceValue.GetType(), LogLevel.DEBUG);
@@ -144,7 +142,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         var tupleInstanceValue = new Tuple<string, bool>(itemOneValueInString, itemtwobool);
 
         Log.WriteLine("Final tuple: " + tupleInstanceValue.Item1 + " | " + tupleInstanceValue.Item2, LogLevel.DEBUG);
-        
+        */
         return true;
     }
 }
