@@ -60,6 +60,7 @@ public class CHALLENGEMESSAGE : BaseMessage
 
         Log.WriteLine("Did not find a channel id to generate a challenge" +
             " queue message on!", LogLevel.ERROR);
+
         return string.Empty;
     }
 

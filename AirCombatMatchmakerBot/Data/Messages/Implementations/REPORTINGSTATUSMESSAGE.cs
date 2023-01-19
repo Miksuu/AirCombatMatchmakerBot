@@ -78,7 +78,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 // Add any other non tuple here, kinda temp fix
                 if (field.FieldType == typeof(string)) continue;
 
-                if (field.FieldType.IsAssignableFrom(("1", false).GetType()))
+                if (field.FieldType.IsAssignableFrom((1, false).GetType()))
                 {
                     Log.WriteLine("Type is tuple<int, bool>", LogLevel.VERBOSE);
                     GenerateTuple<int>(field, teamReportData);
@@ -104,8 +104,8 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
     public override bool GenerateTuple<T>(FieldInfo _field, ReportData _reportData)
     {
-
-        _field.GetValue(_reportData.TeamName);
+        var newField = _field;
+        newField.GetValue(_reportData);
 
         /*
         var dataMember = _field.GetCustomAttribute<DataMemberAttribute>();
