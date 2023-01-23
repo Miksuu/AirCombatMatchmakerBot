@@ -216,5 +216,5 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     public abstract string GenerateMessage();
-    public abstract bool GenerateTuple<T>(FieldInfo _field);
+    public abstract bool GenerateTuple(FieldInfo _field, ReportData _reportData, Type _type);
 }

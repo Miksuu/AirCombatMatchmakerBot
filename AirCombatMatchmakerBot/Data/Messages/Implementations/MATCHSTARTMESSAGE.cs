@@ -56,7 +56,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
         return generatedMessage;
     }
 
-    public override bool GenerateTuple<T>(FieldInfo _field)
+    public override bool GenerateTuple(FieldInfo _field, ReportData _reportData, Type _type)
     {
         throw new NotImplementedException();
     }

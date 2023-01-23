@@ -78,17 +78,19 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 // Add any other non tuple here, kinda temp fix
                 if (field.FieldType == typeof(string)) continue;
 
+                Log.WriteLine("This is tuple field: " + field.FieldType, LogLevel.VERBOSE);
+                
                 if (field.FieldType.IsAssignableFrom((1, false).GetType()))
                 {
                     Log.WriteLine("Type is tuple<int, bool>", LogLevel.VERBOSE);
-                    GenerateTuple<int>(field, teamReportData);
+                    GenerateTuple(field, teamReportData, typeof(int));
                 }
 
                 if (field.FieldType.IsAssignableFrom(("asd", false).GetType()))
                 {
                     Log.WriteLine("Type is tuple<string, bool>", LogLevel.VERBOSE);
-                    Log.WriteLine(field.FieldType.IsAssignableFrom(("asd", false).GetType()).ToString(), LogLevel.DEBUG);
-                    GenerateTuple<string>(field, teamReportData);
+                    //Log.WriteLine(field.FieldType.IsAssignableFrom(("asd", false).GetType()).ToString(), LogLevel.DEBUG);
+                    GenerateTuple(field, teamReportData, typeof(string));
                 }
             }
 
@@ -102,11 +104,12 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         return reportingStatusMessage;
     }
 
-    public override bool GenerateTuple<T>(FieldInfo _field, ReportData _reportData)
+    public override bool GenerateTuple(FieldInfo _field, ReportData _reportData, Type _type)
     {
         var newField = _field;
-        newField.GetValue(_reportData);
+        Tuple<typeof(_type), bool> newTuple = (Tuple<_type, bool>)newField.GetValue(_reportData);
 
+        Log.WriteLine("Final tuple: " + newTuple.Item1 + " | " + newTuple.Item2, LogLevel.DEBUG);
         /*
         var dataMember = _field.GetCustomAttribute<DataMemberAttribute>();
         if (dataMember == null)

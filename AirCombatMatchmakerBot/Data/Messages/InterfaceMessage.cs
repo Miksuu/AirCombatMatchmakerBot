@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-[JsonObjectAttribute]
+[JsonObjectAttribute]   
 public interface InterfaceMessage
 {
     public MessageName MessageName { get; set; }
@@ -20,5 +20,5 @@ public interface InterfaceMessage
 
     public Task ModifyMessage(string _newContent);
     public abstract string GenerateMessage();
-    public abstract bool GenerateTuple<T>(FieldInfo _field);
+    public abstract bool GenerateTuple(FieldInfo _field, ReportData _reportData, Type _type);
 }

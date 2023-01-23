@@ -24,7 +24,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         return message;
     }
 
-    public override bool GenerateTuple<T>(FieldInfo _field)
+    public override bool GenerateTuple(FieldInfo _field, ReportData _reportData, Type _type)
     {
         throw new NotImplementedException();
     }
