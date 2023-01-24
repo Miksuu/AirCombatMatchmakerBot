@@ -12,11 +12,12 @@ public class CONFIRMATIONMESSAGE : BaseMessage
     public CONFIRMATIONMESSAGE()
     {
         messageName = MessageName.CONFIRMATIONMESSAGE;
-        messageButtonNamesWithAmount = new Dictionary<ButtonName, int>();
-        /*
+        messageButtonNamesWithAmount = new Dictionary<ButtonName, int>
         {
-            { ButtonName.REPORTSCOREBUTTON, 4 }
-        };*/
+            { ButtonName.CONFIRMMATCHRESULTBUTTON, 1 },
+            { ButtonName.MODIFYMATCHRESULTBUTTON, 1 },
+            { ButtonName.DISPUTEMATCHRESULTBUTTON, 1 }
+        };
         message = "Insert the confirmation message here";
     }
 
