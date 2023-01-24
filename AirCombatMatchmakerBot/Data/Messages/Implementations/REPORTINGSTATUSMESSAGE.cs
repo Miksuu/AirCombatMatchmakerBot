@@ -48,32 +48,12 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 continue;
             }
 
-
-
-            /*
-            // Does not contain the reporting result, just add "none"
-            else
-            {
-                reportingStatusPerTeam += "Not reported yet";
-            }*/
-
             var teamReportData = foundMatch.MatchReporting.TeamIdsWithReportData[teamKvp.Key];
-            //var reportedResult = teamReportData.ReportedResult;
-            //var tacviewLink = teamReportData.TacviewLink;
             if (teamReportData == null)
             {
                 Log.WriteLine(nameof(teamReportData) + " was null!", LogLevel.CRITICAL);
                 continue;
             }
-
-            //reportingStatusPerTeam += "**" + teamReportData.TeamName.ToString() + "**\n";
-
-            /*
-            Log.WriteLine("Found team's: " + teamKvp.Key + " (" + teamKvp.Value + ")" +
-                " reported result: " + reportedResult, LogLevel.VERBOSE);
-
-            reportingStatusPerTeam += reportedResult; */
-            //if (tacviewLink != "") reportingStatusPerTeam += " | " + tacviewLink;
 
             FieldInfo[] fields = typeof(ReportData).GetFields(
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
@@ -103,20 +83,6 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
                 reportingStatusPerTeam += reportObject.FieldNameDisplay + ": " +
                     reportObject.ObjectValue + " | " + reportObject.FieldFilled + "\n";
-
-
-                /*
-                if (field.FieldType.IsAssignableFrom((1, false).GetType()))
-                {
-                    Log.WriteLine("Type is tuple<int, bool>", LogLevel.VERBOSE);
-                    GenerateTuple(field, teamReportData, typeof(int));
-                }
-
-                if (field.FieldType.IsAssignableFrom(("asd", false).GetType()))
-                {
-                    Log.WriteLine("Type is tuple<string, bool>", LogLevel.VERBOSE);
-                    GenerateTuple(field, teamReportData, typeof(string));
-                }*/
             }
 
             Log.WriteLine("Done looping through team: " + teamKvp.Key + " (" + teamKvp.Value +

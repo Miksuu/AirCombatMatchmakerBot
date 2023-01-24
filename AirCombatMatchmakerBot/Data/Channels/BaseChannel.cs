@@ -142,6 +142,27 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
     }
 
+    public async Task CreateAMessageForTheChannelFromMessageName(InterfaceChannel _interfaceChannel, MessageName _MessageName)
+    {
+        string messageNameString = _MessageName.ToString();
+
+        var guild = BotReference.GetGuildRef();
+
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
+        InterfaceMessage interfaceMessage =
+            (InterfaceMessage)EnumExtensions.GetInstance(_MessageName.ToString());
+
+        ulong id = interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+            guild, channelId, channelsCategoryId, _MessageName.ToString()).Result;
+
+        _interfaceChannel.InterfaceMessagesWithIds.Add(messageNameString, interfaceMessage);
+    }
+
     public virtual async Task PrepareChannelMessages()
     {
         Log.WriteLine("Starting to prepare channel messages on: " + channelType, LogLevel.VERBOSE);
@@ -160,7 +181,7 @@ public abstract class BaseChannel : InterfaceChannel
                 Value.InterfaceChannels.FirstOrDefault(
                     x => x.Value.ChannelId == channelId);
 
-        foreach (var messageName in channelMessages)
+        foreach (MessageName messageName in channelMessages)
         {
             Log.WriteLine("on: " + nameof(messageName) + " " + messageName, LogLevel.VERBOSE);
 

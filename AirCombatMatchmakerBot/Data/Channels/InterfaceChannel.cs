@@ -17,6 +17,7 @@ public interface InterfaceChannel
 
     public Task CreateAChannelForTheCategory(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
+    public Task CreateAMessageForTheChannelFromMessageName(InterfaceChannel _interfaceChannel, MessageName _MessageName);
     public Task PrepareChannelMessages();
     public Task PostChannelMessages(SocketGuild _guild,
         InterfaceChannel _databaseInterfaceChannel);

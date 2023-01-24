@@ -10,7 +10,7 @@ public class DISPUTEMATCHRESULTBUTTON : BaseButton
 {
     public DISPUTEMATCHRESULTBUTTON()
     {
-        buttonName = ButtonName.CONFIRMMATCHRESULTBUTTON;
+        buttonName = ButtonName.DISPUTEMATCHRESULTBUTTON;
         buttonLabel = "DISPUTE";
         buttonStyle = ButtonStyle.Danger;
     }

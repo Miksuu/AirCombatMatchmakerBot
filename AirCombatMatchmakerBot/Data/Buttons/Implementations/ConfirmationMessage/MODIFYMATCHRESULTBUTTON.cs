@@ -10,7 +10,7 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
 {
     public MODIFYMATCHRESULTBUTTON()
     {
-        buttonName = ButtonName.CONFIRMMATCHRESULTBUTTON;
+        buttonName = ButtonName.MODIFYMATCHRESULTBUTTON;
         buttonLabel = "MODIFY";
         buttonStyle = ButtonStyle.Primary;
     }

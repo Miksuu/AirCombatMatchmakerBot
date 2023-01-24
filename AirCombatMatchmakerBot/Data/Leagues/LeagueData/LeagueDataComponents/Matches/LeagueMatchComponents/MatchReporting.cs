@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using System;
 using System.Net.Mail;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading.Channels;
 
@@ -23,6 +25,21 @@ public class MatchReporting
         }
     }
 
+    public bool ShowingConfirmationMessage
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(showingConfirmationMessage), LogLevel.VERBOSE);
+            return showingConfirmationMessage;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(showingConfirmationMessage)
+                + " to: " + value, LogLevel.VERBOSE);
+            showingConfirmationMessage = value;
+        }
+    }
+
     public bool MatchDone
     {
         get
@@ -38,7 +55,9 @@ public class MatchReporting
         }
     }
 
+
     [DataMember] private Dictionary<int, ReportData> teamIdsWithReportData { get; set; }
+    [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
 
     public MatchReporting()
@@ -65,7 +84,7 @@ public class MatchReporting
     }
 
     public async Task<string> ReportMatchResult(
-        InterfaceLeague _interfaceLeague, ulong _playerId, 
+        InterfaceLeague _interfaceLeague, ulong _playerId,
         int _playerReportedResult, InterfaceMessage _interfaceMessage)
     {
         string response = string.Empty;
@@ -85,7 +104,6 @@ public class MatchReporting
             Log.WriteLine(nameof(reportingTeam) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
             return Task.FromResult(response).Result;
         }
-
 
         // First time pressing the report button for the team
         if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
@@ -121,17 +139,91 @@ public class MatchReporting
             return Task.FromResult(response).Result;
         }
 
+        response = CheckIfMatchCanBeSentToConfirmation(_interfaceMessage).Result;
 
+        /*
         // Fix this
         if (false)
         {
             //MatchDone = true;
             response = CalculateFinalMatchResult(_interfaceLeague, reportingTeam);
-        }
+        }*/
 
         await _interfaceMessage.ModifyMessage(_interfaceMessage.GenerateMessage());
 
+        await SerializationManager.SerializeDB();
+
         return Task.FromResult(response).Result;
+    }
+
+    private async Task<string> CheckIfMatchCanBeSentToConfirmation(InterfaceMessage _interfaceMessage)
+    {
+        bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
+
+        Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
+            " showing: " + showingConfirmationMessage, LogLevel.DEBUG);
+
+        if (confirmationMessageCanBeShown && !showingConfirmationMessage)
+        {
+            showingConfirmationMessage = true;
+
+            var interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                    _interfaceMessage.MessageChannelId);
+            if (interfaceChannel == null)
+            {
+                Log.WriteLine("channel was null!", LogLevel.CRITICAL);
+                return "Channel doesn't exist!";
+            }
+
+            await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                interfaceChannel, MessageName.CONFIRMATIONMESSAGE);
+        }
+
+        return "";
+    }
+
+    private bool CheckIfConfirmationMessageCanBeShown()
+    {
+        Log.WriteLine("Starting to check if the confirmation message can be showed.", LogLevel.VERBOSE);
+
+        foreach (var teamKvp in TeamIdsWithReportData)
+        {
+            FieldInfo[] fieldInfos = typeof(ReportData).GetFields(
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
+
+            Log.WriteLine("Got field infos, length: " + fieldInfos.Length + " for team: " +
+                teamKvp.Value.TeamName, LogLevel.VERBOSE);
+
+            foreach (FieldInfo field in fieldInfos)
+            {
+                Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
+
+                // Only process the ReportObject fields (ignore teamName)
+                if (field.FieldType != typeof(ReportObject)) continue;
+
+                Log.WriteLine("This is " + nameof(ReportObject) + " field: " +
+                    field.FieldType, LogLevel.VERBOSE);
+
+                ReportObject reportObject = (ReportObject)field.GetValue(teamKvp.Value);
+                if (reportObject == null)
+                {
+                    Log.WriteLine(nameof(reportObject) + " was null!", LogLevel.CRITICAL);
+                    continue;
+                }
+
+                if (!reportObject.FieldFilled)
+                {
+                    Log.WriteLine("Team: " + teamKvp.Value.TeamName + "'s " + reportObject.FieldNameDisplay +
+                        " was " + reportObject.FieldFilled + " with value: " + reportObject.ObjectValue, LogLevel.DEBUG);
+                    return false;
+                }
+            }
+        }
+
+        Log.WriteLine("All fields were true, proceeding to show the confirmation message", LogLevel.DEBUG);
+
+        return true;
     }
 
     private string CalculateFinalMatchResult(InterfaceLeague _interfaceLeague, Team _reportingTeam)
@@ -311,6 +403,10 @@ public class MatchReporting
             return;
         }
 
+        await CheckIfMatchCanBeSentToConfirmation(reportingStatusMessage);
+
         await reportingStatusMessage.ModifyMessage(reportingStatusMessage.GenerateMessage());
+
+        await SerializationManager.SerializeDB();
     }
 }
