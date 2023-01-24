@@ -20,5 +20,4 @@ public interface InterfaceMessage
 
     public Task ModifyMessage(string _newContent);
     public abstract string GenerateMessage();
-    public abstract bool GenerateTuple(FieldInfo _field, ReportData _reportData, Type _type);
 }

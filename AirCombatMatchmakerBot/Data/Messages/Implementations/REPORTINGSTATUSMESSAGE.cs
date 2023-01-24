@@ -48,6 +48,8 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 continue;
             }
 
+
+
             /*
             // Does not contain the reporting result, just add "none"
             else
@@ -57,7 +59,14 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
             var teamReportData = foundMatch.MatchReporting.TeamIdsWithReportData[teamKvp.Key];
             //var reportedResult = teamReportData.ReportedResult;
-            var tacviewLink = teamReportData.TacviewLink;
+            //var tacviewLink = teamReportData.TacviewLink;
+            if (teamReportData == null)
+            {
+                Log.WriteLine(nameof(teamReportData) + " was null!", LogLevel.CRITICAL);
+                continue;
+            }
+
+            //reportingStatusPerTeam += "**" + teamReportData.TeamName.ToString() + "**\n";
 
             /*
             Log.WriteLine("Found team's: " + teamKvp.Key + " (" + teamKvp.Value + ")" +
@@ -75,11 +84,28 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
             {
                 Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
 
-                // Add any other non tuple here, kinda temp fix
-                if (field.FieldType == typeof(string)) continue;
+                // Only process the ReportObject fields (ignore teamName)
+                if (field.FieldType != typeof(ReportObject)) continue;
 
-                Log.WriteLine("This is tuple field: " + field.FieldType, LogLevel.VERBOSE);
-                
+                Log.WriteLine("This is " + nameof(ReportObject) + " field: " +
+                    field.FieldType, LogLevel.VERBOSE);
+
+                ReportObject reportObject = (ReportObject)field.GetValue(teamReportData);
+                if (reportObject == null)
+                {
+                    Log.WriteLine(nameof(reportObject) + " was null!", LogLevel.CRITICAL);
+                    continue;
+                }
+
+                Log.WriteLine("Found: " + nameof(reportObject) + " with values: " +
+                    reportObject.FieldNameDisplay + ", " +reportObject.ObjectValue + ", " + 
+                    reportObject.FieldFilled, LogLevel.DEBUG);
+
+                reportingStatusPerTeam += reportObject.FieldNameDisplay + ": " +
+                    reportObject.ObjectValue + " | " + reportObject.FieldFilled + "\n";
+
+
+                /*
                 if (field.FieldType.IsAssignableFrom((1, false).GetType()))
                 {
                     Log.WriteLine("Type is tuple<int, bool>", LogLevel.VERBOSE);
@@ -90,7 +116,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 {
                     Log.WriteLine("Type is tuple<string, bool>", LogLevel.VERBOSE);
                     GenerateTuple(field, teamReportData, typeof(string));
-                }
+                }*/
             }
 
             Log.WriteLine("Done looping through team: " + teamKvp.Key + " (" + teamKvp.Value +
@@ -101,49 +127,5 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         Log.WriteLine("Returning: " + reportingStatusMessage, LogLevel.DEBUG);
 
         return reportingStatusMessage;
-    }
-
-    public override bool GenerateTuple(FieldInfo _field, ReportData _reportData, Type _type)
-    {
-        object newObject = Activator.CreateInstance(_type);
-
-
-        /*
-        var dataMember = _field.GetCustomAttribute<DataMemberAttribute>();
-        if (dataMember == null)
-        {
-            Log.WriteLine(dataMember + " was null!", LogLevel.CRITICAL);
-            return false;
-        }
-        
-        
-        var fieldValue = _field.GetValue(_field);
-        if (fieldValue == null)
-        {
-            Log.WriteLine(nameof(fieldValue) + " was null!", LogLevel.CRITICAL);
-            return false;
-        }
-
-        string? fieldValueString = fieldValue.ToString();
-        if (fieldValueString == null)
-        {
-            Log.WriteLine(nameof(fieldValue) + "string was null!", LogLevel.CRITICAL);
-            return false;
-        }
-
-        //Log.WriteLine("tupleType: " + _tupleType, LogLevel.DEBUG);
-        Tuple<T, bool> instanceValue = (Tuple<T, bool>)EnumExtensions.GetInstance(_tupleType.ToString());
-
-        Log.WriteLine(nameof(instanceValue) + " type: " + instanceValue.GetType(), LogLevel.DEBUG);
-
-        var itemOneValueInString = instanceValue.Item1.ToString();
-        var itemtwo = instanceValue.Item2.ToString();
-        var itemtwobool = bool.Parse(itemtwo);
-
-        var tupleInstanceValue = new Tuple<string, bool>(itemOneValueInString, itemtwobool);
-
-        Log.WriteLine("Final tuple: " + tupleInstanceValue.Item1 + " | " + tupleInstanceValue.Item2, LogLevel.DEBUG);
-        */
-        return true;
     }
 }

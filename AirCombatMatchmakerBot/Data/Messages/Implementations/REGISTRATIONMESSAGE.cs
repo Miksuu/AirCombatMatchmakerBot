@@ -23,9 +23,4 @@ public class REGISTRATIONMESSAGE : BaseMessage
     {
         return message;
     }
-
-    public override bool GenerateTuple(FieldInfo _field, ReportData _reportData, Type _type)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -3,6 +3,21 @@
 [DataContract]
 public class ReportObject
 {
+    public string FieldNameDisplay
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(fieldNameDisplay), LogLevel.VERBOSE);
+            return fieldNameDisplay;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(fieldNameDisplay)
+                + " to: " + value, LogLevel.VERBOSE);
+            fieldNameDisplay = value;
+        }
+    }
+
     public string ObjectValue
     {
         get
@@ -33,10 +48,17 @@ public class ReportObject
         }
     }
 
+    [DataMember] private string fieldNameDisplay { get; set; }
     [DataMember] private string objectValue { get; set; }
     [DataMember] private bool fieldFilled { get; set; }
+
     public ReportObject()
     {
+    }
+
+    public ReportObject(string _fieldNameDisplay)
+    {
+        fieldNameDisplay = _fieldNameDisplay;
     }
 
     public void SetObjectValueAndFieldBool(string _value, bool _fieldBool)

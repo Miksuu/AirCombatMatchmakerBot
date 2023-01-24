@@ -63,9 +63,4 @@ public class CHALLENGEMESSAGE : BaseMessage
 
         return string.Empty;
     }
-
-    public override bool GenerateTuple(FieldInfo _field, ReportData _reportData, Type _type)
-    {
-        throw new NotImplementedException();
-    }
 }

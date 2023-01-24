@@ -55,6 +55,8 @@ public class ReportData
 
     public ReportData(string _reportingTeamName)
     {
-        teamName = _reportingTeamName;
+        teamName = _reportingTeamName;      
+        reportedScore = new ReportObject("Reported score");
+        tacviewLink = new ReportObject("Tacview link");
     }
 }
