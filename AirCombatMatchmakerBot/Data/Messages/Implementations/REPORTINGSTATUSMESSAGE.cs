@@ -89,7 +89,6 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 if (field.FieldType.IsAssignableFrom(("asd", false).GetType()))
                 {
                     Log.WriteLine("Type is tuple<string, bool>", LogLevel.VERBOSE);
-                    //Log.WriteLine(field.FieldType.IsAssignableFrom(("asd", false).GetType()).ToString(), LogLevel.DEBUG);
                     GenerateTuple(field, teamReportData, typeof(string));
                 }
             }
@@ -106,10 +105,9 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
     public override bool GenerateTuple(FieldInfo _field, ReportData _reportData, Type _type)
     {
-        var newField = _field;
-        Tuple<typeof(_type), bool> newTuple = (Tuple<_type, bool>)newField.GetValue(_reportData);
+        object newObject = Activator.CreateInstance(_type);
 
-        Log.WriteLine("Final tuple: " + newTuple.Item1 + " | " + newTuple.Item2, LogLevel.DEBUG);
+
         /*
         var dataMember = _field.GetCustomAttribute<DataMemberAttribute>();
         if (dataMember == null)

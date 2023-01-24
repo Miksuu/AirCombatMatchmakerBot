@@ -98,7 +98,8 @@ public class MatchReporting
         else
         {
             Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
-            TeamIdsWithReportData[reportingTeam.TeamId].ReportedScore = (_playerReportedResult, true);
+            TeamIdsWithReportData[reportingTeam.TeamId].ReportedScore.SetObjectValueAndFieldBool(
+                _playerReportedResult.ToString(), true);
             response = "You reported score of: " + _playerReportedResult;
         }
 
@@ -170,17 +171,17 @@ public class MatchReporting
     {
         int winnerIndex = 0;
 
-        if (TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.Item1 >
-            TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.Item1)
+        if (Int32.Parse(TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue) >
+            Int32.Parse(TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue))
         {
             winnerIndex = 1;
         }
-        else if (TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.Item1 ==
-            TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.Item1)
+        else if (TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue ==
+            TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue)
         {
             winnerIndex = 2;
         }
-
+            
         Log.WriteLine("winnerIndex is = " + winnerIndex, LogLevel.VERBOSE);
 
         return winnerIndex;
@@ -270,7 +271,8 @@ public class MatchReporting
             return;
         }
 
-        TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink = (_attachmentUrl, true);
+        TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink.SetObjectValueAndFieldBool(
+            _attachmentUrl, true);
 
         InterfaceMessage reportingStatusMessage =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(

@@ -18,7 +18,7 @@ public class ReportData
         }
     }
 
-    public (int, bool) ReportedScore
+    public ReportObject ReportedScore
     {
         get
         {
@@ -33,7 +33,7 @@ public class ReportData
         }
     }
 
-    public (string, bool) TacviewLink
+    public ReportObject TacviewLink
     {
         get
         {
@@ -49,8 +49,8 @@ public class ReportData
     }
 
     [DataMember] private string teamName { get; set; }
-    [DataMember] private (int, bool) reportedScore { get; set; }
-    [DataMember] private (string, bool) tacviewLink { get; set; }
+    [DataMember] private ReportObject reportedScore { get; set; }
+    [DataMember] private ReportObject tacviewLink { get; set; }
     //[DataMember] private (string, bool) commentByTheUser { get; set; }
 
     public ReportData(string _reportingTeamName)
