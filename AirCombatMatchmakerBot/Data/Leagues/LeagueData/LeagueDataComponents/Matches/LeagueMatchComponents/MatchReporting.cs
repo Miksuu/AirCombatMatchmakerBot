@@ -121,7 +121,7 @@ public class MatchReporting
             return Task.FromResult(response).Result;
         }
 
-        if (reportedTeamsCount == 2)
+        if (false)
         {
             //MatchDone = true;
             response = CalculateFinalMatchResult(_interfaceLeague, reportingTeam);
@@ -171,13 +171,36 @@ public class MatchReporting
     {
         int winnerIndex = 0;
 
-        if (Int32.Parse(TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue) >
-            Int32.Parse(TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue))
+        string teamOneObjectValue = TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue;
+        string teamTwoObjectValue = TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue;
+
+        int teamOneOutput = 0;
+        if (int.TryParse(teamOneObjectValue, out int output))
+        {
+            teamOneOutput = output;
+        }
+        else
+        {
+            Log.WriteLine("Parse failed for value (team one): " + teamOneObjectValue, LogLevel.CRITICAL);
+            return 3;
+        }
+
+        int teamTwoOutput = 0;
+        if (int.TryParse(teamOneObjectValue, out int outputTwo))
+        {
+            teamTwoOutput = outputTwo;
+        }
+        else
+        {
+            Log.WriteLine("Parse failed for value (team two): " + teamTwoObjectValue, LogLevel.CRITICAL);
+            return 3;
+        }
+
+        if (teamTwoOutput > teamOneOutput)
         {
             winnerIndex = 1;
         }
-        else if (TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue ==
-            TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue)
+        else if (teamTwoOutput == teamOneOutput)
         {
             winnerIndex = 2;
         }
