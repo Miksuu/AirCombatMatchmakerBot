@@ -55,7 +55,7 @@ public class Matches
         await SerializationManager.SerializeDB();
     }
 
-    public async Task CreateAMatchChannel(
+    public async Task<ulong> CreateAMatchChannel(
         SocketGuild _guild,
         LeagueMatch _leagueMatch,
         InterfaceLeague _interfaceLeague)
@@ -72,10 +72,17 @@ public class Matches
             overriddenMatchName, LogLevel.VERBOSE);
 
         // Prepare the match with the ID of the current new match
-        InterfaceChannel interfaceChannel = await categoryKvp.Value.CreateSpecificChannelFromChannelType(
+        InterfaceChannel? interfaceChannel = await categoryKvp.Value.CreateSpecificChannelFromChannelType(
                 _guild, ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
                 overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
                 _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague));
+
+        if (interfaceChannel == null)
+        {
+            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.ERROR);
+            return 0;
+        }
+
 
         _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
@@ -89,6 +96,8 @@ public class Matches
         await interfaceChannel.PrepareChannelMessages();
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
+
+        return _leagueMatch.MatchChannelId;
     }
 
     public LeagueMatch? FindLeagueMatchByTheChannelId(ulong _channelId)

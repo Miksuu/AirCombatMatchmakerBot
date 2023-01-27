@@ -115,7 +115,7 @@ public class BotRuntimeManager
                     _socketMessage.Author.Mention + ", make sure only include one attachment in the message," +
                     " with the .acmi file of the match!");
 
-                _socketMessage.DeleteAsync();
+                await _socketMessage.DeleteAsync();
 
                 return;
             }

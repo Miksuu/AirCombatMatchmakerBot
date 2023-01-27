@@ -17,9 +17,9 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override async Task<string> ActivateButtonFunction(
+    public override Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        return "";
+        return Task.FromResult("");
     }
 }

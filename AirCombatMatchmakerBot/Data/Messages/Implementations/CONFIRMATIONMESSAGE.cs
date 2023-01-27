@@ -31,10 +31,27 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             messageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                 messageChannelId).FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE); */
+        InterfaceLeague? interfaceLeague = 
+            Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
 
-        var matchReportingTeamIdsWithReportData = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(
-            messageCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(
-                messageChannelId).MatchReporting.TeamIdsWithReportData;
+        if (interfaceLeague == null)
+        {
+            Log.WriteLine(nameof(interfaceLeague) +
+                " was null! Could not find the league.", LogLevel.CRITICAL);
+            return "";
+        }
+
+        LeagueMatch? leagueMatch = 
+            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(messageChannelId);
+
+        if (leagueMatch == null)
+        {
+            Log.WriteLine(nameof(leagueMatch) +
+                " was null! Could not find the match.", LogLevel.CRITICAL);
+            return "";
+        }
+
+        Dictionary<int, ReportData>? matchReportingTeamIdsWithReportData = leagueMatch.MatchReporting.TeamIdsWithReportData;
 
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {

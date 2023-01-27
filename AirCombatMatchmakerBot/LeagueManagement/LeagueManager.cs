@@ -51,9 +51,15 @@ public static class LeagueManager
                     " adding new units to the league", LogLevel.VERBOSE);
 
                 // Update the units and to the database (before interfaceLeagueCategory is replaced by it)
-                Database.Instance.Leagues.GetILeagueByCategoryName(
-                    interfaceLeagueCategory.LeagueCategoryName).
-                        LeagueUnits = interfaceLeagueCategory.LeagueUnits;
+                var interfaceLeague = Database.Instance.Leagues.GetILeagueByCategoryName(
+                    interfaceLeagueCategory.LeagueCategoryName);
+                if (interfaceLeague == null)
+                {
+                    Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
+                    return Task.CompletedTask;
+                }
+
+                interfaceLeague.LeagueUnits = interfaceLeagueCategory.LeagueUnits;
 
                 continue;
             }

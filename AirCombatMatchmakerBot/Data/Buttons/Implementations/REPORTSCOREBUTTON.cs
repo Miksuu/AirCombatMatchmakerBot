@@ -18,7 +18,7 @@ public class REPORTSCOREBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override async Task<string> ActivateButtonFunction(
+    public override Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         InterfaceMessage reportingStatusMessage =
@@ -51,7 +51,7 @@ public class REPORTSCOREBUTTON : BaseButton
         if (interfaceLeague == null)
         {
             Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
-            return "";
+            return Task.FromResult(finalResponse);
         }
 
         LeagueMatch? foundMatch = 
@@ -61,7 +61,7 @@ public class REPORTSCOREBUTTON : BaseButton
         {
             Log.WriteLine("Match with: " + reportingStatusMessage.MessageChannelId +
                 " was not found.", LogLevel.CRITICAL);
-            return finalResponse;
+            return Task.FromResult(finalResponse);
         }
 
         finalResponse = foundMatch.MatchReporting.ProcessPlayersSentReportObject(
@@ -70,6 +70,6 @@ public class REPORTSCOREBUTTON : BaseButton
 
         Log.WriteLine("Reached end before the return with player id: " + playerId, LogLevel.DEBUG);
 
-        return finalResponse;
+        return Task.FromResult(finalResponse);
     }
 }

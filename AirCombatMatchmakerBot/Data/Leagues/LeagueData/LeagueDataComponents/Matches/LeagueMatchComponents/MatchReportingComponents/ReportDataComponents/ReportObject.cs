@@ -3,7 +3,7 @@
 [DataContract]
 public class ReportObject
 {
-    public string FieldNameDisplay
+    public string? FieldNameDisplay
     {
         get
         {
@@ -18,7 +18,7 @@ public class ReportObject
         }
     }
 
-    public string ObjectValue
+    public string? ObjectValue
     {
         get
         {
@@ -48,8 +48,8 @@ public class ReportObject
         }
     }
 
-    [DataMember] private string fieldNameDisplay { get; set; }
-    [DataMember] private string objectValue { get; set; }
+    [DataMember] private string? fieldNameDisplay { get; set; }
+    [DataMember] private string? objectValue { get; set; }
     [DataMember] private bool fieldFilled { get; set; }
 
     public ReportObject()

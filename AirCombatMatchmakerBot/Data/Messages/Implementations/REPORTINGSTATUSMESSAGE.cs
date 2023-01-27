@@ -70,7 +70,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 Log.WriteLine("This is " + nameof(ReportObject) + " field: " +
                     field.FieldType, LogLevel.VERBOSE);
 
-                ReportObject reportObject = (ReportObject)field.GetValue(teamReportData);
+                ReportObject? reportObject = (ReportObject?)field.GetValue(teamReportData);
                 if (reportObject == null)
                 {
                     Log.WriteLine(nameof(reportObject) + " was null!", LogLevel.CRITICAL);

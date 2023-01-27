@@ -16,7 +16,7 @@ public class REGISTRATIONBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override async Task<string> ActivateButtonFunction(
+    public override Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         Log.WriteLine("Starting player registration", LogLevel.DEBUG);
@@ -42,6 +42,6 @@ public class REGISTRATIONBUTTON : BaseButton
                     _component.Channel.Name);
         }
 
-        return Task.FromResult(response).Result;
+        return Task.FromResult(response);
     }
 }

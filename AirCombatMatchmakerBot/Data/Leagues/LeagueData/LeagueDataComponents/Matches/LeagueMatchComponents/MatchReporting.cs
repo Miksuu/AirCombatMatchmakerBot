@@ -58,7 +58,7 @@ public class MatchReporting
     [DataMember] private Dictionary<int, ReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
-    [DataMember] private string finalResultForConfirmation { get; set; }
+    [DataMember] private string? finalResultForConfirmation { get; set; }
     public MatchReporting()
     {
         teamIdsWithReportData = new Dictionary<int, ReportData>();
@@ -223,7 +223,7 @@ public class MatchReporting
                 Log.WriteLine("This is " + nameof(ReportObject) + " field: " +
                     field.FieldType, LogLevel.VERBOSE);
 
-                ReportObject reportObject = (ReportObject)field.GetValue(teamKvp.Value);
+                ReportObject? reportObject = (ReportObject?)field.GetValue(teamKvp.Value);
                 if (reportObject == null)
                 {
                     Log.WriteLine(nameof(reportObject) + " was null!", LogLevel.CRITICAL);
@@ -283,8 +283,8 @@ public class MatchReporting
     {
         int winnerIndex = 0;
 
-        string teamOneObjectValue = TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue;
-        string teamTwoObjectValue = TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue;
+        string? teamOneObjectValue = TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue;
+        string? teamTwoObjectValue = TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue;
 
         int teamOneOutput = 0;
         if (int.TryParse(teamOneObjectValue, out int output))
