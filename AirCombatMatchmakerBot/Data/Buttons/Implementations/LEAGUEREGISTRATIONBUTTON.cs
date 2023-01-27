@@ -26,7 +26,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         string[] splitStrings = _component.Data.CustomId.Split('_');
 
         InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.FindLeagueInterfaceWithCategoryNameString(ulong.Parse(splitStrings[0]));
+            Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(ulong.Parse(splitStrings[0]));
 
         if (interfaceLeague == null)
         {

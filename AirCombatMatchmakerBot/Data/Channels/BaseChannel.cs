@@ -142,7 +142,8 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
     }
 
-    public async Task CreateAMessageForTheChannelFromMessageName(InterfaceChannel _interfaceChannel, MessageName _MessageName)
+    public async Task CreateAMessageForTheChannelFromMessageName(
+        InterfaceChannel _interfaceChannel, MessageName _MessageName)
     {
         string messageNameString = _MessageName.ToString();
 
@@ -159,6 +160,8 @@ public abstract class BaseChannel : InterfaceChannel
 
         ulong id = interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
             guild, channelId, channelsCategoryId, _MessageName.ToString()).Result;
+
+        await interfaceMessage.GenerateAndModifyTheMessage();
 
         _interfaceChannel.InterfaceMessagesWithIds.Add(messageNameString, interfaceMessage);
     }

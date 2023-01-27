@@ -64,8 +64,9 @@ public class REPORTSCOREBUTTON : BaseButton
             return finalResponse;
         }
 
-        finalResponse = foundMatch.MatchReporting.ReportMatchResult(
-            interfaceLeague, playerId, playerReportedResult, reportingStatusMessage).Result;
+        finalResponse = foundMatch.MatchReporting.ProcessPlayersSentReportObject(
+            interfaceLeague, playerId, reportingStatusMessage, playerReportedResult.ToString(),
+            TypeOfTheReportingObject.REPORTEDSCORE).Result;
 
         Log.WriteLine("Reached end before the return with player id: " + playerId, LogLevel.DEBUG);
 

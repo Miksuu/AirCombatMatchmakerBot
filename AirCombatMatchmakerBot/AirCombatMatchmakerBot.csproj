@@ -13,8 +13,4 @@
     <PackageReference Include="Pastel" Version="4.0.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\Leagues\LeagueData\LeagueDataComponents\Matches\LeagueMatchComponents\MatchReportingComponents\ReportDataComponents\" />
-  </ItemGroup>
-
 </Project>

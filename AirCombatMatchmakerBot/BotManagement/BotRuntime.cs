@@ -164,9 +164,16 @@ public class BotRuntimeManager
                 return;
             }
 
+            InterfaceMessage reportingStatusMessage =
+                Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                   interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                        _socketMessage.Channel.Id).FindInterfaceMessageWithNameInTheChannel(
+                            MessageName.REPORTINGSTATUSMESSAGE);
+
             // Process the tacview file, and delete the original message by the user
-            await foundMatch.MatchReporting.ProcessTacviewSentByTheUser(
-                     interfaceLeague, _socketMessage, attachment.Url);
+            await foundMatch.MatchReporting.ProcessPlayersSentReportObject(
+                     interfaceLeague, _socketMessage.Author.Id,
+                     reportingStatusMessage, attachment.Url, TypeOfTheReportingObject.TACVIEWLINK);
             await _socketMessage.DeleteAsync();
 
             await SerializationManager.SerializeDB();

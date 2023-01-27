@@ -20,4 +20,5 @@ public interface InterfaceMessage
 
     public Task ModifyMessage(string _newContent);
     public abstract string GenerateMessage();
+    public Task GenerateAndModifyTheMessage();
 }

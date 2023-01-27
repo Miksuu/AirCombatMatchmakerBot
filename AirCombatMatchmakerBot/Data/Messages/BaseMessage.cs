@@ -215,5 +215,10 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("Modifying the message: " + messageId + " done.", LogLevel.VERBOSE);
     }
 
+    public async Task GenerateAndModifyTheMessage()
+    {
+        await ModifyMessage(GenerateMessage());
+    }
+
     public abstract string GenerateMessage();
 }

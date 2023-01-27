@@ -55,11 +55,10 @@ public class MatchReporting
         }
     }
 
-
     [DataMember] private Dictionary<int, ReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
-
+    [DataMember] private string finalResultForConfirmation { get; set; }
     public MatchReporting()
     {
         teamIdsWithReportData = new Dictionary<int, ReportData>();
@@ -83,11 +82,23 @@ public class MatchReporting
         }
     }
 
-    public async Task<string> ReportMatchResult(
-        InterfaceLeague _interfaceLeague, ulong _playerId,
-        int _playerReportedResult, InterfaceMessage _interfaceMessage)
+    public async Task<string> ProcessPlayersSentReportObject(
+        InterfaceLeague _interfaceLeague, ulong _playerId, InterfaceMessage _reportingStatusMessage,
+        string _reportedObjectByThePlayer, TypeOfTheReportingObject _typeOfTheReportingObject)
     {
         string response = string.Empty;
+
+        Log.WriteLine("Processing player's sent " + nameof(ReportObject) + " in league: " +
+            _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
+            _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
+
+        if (showingConfirmationMessage)
+        {
+            Log.WriteLine(_playerId + " requested to report the match," +
+                " when it was already in confirmation.", LogLevel.VERBOSE);
+            return Task.FromResult("Match is in confirmation already! Finish that first, " +
+                "or hit the MODIFY button if you need to change reporting result!").Result;
+        }
 
         if (matchDone)
         {
@@ -109,16 +120,30 @@ public class MatchReporting
         if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
         {
             Log.WriteLine("Key wasn't found! by player:" + _playerId, LogLevel.WARNING);
-
             return "";
         }
         // Replacing the result
         else
         {
             Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
-            TeamIdsWithReportData[reportingTeam.TeamId].ReportedScore.SetObjectValueAndFieldBool(
-                _playerReportedResult.ToString(), true);
-            response = "You reported score of: " + _playerReportedResult;
+
+            switch (_typeOfTheReportingObject) 
+            {
+                case TypeOfTheReportingObject.REPORTEDSCORE:
+                    TeamIdsWithReportData[reportingTeam.TeamId].ReportedScore.SetObjectValueAndFieldBool(
+                        _reportedObjectByThePlayer, true);
+                    response = "You reported score of: " + _reportedObjectByThePlayer;
+                    break;
+                case TypeOfTheReportingObject.TACVIEWLINK:
+                    TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink.SetObjectValueAndFieldBool(
+                        _reportedObjectByThePlayer, true);
+                    response = "You posted tacview link: " + _reportedObjectByThePlayer;
+                    break;
+                default:
+                    Log.WriteLine("Unknown type! (not implemented?)", LogLevel.CRITICAL);
+                    response = "Unknown type: " + _reportedObjectByThePlayer + "(not implemented ?)";
+                    break;
+            }
         }
 
         foreach (var reportedTeamKvp in TeamIdsWithReportData)
@@ -139,24 +164,17 @@ public class MatchReporting
             return Task.FromResult(response).Result;
         }
 
-        response = CheckIfMatchCanBeSentToConfirmation(_interfaceMessage).Result;
+        var responseTuple = CheckIfMatchCanBeSentToConfirmation(_reportingStatusMessage).Result;
+        response = responseTuple.Item1;
 
-        /*
-        // Fix this
-        if (false)
-        {
-            //MatchDone = true;
-            response = CalculateFinalMatchResult(_interfaceLeague, reportingTeam);
-        }*/
-
-        await _interfaceMessage.ModifyMessage(_interfaceMessage.GenerateMessage());
+        await _reportingStatusMessage.GenerateAndModifyTheMessage();
 
         await SerializationManager.SerializeDB();
 
         return Task.FromResult(response).Result;
     }
 
-    private async Task<string> CheckIfMatchCanBeSentToConfirmation(InterfaceMessage _interfaceMessage)
+    private async Task<(string, bool)> CheckIfMatchCanBeSentToConfirmation(InterfaceMessage _interfaceMessage)
     {
         bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
 
@@ -173,14 +191,14 @@ public class MatchReporting
             if (interfaceChannel == null)
             {
                 Log.WriteLine("channel was null!", LogLevel.CRITICAL);
-                return "Channel doesn't exist!";
+                return ("Channel doesn't exist!", false);
             }
 
             await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 interfaceChannel, MessageName.CONFIRMATIONMESSAGE);
         }
 
-        return "";
+        return ("", confirmationMessageCanBeShown);
     }
 
     private bool CheckIfConfirmationMessageCanBeShown()
@@ -360,53 +378,5 @@ public class MatchReporting
     private double ExpectationToWin(float _playerOneRating, float _playerTwoRating)
     {
         return 1 / (1 + Math.Pow(10, (_playerTwoRating - _playerOneRating) / 400.0));
-    }
-
-    public async Task ProcessTacviewSentByTheUser(
-        InterfaceLeague _interfaceLeague, SocketMessage _socketMessage, string _attachmentUrl)
-    {
-        Log.WriteLine("Starting to process tacview send request by: " + _socketMessage.Author.Id +
-            " in league: " + _interfaceLeague.LeagueCategoryName + " with url: " +
-            _attachmentUrl, LogLevel.VERBOSE);
-
-        Team? reportingTeam =
-            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
-                _socketMessage.Author.Id);
-        if (reportingTeam == null)
-        {
-            Log.WriteLine(nameof(reportingTeam) + " was null!", LogLevel.CRITICAL);
-            return;
-        }
-
-        Log.WriteLine("Reporting team id: " + reportingTeam.TeamId, LogLevel.VERBOSE);
-
-        if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
-        {
-            Log.WriteLine("Did not contain key: " + reportingTeam.TeamId + " admin?: " +
-                _socketMessage.Author.Id + " trying to post a tacview to a match channel" +
-                " that he's not part of?", LogLevel.WARNING);
-            return;
-        }
-
-        TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink.SetObjectValueAndFieldBool(
-            _attachmentUrl, true);
-
-        InterfaceMessage reportingStatusMessage =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                    _socketMessage.Channel.Id).FindInterfaceMessageWithNameInTheChannel(
-                        MessageName.REPORTINGSTATUSMESSAGE);
-
-        if (reportingStatusMessage == null)
-        {
-            Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
-            return;
-        }
-
-        await CheckIfMatchCanBeSentToConfirmation(reportingStatusMessage);
-
-        await reportingStatusMessage.ModifyMessage(reportingStatusMessage.GenerateMessage());
-
-        await SerializationManager.SerializeDB();
     }
 }

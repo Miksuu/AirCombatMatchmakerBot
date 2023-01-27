@@ -234,7 +234,7 @@ public class Leagues
             return _leagueInterface;
         }
     }
-    public InterfaceLeague? FindLeagueInterfaceWithCategoryNameString(
+    public InterfaceLeague FindLeagueInterfaceWithLeagueCategoryId(
         ulong _leagueCategoryId)
     {
         Log.WriteLine("Starting to find Ileague from db with: " +
