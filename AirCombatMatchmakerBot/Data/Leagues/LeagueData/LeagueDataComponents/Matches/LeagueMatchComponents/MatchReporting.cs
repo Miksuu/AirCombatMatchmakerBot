@@ -9,6 +9,21 @@ using System.Threading.Channels;
 [DataContract]
 public class MatchReporting
 {
+    public EloSystem EloSystem
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(eloSystem) + " to: " + eloSystem, LogLevel.VERBOSE);
+            return eloSystem;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(eloSystem)
+                + " to: " + value, LogLevel.VERBOSE);
+            eloSystem = value;
+        }
+    }
+
     public Dictionary<int, ReportData> TeamIdsWithReportData
     {
         get
@@ -55,17 +70,22 @@ public class MatchReporting
         }
     }
 
+    private EloSystem eloSystem { get; set; }
+
     [DataMember] private Dictionary<int, ReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
     [DataMember] private string? finalResultForConfirmation { get; set; }
+
     public MatchReporting()
     {
+        eloSystem = new EloSystem();
         teamIdsWithReportData = new Dictionary<int, ReportData>();
     }
 
     public MatchReporting(Dictionary<int, string> _teamsInTheMatch)
     {
+        eloSystem = new EloSystem();
         teamIdsWithReportData = new Dictionary<int, ReportData>();
 
         foreach (var teamKvp in _teamsInTheMatch)
@@ -261,7 +281,8 @@ public class MatchReporting
         }
         teamsInTheMatch[1] = otherTeam;
 
-        return CalculateAndChangeFinalEloPoints(_interfaceLeague, teamsInTheMatch);
+        return eloSystem.CalculateAndChangeFinalEloPoints(
+            _interfaceLeague, teamsInTheMatch, teamIdsWithReportData);
     }
 
     private Team? FindTheOtherTeamThatIsActive(InterfaceLeague _interfaceLeague, int _excludedTeamId)
@@ -277,106 +298,5 @@ public class MatchReporting
         int otherTeamId = TeamIdsWithReportData.FirstOrDefault(t => t.Key != _excludedTeamId).Key;
         Log.WriteLine("Found other team id: " + otherTeamId, LogLevel.VERBOSE);
         return _interfaceLeague.LeagueData.FindTeamWithTeamId(otherTeamId);
-    }
-
-    private int DecideWinnerIndex()
-    {
-        int winnerIndex = 0;
-
-        string? teamOneObjectValue = TeamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue;
-        string? teamTwoObjectValue = TeamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue;
-
-        int teamOneOutput = 0;
-        if (int.TryParse(teamOneObjectValue, out int output))
-        {
-            teamOneOutput = output;
-        }
-        else
-        {
-            Log.WriteLine("Parse failed for value (team one): " + teamOneObjectValue, LogLevel.CRITICAL);
-            return 3;
-        }
-
-        int teamTwoOutput = 0;
-        if (int.TryParse(teamOneObjectValue, out int outputTwo))
-        {
-            teamTwoOutput = outputTwo;
-        }
-        else
-        {
-            Log.WriteLine("Parse failed for value (team two): " + teamTwoObjectValue, LogLevel.CRITICAL);
-            return 3;
-        }
-
-        if (teamTwoOutput > teamOneOutput)
-        {
-            winnerIndex = 1;
-        }
-        else if (teamTwoOutput == teamOneOutput)
-        {
-            winnerIndex = 2;
-        }
-            
-        Log.WriteLine("winnerIndex is = " + winnerIndex, LogLevel.VERBOSE);
-
-        return winnerIndex;
-    }
-
-    private string CalculateAndChangeFinalEloPoints(
-        InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch)
-    {
-        float firstTeamSkillRating = _teamsInTheMatch[0].SkillRating;
-        float secondTeamSkillRating = _teamsInTheMatch[1].SkillRating;
-
-        Log.WriteLine("Calculating final elo points for: " + firstTeamSkillRating +
-            " | " + secondTeamSkillRating, LogLevel.VERBOSE);
-
-        int winnerIndex = DecideWinnerIndex();
-
-        if (winnerIndex == 2)
-        {
-            return "The match cannot be a draw!";
-        }
-
-        int eloDelta = (int)(32 * (1 - winnerIndex - ExpectationToWin(
-            _teamsInTheMatch[0].SkillRating, _teamsInTheMatch[1].SkillRating)));
-
-        Log.WriteLine("EloDelta: " + eloDelta, LogLevel.VERBOSE);
-
-        if (_teamsInTheMatch[0] == null)
-        {
-            Log.WriteLine(nameof(_teamsInTheMatch) + " was null!", LogLevel.CRITICAL);
-            return "";
-        }
-
-        Team? databaseTeamOne = _interfaceLeague.LeagueData.FindTeamWithTeamId(_teamsInTheMatch[0].TeamId);
-
-        if (databaseTeamOne == null)
-        {
-            Log.WriteLine(nameof(databaseTeamOne) + " was null!", LogLevel.CRITICAL);
-            return "";
-        }
-
-        Team? databaseTeamTwo = _interfaceLeague.LeagueData.FindTeamWithTeamId(_teamsInTheMatch[1].TeamId);
-
-        if (databaseTeamTwo == null)
-        {
-            Log.WriteLine(nameof(databaseTeamTwo) + " was null!", LogLevel.CRITICAL);
-            return "";
-        }
-
-        // Make the change in the player's ratings
-        databaseTeamOne.SkillRating += eloDelta;
-        databaseTeamTwo.SkillRating -= eloDelta;
-
-        Log.WriteLine("Done calculating and changing elo points for: " + databaseTeamOne.SkillRating +
-            " | " + databaseTeamTwo.SkillRating, LogLevel.DEBUG);
-
-        return "";
-    }
-
-    private double ExpectationToWin(float _playerOneRating, float _playerTwoRating)
-    {
-        return 1 / (1 + Math.Pow(10, (_playerTwoRating - _playerOneRating) / 400.0));
     }
 }
