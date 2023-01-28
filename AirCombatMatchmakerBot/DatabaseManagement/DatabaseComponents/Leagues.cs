@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Discord.WebSocket;
+using System.Runtime.Serialization;
 
 [DataContract]
 public class Leagues
@@ -268,5 +269,36 @@ public class Leagues
         Log.WriteLine(nameof(dbLeagueInstance) + " db: " +
             dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
         return dbLeagueInstance;
+    }
+
+    public (InterfaceLeague?, LeagueMatch?) FindLeagueInterfaceAndLeagueMatchWithChannelId(ulong _channelId)
+    {
+        Log.WriteLine("Trying to find the league interface with the league match with channel id: " +
+            _channelId, LogLevel.VERBOSE);  
+
+        // Find the league with the cached category ID
+        InterfaceLeague? interfaceLeague =
+            Database.Instance.Leagues.GetILeagueByCategoryId(
+                Database.Instance.Categories.MatchChannelsIdWithCategoryId[_channelId]);
+        if (interfaceLeague == null)
+        {
+            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
+            return (null, null);
+        }
+
+        LeagueMatch? foundMatch =
+            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(
+                _channelId);
+        if (foundMatch == null)
+        {
+            Log.WriteLine("Match with: " + _channelId +
+                " was not found.", LogLevel.CRITICAL);
+            return (interfaceLeague, null);
+        }
+
+        Log.WriteLine("Returning: " + interfaceLeague.LeagueCategoryName +
+            " | " + foundMatch.MatchId, LogLevel.DEBUG);
+
+        return (interfaceLeague, foundMatch);
     }
 }

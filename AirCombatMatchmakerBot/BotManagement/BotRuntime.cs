@@ -144,35 +144,25 @@ public class BotRuntimeManager
                 return;
             }
 
-            // Find the league with the cached category ID
-            InterfaceLeague? interfaceLeague =
-                Database.Instance.Leagues.GetILeagueByCategoryId(
-                    Database.Instance.Categories.MatchChannelsIdWithCategoryId[_socketMessage.Channel.Id]);
-            if (interfaceLeague == null)
-            {
-                Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
-                return;
-            }
+            var interfaceLeagueWithLeagueMatch = 
+                Database.Instance.Leagues.FindLeagueInterfaceAndLeagueMatchWithChannelId(_socketMessage.Channel.Id);
 
-            LeagueMatch? foundMatch =
-                interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(
-                    _socketMessage.Channel.Id);
-            if (foundMatch == null)
+            if (interfaceLeagueWithLeagueMatch.Item1 == null || interfaceLeagueWithLeagueMatch.Item2 == null)
             {
-                Log.WriteLine("Match with: " + _socketMessage.Channel.Id +
-                    " was not found.", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(interfaceLeagueWithLeagueMatch) + " was null!", LogLevel.CRITICAL);
                 return;
             }
 
             InterfaceMessage reportingStatusMessage =
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                   interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                        _socketMessage.Channel.Id).FindInterfaceMessageWithNameInTheChannel(
-                            MessageName.REPORTINGSTATUSMESSAGE);
+                   interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).Value.
+                       FindInterfaceChannelWithIdInTheCategory(
+                            _socketMessage.Channel.Id).FindInterfaceMessageWithNameInTheChannel(
+                                MessageName.REPORTINGSTATUSMESSAGE);
 
             // Process the tacview file, and delete the original message by the user
-            await foundMatch.MatchReporting.ProcessPlayersSentReportObject(
-                     interfaceLeague, _socketMessage.Author.Id,
+            await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
+                     interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
                      reportingStatusMessage, attachment.Url, TypeOfTheReportingObject.TACVIEWLINK);
             await _socketMessage.DeleteAsync();
 

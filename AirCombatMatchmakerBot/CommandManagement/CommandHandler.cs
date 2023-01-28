@@ -136,7 +136,7 @@ public static class CommandHandler
         Log.WriteLine("FINAL RESPONSE: " + response, logLevel); */
 
         InterfaceCommand interfaceCommand = GetCommandInstance(_command.CommandName.ToUpper().ToString());
-        await interfaceCommand.ActivateCommandFunction();
+        await interfaceCommand.ActivateCommandFunction(_command);
 
         await SerializationManager.SerializeDB();
 
