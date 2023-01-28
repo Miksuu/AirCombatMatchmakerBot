@@ -71,8 +71,8 @@ public class ReportData
     public ReportData(string _reportingTeamName)
     {
         teamName = _reportingTeamName;      
-        reportedScore = new ReportObject("Reported score", true);
-        tacviewLink = new ReportObject("Tacview link", true);
-        commentByTheUser = new ReportObject("Comment", false);
+        reportedScore = new ReportObject("Reported score", EmojiName.REDSQUARE);
+        tacviewLink = new ReportObject("Tacview link", EmojiName.REDSQUARE);
+        commentByTheUser = new ReportObject("Comment", EmojiName.YELLOWSQUARE);
     }
 }

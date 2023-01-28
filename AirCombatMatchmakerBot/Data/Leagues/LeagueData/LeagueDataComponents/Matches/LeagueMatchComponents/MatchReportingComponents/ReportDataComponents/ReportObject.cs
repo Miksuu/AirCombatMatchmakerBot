@@ -48,34 +48,34 @@ public class ReportObject
         }
     }
 
-    public bool FieldIsOptional
+    public EmojiName DefaultStateEmoji
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(fieldIsOptional), LogLevel.VERBOSE);
-            return fieldIsOptional;
+            Log.WriteLine("Getting " + nameof(defaultStateEmoji), LogLevel.VERBOSE);
+            return defaultStateEmoji;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(fieldIsOptional)
+            Log.WriteLine("Setting " + nameof(defaultStateEmoji)
                 + " to: " + value, LogLevel.VERBOSE);
-            fieldIsOptional = value;
+            defaultStateEmoji = value;
         }
     }
 
     [DataMember] private string? fieldNameDisplay { get; set; }
     [DataMember] private string? objectValue { get; set; }
     [DataMember] private bool fieldFilled { get; set; }
-    [DataMember] private bool fieldIsOptional { get; set; }
+    [DataMember] private EmojiName defaultStateEmoji { get; set; }
 
     public ReportObject()
     {
     }
 
-    public ReportObject(string _fieldNameDisplay, bool _fieldIsOptional)
+    public ReportObject(string _fieldNameDisplay, EmojiName _defaultStateEmoji)
     {
         fieldNameDisplay = _fieldNameDisplay;
-        fieldIsOptional = _fieldIsOptional;
+        defaultStateEmoji = _defaultStateEmoji;
     }
 
     public void SetObjectValueAndFieldBool(string _value, bool _fieldBool)

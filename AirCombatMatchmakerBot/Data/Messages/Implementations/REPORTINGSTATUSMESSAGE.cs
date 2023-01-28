@@ -39,7 +39,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
         foreach (var teamKvp in foundMatch.TeamsInTheMatch)
         {
-            string reportingStatusPerTeam = teamKvp.Value + ": ";
+            string reportingStatusPerTeam = teamKvp.Value + ":\n";
 
             if (!foundMatch.MatchReporting.TeamIdsWithReportData.ContainsKey(teamKvp.Key))
             {
@@ -62,6 +62,8 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
             foreach (FieldInfo field in fields)
             {
+                string finalCheckMark = string.Empty;
+
                 Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
 
                 // Only process the ReportObject fields (ignore teamName)
@@ -77,12 +79,22 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                     continue;
                 }
 
-                Log.WriteLine("Found: " + nameof(reportObject) + " with values: " +
-                    reportObject.FieldNameDisplay + ", " +reportObject.ObjectValue + ", " + 
-                    reportObject.FieldFilled, LogLevel.DEBUG);
+                if (reportObject.FieldFilled == true)
+                {
+                    finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
+                }
+                else
+                {
+                    finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(reportObject.DefaultStateEmoji);
+                }
 
-                reportingStatusPerTeam += reportObject.FieldNameDisplay + ": " +
-                    reportObject.ObjectValue + " | " + reportObject.FieldFilled + "\n";
+                Log.WriteLine("Found: " + nameof(reportObject) + " with values: " +
+                    reportObject.FieldNameDisplay + ", " + reportObject.ObjectValue + ", " +
+                    reportObject.FieldFilled + ", " + reportObject.DefaultStateEmoji.ToString() + ", with" +
+                    finalCheckMark, LogLevel.DEBUG);
+
+                reportingStatusPerTeam += finalCheckMark + " " + reportObject.FieldNameDisplay + ": " +
+                    reportObject.ObjectValue + "\n";
             }
 
             Log.WriteLine("Done looping through team: " + teamKvp.Key + " (" + teamKvp.Value +
