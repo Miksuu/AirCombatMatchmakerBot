@@ -52,7 +52,7 @@ public static class CommandHandler
             Log.WriteLine("The command " + _command.Data.Name + " does not have any options in it.", LogLevel.DEBUG);
         }
 
-        string response = "EMPTY REPONSE";
+        string response = "";
         /*
         LogLevel logLevel = LogLevel.DEBUG;
         switch (_command.Data.Name)
@@ -140,10 +140,9 @@ public static class CommandHandler
 
         await SerializationManager.SerializeDB();
 
-        // Respond to the user based on the string result
         await _command.RespondAsync(BotMessaging.GetMessageResponse(
-            _command.Data.Name, response, _command.Channel.Name));
-
+            _command.Data.Name, response, _command.Channel.Name), ephemeral: true);
+        
         Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
     }
 

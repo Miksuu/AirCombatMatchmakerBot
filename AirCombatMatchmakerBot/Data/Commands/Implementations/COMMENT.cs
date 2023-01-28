@@ -45,31 +45,16 @@ public class COMMENT : BaseCommand
 
         InterfaceMessage reportingStatusMessage =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                    commandChannelId).FindInterfaceMessageWithNameInTheChannel(
-                        MessageName.REPORTINGSTATUSMESSAGE);
+                leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).
+                    Value.FindInterfaceChannelWithIdInTheCategory(
+                        commandChannelId).FindInterfaceMessageWithNameInTheChannel(
+                            MessageName.REPORTINGSTATUSMESSAGE);
 
         await leagueInterfaceWithTheMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
                  leagueInterfaceWithTheMatch.Item1,
                  commandPlayerId, reportingStatusMessage,
-                 _firstOptionString, 
-                 TypeOfTheReportingObject.COMMENTBYTHEUSER);
+                 _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER);
 
-        /*
-        int foundTeamId =
-            leagueInterfaceWithTheMatch.Item1.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(commandPlayerId).TeamId;
-
-        if (foundTeamId == 0)
-        {
-            Log.WriteLine("Team id was 0!", LogLevel.ERROR);
-        }
-
-        Log.WriteLine("Found team id: " + foundTeamId, LogLevel.VERBOSE);
-
-        ReportData reportData = leagueInterfaceWithTheMatch.Item2.MatchReporting.TeamIdsWithReportData[foundTeamId];
-
-        reportData.CommentByTheUser.SetObjectValueAndFieldBool(_firstOptionString, true);*/
-
-        return "";
+        return "Comment posted: " +  _firstOptionString;
     }
 }
