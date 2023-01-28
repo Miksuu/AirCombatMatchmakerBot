@@ -18,50 +18,11 @@ public class CONFIRMATIONMESSAGE : BaseMessage
             { ButtonName.MODIFYMATCHRESULTBUTTON, 1 },
             { ButtonName.DISPUTEMATCHRESULTBUTTON, 1 }
         };
-        message = "Insert the confirmation message here";
+        message = "You can either Confirm, Modify or Dispute the result below.";
     }
 
     public override string GenerateMessage()
     {
-        string finalMessage = "FINAL REPORTING RESULTS:\n";
-
-        // Generate the message here
-
-        /*
-        Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            messageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                messageChannelId).FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE); */
-        InterfaceLeague? interfaceLeague = 
-            Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
-
-        if (interfaceLeague == null)
-        {
-            Log.WriteLine(nameof(interfaceLeague) +
-                " was null! Could not find the league.", LogLevel.CRITICAL);
-            return "";
-        }
-
-        LeagueMatch? leagueMatch = 
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(messageChannelId);
-
-        if (leagueMatch == null)
-        {
-            Log.WriteLine(nameof(leagueMatch) +
-                " was null! Could not find the match.", LogLevel.CRITICAL);
-            return "";
-        }
-
-        Dictionary<int, ReportData>? matchReportingTeamIdsWithReportData = leagueMatch.MatchReporting.TeamIdsWithReportData;
-
-        foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
-        {
-            finalMessage += reportDataKvp.Value.TeamName + ": " + reportDataKvp.Value.ReportedScore.ObjectValue + "\n";
-        }
-
-        finalMessage += "\nYou can either Confirm, Modify or Dispute the result below.";
-
-        Log.WriteLine("Returning: " + finalMessage, LogLevel.DEBUG);
-
-        return finalMessage;
+        return message;
     }
 }

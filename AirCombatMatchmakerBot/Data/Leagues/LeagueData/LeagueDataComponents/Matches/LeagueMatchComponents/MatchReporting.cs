@@ -103,7 +103,7 @@ public class MatchReporting
     }
 
     public async Task<string> ProcessPlayersSentReportObject(
-        InterfaceLeague _interfaceLeague, ulong _playerId, InterfaceMessage _reportingStatusMessage,
+        InterfaceLeague _interfaceLeague, ulong _playerId, InterfaceMessage _finalMatchResultMessage,
         string _reportedObjectByThePlayer, TypeOfTheReportingObject _typeOfTheReportingObject)
     {
         string response = string.Empty;
@@ -184,10 +184,10 @@ public class MatchReporting
             return Task.FromResult(response).Result;
         }
 
-        var responseTuple = CheckIfMatchCanBeSentToConfirmation(_reportingStatusMessage).Result;
+        var responseTuple = CheckIfMatchCanBeSentToConfirmation(_finalMatchResultMessage).Result;
         response = responseTuple.Item1;
 
-        await _reportingStatusMessage.GenerateAndModifyTheMessage();
+        await _finalMatchResultMessage.GenerateAndModifyTheMessage();
 
         await SerializationManager.SerializeDB();
 
@@ -213,6 +213,9 @@ public class MatchReporting
                 Log.WriteLine("channel was null!", LogLevel.CRITICAL);
                 return ("Channel doesn't exist!", false);
             }
+
+            await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                    interfaceChannel, MessageName.MATCHFINALRESULTMESSAGE);
 
             await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 interfaceChannel, MessageName.CONFIRMATIONMESSAGE);

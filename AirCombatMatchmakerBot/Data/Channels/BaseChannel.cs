@@ -145,6 +145,8 @@ public abstract class BaseChannel : InterfaceChannel
     public async Task CreateAMessageForTheChannelFromMessageName(
         InterfaceChannel _interfaceChannel, MessageName _MessageName)
     {
+        Log.WriteLine("Creating a message named: " + _MessageName.ToString(), LogLevel.DEBUG);
+
         string messageNameString = _MessageName.ToString();
 
         var guild = BotReference.GetGuildRef();
@@ -160,6 +162,8 @@ public abstract class BaseChannel : InterfaceChannel
 
         ulong id = interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
             guild, channelId, channelsCategoryId, _MessageName.ToString()).Result;
+
+        interfaceMessage.MessageId = id;
 
         await interfaceMessage.GenerateAndModifyTheMessage();
 
