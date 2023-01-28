@@ -83,7 +83,7 @@ public class ReportObject
         Log.WriteLine("Setting " + nameof(ReportObject) + "'s value to: " + _value
             + " with bool: " + _fieldBool, LogLevel.VERBOSE);
 
-        ObjectValue = _value;
-        FieldFilled = _fieldBool;
+        objectValue = _value;
+        fieldFilled = _fieldBool;
     }
 }
