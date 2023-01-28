@@ -15,7 +15,7 @@ public static class CommandHandler
             return Task.CompletedTask;
         }
 
-        client.Ready += CommandBuilder.PrepareCommands;
+        client.Ready += PrepareCommands;
 
         // Listens for command usage
         client.SlashCommandExecuted += SlashCommandHandler;
@@ -53,6 +53,7 @@ public static class CommandHandler
         }
 
         string response = "EMPTY REPONSE";
+        /*
         LogLevel logLevel = LogLevel.DEBUG;
         switch (_command.Data.Name)
         {
@@ -129,15 +130,79 @@ public static class CommandHandler
                 logLevel = LogLevel.ERROR;
                 break;
         }
+       
+
+
+        Log.WriteLine("FINAL RESPONSE: " + response, logLevel); */
+
+        InterfaceCommand interfaceCommand = GetCommandInstance(_command.CommandName.ToUpper().ToString());
+        await interfaceCommand.ActivateCommandFunction();
 
         await SerializationManager.SerializeDB();
-
-        Log.WriteLine("FINAL RESPONSE: " + response, logLevel);
 
         // Respond to the user based on the string result
         await _command.RespondAsync(BotMessaging.GetMessageResponse(
             _command.Data.Name, response, _command.Channel.Name)); ;
 
         Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
+    }
+
+    public static Task PrepareCommands()
+    {
+        Log.WriteLine("Starting to prepare the commands.", LogLevel.VERBOSE);
+
+        var commandEnumValues = Enum.GetValues(typeof(CommandName));
+        Log.WriteLine(nameof(commandEnumValues) +
+            " length: " + commandEnumValues.Length, LogLevel.VERBOSE);
+
+        var client = BotReference.GetClientRef();
+        if (client == null)
+        {
+            Exceptions.BotClientRefNull();
+            return Task.CompletedTask;
+        }
+
+        foreach (CommandName commandName in commandEnumValues)
+        {
+            Log.WriteLine("Looping on cmd" + nameof(commandName), LogLevel.VERBOSE);
+
+            InterfaceCommand interfaceCommand = GetCommandInstance(commandName.ToString());
+            Log.WriteLine("after getting command interface", LogLevel.VERBOSE);
+            if (interfaceCommand == null)
+            {
+                Log.WriteLine(nameof(interfaceCommand).ToString() +
+                    " was null!", LogLevel.CRITICAL);
+                return Task.CompletedTask;
+            }
+
+            // For commands without option, need to implement it with null check
+            interfaceCommand.AddNewCommandWithOption(client);
+        }
+
+        /*
+        // Command for showing a test gif
+        AddNewCommand("cats", "Prints a cute cat!");
+
+        AddNewCommandWithOption("register",
+            "registers an user profile manually",
+            "userid",
+            "what discord ID do you want to register?"
+            );
+
+        // Command for eliminating a player's profile
+        AddNewCommandWithOption("terminate",
+            "deletes a player profile, completely",
+            "userid",
+            "which user do you want to terminate?"
+            );
+        */
+        Log.WriteLine("Done preparing the commands.", LogLevel.VERBOSE);
+
+        return Task.CompletedTask;
+    }
+
+    public static InterfaceCommand GetCommandInstance(string _commandName)
+    {
+        return (InterfaceCommand)EnumExtensions.GetInstance(_commandName.ToString());
     }
 }

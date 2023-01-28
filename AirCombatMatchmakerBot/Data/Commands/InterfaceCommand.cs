@@ -9,7 +9,7 @@ public interface InterfaceCommand
     public CommandName CommandName{ get; set; }
     public string CommandDescription { get; set; }
     public CommandOption? CommandOption { get; set; }
-    public abstract Task ActivateCommandFunction();
+    public abstract Task ActivateCommandFunction(SocketSlashCommand _command);
     public Task AddNewCommandWithOption(
         Discord.WebSocket.DiscordSocketClient _client);
 }
