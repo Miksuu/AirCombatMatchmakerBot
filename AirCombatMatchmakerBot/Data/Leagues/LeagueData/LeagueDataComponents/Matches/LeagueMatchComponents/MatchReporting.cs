@@ -257,6 +257,9 @@ public class MatchReporting
                     continue;
                 }
 
+                // Skips optional fields
+                if (reportObject.DefaultStateEmoji == EmojiName.YELLOWSQUARE) continue;
+
                 if (!reportObject.FieldFilled)
                 {
                     Log.WriteLine("Team: " + teamKvp.Value.TeamName + "'s " + reportObject.FieldNameDisplay +
