@@ -48,17 +48,34 @@ public class ReportObject
         }
     }
 
+    public bool FieldIsOptional
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(fieldIsOptional), LogLevel.VERBOSE);
+            return fieldIsOptional;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(fieldIsOptional)
+                + " to: " + value, LogLevel.VERBOSE);
+            fieldIsOptional = value;
+        }
+    }
+
     [DataMember] private string? fieldNameDisplay { get; set; }
     [DataMember] private string? objectValue { get; set; }
     [DataMember] private bool fieldFilled { get; set; }
+    [DataMember] private bool fieldIsOptional { get; set; }
 
     public ReportObject()
     {
     }
 
-    public ReportObject(string _fieldNameDisplay)
+    public ReportObject(string _fieldNameDisplay, bool _fieldIsOptional)
     {
         fieldNameDisplay = _fieldNameDisplay;
+        fieldIsOptional = _fieldIsOptional;
     }
 
     public void SetObjectValueAndFieldBool(string _value, bool _fieldBool)

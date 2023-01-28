@@ -136,13 +136,13 @@ public static class CommandHandler
         Log.WriteLine("FINAL RESPONSE: " + response, logLevel); */
 
         InterfaceCommand interfaceCommand = GetCommandInstance(_command.CommandName.ToUpper().ToString());
-        await interfaceCommand.ActivateCommandFunction(_command);
+        response = await interfaceCommand.ActivateCommandFunction(_command, firstOptionString);
 
         await SerializationManager.SerializeDB();
 
         // Respond to the user based on the string result
         await _command.RespondAsync(BotMessaging.GetMessageResponse(
-            _command.Data.Name, response, _command.Channel.Name)); ;
+            _command.Data.Name, response, _command.Channel.Name));
 
         Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
     }

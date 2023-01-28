@@ -159,6 +159,10 @@ public class MatchReporting
                         _reportedObjectByThePlayer, true);
                     response = "You posted tacview link: " + _reportedObjectByThePlayer;
                     break;
+                case TypeOfTheReportingObject.COMMENTBYTHEUSER:
+                    TeamIdsWithReportData[reportingTeam.TeamId].CommentByTheUser.SetObjectValueAndFieldBool(
+                        _reportedObjectByThePlayer, true);
+                    break;
                 default:
                     Log.WriteLine("Unknown type! (not implemented?)", LogLevel.CRITICAL);
                     response = "Unknown type: " + _reportedObjectByThePlayer + "(not implemented ?)";

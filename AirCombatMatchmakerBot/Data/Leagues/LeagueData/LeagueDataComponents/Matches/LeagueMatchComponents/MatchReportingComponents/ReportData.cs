@@ -48,15 +48,31 @@ public class ReportData
         }
     }
 
+    public ReportObject CommentByTheUser
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(commentByTheUser), LogLevel.VERBOSE);
+            return commentByTheUser;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(commentByTheUser)
+                + " to: " + value, LogLevel.VERBOSE);
+            commentByTheUser = value;
+        }
+    }
+
     [DataMember] private string teamName { get; set; }
     [DataMember] private ReportObject reportedScore { get; set; }
     [DataMember] private ReportObject tacviewLink { get; set; }
-    //[DataMember] private (string, bool) commentByTheUser { get; set; }
+    [DataMember] private ReportObject commentByTheUser { get; set; }
 
     public ReportData(string _reportingTeamName)
     {
         teamName = _reportingTeamName;      
-        reportedScore = new ReportObject("Reported score");
-        tacviewLink = new ReportObject("Tacview link");
+        reportedScore = new ReportObject("Reported score", true);
+        tacviewLink = new ReportObject("Tacview link", true);
+        commentByTheUser = new ReportObject("Comment", false);
     }
 }

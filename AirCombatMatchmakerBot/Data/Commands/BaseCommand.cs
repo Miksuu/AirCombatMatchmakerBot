@@ -57,7 +57,8 @@ public abstract class BaseCommand : InterfaceCommand
     protected string commandDescription = "";
     protected CommandOption? commandOption;
 
-    public abstract Task ActivateCommandFunction(SocketSlashCommand _command);
+    public abstract Task<string> ActivateCommandFunction(
+        SocketSlashCommand _command, string _firstOptionString);
 
     public async Task AddNewCommandWithOption(Discord.WebSocket.DiscordSocketClient _client)
     {

@@ -10,4 +10,7 @@ public enum TypeOfTheReportingObject
 
     [EnumMember(Value = "tacviewLink")]
     TACVIEWLINK = 1,
+
+    [EnumMember(Value = "commentByTheUser")]
+    COMMENTBYTHEUSER = 2,
 }
