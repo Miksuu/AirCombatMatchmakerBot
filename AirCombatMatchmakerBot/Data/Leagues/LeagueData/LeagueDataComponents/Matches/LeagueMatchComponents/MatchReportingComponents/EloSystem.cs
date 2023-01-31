@@ -2,7 +2,7 @@
 
 public class EloSystem
 {
-    public (string, Dictionary<int, ReportData>) CalculateAndSaveFinalEloDelta(
+    public string CalculateAndSaveFinalEloDelta(
     InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch, Dictionary<int, ReportData> _teamIdsWithReportData)
     {
         float firstTeamSkillRating = _teamsInTheMatch[0].SkillRating;
@@ -21,7 +21,7 @@ public class EloSystem
         if (winnerIndex == 2)
         {
             // Handle this ?
-            return ("The match cannot be a draw!", _teamIdsWithReportData);
+            return "The match cannot be a draw!";
         }
 
         Log.WriteLine("Before calculating elo delta", LogLevel.DEBUG);
@@ -35,7 +35,7 @@ public class EloSystem
         if (_teamsInTheMatch[0] == null)
         {
             Log.WriteLine(nameof(_teamsInTheMatch) + " was null!", LogLevel.CRITICAL);
-            return ("Error while calculating and saving the final elo delta", _teamIdsWithReportData);
+            return "Error while calculating and saving the final elo delta";
         }
 
         /*
@@ -63,7 +63,7 @@ public class EloSystem
             _teamIdsWithReportData.ElementAt(0).Value.FinalEloDelta +
             " | " + _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta, LogLevel.DEBUG);
 
-        return ("", _teamIdsWithReportData);
+        return "";
     }
 
     private double ExpectationToWin(float _playerOneRating, float _playerTwoRating)

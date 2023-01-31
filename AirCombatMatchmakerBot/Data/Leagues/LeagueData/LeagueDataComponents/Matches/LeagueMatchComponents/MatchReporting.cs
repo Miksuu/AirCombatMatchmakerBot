@@ -294,12 +294,8 @@ public class MatchReporting
             teamsInTheMatch[t] = _interfaceLeague.LeagueData.FindTeamWithTeamId(TeamIdsWithReportData.ElementAt(t).Key);
         }
 
-        var teamIdsWithReportDataWithResultString = eloSystem.CalculateAndSaveFinalEloDelta(
+        return eloSystem.CalculateAndSaveFinalEloDelta(
             _interfaceLeague, teamsInTheMatch, teamIdsWithReportData);
-
-        teamIdsWithReportData = teamIdsWithReportDataWithResultString.Item2;
-
-        return teamIdsWithReportDataWithResultString.Item1;
     }
 
     /*
