@@ -45,27 +45,31 @@ public class REPORTSCOREBUTTON : BaseButton
             Log.WriteLine(item, LogLevel.DEBUG);
         }*/
 
-        // Find the league with the cached category ID
-        InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.GetILeagueByCategoryId(buttonCategoryId);
-        if (interfaceLeague == null)
+        MATCHCHANNEL? matchChannel = _interfaceMessage as MATCHCHANNEL;
+        if (matchChannel == null)
         {
-            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(matchChannel) + " was null!", LogLevel.CRITICAL);
             return Task.FromResult(finalResponse);
         }
 
-        LeagueMatch? foundMatch = 
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(
-                reportingStatusMessage.MessageChannelId);
-        if (foundMatch == null)
+        if (matchChannel == null)
         {
-            Log.WriteLine("Match with: " + reportingStatusMessage.MessageChannelId +
-                " was not found.", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(matchChannel) + " was null!", LogLevel.CRITICAL);
             return Task.FromResult(finalResponse);
         }
 
-        finalResponse = foundMatch.MatchReporting.ProcessPlayersSentReportObject(
-            interfaceLeague, playerId, reportingStatusMessage, playerReportedResult.ToString(),
+        var matchTuple = 
+            matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
+                buttonCategoryId, reportingStatusMessage.MessageChannelId);
+
+        if (matchTuple.Item1 == null || matchTuple.Item2 == null)
+        {
+            Log.WriteLine(nameof(matchTuple) + " was null!", LogLevel.CRITICAL);
+            return Task.FromResult(matchTuple.Item3);
+        }
+
+        finalResponse = matchTuple.Item2.MatchReporting.ProcessPlayersSentReportObject(
+            matchTuple.Item1, playerId, reportingStatusMessage, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE).Result;
 
         Log.WriteLine("Reached end before the return with player id: " + playerId, LogLevel.DEBUG);

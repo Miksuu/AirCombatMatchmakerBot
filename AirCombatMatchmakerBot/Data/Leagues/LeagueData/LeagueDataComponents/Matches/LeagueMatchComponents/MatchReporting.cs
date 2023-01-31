@@ -195,8 +195,6 @@ public class MatchReporting
 
         if (responseTuple.Item2)
         {
-
-
             CalculateFinalMatchResult(_interfaceLeague);
 
             await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
@@ -213,7 +211,8 @@ public class MatchReporting
         return Task.FromResult(response).Result;
     }
 
-    private async Task<(string, bool, InterfaceChannel)> CheckIfMatchCanBeSentToConfirmation(InterfaceMessage _interfaceMessage)
+    private async Task<(string, bool, InterfaceChannel)> CheckIfMatchCanBeSentToConfirmation(
+        InterfaceMessage _interfaceMessage)
     {
         bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
         InterfaceChannel? interfaceChannel = null;

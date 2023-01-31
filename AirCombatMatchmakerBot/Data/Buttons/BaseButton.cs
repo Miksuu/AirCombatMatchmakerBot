@@ -1,4 +1,4 @@
-﻿using Discord.WebSocket;
+using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
 using System.Reflection.Emit;
@@ -111,7 +111,7 @@ public abstract class BaseButton : InterfaceButton
         if (buttonName == ButtonName.LEAGUEREGISTRATIONBUTTON)
         {
             _customId = _messageKey + "_" + _buttonIndex;
-            Log.WriteLine("Setting league-registration button custom id to: " + 
+            Log.WriteLine("Setting league-registration button custom id to: " +
                 _customId, LogLevel.DEBUG);
         }
 
