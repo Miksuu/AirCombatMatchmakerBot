@@ -79,16 +79,15 @@ public class LeagueData
         return null;
     }
 
-    public Team? FindTeamWithTeamId(int _teamId)
+    public Team? FindActiveTeamWithTeamId(int _teamId)
     {
         Log.WriteLine("Starting to find team with id: " + _teamId, LogLevel.VERBOSE);
 
-        Team? foundTeam = Teams.TeamsList.FirstOrDefault(t => t.TeamId == _teamId);
+        Team? foundTeam = Teams.TeamsList.FirstOrDefault(t => t.TeamId == _teamId && t.TeamActive);
 
-        if (foundTeam == null)
+        if (foundTeam != null)
         {
-            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
-            return null;
+            return foundTeam;
         }
 
         Log.WriteLine("Found team: " + foundTeam.TeamName + " with id: " + _teamId, LogLevel.VERBOSE);

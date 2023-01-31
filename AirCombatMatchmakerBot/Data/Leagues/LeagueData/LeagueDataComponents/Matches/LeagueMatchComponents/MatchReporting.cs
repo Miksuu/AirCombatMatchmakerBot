@@ -71,7 +71,6 @@ public class MatchReporting
     }
 
     private EloSystem eloSystem { get; set; }
-
     [DataMember] private Dictionary<int, ReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
@@ -292,7 +291,15 @@ public class MatchReporting
         Team[] teamsInTheMatch = new Team[2];
         for (int t = 0; t < TeamIdsWithReportData.Count; t++)
         {
-            teamsInTheMatch[t] = _interfaceLeague.LeagueData.FindTeamWithTeamId(TeamIdsWithReportData.ElementAt(t).Key);
+            var foundTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(TeamIdsWithReportData.ElementAt(t).Key);
+
+            if (foundTeam == null)
+            {
+                Log.WriteLine("Found team was null!", LogLevel.CRITICAL);
+                return "";
+            }
+
+            teamsInTheMatch[t] = foundTeam;
         }
 
         return eloSystem.CalculateAndSaveFinalEloDelta(
@@ -312,6 +319,6 @@ public class MatchReporting
 
         int otherTeamId = TeamIdsWithReportData.FirstOrDefault(t => t.Key != _excludedTeamId).Key;
         Log.WriteLine("Found other team id: " + otherTeamId, LogLevel.VERBOSE);
-        return _interfaceLeague.LeagueData.FindTeamWithTeamId(otherTeamId);
+        return _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(otherTeamId);
     }*/
         }
