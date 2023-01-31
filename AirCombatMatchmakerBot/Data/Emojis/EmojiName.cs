@@ -14,9 +14,9 @@ public enum EmojiName
     [EnumMember(Value = ":red_square:")]
     REDSQUARE = 2,
 
-    [EnumMember(Value = ":RatingUp:")]
+    [EnumMember(Value = "<:RatingUp:1069164545785991189>")]
     RATINGUP = 3,
 
-    [EnumMember(Value = ":RatingDown:")]
+    [EnumMember(Value = "<:RatingDown:1069164544288641155>")]
     RATINGDOWN = 4,
 }
