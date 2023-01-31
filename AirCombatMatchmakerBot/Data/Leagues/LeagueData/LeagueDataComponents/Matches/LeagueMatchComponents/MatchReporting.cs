@@ -195,6 +195,8 @@ public class MatchReporting
 
         if (responseTuple.Item2)
         {
+
+
             CalculateFinalMatchResult(_interfaceLeague);
 
             await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
@@ -219,7 +221,7 @@ public class MatchReporting
         Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
             " showing: " + showingConfirmationMessage, LogLevel.DEBUG);
 
-        if (confirmationMessageCanBeShown && !showingConfirmationMessage)
+        if (confirmationMessageCanBeShown) //&& !showingConfirmationMessage)
         {
             showingConfirmationMessage = true;
 
