@@ -27,7 +27,7 @@ public class BotRuntimeManager
                 BotReference.SetConnectionState(true);
                 Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
-                //ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
+
 
 
                 //var guild = BotReference.GetGuildRef();
@@ -37,6 +37,10 @@ public class BotRuntimeManager
                 {
                     Log.WriteLine("Emoji: " + item.Name + " id: " + item.Id, LogLevel.DEBUG);
                 }*/
+
+                // !!!
+                // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
+                // !!!
 
                 /*
                 foreach (var ch in guild.Channels)
