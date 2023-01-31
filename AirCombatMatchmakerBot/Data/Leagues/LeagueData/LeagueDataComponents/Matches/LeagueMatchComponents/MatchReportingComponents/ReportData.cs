@@ -63,10 +63,43 @@ public class ReportData
         }
     }
 
+    /*
+    public float CachedSkillRating
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(cachedSkillRating) + ": " + cachedSkillRating, LogLevel.VERBOSE);
+            return cachedSkillRating;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(cachedSkillRating)
+                + " to: " + value, LogLevel.VERBOSE);
+            cachedSkillRating = value;
+        }
+    }*/
+
+    public float FinalEloDelta
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(finalEloDelta) + ": " + finalEloDelta, LogLevel.VERBOSE);
+            return finalEloDelta;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(finalEloDelta)
+                + " to: " + value, LogLevel.VERBOSE);
+            finalEloDelta = value;
+        }
+    }
+
     [DataMember] private string teamName { get; set; }
     [DataMember] private ReportObject reportedScore { get; set; }
     [DataMember] private ReportObject tacviewLink { get; set; }
     [DataMember] private ReportObject commentByTheUser { get; set; }
+    //[DataMember] private float cachedSkillRating { get; set; }
+    [DataMember] private float finalEloDelta { get; set; }
 
     public ReportData(string _reportingTeamName)
     {

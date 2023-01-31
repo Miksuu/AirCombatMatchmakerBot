@@ -13,4 +13,10 @@ public enum EmojiName
 
     [EnumMember(Value = ":red_square:")]
     REDSQUARE = 2,
+
+    [EnumMember(Value = ":RatingUp:")]
+    RATINGUP = 3,
+
+    [EnumMember(Value = ":RatingDown:")]
+    RATINGDOWN = 4,
 }

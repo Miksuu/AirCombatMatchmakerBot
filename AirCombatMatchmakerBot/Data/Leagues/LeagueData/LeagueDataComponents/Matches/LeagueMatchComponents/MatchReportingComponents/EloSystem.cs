@@ -2,33 +2,43 @@
 
 public class EloSystem
 {
-    public string CalculateAndChangeFinalEloPoints(
+    public (string, Dictionary<int, ReportData>) CalculateAndSaveFinalEloDelta(
     InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch, Dictionary<int, ReportData> _teamIdsWithReportData)
     {
         float firstTeamSkillRating = _teamsInTheMatch[0].SkillRating;
         float secondTeamSkillRating = _teamsInTheMatch[1].SkillRating;
 
+        /*
+        _teamIdsWithReportData.ElementAt(0).Value.CachedSkillRating = firstTeamSkillRating;
+        _teamIdsWithReportData.ElementAt(1).Value.CachedSkillRating = firstTeamSkillRating;
+        */
+
         Log.WriteLine("Calculating final elo points for: " + firstTeamSkillRating +
-            " | " + secondTeamSkillRating, LogLevel.VERBOSE);
+            " | " + secondTeamSkillRating, LogLevel.DEBUG);
 
         int winnerIndex = DecideWinnerIndex(_teamIdsWithReportData);
 
         if (winnerIndex == 2)
         {
-            return "The match cannot be a draw!";
+            // Handle this ?
+            return ("The match cannot be a draw!", _teamIdsWithReportData);
         }
 
-        int eloDelta = (int)(32 * (1 - winnerIndex - ExpectationToWin(
-            _teamsInTheMatch[0].SkillRating, _teamsInTheMatch[1].SkillRating)));
+        Log.WriteLine("Before calculating elo delta", LogLevel.DEBUG);
 
-        Log.WriteLine("EloDelta: " + eloDelta, LogLevel.VERBOSE);
+        float eloDelta = (int)(32 * (1 - winnerIndex - ExpectationToWin(
+            firstTeamSkillRating, secondTeamSkillRating)));
+
+        Log.WriteLine("calculated EloDelta: " + eloDelta, LogLevel.DEBUG);
+
 
         if (_teamsInTheMatch[0] == null)
         {
             Log.WriteLine(nameof(_teamsInTheMatch) + " was null!", LogLevel.CRITICAL);
-            return "";
+            return ("Error while calculating and saving the final elo delta", _teamIdsWithReportData);
         }
 
+        /*
         Team? databaseTeamOne = _interfaceLeague.LeagueData.FindTeamWithTeamId(_teamsInTheMatch[0].TeamId);
 
         if (databaseTeamOne == null)
@@ -43,16 +53,17 @@ public class EloSystem
         {
             Log.WriteLine(nameof(databaseTeamTwo) + " was null!", LogLevel.CRITICAL);
             return "";
-        }
+        }*/
 
         // Make the change in the player's ratings
-        databaseTeamOne.SkillRating += eloDelta;
-        databaseTeamTwo.SkillRating -= eloDelta;
+        _teamIdsWithReportData.ElementAt(0).Value.FinalEloDelta = eloDelta;
+        _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta = -eloDelta;
 
-        Log.WriteLine("Done calculating and changing elo points for: " + databaseTeamOne.SkillRating +
-            " | " + databaseTeamTwo.SkillRating, LogLevel.DEBUG);
+        Log.WriteLine("Done calculating and changing elo points for: " +
+            _teamIdsWithReportData.ElementAt(0).Value.FinalEloDelta +
+            " | " + _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta, LogLevel.DEBUG);
 
-        return "";
+        return ("", _teamIdsWithReportData);
     }
 
     private double ExpectationToWin(float _playerOneRating, float _playerTwoRating)
@@ -67,6 +78,8 @@ public class EloSystem
         string? teamOneObjectValue = _teamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue;
         string? teamTwoObjectValue = _teamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue;
 
+        Log.WriteLine("object values: " + teamOneObjectValue + " | " + teamTwoObjectValue, LogLevel.DEBUG);
+
         int teamOneOutput = 0;
         if (int.TryParse(teamOneObjectValue, out int output))
         {
@@ -79,7 +92,7 @@ public class EloSystem
         }
 
         int teamTwoOutput = 0;
-        if (int.TryParse(teamOneObjectValue, out int outputTwo))
+        if (int.TryParse(teamTwoObjectValue, out int outputTwo))
         {
             teamTwoOutput = outputTwo;
         }
@@ -88,6 +101,8 @@ public class EloSystem
             Log.WriteLine("Parse failed for value (team two): " + teamTwoObjectValue, LogLevel.CRITICAL);
             return 3;
         }
+
+        Log.WriteLine("outputs: " + teamOneOutput + " | " + teamTwoOutput, LogLevel.DEBUG);
 
         if (teamTwoOutput > teamOneOutput)
         {

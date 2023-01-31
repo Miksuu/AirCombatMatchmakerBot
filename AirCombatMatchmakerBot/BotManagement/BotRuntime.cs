@@ -111,7 +111,7 @@ public class BotRuntimeManager
                 Log.WriteLine("Message: " + _socketMessage.Id +
                     " contained more than 1 attachment!", LogLevel.VERBOSE);
 
-                await _socketMessage.Channel.SendMessageAsync(
+                await _socketMessage.Channel.SendMessageAsync("\n" +
                     _socketMessage.Author.Mention + ", make sure only include one attachment in the message," +
                     " with the .acmi file of the match!");
 
@@ -135,7 +135,7 @@ public class BotRuntimeManager
                     " tried to send a file that is not a .acmi file!" +
                     " URL:" + attachment.Url, LogLevel.WARNING);
 
-                await _socketMessage.Channel.SendMessageAsync(
+                await _socketMessage.Channel.SendMessageAsync("\n" +
                           _socketMessage.Author.Mention +
                           ", make sure the attachment you are sending is in .acmi format!");
 

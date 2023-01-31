@@ -188,8 +188,21 @@ public class MatchReporting
             return Task.FromResult(response).Result;
         }
 
+        // Split from this to different method incase needs to be recalculated for the final result
+
         var responseTuple = CheckIfMatchCanBeSentToConfirmation(_finalMatchResultMessage).Result;
         response = responseTuple.Item1;
+
+        if (responseTuple.Item2)
+        {
+            CalculateFinalMatchResult(_interfaceLeague);
+
+            await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
+            responseTuple.Item3, MessageName.MATCHFINALRESULTMESSAGE);
+
+            await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
+                responseTuple.Item3, MessageName.CONFIRMATIONMESSAGE);
+        }
 
         await _finalMatchResultMessage.GenerateAndModifyTheMessage();
 
@@ -198,9 +211,10 @@ public class MatchReporting
         return Task.FromResult(response).Result;
     }
 
-    private async Task<(string, bool)> CheckIfMatchCanBeSentToConfirmation(InterfaceMessage _interfaceMessage)
+    private async Task<(string, bool, InterfaceChannel)> CheckIfMatchCanBeSentToConfirmation(InterfaceMessage _interfaceMessage)
     {
         bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
+        InterfaceChannel? interfaceChannel = null;
 
         Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
             " showing: " + showingConfirmationMessage, LogLevel.DEBUG);
@@ -209,23 +223,17 @@ public class MatchReporting
         {
             showingConfirmationMessage = true;
 
-            var interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                     _interfaceMessage.MessageChannelId);
             if (interfaceChannel == null)
             {
                 Log.WriteLine("channel was null!", LogLevel.CRITICAL);
-                return ("Channel doesn't exist!", false);
+                return ("Channel doesn't exist!", false, interfaceChannel);
             }
-
-            await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                    interfaceChannel, MessageName.MATCHFINALRESULTMESSAGE);
-
-            await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                interfaceChannel, MessageName.CONFIRMATIONMESSAGE);
         }
 
-        return ("", confirmationMessageCanBeShown);
+        return ("", confirmationMessageCanBeShown, interfaceChannel);
     }
 
     private bool CheckIfConfirmationMessageCanBeShown()
@@ -274,27 +282,27 @@ public class MatchReporting
         return true;
     }
 
-    private string CalculateFinalMatchResult(InterfaceLeague _interfaceLeague, Team _reportingTeam)
+    private string CalculateFinalMatchResult(InterfaceLeague _interfaceLeague)
     {
         Log.WriteLine("Starting to calculate the final match result with teams: " +
-            TeamIdsWithReportData.ElementAt(0) + " and: " +
-            TeamIdsWithReportData.ElementAt(1), LogLevel.DEBUG);   
+            TeamIdsWithReportData.ElementAt(0).Value.TeamName + " and: " +
+            TeamIdsWithReportData.ElementAt(1).Value.TeamName, LogLevel.DEBUG);   
 
         Team[] teamsInTheMatch = new Team[2];
-        teamsInTheMatch[0] = _reportingTeam;
-
-        Team? otherTeam = FindTheOtherTeamThatIsActive(_interfaceLeague, _reportingTeam.TeamId);
-        if (otherTeam == null)
+        for (int t = 0; t < TeamIdsWithReportData.Count; t++)
         {
-            Log.WriteLine(nameof(otherTeam) + " was null!", LogLevel.CRITICAL);
-            return "";
+            teamsInTheMatch[t] = _interfaceLeague.LeagueData.FindTeamWithTeamId(TeamIdsWithReportData.ElementAt(t).Key);
         }
-        teamsInTheMatch[1] = otherTeam;
 
-        return eloSystem.CalculateAndChangeFinalEloPoints(
+        var teamIdsWithReportDataWithResultString = eloSystem.CalculateAndSaveFinalEloDelta(
             _interfaceLeague, teamsInTheMatch, teamIdsWithReportData);
+
+        teamIdsWithReportData = teamIdsWithReportDataWithResultString.Item2;
+
+        return teamIdsWithReportDataWithResultString.Item1;
     }
 
+    /*
     private Team? FindTheOtherTeamThatIsActive(InterfaceLeague _interfaceLeague, int _excludedTeamId)
     {
         Log.WriteLine("Finding the other team excluding: " + _excludedTeamId, LogLevel.VERBOSE);
@@ -308,5 +316,5 @@ public class MatchReporting
         int otherTeamId = TeamIdsWithReportData.FirstOrDefault(t => t.Key != _excludedTeamId).Key;
         Log.WriteLine("Found other team id: " + otherTeamId, LogLevel.VERBOSE);
         return _interfaceLeague.LeagueData.FindTeamWithTeamId(otherTeamId);
-    }
-}
+    }*/
+        }

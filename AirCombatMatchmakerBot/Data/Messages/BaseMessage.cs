@@ -185,7 +185,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
 
         dynamic newMessage = await textChannel.SendMessageAsync(
-            GenerateMessage(), components: component.Build());
+            "\n" + GenerateMessage(), components: component.Build());
         ulong newMessageId = newMessage.Id;
 
         Log.WriteLine("Created a new message with id: " + newMessageId,LogLevel.VERBOSE);
