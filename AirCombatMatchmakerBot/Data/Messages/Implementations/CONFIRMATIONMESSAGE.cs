@@ -23,14 +23,30 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
-        string finalMessage = "Confirmed:\n;";
+        Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
+
+        string finalMessage = "Confirmed:\n";
 
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             messageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
             messageChannelId);
+        if (interfaceChannel == null)
+        {
+            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
+            return "InterfaceChannel was null!";
+        }
+
+        Log.WriteLine("Found interfaceChannel:" + interfaceChannel.ChannelId, LogLevel.VERBOSE);
 
         //Find the channel of the message and cast the interface to to the MATCHCHANNEL class       
         MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
+        if (matchChannel == null)
+        {
+            Log.WriteLine(nameof(matchChannel) + " was null!", LogLevel.CRITICAL);
+            return nameof(matchChannel) + " was null!";
+        }
+
+        Log.WriteLine(nameof(matchChannel) + ": " + matchChannel, LogLevel.VERBOSE);
 
         var matchTuple =
             matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
@@ -41,6 +57,8 @@ public class CONFIRMATIONMESSAGE : BaseMessage
             Log.WriteLine(nameof(matchTuple) + " was null!", LogLevel.CRITICAL);
             return matchTuple.Item3;
         }
+
+        Log.WriteLine("Found match tuple: " + matchTuple.Item2.MatchChannelId, LogLevel.VERBOSE);
 
         var matchReportData = matchTuple.Item2.MatchReporting.TeamIdsWithReportData;
 

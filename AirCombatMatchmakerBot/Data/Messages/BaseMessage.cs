@@ -218,6 +218,7 @@ public abstract class BaseMessage : InterfaceMessage
     public async Task GenerateAndModifyTheMessage()
     {
         await ModifyMessage(GenerateMessage());
+        await SerializationManager.SerializeDB();
     }
 
     public abstract string GenerateMessage();
