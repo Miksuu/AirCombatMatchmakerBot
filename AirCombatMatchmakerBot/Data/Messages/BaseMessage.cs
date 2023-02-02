@@ -184,15 +184,17 @@ public abstract class BaseMessage : InterfaceMessage
             }
         }
 
-        dynamic newMessage = await textChannel.SendMessageAsync(
-            "\n" + GenerateMessage(), components: component.Build());
+        string messageForGenerating = "\n" + GenerateMessage();
 
-        messageId = newMessage.Id;
-        message = newMessage;
+        var generatedMessage =  await textChannel.SendMessageAsync(
+            messageForGenerating, components: component.Build());
+
+        messageId = generatedMessage.Id;
+        message = messageForGenerating;
 
         Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);
 
-        return newMessage;
+        return messageForGenerating;
     }
 
     public async Task ModifyMessage(string _newContent)

@@ -269,7 +269,7 @@ public abstract class BaseChannel : InterfaceChannel
 
             Log.WriteLine("Key was 0, message does not exist. Creating it.", LogLevel.VERBOSE);
 
-            await interfaceMessageKvp.Value.CreateTheMessageAndItsButtonsOnTheBaseClass(
+            string newMessage = await interfaceMessageKvp.Value.CreateTheMessageAndItsButtonsOnTheBaseClass(
                 _guild, channelId, channelsCategoryId, interfaceMessageKvp.Key);
         }
 

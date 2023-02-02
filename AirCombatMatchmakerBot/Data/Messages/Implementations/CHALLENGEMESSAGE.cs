@@ -53,6 +53,8 @@ public class CHALLENGEMESSAGE : BaseMessage
                     string challengeMessage = ". \n" +
                         leagueName + " challenge. Players In The Queue: \n";
 
+                    Log.WriteLine("Challenge message generated: " + challengeMessage, LogLevel.VERBOSE);
+
                     return challengeMessage;
                 }
             }
