@@ -1,8 +1,10 @@
 ﻿public static class Exceptions
 {
-    public static void BotClientRefNull()
+    public static string BotClientRefNull()
     {
-        Log.WriteLine("ClientRef was null!", LogLevel.CRITICAL);
+        string errorMessage = "ClientRef was null!";
+        Log.WriteLine(errorMessage, LogLevel.CRITICAL);
+        return errorMessage;
     }
 
     public static void BotGuildRefNull()

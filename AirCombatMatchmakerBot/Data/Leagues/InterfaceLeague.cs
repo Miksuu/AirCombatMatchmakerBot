@@ -21,4 +21,5 @@ public interface InterfaceLeague
     public string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface();
     public void ModifyLeagueRegisterationChannelMessage();
     public string GenerateALeagueChallengeButtonMessage();
+    public InterfaceCategory FindLeaguesInterfaceCategory();
 }

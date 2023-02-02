@@ -279,14 +279,35 @@ public abstract class BaseChannel : InterfaceChannel
         return;
     }
 
-    public InterfaceMessage FindInterfaceMessageWithNameInTheChannel(
+    public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName)
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _messageName, LogLevel.VERBOSE);
 
         var foundInterfaceMessage = interfaceMessagesWithIds.FirstOrDefault(
             x => x.Value.MessageName == _messageName);
+        if (foundInterfaceMessage.Value == null)
+        {
+            Log.WriteLine(nameof(foundInterfaceMessage) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
         Log.WriteLine("Found: " + foundInterfaceMessage.Value.MessageName, LogLevel.VERBOSE);
         return foundInterfaceMessage.Value;
+    }
+
+    public async Task<IMessageChannel?> GetMessageChannelById(DiscordSocketClient _client)
+    {
+        Log.WriteLine("Getting IMessageChannel with id: " + channelId, LogLevel.VERBOSE);
+
+        var channel = await _client.GetChannelAsync(channelId) as IMessageChannel;
+        if (channel == null)
+        {
+            Log.WriteLine(nameof(channel) + " was null!", LogLevel.ERROR);
+            return null;
+        }
+
+        Log.WriteLine("Found: " + channel.Id, LogLevel.VERBOSE);
+        return channel;
     }
 }

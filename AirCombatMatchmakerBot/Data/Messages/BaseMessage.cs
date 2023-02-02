@@ -223,4 +223,19 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     public abstract string GenerateMessage();
+
+    public async Task<Discord.IMessage?> GetMessageById(IMessageChannel _channel)
+    {
+        Log.WriteLine("Getting IMessageChannel with id: " + messageId, LogLevel.VERBOSE);
+
+        var message = await _channel.GetMessageAsync(messageId);
+        if (message == null)
+        {
+            Log.WriteLine(nameof(message) + " was null!", LogLevel.ERROR);
+            return null;
+        }
+
+        Log.WriteLine("Found: " + message.Id, LogLevel.VERBOSE);
+        return message;
+    }
 }

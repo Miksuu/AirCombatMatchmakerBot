@@ -27,9 +27,6 @@ public class BotRuntimeManager
                 BotReference.SetConnectionState(true);
                 Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
-
-
-
                 //var guild = BotReference.GetGuildRef();
 
                 /*

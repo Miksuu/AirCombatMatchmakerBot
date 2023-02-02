@@ -2,6 +2,7 @@
 using Discord;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
+using System.Threading.Channels;
 
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
@@ -221,5 +222,24 @@ public abstract class BaseLeague : InterfaceLeague
         return "." + "\n" + leagueEnumAttrValue + "\n" +
             GetAllowedUnitsAsString() + "\n" +
             GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface();
+    }
+
+    public InterfaceCategory? FindLeaguesInterfaceCategory()
+    {
+        Log.WriteLine("Finding interfaceCategory in: " + leagueCategoryName +
+            " with id: " + discordleagueReferences.LeagueCategoryId, LogLevel.VERBOSE);
+
+        InterfaceCategory interfaceCategory = 
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                discordleagueReferences.LeagueCategoryId).Value;
+        if (interfaceCategory == null)
+        {
+            Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        Log.WriteLine("Found: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
+
+        return interfaceCategory;
     }
 }

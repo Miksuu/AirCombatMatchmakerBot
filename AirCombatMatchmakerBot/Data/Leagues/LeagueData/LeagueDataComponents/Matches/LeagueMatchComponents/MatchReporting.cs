@@ -202,6 +202,42 @@ public class MatchReporting
 
             await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
                 responseTuple.Item3, MessageName.CONFIRMATIONMESSAGE);
+
+            var client = BotReference.GetClientRef();
+            if (client == null)
+            {
+                return Exceptions.BotClientRefNull();
+            }
+
+            // Maybe move this all to a method, useful when trying to delete a message from the interfaces
+            InterfaceChannel interfaceChannel = _interfaceLeague.FindLeaguesInterfaceCategory(
+                ).FindInterfaceChannelWithIdInTheCategory(
+                    _finalMatchResultMessage.MessageChannelId);
+            if (interfaceChannel == null)
+            {
+                Log.WriteLine(nameof(interfaceChannel) + " was null, with: " +
+                    _finalMatchResultMessage.MessageChannelId, LogLevel.CRITICAL);
+                return nameof(interfaceChannel) + " was null";
+            }
+
+            InterfaceMessage? interfaceMessage =
+                interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.REPORTINGSTATUSMESSAGE);
+            if (interfaceMessage == null)
+            {
+                Log.WriteLine(nameof(interfaceMessage) + " was null, with: " +
+                    MessageName.REPORTINGSTATUSMESSAGE, LogLevel.CRITICAL);
+                return nameof(interfaceMessage) + " was null";
+            }
+
+            var iMessageChannel = await interfaceChannel.GetMessageChannelById(client);
+            if (iMessageChannel == null)
+            {
+                Log.WriteLine(nameof(iMessageChannel) + " was null!", LogLevel.CRITICAL);
+                return nameof(iMessageChannel) + " was null";
+            }
+
+            var message = await interfaceMessage.GetMessageById(iMessageChannel);
+            await message.DeleteAsync();
         }
 
         await _finalMatchResultMessage.GenerateAndModifyTheMessage();

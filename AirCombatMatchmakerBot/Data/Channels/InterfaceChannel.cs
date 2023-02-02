@@ -21,6 +21,7 @@ public interface InterfaceChannel
     public Task PrepareChannelMessages();
     public Task PostChannelMessages(SocketGuild _guild,
         InterfaceChannel _databaseInterfaceChannel);
-    public InterfaceMessage FindInterfaceMessageWithNameInTheChannel(
+    public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName);
+    public Task<IMessageChannel?> GetMessageChannelById(DiscordSocketClient _client);
 }
