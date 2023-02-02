@@ -77,7 +77,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
             }
             else if (reportDataKvp.Value.FinalEloDelta < 0f)
             {
-                finalMessage += EnumExtensions.GetEnumMemberAttrValue(EmojiName.RATINGDOWN) + " -" + reportDataKvp.Value.FinalEloDelta;
+                finalMessage += EnumExtensions.GetEnumMemberAttrValue(EmojiName.RATINGDOWN) + " " + reportDataKvp.Value.FinalEloDelta;
             }
             else
             {
