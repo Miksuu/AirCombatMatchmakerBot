@@ -160,12 +160,12 @@ public abstract class BaseChannel : InterfaceChannel
         InterfaceMessage interfaceMessage =
             (InterfaceMessage)EnumExtensions.GetInstance(_MessageName.ToString());
 
-        ulong id = interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            guild, channelId, channelsCategoryId, _MessageName.ToString()).Result;
+        await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+            guild, channelId, channelsCategoryId, _MessageName.ToString());
 
-        interfaceMessage.MessageId = id;
+        //interfaceMessage.MessageId = id;
 
-        await interfaceMessage.GenerateAndModifyTheMessage();
+        //await interfaceMessage.GenerateAndModifyTheMessage();
 
         _interfaceChannel.InterfaceMessagesWithIds.Add(messageNameString, interfaceMessage);
     }
@@ -272,10 +272,8 @@ public abstract class BaseChannel : InterfaceChannel
 
             Log.WriteLine("Key was 0, message does not exist. Creating it.", LogLevel.VERBOSE);
 
-            ulong id = interfaceMessageKvp.Value.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            _guild, channelId, channelsCategoryId, interfaceMessageKvp.Key).Result;
-
-            messageKey.MessageId = id;
+            await interfaceMessageKvp.Value.CreateTheMessageAndItsButtonsOnTheBaseClass(
+                _guild, channelId, channelsCategoryId, interfaceMessageKvp.Key);
         }
 
         return;

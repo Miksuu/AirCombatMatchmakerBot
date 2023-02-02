@@ -132,7 +132,7 @@ public abstract class BaseMessage : InterfaceMessage
         buttonsInTheMessage = new List<InterfaceButton>();
     }
 
-    public async Task<ulong> CreateTheMessageAndItsButtonsOnTheBaseClass(
+    public async Task CreateTheMessageAndItsButtonsOnTheBaseClass(
         Discord.WebSocket.SocketGuild _guild, ulong _channelId, ulong _channelCategoryId,
         string _messageKey)
     {
@@ -149,7 +149,7 @@ public abstract class BaseMessage : InterfaceMessage
         if (textChannel == null)
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
-            return 0;
+            return;
         }
 
         Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
@@ -186,11 +186,12 @@ public abstract class BaseMessage : InterfaceMessage
 
         dynamic newMessage = await textChannel.SendMessageAsync(
             "\n" + GenerateMessage(), components: component.Build());
-        ulong newMessageId = newMessage.Id;
 
-        Log.WriteLine("Created a new message with id: " + newMessageId,LogLevel.VERBOSE);
+        messageId = newMessage.Id;
 
-        return newMessageId;
+        Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);
+
+        return;
     }
 
     public async Task ModifyMessage(string _newContent)

@@ -11,7 +11,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 {
     public MATCHFINALRESULTMESSAGE()
     {
-        messageName = MessageName.CONFIRMATIONMESSAGE;
+        messageName = MessageName.MATCHFINALRESULTMESSAGE;
         messageButtonNamesWithAmount = new Dictionary<ButtonName, int>
         {
         };
@@ -92,7 +92,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
-            finalMessage += reportDataKvp.Value.TacviewLink.ObjectValue + " ";
+            finalMessage += reportDataKvp.Value.TacviewLink.ObjectValue + "\n";
         }
 
         finalMessage += "\n";

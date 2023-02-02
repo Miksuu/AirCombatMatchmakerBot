@@ -37,7 +37,6 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
             return Task.FromResult("Could not find: " + nameof(interfaceChannel));
         }
 
-
         MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
         if (matchChannel == null)
         {
@@ -89,6 +88,8 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
                 _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                     _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
                         MessageName.CONFIRMATIONMESSAGE);
+
+        Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " + confirmationMessage.Message, LogLevel.DEBUG);
 
         confirmationMessage.GenerateAndModifyTheMessage();
 
