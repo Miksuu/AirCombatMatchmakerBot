@@ -66,21 +66,23 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         // Shows the rating change
         int rIndex = 0;
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
-        {
-            string ratingEmoji = ":no_change_in_rating:";
-            
+        {            
             Log.WriteLine("FinalEloDelta on report message construction: " + reportDataKvp.Value.FinalEloDelta, LogLevel.DEBUG);
+
+            finalMessage += reportDataKvp.Value.TeamName + " ";
 
             if (reportDataKvp.Value.FinalEloDelta > 0f)
             {
-                ratingEmoji = EnumExtensions.GetEnumMemberAttrValue(EmojiName.RATINGUP);
+                finalMessage += EnumExtensions.GetEnumMemberAttrValue(EmojiName.RATINGUP) + " +" + reportDataKvp.Value.FinalEloDelta;
             }
             else if (reportDataKvp.Value.FinalEloDelta < 0f)
             {
-                ratingEmoji = EnumExtensions.GetEnumMemberAttrValue(EmojiName.RATINGDOWN);
+                finalMessage += EnumExtensions.GetEnumMemberAttrValue(EmojiName.RATINGDOWN) + " -" + reportDataKvp.Value.FinalEloDelta;
             }
-
-            finalMessage += reportDataKvp.Value.TeamName + " " + ratingEmoji + " " + reportDataKvp.Value.FinalEloDelta;
+            else
+            {
+                finalMessage += ":no_change_in_rating: " + reportDataKvp.Value.FinalEloDelta;
+            }
 
             Log.WriteLine("finalMessage on report message construction: " + reportDataKvp.Value.FinalEloDelta, LogLevel.DEBUG);
 
