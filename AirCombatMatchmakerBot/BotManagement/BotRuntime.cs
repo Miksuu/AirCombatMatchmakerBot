@@ -28,14 +28,11 @@ public class BotRuntimeManager
                 Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
 
-
-
-
-
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
+                /*
                 var guild = BotReference.GetGuildRef();
 
                 foreach (var ch in guild.Channels)
@@ -49,7 +46,7 @@ public class BotRuntimeManager
                 {
                     Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
                     await cat.DeleteAsync();
-                }
+                }*/
                 /*
                 foreach (var item in guild.Emotes)
                 {
