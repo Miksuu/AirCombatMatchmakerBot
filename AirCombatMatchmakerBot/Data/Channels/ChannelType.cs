@@ -24,4 +24,6 @@ public enum ChannelType
     CHALLENGE,
     [EnumMember(Value = "match-channel")]
     MATCHCHANNEL,
+    [EnumMember(Value = "match-reports")]
+    MATCHREPORTSCHANNEL,
 }

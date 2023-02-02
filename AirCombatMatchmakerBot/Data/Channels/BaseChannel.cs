@@ -142,7 +142,7 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
     }
 
-    public async Task CreateAMessageForTheChannelFromMessageName(
+    public async Task<string> CreateAMessageForTheChannelFromMessageName(
         InterfaceChannel _interfaceChannel, MessageName _MessageName)
     {
         Log.WriteLine("Creating a message named: " + _MessageName.ToString(), LogLevel.DEBUG);
@@ -153,21 +153,18 @@ public abstract class BaseChannel : InterfaceChannel
 
         if (guild == null)
         {
-            Exceptions.BotGuildRefNull();
-            return;
+            return Exceptions.BotGuildRefNull();
         }
 
         InterfaceMessage interfaceMessage =
             (InterfaceMessage)EnumExtensions.GetInstance(_MessageName.ToString());
 
-        await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+        string newMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
             guild, channelId, channelsCategoryId, _MessageName.ToString());
 
-        //interfaceMessage.MessageId = id;
-
-        //await interfaceMessage.GenerateAndModifyTheMessage();
-
         _interfaceChannel.InterfaceMessagesWithIds.Add(messageNameString, interfaceMessage);
+
+        return newMessage;
     }
 
     public virtual async Task PrepareChannelMessages()

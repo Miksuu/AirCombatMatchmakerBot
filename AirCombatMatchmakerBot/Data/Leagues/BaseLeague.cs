@@ -3,6 +3,7 @@ using Discord;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
 using System.Threading.Channels;
+using System;
 
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
@@ -241,5 +242,25 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Found: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
 
         return interfaceCategory;
+    }
+
+    public async void PostMatchReport(SocketGuild _guild, string _finalResult)
+    {
+        InterfaceCategory leagueCategory =
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                discordleagueReferences.LeagueCategoryId).Value;
+
+        InterfaceChannel matchReportsChannelInterface =
+            leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
+
+        var textChannel = _guild.GetChannel(matchReportsChannelInterface.ChannelId) as ITextChannel;
+
+        if (textChannel == null)
+        {
+            Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.ERROR);
+            return;
+        }
+
+        await textChannel.SendMessageAsync(_finalResult);
     }
 }

@@ -140,4 +140,37 @@ public class LeagueMatch
 
         return allowedUserIds;
     }
+
+    public async void FinishMatch(InterfaceLeague _interfaceLeague)
+    {
+        matchReporting.MatchDone = true;
+
+        Log.WriteLine("Finishing match: " + matchId, LogLevel.DEBUG);
+        matchReporting.EloSystem.CalculateFinalEloForBothTeams(
+            _interfaceLeague, matchReporting.FindTeamsInTheMatch(_interfaceLeague),
+            matchReporting.TeamIdsWithReportData);
+
+        var guild = BotReference.GetGuildRef();
+
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
+        _interfaceLeague.PostMatchReport(guild, matchReporting.FinalResultForConfirmation);
+
+        // Perhaps search within category for a faster operation
+        var channel = guild.Channels.FirstOrDefault(
+            c => c.Id == matchChannelId &&
+                c.Name.Contains("match"));// Just in case
+
+        if (channel == null)
+        {
+            Log.WriteLine(nameof(channel) + " was null!", LogLevel.ERROR);
+            return;
+        }
+
+        await channel.DeleteAsync();
+    }
 }

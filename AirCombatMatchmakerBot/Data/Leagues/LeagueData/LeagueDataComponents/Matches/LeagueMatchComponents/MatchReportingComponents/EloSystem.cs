@@ -3,7 +3,7 @@
 public class EloSystem
 {
     public string CalculateAndSaveFinalEloDelta(
-    InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch, Dictionary<int, ReportData> _teamIdsWithReportData)
+        Team[] _teamsInTheMatch, Dictionary<int, ReportData> _teamIdsWithReportData)
     {
         float firstTeamSkillRating = _teamsInTheMatch[0].SkillRating;
         float secondTeamSkillRating = _teamsInTheMatch[1].SkillRating;
@@ -59,11 +59,38 @@ public class EloSystem
         _teamIdsWithReportData.ElementAt(0).Value.FinalEloDelta = eloDelta;
         _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta = -eloDelta;
 
-        Log.WriteLine("Done calculating and changing elo points for: " +
+        Log.WriteLine("Done calculating " +
             _teamIdsWithReportData.ElementAt(0).Value.FinalEloDelta +
             " | " + _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta, LogLevel.DEBUG);
 
         return "";
+    }
+
+    public void CalculateFinalEloForBothTeams(
+        InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch, Dictionary<int, ReportData> _teamIdsWithReportData)
+    {
+        Team? databaseTeamOne = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[0].TeamId);
+
+        if (databaseTeamOne == null)
+        {
+            Log.WriteLine(nameof(databaseTeamOne) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        Team? databaseTeamTwo = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[1].TeamId);
+
+        if (databaseTeamTwo == null)
+        {
+            Log.WriteLine(nameof(databaseTeamTwo) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        Log.WriteLine("SR's before: " + databaseTeamOne.SkillRating + " | " + databaseTeamOne.SkillRating, LogLevel.VERBOSE);
+
+        databaseTeamOne.SkillRating += _teamIdsWithReportData.ElementAt(0).Value.FinalEloDelta;
+        databaseTeamTwo.SkillRating += _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta;
+
+        Log.WriteLine("SR's after: " + databaseTeamOne.SkillRating + " | " + databaseTeamOne.SkillRating, LogLevel.VERBOSE);
     }
 
     private double ExpectationToWin(float _playerOneRating, float _playerTwoRating)

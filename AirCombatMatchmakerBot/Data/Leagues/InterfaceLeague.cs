@@ -22,4 +22,5 @@ public interface InterfaceLeague
     public void ModifyLeagueRegisterationChannelMessage();
     public string GenerateALeagueChallengeButtonMessage();
     public InterfaceCategory FindLeaguesInterfaceCategory();
+    public void PostMatchReport(SocketGuild _guild, string _finalResult);
 }

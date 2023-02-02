@@ -305,4 +305,14 @@ public abstract class BaseCategory : InterfaceCategory
         Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName, LogLevel.VERBOSE);
         return foundInterfaceChannel.Value;
     }
+
+    public InterfaceChannel FindInterfaceChannelWithNameInTheCategory(
+        ChannelType _nameToSearchWith)
+    {
+        Log.WriteLine("Getting CategoryKvp with name: " + _nameToSearchWith, LogLevel.VERBOSE);
+
+        var foundInterfaceChannel = interfaceChannels.FirstOrDefault(x => x.Value.ChannelType == _nameToSearchWith);
+        Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName, LogLevel.VERBOSE);
+        return foundInterfaceChannel.Value;
+    }
 }

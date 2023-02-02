@@ -27,19 +27,17 @@ public class BotRuntimeManager
                 BotReference.SetConnectionState(true);
                 Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
-                //var guild = BotReference.GetGuildRef();
 
-                /*
-                foreach (var item in guild.Emotes)
-                {
-                    Log.WriteLine("Emoji: " + item.Name + " id: " + item.Id, LogLevel.DEBUG);
-                }*/
+
+
+
 
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
-                /*
+                var guild = BotReference.GetGuildRef();
+
                 foreach (var ch in guild.Channels)
                 {
                     if (ch.Name == "info") continue;
@@ -51,6 +49,11 @@ public class BotRuntimeManager
                 {
                     Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
                     await cat.DeleteAsync();
+                }
+                /*
+                foreach (var item in guild.Emotes)
+                {
+                    Log.WriteLine("Emoji: " + item.Name + " id: " + item.Id, LogLevel.DEBUG);
                 }*/
 
                 // Creates the league references to the database
@@ -94,8 +97,8 @@ public class BotRuntimeManager
                 Log.WriteLine(item.Key + " | " + item.Value, LogLevel.DEBUG);
             }*/
 
-            // Disregards any message that's not inside the bot's match channels
-            if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
+                // Disregards any message that's not inside the bot's match channels
+                if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
                 _socketMessage.Channel.Id))
             {
                 return;

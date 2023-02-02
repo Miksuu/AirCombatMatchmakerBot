@@ -62,6 +62,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         var matchReportData = matchTuple.Item2.MatchReporting.TeamIdsWithReportData;
 
+        int confirmedTeamsCounter = 0;
         foreach (var teamKvp in matchReportData)
         {
             string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
@@ -69,9 +70,22 @@ public class CONFIRMATIONMESSAGE : BaseMessage
             if (teamKvp.Value.ConfirmedMatch)
             {
                 checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
+                confirmedTeamsCounter++;
             }
 
             finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
+        }
+
+        if (confirmedTeamsCounter > 1) 
+        {
+            InterfaceLeague? interfaceLeague = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
+            if (interfaceLeague == null)
+            {
+                Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
+                return nameof(interfaceLeague) + " was null!";
+            }
+
+            matchTuple.Item2.FinishMatch(interfaceLeague);
         }
 
         finalMessage += "You can either Confirm, Modify or Dispute the result below.";

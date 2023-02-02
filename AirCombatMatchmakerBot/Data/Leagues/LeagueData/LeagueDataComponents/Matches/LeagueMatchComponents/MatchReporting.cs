@@ -71,6 +71,21 @@ public class MatchReporting
         }
     }
 
+    public string? FinalResultForConfirmation
+    {
+        get
+        {
+            Log.WriteLine("Getting finalResultForConfirmation", LogLevel.VERBOSE);
+            return finalResultForConfirmation;
+        }
+        set
+        {
+            Log.WriteLine("Setting finalResultForConfirmation"
+                + " to: " + value, LogLevel.VERBOSE);
+            finalResultForConfirmation = value;
+        }
+    }
+
     private EloSystem eloSystem { get; set; }
     [DataMember] private Dictionary<int, ReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool showingConfirmationMessage { get; set; }
@@ -112,19 +127,19 @@ public class MatchReporting
             _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
             _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
 
+        if (matchDone)
+        {
+            Log.WriteLine(_playerId + " requested to report the match," +
+                " when it was already over.", LogLevel.VERBOSE);
+            return Task.FromResult("Match is already done!").Result;
+        }
+
         if (showingConfirmationMessage)
         {
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already in confirmation.", LogLevel.VERBOSE);
             return Task.FromResult("Match is in confirmation already! Finish that first, " +
                 "or hit the MODIFY button if you need to change reporting result!").Result;
-        }
-
-        if (matchDone)
-        {
-            Log.WriteLine(_playerId + " requested to report the match," +
-                " when it was already over.", LogLevel.VERBOSE);
-            return Task.FromResult("Match is already done!").Result;
         }
 
         Team? reportingTeam =
@@ -174,7 +189,7 @@ public class MatchReporting
         {
             Log.WriteLine("Reported team: " + reportedTeamKvp.Key +
                 " with value: " + reportedTeamKvp.Value, LogLevel.VERBOSE);
-        }
+        }   
 
         int reportedTeamsCount = TeamIdsWithReportData.Count;
 
@@ -197,7 +212,7 @@ public class MatchReporting
         {
             CalculateFinalMatchResult(_interfaceLeague);
 
-            await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
+            finalResultForConfirmation = await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
             responseTuple.Item3, MessageName.MATCHFINALRESULTMESSAGE);
 
             await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
@@ -237,7 +252,13 @@ public class MatchReporting
             }
 
             var message = await interfaceMessage.GetMessageById(iMessageChannel);
+            if (message == null)
+            {
+                Log.WriteLine(nameof(message) + " was null!", LogLevel.CRITICAL);
+                return nameof(message) + " was null";
+            }
             await message.DeleteAsync();
+            // end of deletion
         }
 
         await _finalMatchResultMessage.GenerateAndModifyTheMessage();
@@ -325,6 +346,12 @@ public class MatchReporting
             TeamIdsWithReportData.ElementAt(0).Value.TeamName + " and: " +
             TeamIdsWithReportData.ElementAt(1).Value.TeamName, LogLevel.DEBUG);
 
+        return eloSystem.CalculateAndSaveFinalEloDelta(
+            FindTeamsInTheMatch(_interfaceLeague), teamIdsWithReportData);
+    }
+
+    public Team[] FindTeamsInTheMatch(InterfaceLeague _interfaceLeague)
+    {
         Team[] teamsInTheMatch = new Team[2];
         for (int t = 0; t < TeamIdsWithReportData.Count; t++)
         {
@@ -333,14 +360,13 @@ public class MatchReporting
             if (foundTeam == null)
             {
                 Log.WriteLine("Found team was null!", LogLevel.CRITICAL);
-                return "";
+                return new Team[0];
             }
 
             teamsInTheMatch[t] = foundTeam;
         }
 
-        return eloSystem.CalculateAndSaveFinalEloDelta(
-            _interfaceLeague, teamsInTheMatch, teamIdsWithReportData);
+        return teamsInTheMatch;
     }
 
     public (List<ReportData>?, string) GetTeamReportDatasOfTheMatchWithPlayerId(

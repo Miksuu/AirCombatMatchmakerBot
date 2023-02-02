@@ -24,4 +24,6 @@ public interface InterfaceCategory
         string _overrideChannelName = "", params ulong[] _allowedUsersIdsArray);
     public InterfaceChannel FindInterfaceChannelWithIdInTheCategory(
         ulong _idToSearchWith);
+    public InterfaceChannel FindInterfaceChannelWithNameInTheCategory(
+        ChannelType _nameToSearchWith);
 }

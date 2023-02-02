@@ -1,4 +1,6 @@
-﻿public static class Exceptions
+﻿using Discord;
+
+public static class Exceptions
 {
     public static string BotClientRefNull()
     {
@@ -7,8 +9,10 @@
         return errorMessage;
     }
 
-    public static void BotGuildRefNull()
+    public static string BotGuildRefNull()
     {
-        Log.WriteLine("Guild ref was null! Wrong ID?" , LogLevel.CRITICAL);
+        string errorMessage = "Guild ref was null!";
+        Log.WriteLine(errorMessage + " wrong ID?", LogLevel.CRITICAL);
+        return errorMessage;
     }
 }
