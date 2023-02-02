@@ -23,6 +23,28 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
+        string finalMessage = string.Empty;
+
+        /*
+        Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            messageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                messageChannelId).FindInterfaceMessageWithNameInTheChannel(messageName);
+
+        var matchTuple =
+            matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
+        buttonCategoryId, _interfaceMessage.MessageChannelId);
+
+        if (matchTuple.Item1 == null || matchTuple.Item2 == null)
+        {
+            Log.WriteLine(nameof(matchTuple) + " was null!", LogLevel.CRITICAL);
+            return Task.FromResult(matchTuple.Item3);
+        }
+
+        var reportDataTupleWithString = matchTuple.Item2.MatchReporting.GetTeamReportDataWithPlayerId(
+            matchTuple.Item1, matchTuple.Item2, componentPlayerId);
+
+        finalMessage += "You can either Confirm, Modify or Dispute the result below.";
+        */
         return message;
     }
 }

@@ -29,8 +29,10 @@ public class REPORTSCOREBUTTON : BaseButton
 
         string[] splitStrings = buttonCustomId.Split('_');
 
+        /*
         string finalResponse = "Something went wrong with the reporting the match result of: " +
             splitStrings[1] + ". An admin has been informed.";
+        */
 
         ulong playerId = _component.User.Id;
         int playerReportedResult = int.Parse(splitStrings[1]);
@@ -45,34 +47,34 @@ public class REPORTSCOREBUTTON : BaseButton
             Log.WriteLine(item, LogLevel.DEBUG);
         }*/
 
-        MATCHCHANNEL? matchChannel = _interfaceMessage as MATCHCHANNEL;
+        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+            _interfaceMessage.MessageChannelId);
+
+        //Find the channel of the message and cast the interface to to the MATCHCHANNEL class       
+        MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
         if (matchChannel == null)
         {
             Log.WriteLine(nameof(matchChannel) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(finalResponse);
+            return Task.FromResult("Match channel was null!");
         }
 
-        if (matchChannel == null)
-        {
-            Log.WriteLine(nameof(matchChannel) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(finalResponse);
-        }
-
-        var matchTuple = 
+        var leagueMatchTuple = 
             matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
                 buttonCategoryId, reportingStatusMessage.MessageChannelId);
 
-        if (matchTuple.Item1 == null || matchTuple.Item2 == null)
+        if (leagueMatchTuple.Item1 == null || leagueMatchTuple.Item2 == null)
         {
-            Log.WriteLine(nameof(matchTuple) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(matchTuple.Item3);
+            Log.WriteLine(nameof(leagueMatchTuple) + " was null!", LogLevel.CRITICAL);
+            return Task.FromResult(leagueMatchTuple.Item3);
         }
 
-        finalResponse = matchTuple.Item2.MatchReporting.ProcessPlayersSentReportObject(
-            matchTuple.Item1, playerId, reportingStatusMessage, playerReportedResult.ToString(),
+        string finalResponse = leagueMatchTuple.Item2.MatchReporting.ProcessPlayersSentReportObject(
+            leagueMatchTuple.Item1, playerId, reportingStatusMessage, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE).Result;
 
-        Log.WriteLine("Reached end before the return with player id: " + playerId, LogLevel.DEBUG);
+        Log.WriteLine("Reached end before the return with player id: " +
+            playerId + " with response:" + finalResponse, LogLevel.DEBUG);
 
         return Task.FromResult(finalResponse);
     }

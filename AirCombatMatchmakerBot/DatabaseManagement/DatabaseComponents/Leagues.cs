@@ -274,7 +274,7 @@ public class Leagues
     public (InterfaceLeague?, LeagueMatch?) FindLeagueInterfaceAndLeagueMatchWithChannelId(ulong _channelId)
     {
         Log.WriteLine("Trying to find the league interface with the league match with channel id: " +
-            _channelId, LogLevel.VERBOSE);  
+            _channelId, LogLevel.VERBOSE);
 
         // Find the league with the cached category ID
         InterfaceLeague? interfaceLeague =
@@ -300,5 +300,33 @@ public class Leagues
             " | " + foundMatch.MatchId, LogLevel.DEBUG);
 
         return (interfaceLeague, foundMatch);
+    }
+
+    public (InterfaceLeague?, LeagueMatch?) FindMatchAndItsInterfaceLeagueByCategoryAndChannelId(
+        ulong _messageCategoryId, ulong _messageChannelId)
+    {
+        Log.WriteLine("Finding the match and its interface league with category: " + _messageCategoryId +
+            " and channel id:" + _messageChannelId, LogLevel.VERBOSE);
+
+        InterfaceLeague? interfaceLeague = FindLeagueInterfaceWithLeagueCategoryId(_messageCategoryId);
+
+        if (interfaceLeague == null)
+        {
+            Log.WriteLine(nameof(interfaceLeague) +
+                " was null! Could not find the league.", LogLevel.CRITICAL);
+            return (null, null);
+        }
+
+        LeagueMatch? leagueMatch =
+            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId);
+
+        if (leagueMatch == null)
+        {
+            Log.WriteLine(nameof(leagueMatch) +
+                " was null! Could not find the match.", LogLevel.CRITICAL);
+            return (interfaceLeague, null);
+        }
+
+        return (interfaceLeague, leagueMatch);
     }
 }

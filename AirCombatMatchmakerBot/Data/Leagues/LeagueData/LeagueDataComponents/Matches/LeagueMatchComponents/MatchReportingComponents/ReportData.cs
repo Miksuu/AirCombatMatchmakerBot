@@ -94,12 +94,28 @@ public class ReportData
         }
     }
 
+    public bool ConfirmedMatch
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(confirmedMatch) + ": " + confirmedMatch, LogLevel.VERBOSE);
+            return confirmedMatch;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(confirmedMatch)
+                + " to: " + value, LogLevel.VERBOSE);
+            confirmedMatch = value;
+        }
+    }
+
     [DataMember] private string teamName { get; set; }
     [DataMember] private ReportObject reportedScore { get; set; }
     [DataMember] private ReportObject tacviewLink { get; set; }
     [DataMember] private ReportObject commentByTheUser { get; set; }
     //[DataMember] private float cachedSkillRating { get; set; }
     [DataMember] private float finalEloDelta { get; set; }
+    [DataMember] private bool confirmedMatch { get; set; }
 
     public ReportData(string _reportingTeamName)
     {

@@ -39,7 +39,7 @@ public class EloSystem
         }
 
         /*
-        Team? databaseTeamOne = _interfaceLeague.LeagueData.FindTeamWithTeamId(_teamsInTheMatch[0].TeamId);
+        Team? databaseTeamOne = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[0].TeamId);
 
         if (databaseTeamOne == null)
         {
@@ -47,7 +47,7 @@ public class EloSystem
             return "";
         }
 
-        Team? databaseTeamTwo = _interfaceLeague.LeagueData.FindTeamWithTeamId(_teamsInTheMatch[1].TeamId);
+        Team? databaseTeamTwo = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[1].TeamId);
 
         if (databaseTeamTwo == null)
         {

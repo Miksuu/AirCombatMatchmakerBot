@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using System;
+using System.IO;
 using System.Net.Mail;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -146,7 +147,7 @@ public class MatchReporting
         {
             Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
 
-            switch (_typeOfTheReportingObject) 
+            switch (_typeOfTheReportingObject)
             {
                 case TypeOfTheReportingObject.REPORTEDSCORE:
                     TeamIdsWithReportData[reportingTeam.TeamId].ReportedScore.SetObjectValueAndFieldBool(
@@ -210,7 +211,7 @@ public class MatchReporting
         return Task.FromResult(response).Result;
     }
 
-    private async Task<(string, bool, InterfaceChannel)> CheckIfMatchCanBeSentToConfirmation(
+    private Task<(string, bool, InterfaceChannel?)> CheckIfMatchCanBeSentToConfirmation(
         InterfaceMessage _interfaceMessage)
     {
         bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
@@ -229,11 +230,11 @@ public class MatchReporting
             if (interfaceChannel == null)
             {
                 Log.WriteLine("channel was null!", LogLevel.CRITICAL);
-                return ("Channel doesn't exist!", false, interfaceChannel);
+                return Task.FromResult(("Channel doesn't exist!", false, interfaceChannel));
             }
         }
 
-        return ("", confirmationMessageCanBeShown, interfaceChannel);
+        return Task.FromResult(("", confirmationMessageCanBeShown, interfaceChannel));
     }
 
     private bool CheckIfConfirmationMessageCanBeShown()
@@ -286,7 +287,7 @@ public class MatchReporting
     {
         Log.WriteLine("Starting to calculate the final match result with teams: " +
             TeamIdsWithReportData.ElementAt(0).Value.TeamName + " and: " +
-            TeamIdsWithReportData.ElementAt(1).Value.TeamName, LogLevel.DEBUG);   
+            TeamIdsWithReportData.ElementAt(1).Value.TeamName, LogLevel.DEBUG);
 
         Team[] teamsInTheMatch = new Team[2];
         for (int t = 0; t < TeamIdsWithReportData.Count; t++)
@@ -306,19 +307,56 @@ public class MatchReporting
             _interfaceLeague, teamsInTheMatch, teamIdsWithReportData);
     }
 
-    /*
-    private Team? FindTheOtherTeamThatIsActive(InterfaceLeague _interfaceLeague, int _excludedTeamId)
+    public (List<ReportData>?, string) GetTeamReportDatasOfTheMatchWithPlayerId(
+        InterfaceLeague _interfaceLeague, LeagueMatch _leagueMatch, ulong _playerId)
     {
-        Log.WriteLine("Finding the other team excluding: " + _excludedTeamId, LogLevel.VERBOSE);
+        List<Team> foundTeams = new List <Team>();
+        List<ReportData> reportDatas = new List <ReportData>();
 
-        if (_interfaceLeague == null)
+        Log.WriteLine("Getting ReportData on match: " + _leagueMatch.MatchId +
+            " with: " + _playerId, LogLevel.DEBUG);
+
+        if (!_leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(
+            _interfaceLeague).Contains(_playerId))
         {
-            Log.WriteLine(nameof(_interfaceLeague) + " was null!", LogLevel.CRITICAL);
-            return null;
+            Log.WriteLine("Error, match: " + _leagueMatch.MatchId +
+                " does not contain: " + _playerId, LogLevel.CRITICAL);
+            return (null, "That's not your match to confirm! by " + _playerId);
         }
 
-        int otherTeamId = TeamIdsWithReportData.FirstOrDefault(t => t.Key != _excludedTeamId).Key;
-        Log.WriteLine("Found other team id: " + otherTeamId, LogLevel.VERBOSE);
-        return _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(otherTeamId);
-    }*/
+        Team? foundTeam =
+            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+
+        if (foundTeam == null)
+        {
+            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
+            return (null, "Could not find: " + nameof(foundTeam));
         }
+
+        foundTeams.Add(foundTeam);
+
+        int otherTeamId = _leagueMatch.TeamsInTheMatch.FirstOrDefault(t => t.Key != foundTeam.TeamId).Key;
+        Team? otherTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(otherTeamId);
+
+        if (otherTeam == null)
+        {
+            Log.WriteLine(nameof(otherTeam) + " was null!", LogLevel.CRITICAL);
+            return (null, "Could not find: " + nameof(otherTeam));
+        }
+
+        foundTeams.Add(otherTeam);
+
+        foreach (Team team in foundTeams)
+        {
+            reportDatas.Add(teamIdsWithReportData.FirstOrDefault(
+                t => t.Key == team.TeamId).Value);
+        }
+
+        /*
+        int otherTeamId = _leagueMatch.TeamsInTheMatch.FirstOrDefault(t => t.Key != foundTeam.TeamId).Key;
+        var otherReportData = teamIdsWithReportData.FirstOrDefault(t => t.Key == otherTeamId);
+        */
+
+        return (reportDatas, "");
+    }
+}

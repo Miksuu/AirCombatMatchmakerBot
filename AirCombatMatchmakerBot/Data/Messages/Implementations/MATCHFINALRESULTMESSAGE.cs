@@ -24,29 +24,20 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         string finalMessage = " \n";
 
-        InterfaceLeague? interfaceLeague = 
-            Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
+        var interfaceLeagueMatchTuple = Database.Instance.Leagues.FindMatchAndItsInterfaceLeagueByCategoryAndChannelId(
+            messageCategoryId, messageChannelId);
 
-        if (interfaceLeague == null)
+        if (interfaceLeagueMatchTuple.Item1 == null || interfaceLeagueMatchTuple.Item2 == null)
         {
-            Log.WriteLine(nameof(interfaceLeague) +
+            Log.WriteLine(nameof(interfaceLeagueMatchTuple) +
                 " was null! Could not find the league.", LogLevel.CRITICAL);
-            return "";
+            return "Error, could not find the league or match";
         }
 
-        LeagueMatch? leagueMatch = 
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(messageChannelId);
+        finalMessage += "Match " + interfaceLeagueMatchTuple.Item2.MatchId + " has finished\n";
 
-        if (leagueMatch == null)
-        {
-            Log.WriteLine(nameof(leagueMatch) +
-                " was null! Could not find the match.", LogLevel.CRITICAL);
-            return "";
-        }
-
-        finalMessage += "Match " + leagueMatch.MatchId + " has finished\n";
-
-        Dictionary<int, ReportData>? matchReportingTeamIdsWithReportData = leagueMatch.MatchReporting.TeamIdsWithReportData;
+        Dictionary<int, ReportData>? matchReportingTeamIdsWithReportData =
+            interfaceLeagueMatchTuple.Item2.MatchReporting.TeamIdsWithReportData;
 
         finalMessage += "\nPlayers: ";
 

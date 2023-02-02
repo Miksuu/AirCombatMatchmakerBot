@@ -69,6 +69,8 @@ public class LeagueData
 
             if (foundTeam != null)
             {
+                Log.WriteLine("Found team: " + foundTeam.TeamName +
+                    " with id: " + foundTeam.TeamId, LogLevel.DEBUG);
                 return foundTeam;
             }
         }
