@@ -310,8 +310,8 @@ public class MatchReporting
     public (List<ReportData>?, string) GetTeamReportDatasOfTheMatchWithPlayerId(
         InterfaceLeague _interfaceLeague, LeagueMatch _leagueMatch, ulong _playerId)
     {
-        List<Team> foundTeams = new List <Team>();
-        List<ReportData> reportDatas = new List <ReportData>();
+        List<Team> foundTeams = new List<Team>();
+        List<ReportData> reportDatas = new List<ReportData>();
 
         Log.WriteLine("Getting ReportData on match: " + _leagueMatch.MatchId +
             " with: " + _playerId, LogLevel.DEBUG);
@@ -351,11 +351,6 @@ public class MatchReporting
             reportDatas.Add(teamIdsWithReportData.FirstOrDefault(
                 t => t.Key == team.TeamId).Value);
         }
-
-        /*
-        int otherTeamId = _leagueMatch.TeamsInTheMatch.FirstOrDefault(t => t.Key != foundTeam.TeamId).Key;
-        var otherReportData = teamIdsWithReportData.FirstOrDefault(t => t.Key == otherTeamId);
-        */
 
         return (reportDatas, "");
     }

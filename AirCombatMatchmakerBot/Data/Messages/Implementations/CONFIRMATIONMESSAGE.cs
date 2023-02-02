@@ -23,28 +23,43 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
-        string finalMessage = string.Empty;
+        string finalMessage = "Confirmed:\n;";
 
-        /*
-        Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             messageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                messageChannelId).FindInterfaceMessageWithNameInTheChannel(messageName);
+            messageChannelId);
+
+        //Find the channel of the message and cast the interface to to the MATCHCHANNEL class       
+        MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
 
         var matchTuple =
             matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
-        buttonCategoryId, _interfaceMessage.MessageChannelId);
+                messageCategoryId, messageChannelId);
 
         if (matchTuple.Item1 == null || matchTuple.Item2 == null)
         {
             Log.WriteLine(nameof(matchTuple) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(matchTuple.Item3);
+            return matchTuple.Item3;
         }
 
-        var reportDataTupleWithString = matchTuple.Item2.MatchReporting.GetTeamReportDataWithPlayerId(
-            matchTuple.Item1, matchTuple.Item2, componentPlayerId);
+        var matchReportData = matchTuple.Item2.MatchReporting.TeamIdsWithReportData;
+
+        foreach (var teamKvp in matchReportData)
+        {
+            string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
+
+            if (teamKvp.Value.ConfirmedMatch)
+            {
+                checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
+            }
+
+            finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
+        }
 
         finalMessage += "You can either Confirm, Modify or Dispute the result below.";
-        */
-        return message;
+
+        Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
+
+        return finalMessage;
     }
 }
