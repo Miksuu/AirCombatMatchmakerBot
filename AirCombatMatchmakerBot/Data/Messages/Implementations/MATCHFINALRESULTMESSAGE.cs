@@ -107,7 +107,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
                 continue;
             }
 
-            finalMessage += reportDataKvp.Value.TeamName + " commented: " + reportDataKvp.Value.CommentByTheUser.ObjectValue;
+            finalMessage += reportDataKvp.Value.TeamName + " commented: " + reportDataKvp.Value.CommentByTheUser.ObjectValue + "\n";
         }
 
         Log.WriteLine("Returning: " + finalMessage, LogLevel.DEBUG);

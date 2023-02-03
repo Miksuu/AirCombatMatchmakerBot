@@ -69,10 +69,27 @@ public class LeagueMatch
         }
     }
 
+    public CategoryType MatchLeague
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(matchLeague)
+                + ": " + matchLeague, LogLevel.VERBOSE);
+            return matchLeague;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(matchLeague) +
+                matchLeague + " to: " + value, LogLevel.VERBOSE);
+            matchLeague = value;
+        }
+    }
+
     [DataMember] private Dictionary<int, string> teamsInTheMatch { get; set; }
     [DataMember] private int matchId { get; set; }
     [DataMember] private ulong matchChannelId { get; set; }
     [DataMember] private MatchReporting matchReporting { get; set; }
+    [DataMember] private CategoryType matchLeague { get; set; }
 
     public LeagueMatch()
     {
@@ -84,6 +101,7 @@ public class LeagueMatch
     {
         teamsInTheMatch = new Dictionary<int, string>();
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
+        matchLeague = _interfaceLeague.LeagueCategoryName;
 
         // Add the team's name to the dictionary as a value
         foreach (int teamId in _teamsToFormMatchOn)
@@ -172,5 +190,18 @@ public class LeagueMatch
         }
 
         await channel.DeleteAsync();
+
+        int matchIdTemp = matchId;
+
+        LeagueMatch tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(matchChannelId);
+
+        Database.Instance.ArchivedLeagueMatches.Add(tempMatch);
+        Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
+            Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
+
+        _interfaceLeague.LeagueData.Matches.MatchesList.RemoveAll(m => m.matchId == tempMatch.matchId);
+        Log.WriteLine("Removed match " + matchIdTemp + ", count is now: ", LogLevel.DEBUG);
+
+        await SerializationManager.SerializeDB();
     }
 }
