@@ -122,6 +122,8 @@ public class MatchReporting
         string _reportedObjectByThePlayer, TypeOfTheReportingObject _typeOfTheReportingObject)
     {
         string response = string.Empty;
+        bool commentingAfter = false;
+
 
         Log.WriteLine("Processing player's sent " + nameof(ReportObject) + " in league: " +
             _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
@@ -134,7 +136,8 @@ public class MatchReporting
             return Task.FromResult("Match is already done!").Result;
         }
 
-        if (showingConfirmationMessage)
+        // Can receive comments still even though the the confirmation is under way
+        if (showingConfirmationMessage && _typeOfTheReportingObject != TypeOfTheReportingObject.COMMENTBYTHEUSER)
         {
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already in confirmation.", LogLevel.VERBOSE);
@@ -212,58 +215,94 @@ public class MatchReporting
         {
             CalculateFinalMatchResult(_interfaceLeague);
 
-            finalResultForConfirmation = await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
-            responseTuple.Item3, MessageName.MATCHFINALRESULTMESSAGE);
-
-            await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
-                responseTuple.Item3, MessageName.CONFIRMATIONMESSAGE);
-
-            var client = BotReference.GetClientRef();
-            if (client == null)
+            // In case the comment is made after showing the confirmation message
+            if (showingConfirmationMessage && _typeOfTheReportingObject == TypeOfTheReportingObject.COMMENTBYTHEUSER)
             {
-                return Exceptions.BotClientRefNull();
-            }
+                commentingAfter = true;
 
-            // Maybe move this all to a method, useful when trying to delete a message from the interfaces
-            InterfaceChannel interfaceChannel = _interfaceLeague.FindLeaguesInterfaceCategory(
-                ).FindInterfaceChannelWithIdInTheCategory(
-                    _finalMatchResultMessage.MessageChannelId);
-            if (interfaceChannel == null)
-            {
-                Log.WriteLine(nameof(interfaceChannel) + " was null, with: " +
-                    _finalMatchResultMessage.MessageChannelId, LogLevel.CRITICAL);
-                return nameof(interfaceChannel) + " was null";
-            }
+                Log.WriteLine("Posting a comment after the match has been confirmed bys: " + _playerId, LogLevel.DEBUG);
 
-            InterfaceMessage? interfaceMessage =
-                interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.REPORTINGSTATUSMESSAGE);
-            if (interfaceMessage == null)
-            {
-                Log.WriteLine(nameof(interfaceMessage) + " was null, with: " +
-                    MessageName.REPORTINGSTATUSMESSAGE, LogLevel.CRITICAL);
-                return nameof(interfaceMessage) + " was null";
-            }
+                var messageToModifyCommentOn =
+                    responseTuple.Item3.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHFINALRESULTMESSAGE);
 
-            var iMessageChannel = await interfaceChannel.GetMessageChannelById(client);
-            if (iMessageChannel == null)
-            {
-                Log.WriteLine(nameof(iMessageChannel) + " was null!", LogLevel.CRITICAL);
-                return nameof(iMessageChannel) + " was null";
-            }
+                if (messageToModifyCommentOn != null)
+                {
+                    await messageToModifyCommentOn.GenerateAndModifyTheMessage();
 
-            var message = await interfaceMessage.GetMessageById(iMessageChannel);
-            if (message == null)
-            {
-                Log.WriteLine(nameof(message) + " was null!", LogLevel.CRITICAL);
-                return nameof(message) + " was null";
+                    Log.WriteLine("Done modifying the comment", LogLevel.VERBOSE);
+
+                    finalResultForConfirmation = messageToModifyCommentOn.Message;
+
+                    Log.WriteLine("final result for the confirmation is now: " + finalResultForConfirmation, LogLevel.VERBOSE);
+                }
+                // Probably dont need to do anything here
+                else
+                {
+                    Log.WriteLine("Message to modify was null", LogLevel.WARNING);
+                }
             }
-            await message.DeleteAsync();
-            // end of deletion
+            else
+            {
+                Log.WriteLine("Creating new messages from: " + _playerId, LogLevel.DEBUG);
+
+                finalResultForConfirmation = await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
+                    responseTuple.Item3, MessageName.MATCHFINALRESULTMESSAGE);
+
+                await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
+                    responseTuple.Item3, MessageName.CONFIRMATIONMESSAGE);
+
+                var client = BotReference.GetClientRef();
+                if (client == null)
+                {
+                    return Exceptions.BotClientRefNull();
+                }
+
+                // Maybe move this all to a method, useful when trying to delete a message from the interfaces
+                InterfaceChannel interfaceChannel = _interfaceLeague.FindLeaguesInterfaceCategory(
+                    ).FindInterfaceChannelWithIdInTheCategory(
+                        _finalMatchResultMessage.MessageChannelId);
+                if (interfaceChannel == null)
+                {
+                    Log.WriteLine(nameof(interfaceChannel) + " was null, with: " +
+                        _finalMatchResultMessage.MessageChannelId, LogLevel.CRITICAL);
+                    return nameof(interfaceChannel) + " was null";
+                }
+
+                InterfaceMessage? interfaceMessage =
+                    interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.REPORTINGSTATUSMESSAGE);
+                if (interfaceMessage == null)
+                {
+                    Log.WriteLine(nameof(interfaceMessage) + " was null, with: " +
+                        MessageName.REPORTINGSTATUSMESSAGE, LogLevel.CRITICAL);
+                    return nameof(interfaceMessage) + " was null";
+                }
+
+                var iMessageChannel = await interfaceChannel.GetMessageChannelById(client);
+                if (iMessageChannel == null)
+                {
+                    Log.WriteLine(nameof(iMessageChannel) + " was null!", LogLevel.CRITICAL);
+                    return nameof(iMessageChannel) + " was null";
+                }
+
+                var message = await interfaceMessage.GetMessageById(iMessageChannel);
+                if (message == null)
+                {
+                    Log.WriteLine(nameof(message) + " was null!", LogLevel.CRITICAL);
+                    return nameof(message) + " was null";
+                }
+                await message.DeleteAsync();
+                // end of deletion
+            }
         }
 
-        await _finalMatchResultMessage.GenerateAndModifyTheMessage();
+        if (!commentingAfter)
+        {
+            await _finalMatchResultMessage.GenerateAndModifyTheMessage();
+        }
 
         await SerializationManager.SerializeDB();
+
+        Log.WriteLine("returning response: " + response, LogLevel.VERBOSE);
 
         return Task.FromResult(response).Result;
     }

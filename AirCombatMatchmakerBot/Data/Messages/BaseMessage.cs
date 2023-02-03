@@ -202,7 +202,8 @@ public abstract class BaseMessage : InterfaceMessage
         message = _newContent;
 
         Log.WriteLine("Modifying a message on channel id: " + messageChannelId +
-            " that has msg id: " + messageId + " with content: " + message, LogLevel.DEBUG);
+            " that has msg id: " + messageId + " with content: " + message +
+            " with new content:" + _newContent, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
 
@@ -212,7 +213,11 @@ public abstract class BaseMessage : InterfaceMessage
             return;
         }
 
+        Log.WriteLine("Found guild", LogLevel.VERBOSE);
+
         var channel = guild.GetTextChannel(messageChannelId) as ITextChannel;
+
+        Log.WriteLine("Found channel: " + channel.Id, LogLevel.VERBOSE);
 
         await channel.ModifyMessageAsync(messageId, m => m.Content = message);
 

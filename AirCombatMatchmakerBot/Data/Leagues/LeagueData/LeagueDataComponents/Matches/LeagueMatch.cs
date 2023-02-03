@@ -200,7 +200,7 @@ public class LeagueMatch
             Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
 
         _interfaceLeague.LeagueData.Matches.MatchesList.RemoveAll(m => m.matchId == tempMatch.matchId);
-        Log.WriteLine("Removed match " + matchIdTemp + ", count is now: ", LogLevel.DEBUG);
+        Log.WriteLine("Removed match " + matchIdTemp, LogLevel.DEBUG); 
 
         await SerializationManager.SerializeDB();
     }
