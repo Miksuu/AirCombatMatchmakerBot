@@ -28,4 +28,7 @@ public enum MessageName
 
     [EnumMember(Value = "MATCH FINAL RESULT MESSAGE")]
     MATCHFINALRESULTMESSAGE = 7,
+
+    [EnumMember(Value = "LEAGUE STATUS MESSAGE")]
+    LEAGUESTATUSMESSAGE = 8,
 }

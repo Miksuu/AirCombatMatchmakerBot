@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
 using System.Threading.Channels;
 using System;
+using Discord.Rest;
 
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
@@ -87,14 +88,14 @@ public abstract class BaseLeague : InterfaceLeague
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(discordleagueReferences) + ": " + discordleagueReferences, LogLevel.VERBOSE);
-            return discordleagueReferences;
+            Log.WriteLine("Getting " + nameof(discordLeagueReferences) + ": " + discordLeagueReferences, LogLevel.VERBOSE);
+            return discordLeagueReferences;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(discordleagueReferences) + discordleagueReferences
+            Log.WriteLine("Setting " + nameof(discordLeagueReferences) + discordLeagueReferences
                 + " to: " + value, LogLevel.VERBOSE);
-            discordleagueReferences = value;
+            discordLeagueReferences = value;
         }
     }
 
@@ -104,7 +105,7 @@ public abstract class BaseLeague : InterfaceLeague
     [DataMember] protected int leaguePlayerCountPerTeam;
     [DataMember] protected List<UnitName> leagueUnits = new List<UnitName>();
     [DataMember] protected LeagueData leagueData = new LeagueData();
-    [DataMember] protected DiscordLeagueReferences discordleagueReferences = new DiscordLeagueReferences();
+    [DataMember] protected DiscordLeagueReferences discordLeagueReferences = new DiscordLeagueReferences();
 
     public BaseLeague()
     {
@@ -205,7 +206,7 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Found channel: " + channel.Value.ChannelName, LogLevel.DEBUG);
 
         InterfaceMessage interfaceMessage = channel.Value.InterfaceMessagesWithIds.FirstOrDefault(
-            x => x.Key == discordleagueReferences.LeagueCategoryId.ToString()).Value;
+            x => x.Key == discordLeagueReferences.LeagueCategoryId.ToString()).Value;
 
         Log.WriteLine("Found messageId: " + interfaceMessage.MessageId, LogLevel.VERBOSE);
 
@@ -228,11 +229,11 @@ public abstract class BaseLeague : InterfaceLeague
     public InterfaceCategory? FindLeaguesInterfaceCategory()
     {
         Log.WriteLine("Finding interfaceCategory in: " + leagueCategoryName +
-            " with id: " + discordleagueReferences.LeagueCategoryId, LogLevel.VERBOSE);
+            " with id: " + discordLeagueReferences.LeagueCategoryId, LogLevel.VERBOSE);
 
         InterfaceCategory interfaceCategory = 
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                discordleagueReferences.LeagueCategoryId).Value;
+                discordLeagueReferences.LeagueCategoryId).Value;
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
@@ -248,7 +249,7 @@ public abstract class BaseLeague : InterfaceLeague
     {
         InterfaceCategory leagueCategory =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                discordleagueReferences.LeagueCategoryId).Value;
+                discordLeagueReferences.LeagueCategoryId).Value;
 
         InterfaceChannel matchReportsChannelInterface =
             leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
@@ -262,5 +263,25 @@ public abstract class BaseLeague : InterfaceLeague
         }
 
         await textChannel.SendMessageAsync(_finalResult);
+    }
+
+    public void UpdateLeagueLeaderboard()
+    {
+        Log.WriteLine("Updating leaderboard on: " + leagueCategoryName, LogLevel.VERBOSE);
+
+        var leagueStatusMessage = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            discordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
+                ChannelType.LEAGUESTATUS).FindInterfaceMessageWithNameInTheChannel(
+                    MessageName.LEAGUESTATUSMESSAGE);
+
+        if (leagueStatusMessage == null)
+        {
+            Log.WriteLine(nameof(leagueStatusMessage) + " was null!", LogLevel.ERROR);
+            return;
+        }
+
+        leagueStatusMessage.GenerateAndModifyTheMessage();
+
+        Log.WriteLine("Done updating leaderboard on: " + leagueCategoryName, LogLevel.VERBOSE);
     }
 }

@@ -85,7 +85,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
                 return nameof(interfaceLeague) + " was null!";
             }
 
-            matchTuple.Item2.FinishMatch(interfaceLeague);
+            matchTuple.Item2.FinishTheMatch(interfaceLeague);
         }
 
         finalMessage += "You can either Confirm, Modify or Dispute the result below.";

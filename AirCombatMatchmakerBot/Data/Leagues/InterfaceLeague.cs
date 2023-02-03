@@ -23,4 +23,5 @@ public interface InterfaceLeague
     public string GenerateALeagueChallengeButtonMessage();
     public InterfaceCategory FindLeaguesInterfaceCategory();
     public void PostMatchReport(SocketGuild _guild, string _finalResult);
+    public void UpdateLeagueLeaderboard();
 }

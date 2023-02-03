@@ -119,6 +119,8 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 " tried to join a league before registering", LogLevel.WARNING);
         }
 
+        interfaceLeague.UpdateLeagueLeaderboard();
+
         return responseMsg;
     }
 }

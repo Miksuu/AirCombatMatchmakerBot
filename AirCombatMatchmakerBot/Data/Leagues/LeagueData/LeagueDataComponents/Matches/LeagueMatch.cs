@@ -159,7 +159,7 @@ public class LeagueMatch
         return allowedUserIds;
     }
 
-    public async void FinishMatch(InterfaceLeague _interfaceLeague)
+    public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
     {
         matchReporting.MatchDone = true;
 
@@ -212,7 +212,9 @@ public class LeagueMatch
             Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
 
         _interfaceLeague.LeagueData.Matches.MatchesList.RemoveAll(m => m.matchId == tempMatch.matchId);
-        Log.WriteLine("Removed match " + matchIdTemp, LogLevel.DEBUG); 
+        Log.WriteLine("Removed match " + matchIdTemp, LogLevel.DEBUG);
+
+        _interfaceLeague.UpdateLeagueLeaderboard();
 
         await SerializationManager.SerializeDB();
     }

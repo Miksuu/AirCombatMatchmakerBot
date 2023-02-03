@@ -10,6 +10,11 @@ public class LEAGUESTATUS : BaseChannel
     public LEAGUESTATUS()
     {
         channelType = ChannelType.LEAGUESTATUS;
+
+        channelMessages = new List<MessageName>
+        {
+            MessageName.LEAGUESTATUSMESSAGE,
+        };
     }
 
     public override List<Overwrite> GetGuildPermissions(
@@ -19,10 +24,4 @@ public class LEAGUESTATUS : BaseChannel
         {
         };
     }
-
-    /*
-    public Task PostChannelMessages()
-    {
-        return Task.CompletedTask;
-    }*/
 }

@@ -317,8 +317,17 @@ public class MatchReporting
     private Task<(string, bool, InterfaceChannel?)> CheckIfMatchCanBeSentToConfirmation(
         InterfaceMessage _interfaceMessage)
     {
-        bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
         InterfaceChannel? interfaceChannel = null;
+        bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
+
+        interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                _interfaceMessage.MessageChannelId);
+        if (interfaceChannel == null)
+        {
+            Log.WriteLine("channel was null!", LogLevel.CRITICAL);
+            return Task.FromResult(("Channel doesn't exist!", false, interfaceChannel));
+        }
 
         Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
             " showing: " + showingConfirmationMessage, LogLevel.DEBUG);
@@ -326,15 +335,6 @@ public class MatchReporting
         if (confirmationMessageCanBeShown) //&& !showingConfirmationMessage)
         {
             showingConfirmationMessage = true;
-
-            interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                    _interfaceMessage.MessageChannelId);
-            if (interfaceChannel == null)
-            {
-                Log.WriteLine("channel was null!", LogLevel.CRITICAL);
-                return Task.FromResult(("Channel doesn't exist!", false, interfaceChannel));
-            }
         }
 
         return Task.FromResult(("", confirmationMessageCanBeShown, interfaceChannel));
