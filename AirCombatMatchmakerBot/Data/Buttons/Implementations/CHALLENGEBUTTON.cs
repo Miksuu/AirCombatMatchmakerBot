@@ -65,20 +65,19 @@ public class CHALLENGEBUTTON : BaseButton
             return "Error adding to the queue! could not find the league.";
         }
 
-        // Merge the message and the current challenge status in to one.
-        string postedChallengeMessage =
-            dbLeagueInstance.LeagueData.ChallengeStatus.PostChallengeToThisLeague(
-                _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam,
-                dbLeagueInstance).Result;
 
-        if (postedChallengeMessage == "alreadyInQueue")
+        string response = await dbLeagueInstance.LeagueData.ChallengeStatus.PostChallengeToThisLeague(
+            _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam,
+            dbLeagueInstance);
+
+        if (response == "alreadyInQueue")
         {
             return "You are already in the queue!";
         }
 
-        string newMessage = _interfaceMessage.Message + postedChallengeMessage;
+        //string newMessage = _interfaceMessage.Message + postedChallengeMessage;
 
-        await _interfaceMessage.ModifyMessage(newMessage);
+        await _interfaceMessage.GenerateAndModifyTheMessage();
 
         Log.WriteLine("After modifying message", LogLevel.VERBOSE);
 

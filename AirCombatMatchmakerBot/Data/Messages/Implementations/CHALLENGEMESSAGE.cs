@@ -53,6 +53,25 @@ public class CHALLENGEMESSAGE : BaseMessage
                     string challengeMessage = ". \n" +
                         leagueName + " challenge. Players In The Queue: \n";
 
+                    var leagueCategory = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
+                    if (leagueCategory == null)
+                    {
+                        Log.WriteLine(nameof(leagueCategory) + " was null!", LogLevel.ERROR);
+                        return "";
+                    }
+
+                    foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
+                    {
+                        var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
+                        if (team == null)
+                        {
+                            Log.WriteLine(nameof(team) + " was null!", LogLevel.ERROR);
+                            return "";
+                        }
+
+                        challengeMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
+                    }
+
                     Log.WriteLine("Challenge message generated: " + challengeMessage, LogLevel.VERBOSE);
 
                     return challengeMessage;
