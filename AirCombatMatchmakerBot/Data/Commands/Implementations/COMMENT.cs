@@ -43,12 +43,18 @@ public class COMMENT : BaseCommand
             return "That's not your match to comment on!";
         }
 
-        InterfaceMessage reportingStatusMessage =
+        InterfaceMessage? reportingStatusMessage =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).
                     Value.FindInterfaceChannelWithIdInTheCategory(
                         commandChannelId).FindInterfaceMessageWithNameInTheChannel(
                             MessageName.REPORTINGSTATUSMESSAGE);
+
+        if (reportingStatusMessage == null)
+        {
+            Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
+            return nameof(reportingStatusMessage) + " was null!";
+        }
 
         await leagueInterfaceWithTheMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
                  leagueInterfaceWithTheMatch.Item1,

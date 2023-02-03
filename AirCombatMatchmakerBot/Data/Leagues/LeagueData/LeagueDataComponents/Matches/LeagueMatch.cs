@@ -176,6 +176,12 @@ public class LeagueMatch
             return;
         }
 
+        if (matchReporting.FinalResultForConfirmation == null)
+        {
+            Log.WriteLine("Final result for the confirmation was null!", LogLevel.CRITICAL);
+            return;
+        }
+
         _interfaceLeague.PostMatchReport(guild, matchReporting.FinalResultForConfirmation);
 
         // Perhaps search within category for a faster operation
@@ -193,7 +199,13 @@ public class LeagueMatch
 
         int matchIdTemp = matchId;
 
-        LeagueMatch tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(matchChannelId);
+        LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(matchChannelId);
+
+        if (tempMatch == null)
+        {
+            Log.WriteLine(nameof(tempMatch) + " was null!", LogLevel.ERROR);
+            return;
+        }
 
         Database.Instance.ArchivedLeagueMatches.Add(tempMatch);
         Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +

@@ -21,11 +21,16 @@ public class REPORTSCOREBUTTON : BaseButton
     public override Task<string> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        InterfaceMessage reportingStatusMessage =
+        InterfaceMessage? reportingStatusMessage =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                     _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
                         MessageName.REPORTINGSTATUSMESSAGE);
+        if (reportingStatusMessage == null)
+        {
+            Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
+            return Task.FromResult(nameof(reportingStatusMessage)+ " was null!");
+        }
 
         string[] splitStrings = buttonCustomId.Split('_');
 

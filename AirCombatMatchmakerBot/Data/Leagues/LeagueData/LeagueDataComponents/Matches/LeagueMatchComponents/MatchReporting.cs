@@ -209,7 +209,14 @@ public class MatchReporting
         // Split from this to different method incase needs to be recalculated for the final result
 
         var responseTuple = CheckIfMatchCanBeSentToConfirmation(_finalMatchResultMessage).Result;
+        if (responseTuple.Item3 == null)
+        {
+            Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
+            return Task.FromResult(response).Result;
+        }
+
         response = responseTuple.Item1;
+        InterfaceChannel interfaceChannel = responseTuple.Item3;
 
         if (responseTuple.Item2)
         {
@@ -223,7 +230,7 @@ public class MatchReporting
                 Log.WriteLine("Posting a comment after the match has been confirmed bys: " + _playerId, LogLevel.DEBUG);
 
                 var messageToModifyCommentOn =
-                    responseTuple.Item3.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHFINALRESULTMESSAGE);
+                    interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHFINALRESULTMESSAGE);
 
                 if (messageToModifyCommentOn != null)
                 {
@@ -245,11 +252,11 @@ public class MatchReporting
             {
                 Log.WriteLine("Creating new messages from: " + _playerId, LogLevel.DEBUG);
 
-                finalResultForConfirmation = await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
-                    responseTuple.Item3, MessageName.MATCHFINALRESULTMESSAGE);
+                finalResultForConfirmation = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                    interfaceChannel, MessageName.MATCHFINALRESULTMESSAGE);
 
-                await responseTuple.Item3.CreateAMessageForTheChannelFromMessageName(
-                    responseTuple.Item3, MessageName.CONFIRMATIONMESSAGE);
+                await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                    interfaceChannel, MessageName.CONFIRMATIONMESSAGE);
 
                 var client = BotReference.GetClientRef();
                 if (client == null)
@@ -258,18 +265,18 @@ public class MatchReporting
                 }
 
                 // Maybe move this all to a method, useful when trying to delete a message from the interfaces
-                InterfaceChannel interfaceChannel = _interfaceLeague.FindLeaguesInterfaceCategory(
+                InterfaceChannel interfaceChannelToDeleteTheMessageIn = _interfaceLeague.FindLeaguesInterfaceCategory(
                     ).FindInterfaceChannelWithIdInTheCategory(
                         _finalMatchResultMessage.MessageChannelId);
-                if (interfaceChannel == null)
+                if (interfaceChannelToDeleteTheMessageIn == null)
                 {
-                    Log.WriteLine(nameof(interfaceChannel) + " was null, with: " +
+                    Log.WriteLine(nameof(interfaceChannelToDeleteTheMessageIn) + " was null, with: " +
                         _finalMatchResultMessage.MessageChannelId, LogLevel.CRITICAL);
-                    return nameof(interfaceChannel) + " was null";
+                    return nameof(interfaceChannelToDeleteTheMessageIn) + " was null";
                 }
 
                 InterfaceMessage? interfaceMessage =
-                    interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.REPORTINGSTATUSMESSAGE);
+                    interfaceChannelToDeleteTheMessageIn.FindInterfaceMessageWithNameInTheChannel(MessageName.REPORTINGSTATUSMESSAGE);
                 if (interfaceMessage == null)
                 {
                     Log.WriteLine(nameof(interfaceMessage) + " was null, with: " +
@@ -277,7 +284,7 @@ public class MatchReporting
                     return nameof(interfaceMessage) + " was null";
                 }
 
-                var iMessageChannel = await interfaceChannel.GetMessageChannelById(client);
+                var iMessageChannel = await interfaceChannelToDeleteTheMessageIn.GetMessageChannelById(client);
                 if (iMessageChannel == null)
                 {
                     Log.WriteLine(nameof(iMessageChannel) + " was null!", LogLevel.CRITICAL);

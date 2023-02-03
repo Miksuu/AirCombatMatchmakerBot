@@ -162,12 +162,18 @@ public class BotRuntimeManager
                 return;
             }
 
-            InterfaceMessage reportingStatusMessage =
+            InterfaceMessage? reportingStatusMessage =
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                    interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).Value.
                        FindInterfaceChannelWithIdInTheCategory(
                             _socketMessage.Channel.Id).FindInterfaceMessageWithNameInTheChannel(
                                 MessageName.REPORTINGSTATUSMESSAGE);
+
+            if (reportingStatusMessage == null)
+            {
+                Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
+                return;
+            }
 
             // Process the tacview file, and delete the original message by the user
             await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(

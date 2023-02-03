@@ -87,8 +87,9 @@ public class LeagueData
 
         Team? foundTeam = Teams.TeamsList.FirstOrDefault(t => t.TeamId == _teamId && t.TeamActive);
 
-        if (foundTeam != null)
+        if (foundTeam == null)
         {
+            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
             return foundTeam;
         }
 

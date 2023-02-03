@@ -136,6 +136,13 @@ public static class CommandHandler
         Log.WriteLine("FINAL RESPONSE: " + response, logLevel); */
 
         InterfaceCommand interfaceCommand = GetCommandInstance(_command.CommandName.ToUpper().ToString());
+
+        if (firstOptionString == null)
+        {
+            Log.WriteLine("firstOptionString was null! ", LogLevel.ERROR);
+            return;
+        }
+
         response = await interfaceCommand.ActivateCommandFunction(_command, firstOptionString);
 
         await SerializationManager.SerializeDB();

@@ -83,11 +83,17 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
             Log.WriteLine("Both teams are done with the reporting on match: " + matchTuple.Item2.MatchId, LogLevel.DEBUG);
         }
 
-        InterfaceMessage confirmationMessage =
+        InterfaceMessage? confirmationMessage =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                     _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
                         MessageName.CONFIRMATIONMESSAGE);
+
+        if (confirmationMessage == null)
+        {
+            Log.WriteLine(nameof(confirmationMessage) + " was null!", LogLevel.CRITICAL);
+            return Task.FromResult(nameof(confirmationMessage) + " was null!");
+        }
 
         Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " + confirmationMessage.Message, LogLevel.DEBUG);
 
