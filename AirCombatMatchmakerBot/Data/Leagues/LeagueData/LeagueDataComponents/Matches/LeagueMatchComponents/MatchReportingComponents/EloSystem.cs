@@ -67,30 +67,41 @@ public class EloSystem
     }
 
     public void CalculateFinalEloForBothTeams(
-        InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch, Dictionary<int, ReportData> _teamIdsWithReportData)
+        InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch,
+        Dictionary<int, ReportData> _teamIdsWithReportData, int _overridenTeamIdToLose = 0)
     {
-        Team? databaseTeamOne = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[0].TeamId);
-
-        if (databaseTeamOne == null)
+        for (int t = 0; t < _teamsInTheMatch.Length; ++t)
         {
-            Log.WriteLine(nameof(databaseTeamOne) + " was null!", LogLevel.CRITICAL);
-            return;
-        }
+            Team? databaseTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[0].TeamId);
+            if (databaseTeam == null)
+            {
+                Log.WriteLine(nameof(databaseTeam) + " was null!", LogLevel.CRITICAL);
+                return;
+            }
 
-        Team? databaseTeamTwo = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[1].TeamId);
+            if (_overridenTeamIdToLose != 0 && databaseTeam.TeamId != _overridenTeamIdToLose)
+            {
+                _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta =
+                    MathF.Abs(_teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta);
 
-        if (databaseTeamTwo == null)
-        {
-            Log.WriteLine(nameof(databaseTeamTwo) + " was null!", LogLevel.CRITICAL);
-            return;
-        }
+                Log.WriteLine("Detected that team: " + databaseTeam.TeamName +
+                    " with ID " + databaseTeam.TeamId + " should win this match and now it's elodelta is: " +
+                _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta, LogLevel.DEBUG);
+            }
+            else if (_overridenTeamIdToLose != 0 && databaseTeam.TeamId == _overridenTeamIdToLose)
+            {
+                _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta =
+                    -MathF.Abs(_teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta);
 
-        Log.WriteLine("SR's before: " + databaseTeamOne.SkillRating + " | " + databaseTeamOne.SkillRating, LogLevel.VERBOSE);
+                Log.WriteLine("Detected that team: " + databaseTeam.TeamName +
+                    " with ID " + databaseTeam.TeamId + " should lose this match and now it's elodelta is: " +
+                    _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta, LogLevel.DEBUG);
+            }
 
-        databaseTeamOne.SkillRating += _teamIdsWithReportData.ElementAt(0).Value.FinalEloDelta;
-        databaseTeamTwo.SkillRating += _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta;
-
-        Log.WriteLine("SR's after: " + databaseTeamOne.SkillRating + " | " + databaseTeamOne.SkillRating, LogLevel.VERBOSE);
+            Log.WriteLine(databaseTeam.TeamId + " SR before: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
+            databaseTeam.SkillRating += _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta;
+            Log.WriteLine(databaseTeam.TeamId + " SR after: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
+        }        
     }
 
     private double ExpectationToWin(float _playerOneRating, float _playerTwoRating)

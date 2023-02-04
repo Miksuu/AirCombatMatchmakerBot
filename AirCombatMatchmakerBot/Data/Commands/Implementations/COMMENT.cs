@@ -8,11 +8,11 @@ public class COMMENT : BaseCommand
     {
         commandName = CommandName.COMMENT;
         commandDescription = "Posts a comment about your match.";
-
         commandOption = new("comment", "Enter your comment here.");
+        isAdminCommand = false;
     }
 
-    public override async Task<string> ActivateCommandFunction(SocketSlashCommand _command, string _firstOptionString)
+    protected override async Task<string> ActivateCommandFunction(SocketSlashCommand _command, string _firstOptionString)
     {
         ulong commandChannelId = _command.Channel.Id;
         ulong commandPlayerId = _command.User.Id;

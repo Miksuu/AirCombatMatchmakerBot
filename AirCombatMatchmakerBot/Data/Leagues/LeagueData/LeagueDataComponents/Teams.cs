@@ -125,7 +125,6 @@ public class Teams
         return new Team();
     }
 
-
     public Team FindTeamById(int _leagueTeamSize, int _id)
     {
         Log.WriteLine("Finding team by id: " + _id, LogLevel.VERBOSE);

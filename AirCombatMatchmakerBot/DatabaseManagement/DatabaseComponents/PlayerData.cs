@@ -162,39 +162,32 @@ public class PlayerData
         await SerializationManager.SerializeDB();
     }
 
-    public async Task<bool> DeletePlayerProfile(string _dataValue)
+    public Task DeletePlayerProfile(ulong _playerDiscordId)
     {
-        ulong userId = UInt64.Parse(_dataValue);
-
-        Log.WriteLine("Starting to remove the player profile: " + userId, LogLevel.VERBOSE);
-        if (!CheckIfUserHasPlayerProfile(userId))
+        Log.WriteLine("Starting to remove the player profile: " + _playerDiscordId, LogLevel.VERBOSE);
+        if (!CheckIfUserHasPlayerProfile(_playerDiscordId))
         {
-            Log.WriteLine("Did not find ID: " + userId + "in the local database.", LogLevel.DEBUG);
-            return false;
+            Log.WriteLine("Did not find ID: " + _playerDiscordId + "in the local database.", LogLevel.DEBUG);
+            return Task.CompletedTask;
         }
 
-        Log.WriteLine("Deleting a player profile " + userId, LogLevel.DEBUG);
-        Database.Instance.PlayerData.PlayerIDs.Remove(userId);
+        Log.WriteLine("Deleting a player profile " + _playerDiscordId, LogLevel.DEBUG);
+        Database.Instance.PlayerData.PlayerIDs.Remove(_playerDiscordId);
 
-        var user = GetSocketGuildUserById(userId);
+        var user = GetSocketGuildUserById(_playerDiscordId);
 
         // If the user is in the server
         if (user == null)
         {
-            Log.WriteLine("User with id: " + userId + " was null!!" +
+            Log.WriteLine("User with id: " + _playerDiscordId + " was null!!" +
                 " Was not found in the server?", LogLevel.DEBUG);
-            return false;
+            return Task.CompletedTask;
         }
 
         Log.WriteLine("User found in the server", LogLevel.VERBOSE);
 
-        // Remove user's access (back to the registration...)
-        await RoleManager.RevokeUserAccess(userId, "Member");
+        Log.WriteLine("Done removing the player profile: " + _playerDiscordId, LogLevel.DEBUG);
 
-
-        Log.WriteLine("Done removing the player profile: " + userId, LogLevel.DEBUG);
-
-        return true;
+        return Task.CompletedTask;
     }
-
 }

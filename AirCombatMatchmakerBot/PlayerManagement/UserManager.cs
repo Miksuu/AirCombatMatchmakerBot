@@ -45,7 +45,7 @@ public static class UserManager
 
         Database.Instance.Leagues.HandleSettingTeamsInactiveThatUserWasIn(_userId);
 
-        Database.Instance.CachedUsers.RemoveUserFromTheCachedList(_userName, _userId);
+        Database.Instance.CachedUsers.RemoveUserFromTheCachedList(_userId);
 
         return Task.CompletedTask;
     }

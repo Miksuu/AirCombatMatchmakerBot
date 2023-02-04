@@ -41,21 +41,19 @@ public class CachedUsers
         }
     }
 
-    public async void RemoveUserFromTheCachedList(string _userName, ulong _userId)
+    public void RemoveUserFromTheCachedList(ulong _userId)
     {
-        Log.WriteLine("Removing " + _userName + "(" + _userId + ")" + " from the cache list", LogLevel.VERBOSE);
+        Log.WriteLine("Removing " + _userId + " from the cache list", LogLevel.VERBOSE);
 
         if (!CachedUserIDs.Contains(_userId))
         {
-            Log.WriteLine("User " + _userName + " is not present on the list!", LogLevel.WARNING);
+            Log.WriteLine("User " + _userId + " is not present on the list!", LogLevel.WARNING);
             return;
         }
 
         CachedUserIDs.Remove(_userId);
 
-        Log.WriteLine("Removed " + _userName + " from the cached users list.", LogLevel.DEBUG);
-
-        await SerializationManager.SerializeDB();
+        Log.WriteLine("Removed " + _userId + " from the cached users list.", LogLevel.DEBUG);
     }
 
 }

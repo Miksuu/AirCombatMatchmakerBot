@@ -159,14 +159,15 @@ public class LeagueMatch
         return allowedUserIds;
     }
 
-    public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
+    public async void FinishTheMatch(InterfaceLeague _interfaceLeague,
+        int _overridenTeamIdToLose = 0)
     {
         matchReporting.MatchDone = true;
 
         Log.WriteLine("Finishing match: " + matchId, LogLevel.DEBUG);
         matchReporting.EloSystem.CalculateFinalEloForBothTeams(
             _interfaceLeague, matchReporting.FindTeamsInTheMatch(_interfaceLeague),
-            matchReporting.TeamIdsWithReportData);
+            matchReporting.TeamIdsWithReportData, _overridenTeamIdToLose);
 
         var guild = BotReference.GetGuildRef();
 
