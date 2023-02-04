@@ -184,6 +184,8 @@ public class LeagueMatch
 
         _interfaceLeague.PostMatchReport(guild, matchReporting.FinalResultForConfirmation);
 
+        LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(matchChannelId);
+
         // Perhaps search within category for a faster operation
         var channel = guild.Channels.FirstOrDefault(
             c => c.Id == matchChannelId &&
@@ -197,15 +199,16 @@ public class LeagueMatch
 
         await channel.DeleteAsync();
 
-        int matchIdTemp = matchId;
-
-        LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(matchChannelId);
-
         if (tempMatch == null)
         {
             Log.WriteLine(nameof(tempMatch) + " was null!", LogLevel.ERROR);
             return;
         }
+
+        Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.InterfaceChannels.Remove(matchChannelId);
+
+        int matchIdTemp = matchId;
 
         Database.Instance.ArchivedLeagueMatches.Add(tempMatch);
         Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
