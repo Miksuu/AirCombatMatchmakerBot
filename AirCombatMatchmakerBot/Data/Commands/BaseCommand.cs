@@ -104,8 +104,14 @@ public abstract class BaseCommand : InterfaceCommand
             commandOption.OptionName, ApplicationCommandOptionType.String,
             commandOption.OptionDescription, isRequired: true);
 
+        Log.WriteLine("Starting to build a guild command: " + commandName, LogLevel.DEBUG);
+
+        var builtCommand = guildCommand.Build();
+
+        Log.WriteLine("Done building a guild command: " + commandName, LogLevel.DEBUG);
+
         await _client.Rest.CreateGuildCommand(
-            guildCommand.Build(), BotReference.GetGuildID());
+            builtCommand, BotReference.GetGuildID());
 
         Log.WriteLine("Done creating a command with option: " + guildCommand.Name, LogLevel.DEBUG);
     }

@@ -84,7 +84,7 @@ public class Database
 
                     await challengeMessage.GenerateAndModifyTheMessage();
 
-                    interfaceLeague.LeagueData.Teams.TeamsList.Remove(team);
+                    interfaceLeague.LeagueData.Teams.TeamsList.RemoveAll(t => t.TeamId == team.TeamId);
                     Log.WriteLine("Found and removed" + _playerDiscordId + " in team: " + team.TeamName +
                         " with id: " + team.TeamId, LogLevel.DEBUG);
                 }

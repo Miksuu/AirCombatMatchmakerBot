@@ -78,6 +78,8 @@ public class BotRuntimeManager
                 //client.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
 
                 await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
+
+                await CommandHandler.InstallCommandsAsync();
             }
             else
             {
@@ -187,9 +189,6 @@ public class BotRuntimeManager
 
             return;
         };
-
-        // Listens for the commandService
-        await CommandHandler.InstallCommandsAsync();
 
         // Block this task until the program is closed.
         await Task.Delay(-1);

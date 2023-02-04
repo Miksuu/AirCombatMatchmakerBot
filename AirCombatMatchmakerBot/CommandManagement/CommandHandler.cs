@@ -15,7 +15,7 @@ public static class CommandHandler
             return Task.CompletedTask;
         }
 
-        client.Ready += PrepareCommands;
+        PrepareCommands();
 
         // Listens for command usage
         client.SlashCommandExecuted += SlashCommandHandler;
@@ -153,7 +153,7 @@ public static class CommandHandler
         Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
     }
 
-    public static Task PrepareCommands()
+    public static async Task PrepareCommands()
     {
         Log.WriteLine("Starting to prepare the commands.", LogLevel.VERBOSE);
 
@@ -165,7 +165,7 @@ public static class CommandHandler
         if (client == null)
         {
             Exceptions.BotClientRefNull();
-            return Task.CompletedTask;
+            return;
         }
 
         foreach (CommandName commandName in commandEnumValues)
@@ -178,11 +178,11 @@ public static class CommandHandler
             {
                 Log.WriteLine(nameof(interfaceCommand).ToString() +
                     " was null!", LogLevel.CRITICAL);
-                return Task.CompletedTask;
+                return;
             }
 
             // For commands without option, need to implement it with null check
-            interfaceCommand.AddNewCommandWithOption(client);
+            await interfaceCommand.AddNewCommandWithOption(client);
         }
 
         /*
@@ -204,7 +204,7 @@ public static class CommandHandler
         */
         Log.WriteLine("Done preparing the commands.", LogLevel.VERBOSE);
 
-        return Task.CompletedTask;
+        return;
     }
 
     public static InterfaceCommand GetCommandInstance(string _commandName)

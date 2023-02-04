@@ -41,7 +41,7 @@ public class CommandOption
 
     public CommandOption(string _optionName, string _optionDescription)
     {
-        optionName = _optionName;
+        optionName = _optionName.ToLower();
         optionDescription = _optionDescription;
     }
 }

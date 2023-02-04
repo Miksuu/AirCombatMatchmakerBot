@@ -8,7 +8,7 @@ public class REMOVEPLAYER : BaseCommand
     {
         commandName = CommandName.REMOVEPLAYER;
         commandDescription = "Removes a player from the database, resolves all the matches";
-        commandOption = new("playerUID", "Enter the player discord ID here");
+        commandOption = new("playeruid", "Enter playerUID here");
         isAdminCommand = true;
     }
 
