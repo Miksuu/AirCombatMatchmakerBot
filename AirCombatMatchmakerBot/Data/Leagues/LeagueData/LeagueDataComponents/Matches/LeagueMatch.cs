@@ -207,6 +207,7 @@ public class LeagueMatch
 
         Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.InterfaceChannels.Remove(matchChannelId);
+        Database.Instance.Categories.MatchChannelsIdWithCategoryId.Remove(matchChannelId);
 
         int matchIdTemp = matchId;
 
