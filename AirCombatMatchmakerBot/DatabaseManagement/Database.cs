@@ -89,14 +89,20 @@ public class Database
                         " with id: " + team.TeamId, LogLevel.DEBUG);
                 }
             }
-
-            
         }
 
-
-        /*
         // Remove user's access (back to the registration...)
-        await RoleManager.RevokeUserAccess(_playerDiscordId, "Member"); */
+        await RoleManager.RevokeUserAccess(_playerDiscordId, "Member");
+
+        foreach (InterfaceLeague interfaceLeague in Database.Instance.Leagues.StoredLeagues)
+        {
+            if (interfaceLeague.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
+                interfaceLeague.LeaguePlayerCountPerTeam, _playerDiscordId))
+            {
+                await RoleManager.RevokeUserAccess(_playerDiscordId, EnumExtensions.GetEnumMemberAttrValue(
+                    interfaceLeague.LeagueCategoryName));
+            } 
+        }
 
         await SerializationManager.SerializeDB();
     }
