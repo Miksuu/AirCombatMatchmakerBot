@@ -65,16 +65,20 @@ public class Database
                             Log.WriteLine("Match: " + match.MatchId + " contains: " + team.TeamId +
                                 " which has player: " + _playerDiscordId, LogLevel.DEBUG);
 
-                            match.FinishTheMatch(interfaceLeague, team.TeamId);
+                            match.MatchReporting.EloSystem.CalculateAndSaveFinalEloDeltaForMatchForfeit(
+                                match.MatchReporting.FindTeamsInTheMatch(interfaceLeague),
+                                match.MatchReporting.TeamIdsWithReportData, team.TeamId);
+                            match.FinishTheMatch(interfaceLeague, true);
                         }
                     }
 
                     // Removes from the queue and updates the message
                     interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Remove(team.TeamId);
                     var challengeMessage = Categories.FindCreatedCategoryWithChannelKvpWithId(
-                        interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
-                            ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
-                                MessageName.CHALLENGEMESSAGE);
+                        interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.
+                            FindInterfaceChannelWithNameInTheCategory(
+                                ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
+                                    MessageName.CHALLENGEMESSAGE);
 
                     if (challengeMessage == null)
                     {
@@ -89,8 +93,11 @@ public class Database
                         " with id: " + team.TeamId, LogLevel.DEBUG);
                 }
             }
+            // Updates the leaderboard after the player has been removed from the league
+            interfaceLeague.UpdateLeagueLeaderboard();
         }
 
+        /*
         // Remove user's access (back to the registration...)
         await RoleManager.RevokeUserAccess(_playerDiscordId, "Member");
 
@@ -102,7 +109,7 @@ public class Database
                 await RoleManager.RevokeUserAccess(_playerDiscordId, EnumExtensions.GetEnumMemberAttrValue(
                     interfaceLeague.LeagueCategoryName));
             } 
-        }
+        }*/
 
         await SerializationManager.SerializeDB();
     }

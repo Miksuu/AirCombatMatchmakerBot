@@ -143,7 +143,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public async Task<string> CreateAMessageForTheChannelFromMessageName(
-        InterfaceChannel _interfaceChannel, MessageName _MessageName)
+        InterfaceChannel _interfaceChannel, MessageName _MessageName, bool _displayMessage = true)
     {
         Log.WriteLine("Creating a message named: " + _MessageName.ToString(), LogLevel.DEBUG);
 
@@ -160,9 +160,12 @@ public abstract class BaseChannel : InterfaceChannel
             (InterfaceMessage)EnumExtensions.GetInstance(_MessageName.ToString());
 
         string newMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            guild, channelId, channelsCategoryId, _MessageName.ToString());
+            guild, channelId, channelsCategoryId, _MessageName.ToString(), _displayMessage);
 
-        _interfaceChannel.InterfaceMessagesWithIds.Add(messageNameString, interfaceMessage);
+        if (_displayMessage)
+        {
+            _interfaceChannel.InterfaceMessagesWithIds.Add(messageNameString, interfaceMessage);
+        }
 
         return newMessage;
     }

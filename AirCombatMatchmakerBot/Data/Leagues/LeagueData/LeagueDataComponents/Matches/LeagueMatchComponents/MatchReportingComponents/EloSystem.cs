@@ -38,23 +38,6 @@ public class EloSystem
             return "Error while calculating and saving the final elo delta";
         }
 
-        /*
-        Team? databaseTeamOne = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[0].TeamId);
-
-        if (databaseTeamOne == null)
-        {
-            Log.WriteLine(nameof(databaseTeamOne) + " was null!", LogLevel.CRITICAL);
-            return "";
-        }
-
-        Team? databaseTeamTwo = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[1].TeamId);
-
-        if (databaseTeamTwo == null)
-        {
-            Log.WriteLine(nameof(databaseTeamTwo) + " was null!", LogLevel.CRITICAL);
-            return "";
-        }*/
-
         // Make the change in the player's ratings
         _teamIdsWithReportData.ElementAt(0).Value.FinalEloDelta = eloDelta;
         _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta = -eloDelta;
@@ -66,19 +49,54 @@ public class EloSystem
         return "";
     }
 
+    public void CalculateAndSaveFinalEloDeltaForMatchForfeit(
+        Team[] _teamsInTheMatch, Dictionary<int, ReportData> _teamIdsWithReportData,
+        int _losingTeamId)
+    {
+        float firstTeamSkillRating = _teamsInTheMatch[0].SkillRating;
+        float secondTeamSkillRating = _teamsInTheMatch[1].SkillRating;
+
+        Log.WriteLine("Calculating final elo points for: " + firstTeamSkillRating +
+            " | " + secondTeamSkillRating, LogLevel.DEBUG);
+
+        int winningTeamIndex = 0;
+
+        if (_teamsInTheMatch[0].TeamId == _losingTeamId) winningTeamIndex++;
+
+        float eloDelta = (int)(32 * (1 - winningTeamIndex - ExpectationToWin(
+            firstTeamSkillRating, secondTeamSkillRating)));
+
+        Log.WriteLine("calculated EloDelta: " + eloDelta, LogLevel.DEBUG);
+
+        if (_teamsInTheMatch[0] == null)
+        {
+            Log.WriteLine(nameof(_teamsInTheMatch) + " was null!", LogLevel.CRITICAL);
+            return; //"Error while calculating and saving the final elo delta";
+        }
+
+        // Make the change in the player's ratings
+        _teamIdsWithReportData.ElementAt(0).Value.FinalEloDelta = eloDelta;
+        _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta = -eloDelta;
+
+        Log.WriteLine("Done calculating " +
+            _teamIdsWithReportData.ElementAt(0).Value.FinalEloDelta +
+            " | " + _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta, LogLevel.DEBUG);
+    }
+
     public void CalculateFinalEloForBothTeams(
         InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch,
-        Dictionary<int, ReportData> _teamIdsWithReportData, int _overridenTeamIdToLose = 0)
+        Dictionary<int, ReportData> _teamIdsWithReportData)
     {
         for (int t = 0; t < _teamsInTheMatch.Length; ++t)
         {
-            Team? databaseTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[0].TeamId);
+            Team? databaseTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[t].TeamId);
             if (databaseTeam == null)
             {
                 Log.WriteLine(nameof(databaseTeam) + " was null!", LogLevel.CRITICAL);
                 return;
             }
 
+            /*
             if (_overridenTeamIdToLose != 0 && databaseTeam.TeamId != _overridenTeamIdToLose)
             {
                 _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta =
@@ -96,7 +114,7 @@ public class EloSystem
                 Log.WriteLine("Detected that team: " + databaseTeam.TeamName +
                     " with ID " + databaseTeam.TeamId + " should lose this match and now it's elodelta is: " +
                     _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta, LogLevel.DEBUG);
-            }
+            }*/
 
             Log.WriteLine(databaseTeam.TeamId + " SR before: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
             databaseTeam.SkillRating += _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta;

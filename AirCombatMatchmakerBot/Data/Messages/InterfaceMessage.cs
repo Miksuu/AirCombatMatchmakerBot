@@ -16,7 +16,8 @@ public interface InterfaceMessage
     public List<InterfaceButton> ButtonsInTheMessage { get; set; }
 
     public Task<string> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        SocketGuild _guild, ulong _channelId, ulong _channelCategoryId, string _messageKey);
+        SocketGuild _guild, ulong _channelId, ulong _channelCategoryId,
+        string _messageKey, bool _displayMessage = true);
 
     public Task ModifyMessage(string _newContent);
     public abstract string GenerateMessage();

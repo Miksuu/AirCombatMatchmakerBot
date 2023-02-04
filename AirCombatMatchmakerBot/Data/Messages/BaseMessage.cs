@@ -134,7 +134,7 @@ public abstract class BaseMessage : InterfaceMessage
 
     public async Task<string> CreateTheMessageAndItsButtonsOnTheBaseClass(
         Discord.WebSocket.SocketGuild _guild, ulong _channelId, ulong _channelCategoryId,
-        string _messageKey)
+        string _messageKey, bool _displayMessage = true)
     {
         messageChannelId = _channelId;
         messageCategoryId = _channelCategoryId;
@@ -186,10 +186,14 @@ public abstract class BaseMessage : InterfaceMessage
 
         string messageForGenerating = "\n" + GenerateMessage();
 
-        var generatedMessage =  await textChannel.SendMessageAsync(
+        if (_displayMessage)
+        {
+            var generatedMessage = await textChannel.SendMessageAsync(
             messageForGenerating, components: component.Build());
 
-        messageId = generatedMessage.Id;
+            messageId = generatedMessage.Id;
+        }
+
         message = messageForGenerating;
 
         Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);

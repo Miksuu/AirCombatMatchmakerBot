@@ -159,15 +159,14 @@ public class LeagueMatch
         return allowedUserIds;
     }
 
-    public async void FinishTheMatch(InterfaceLeague _interfaceLeague,
-        int _overridenTeamIdToLose = 0)
+    public async void FinishTheMatch(InterfaceLeague _interfaceLeague, bool _removingPlayerFromDatabase = false)
     {
         matchReporting.MatchDone = true;
 
         Log.WriteLine("Finishing match: " + matchId, LogLevel.DEBUG);
         matchReporting.EloSystem.CalculateFinalEloForBothTeams(
             _interfaceLeague, matchReporting.FindTeamsInTheMatch(_interfaceLeague),
-            matchReporting.TeamIdsWithReportData, _overridenTeamIdToLose);
+            matchReporting.TeamIdsWithReportData);
 
         var guild = BotReference.GetGuildRef();
 
@@ -179,8 +178,20 @@ public class LeagueMatch
 
         if (matchReporting.FinalResultForConfirmation == null)
         {
-            Log.WriteLine("Final result for the confirmation was null!", LogLevel.CRITICAL);
-            return;
+            if (!_removingPlayerFromDatabase)
+            {
+                Log.WriteLine("Final result for the confirmation was null!", LogLevel.CRITICAL);
+                return;
+            }
+
+            Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
+
+            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                    matchChannelId);
+
+            matchReporting.FinalResultForConfirmation = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                    interfaceChannel, MessageName.MATCHFINALRESULTMESSAGE, false);
         }
 
         _interfaceLeague.PostMatchReport(guild, matchReporting.FinalResultForConfirmation);
@@ -219,7 +230,12 @@ public class LeagueMatch
         _interfaceLeague.LeagueData.Matches.MatchesList.RemoveAll(m => m.matchId == tempMatch.matchId);
         Log.WriteLine("Removed match " + matchIdTemp, LogLevel.DEBUG);
 
-        _interfaceLeague.UpdateLeagueLeaderboard();
+
+        // When removing the player from the database, no need for this because it's done after he is gone from the league
+        if (!_removingPlayerFromDatabase)
+        {
+            _interfaceLeague.UpdateLeagueLeaderboard();
+        }
 
         await SerializationManager.SerializeDB();
     }
