@@ -143,7 +143,7 @@ public static class CommandHandler
             return;
         }
 
-        response = await interfaceCommand.ActivateCommandFunction(_command, firstOptionString);
+        response = await interfaceCommand.ReceiveCommandAndCheckForAdminRights(_command, firstOptionString);
 
         await SerializationManager.SerializeDB();
 
