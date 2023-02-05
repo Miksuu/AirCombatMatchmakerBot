@@ -144,6 +144,11 @@ public abstract class BaseCategory : InterfaceCategory
                 continue;
             }
 
+            /*
+            interfaceChannel.ChannelId = socketCategoryChannelId;
+            interfaceChannel.ChannelsCategoryId= _socketCategoryChannelId;
+            */
+
             //CategoryAndChannelManager.matchChannelsIdWithCategoryId.Add();
             //CategoryAndChannelManager.channelsThatBelongToTheBot.Add(interfaceChannel.ChannelId);
 
@@ -203,7 +208,7 @@ public abstract class BaseCategory : InterfaceCategory
                 interfaceChannel.ChannelName, LogLevel.DEBUG);
 
             ulong categoryId =
-                Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
+                Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
                     categoryTypes).Key;
 
             await interfaceChannel.CreateAChannelForTheCategory(_guild, _allowedUsersIdsArray);

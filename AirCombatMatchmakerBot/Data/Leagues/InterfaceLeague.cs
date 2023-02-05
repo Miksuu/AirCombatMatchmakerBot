@@ -16,11 +16,6 @@ public interface InterfaceLeague
     public DiscordLeagueReferences DiscordLeagueReferences { get; set; }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
-    public string GenerateALeagueJoinButtonMessage();
-    public string GetAllowedUnitsAsString();
-    public string GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface();
-    public void ModifyLeagueRegisterationChannelMessage();
-    public string GenerateALeagueChallengeButtonMessage();
     public InterfaceCategory FindLeaguesInterfaceCategory();
     public void PostMatchReport(SocketGuild _guild, string _finalResult);
     public void UpdateLeagueLeaderboard();

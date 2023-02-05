@@ -55,7 +55,9 @@ public class Categories
         return FoundCategoryKvp;
     }
 
-    public KeyValuePair<ulong, InterfaceCategory> GetCreatedCategoryWithChannelKvpByCategoryName(
+
+
+    public KeyValuePair<ulong, InterfaceCategory> FindCreatedCategoryWithChannelKvpByCategoryName(
         CategoryType? _categoryType)
     {
         Log.WriteLine("Getting CategoryKvp by category name: " + _categoryType, LogLevel.VERBOSE);

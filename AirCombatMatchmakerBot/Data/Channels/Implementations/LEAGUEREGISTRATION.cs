@@ -90,10 +90,6 @@ public class LEAGUEREGISTRATION : BaseChannel
             Log.WriteLine("Created interfaceMessage instance: " +
                 interfaceMessage.MessageName, LogLevel.VERBOSE);
 
-            interfaceMessage.Message = leagueInterfaceFromDatabase.GenerateALeagueJoinButtonMessage();
-
-            Log.WriteLine("interfaceMessage message: " + interfaceMessage.Message, LogLevel.VERBOSE);
-
             if (databaseInterfaceChannel.Value.InterfaceMessagesWithIds.ContainsKey(
                 leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId.ToString())) continue;
 

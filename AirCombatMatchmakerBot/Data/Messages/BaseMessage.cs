@@ -134,11 +134,12 @@ public abstract class BaseMessage : InterfaceMessage
 
     public async Task<string> CreateTheMessageAndItsButtonsOnTheBaseClass(
         Discord.WebSocket.SocketGuild _guild, ulong _channelId, ulong _channelCategoryId,
-        string _messageKey, bool _displayMessage = true)
+        KeyValuePair<string, InterfaceMessage> _interfaceMessageKvp, bool _displayMessage = true)
     {
         messageChannelId = _channelId;
         messageCategoryId = _channelCategoryId;
 
+        string messageForGenerating = string.Empty;
         var component = new ComponentBuilder();
 
         Log.WriteLine("Creating the channel message with id: "
@@ -178,13 +179,29 @@ public abstract class BaseMessage : InterfaceMessage
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
                 component.WithButton(interfaceButton.CreateTheButton(
-                    finalCustomId, b, _channelCategoryId, _messageKey));
+                    finalCustomId, b, _channelCategoryId, _interfaceMessageKvp.Key));
 
                 buttonsInTheMessage.Add(interfaceButton);
             }
         }
 
-        string messageForGenerating = "\n" + GenerateMessage();
+        if (_interfaceMessageKvp.Value.MessageName == MessageName.LEAGUEREGISTRATIONMESSAGE)
+        {
+            LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessageKvp.Value as LEAGUEREGISTRATIONMESSAGE;
+            if (leagueRegistrationMessage == null)
+            {
+                Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
+                return nameof(leagueRegistrationMessage) + " was null!";
+            }
+
+            leagueRegistrationMessage.belongsToLeagueCategoryId = ulong.Parse(_interfaceMessageKvp.Key);
+
+            messageForGenerating = leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague();
+        }
+        else
+        {
+            messageForGenerating = "\n" + GenerateMessage();
+        }         
 
         if (_displayMessage)
         {
@@ -230,7 +247,7 @@ public abstract class BaseMessage : InterfaceMessage
 
     public async Task GenerateAndModifyTheMessage()
     {
-        await ModifyMessage(GenerateMessage());
+        await ModifyMessage(GenerateMessage());        
         await SerializationManager.SerializeDB();
     }
 

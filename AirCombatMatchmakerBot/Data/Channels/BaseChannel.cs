@@ -159,8 +159,10 @@ public abstract class BaseChannel : InterfaceChannel
         InterfaceMessage interfaceMessage =
             (InterfaceMessage)EnumExtensions.GetInstance(_MessageName.ToString());
 
+        KeyValuePair<string, InterfaceMessage> interfaceMessageKvp = new(_MessageName.ToString(), interfaceMessage);
+
         string newMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            guild, channelId, channelsCategoryId, _MessageName.ToString(), _displayMessage);
+            guild, channelId, channelsCategoryId, interfaceMessageKvp, _displayMessage);
 
         if (_displayMessage)
         {
@@ -248,7 +250,7 @@ public abstract class BaseChannel : InterfaceChannel
             _databaseInterfaceChannel.InterfaceMessagesWithIds.Count + " | " + nameof(channelMessages) +
             " count: " + channelMessages.Count, LogLevel.VERBOSE);
 
-        foreach (var interfaceMessageKvp in _databaseInterfaceChannel.InterfaceMessagesWithIds)
+        foreach (KeyValuePair<string, InterfaceMessage> interfaceMessageKvp in _databaseInterfaceChannel.InterfaceMessagesWithIds)
         {
             Log.WriteLine("Looping on message: " + interfaceMessageKvp.Value.MessageName + " with id: " +
                 interfaceMessageKvp.Key, LogLevel.VERBOSE);
@@ -273,7 +275,7 @@ public abstract class BaseChannel : InterfaceChannel
             Log.WriteLine("Key was 0, message does not exist. Creating it.", LogLevel.VERBOSE);
 
             string newMessage = await interfaceMessageKvp.Value.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                _guild, channelId, channelsCategoryId, interfaceMessageKvp.Key);
+                _guild, channelId, channelsCategoryId, interfaceMessageKvp);
         }
 
         return;
@@ -282,7 +284,7 @@ public abstract class BaseChannel : InterfaceChannel
     public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName)
     {
-        Log.WriteLine("Getting CategoryKvp with id: " + _messageName, LogLevel.VERBOSE);
+        Log.WriteLine("Getting CategoryKvp with name: " + _messageName, LogLevel.VERBOSE);
 
         var foundInterfaceMessage = interfaceMessagesWithIds.FirstOrDefault(
             x => x.Value.MessageName == _messageName);

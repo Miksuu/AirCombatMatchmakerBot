@@ -79,7 +79,6 @@ public class Database
                             FindInterfaceChannelWithNameInTheCategory(
                                 ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
                                     MessageName.CHALLENGEMESSAGE);
-
                     if (challengeMessage == null)
                     {
                         Log.WriteLine(nameof(challengeMessage) + " was null!", LogLevel.ERROR);
@@ -91,6 +90,43 @@ public class Database
                     interfaceLeague.LeagueData.Teams.TeamsList.RemoveAll(t => t.TeamId == team.TeamId);
                     Log.WriteLine("Found and removed" + _playerDiscordId + " in team: " + team.TeamName +
                         " with id: " + team.TeamId, LogLevel.DEBUG);
+
+                    var interfaceChannel = Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
+                        CategoryType.REGISTRATIONCATEGORY).Value.FindInterfaceChannelWithNameInTheCategory(
+                            ChannelType.LEAGUEREGISTRATION);
+
+                    var leagueRegistrationMessages = interfaceChannel.InterfaceMessagesWithIds.Where(
+                        m => m.Value.MessageName == MessageName.LEAGUEREGISTRATIONMESSAGE);
+
+                    foreach (var messageKvp in leagueRegistrationMessages)
+                    {
+                        LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = messageKvp.Value as LEAGUEREGISTRATIONMESSAGE;
+                        if (leagueRegistrationMessage == null)
+                        {
+                            Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
+                            return; ;
+                        }
+
+                        await messageKvp.Value.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
+
+                        await messageKvp.Value.GenerateAndModifyTheMessage();
+
+                        /*
+                        var message = messageKvp.Value;
+
+                        var leagueRegistrationMessage = message as LEAGUEREGISTRATIONMESSAGE;
+                        if (leagueRegistrationMessage == null)
+                        {
+                            Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.ERROR);
+                            continue;
+                        }
+
+                        if (leagueRegistrationMessage.IfLeagueRegistrationMessageIsCorrectFromCategoryId(
+                            interfaceChannel, interfaceLeague.DiscordLeagueReferences.LeagueCategoryId))
+                        {
+                            await leagueRegistrationMessage.GenerateAndModifyTheMessage();
+                        }*/
+                    }
                 }
             }
             // Updates the leaderboard after the player has been removed from the league

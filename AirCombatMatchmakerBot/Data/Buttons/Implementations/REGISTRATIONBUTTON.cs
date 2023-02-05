@@ -22,6 +22,22 @@ public class REGISTRATIONBUTTON : BaseButton
         Log.WriteLine("Starting player registration", LogLevel.DEBUG);
 
         string response = string.Empty;
+        string registrationChannelCheck = string.Empty;
+
+        var registrationChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
+        ChannelType.LEAGUEREGISTRATION);
+
+        if (registrationChannel == null)
+        {
+            Log.WriteLine(nameof(registrationChannel) + " was null", LogLevel.ERROR);
+            registrationChannelCheck = nameof(registrationChannel) + " was null!";
+        }
+        else
+        {
+            registrationChannelCheck = "\n\n Check <#" + registrationChannel.ChannelId + "> for all the available leagues!";
+        }
+
         // Checks that the player does not exist in the database already, true if this is not the case
         if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
         {
@@ -30,7 +46,7 @@ public class REGISTRATIONBUTTON : BaseButton
             response = _component.User.Mention + ", " +
                 BotMessaging.GetMessageResponse(
                     _component.Data.CustomId,
-                    " registration complete, welcome!",
+                    " registration complete, welcome!" + registrationChannelCheck,
                     _component.Channel.Name);
         }
         else
@@ -38,7 +54,7 @@ public class REGISTRATIONBUTTON : BaseButton
             response = _component.User.Mention + ", " +
                 BotMessaging.GetMessageResponse(
                     _component.Data.CustomId,
-                    " You are already registered!",
+                    " You are already registered!" + registrationChannelCheck,
                     _component.Channel.Name);
         }
 

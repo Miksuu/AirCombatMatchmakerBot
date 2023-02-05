@@ -8,11 +8,6 @@ public class EloSystem
         float firstTeamSkillRating = _teamsInTheMatch[0].SkillRating;
         float secondTeamSkillRating = _teamsInTheMatch[1].SkillRating;
 
-        /*
-        _teamIdsWithReportData.ElementAt(0).Value.CachedSkillRating = firstTeamSkillRating;
-        _teamIdsWithReportData.ElementAt(1).Value.CachedSkillRating = firstTeamSkillRating;
-        */
-
         Log.WriteLine("Calculating final elo points for: " + firstTeamSkillRating +
             " | " + secondTeamSkillRating, LogLevel.DEBUG);
 
@@ -63,6 +58,7 @@ public class EloSystem
 
         if (_teamsInTheMatch[0].TeamId == _losingTeamId) winningTeamIndex++;
 
+        // Duplicate code to the above method; refactor?
         float eloDelta = (int)(32 * (1 - winningTeamIndex - ExpectationToWin(
             firstTeamSkillRating, secondTeamSkillRating)));
 
@@ -95,26 +91,6 @@ public class EloSystem
                 Log.WriteLine(nameof(databaseTeam) + " was null!", LogLevel.CRITICAL);
                 return;
             }
-
-            /*
-            if (_overridenTeamIdToLose != 0 && databaseTeam.TeamId != _overridenTeamIdToLose)
-            {
-                _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta =
-                    MathF.Abs(_teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta);
-
-                Log.WriteLine("Detected that team: " + databaseTeam.TeamName +
-                    " with ID " + databaseTeam.TeamId + " should win this match and now it's elodelta is: " +
-                _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta, LogLevel.DEBUG);
-            }
-            else if (_overridenTeamIdToLose != 0 && databaseTeam.TeamId == _overridenTeamIdToLose)
-            {
-                _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta =
-                    -MathF.Abs(_teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta);
-
-                Log.WriteLine("Detected that team: " + databaseTeam.TeamName +
-                    " with ID " + databaseTeam.TeamId + " should lose this match and now it's elodelta is: " +
-                    _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta, LogLevel.DEBUG);
-            }*/
 
             Log.WriteLine(databaseTeam.TeamId + " SR before: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
             databaseTeam.SkillRating += _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta;

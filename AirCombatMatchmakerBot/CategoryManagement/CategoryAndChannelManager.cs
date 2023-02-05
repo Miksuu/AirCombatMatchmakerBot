@@ -134,7 +134,7 @@ public static class CategoryAndChannelManager
                 " found, checking it's channels", LogLevel.VERBOSE);
 
             var dbCategory =
-                Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
+                Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
                     interfaceCategory.CategoryType);
 
             interfaceCategory = dbCategory.Value;

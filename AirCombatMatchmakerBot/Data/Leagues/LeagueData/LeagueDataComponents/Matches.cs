@@ -62,7 +62,7 @@ public class Matches
     {
         // Get the category by the league category name passed in the method
         var categoryKvp =
-            Database.Instance.Categories.GetCreatedCategoryWithChannelKvpByCategoryName(
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
                 _interfaceLeague.LeagueCategoryName);
 
         // Prep the channel name with match id

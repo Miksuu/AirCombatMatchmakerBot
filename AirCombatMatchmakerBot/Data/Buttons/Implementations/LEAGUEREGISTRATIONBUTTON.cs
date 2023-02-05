@@ -87,9 +87,16 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 UserManager.SetTeamActiveAndGrantThePlayerRole(
                     interfaceLeague, _component.User.Id);
 
+                
                 // Modify the message to have the new player count
-                interfaceLeague.ModifyLeagueRegisterationChannelMessage();
+                LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
+                if (leagueRegistrationMessage == null)
+                {
+                    Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
+                    return nameof(leagueRegistrationMessage) + " was null!";
+                }
 
+                await _interfaceMessage.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
 
                 Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
                     interfaceLeague.LeagueData.Teams.TeamsList.Count, LogLevel.DEBUG);
@@ -107,7 +114,22 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 UserManager.SetTeamActiveAndGrantThePlayerRole(
                     interfaceLeague, _component.User.Id);
 
-                interfaceLeague.ModifyLeagueRegisterationChannelMessage();
+                /*
+                LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
+                if (leagueRegistrationMessage == null)
+                {
+                    Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
+                    return nameof(leagueRegistrationMessage) + " was null!";
+                }*/
+
+                LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
+                if (leagueRegistrationMessage == null)
+                {
+                    Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
+                    return nameof(leagueRegistrationMessage) + " was null!";
+                }
+
+                await _interfaceMessage.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
             }
         }
         else

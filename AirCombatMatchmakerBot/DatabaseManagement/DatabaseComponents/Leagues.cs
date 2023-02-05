@@ -162,25 +162,38 @@ public class Leagues
                                 return;
                             }
 
-                            CategoryType leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
+                            var interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
+                                CategoryType.REGISTRATIONCATEGORY).Value.FindInterfaceChannelWithNameInTheCategory(
+                                ChannelType.LEAGUEREGISTRATION);
 
-                            var leagueInterface =
-                                LeagueManager.GetLeagueInstanceWithLeagueCategoryName(
-                                    leagueCategoryName);
-                            Log.WriteLine("Found " + nameof(leagueInterface) + ": " +
-                                leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
+                            var leagueRegistrationMessages = interfaceChannel.InterfaceMessagesWithIds.Where(
+                                m => m.Value.MessageName == MessageName.LEAGUEREGISTRATIONMESSAGE);
 
-                            InterfaceLeague? dbLeagueInstance =
-                                Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(
-                                    leagueInterface);
-
-                            if (dbLeagueInstance == null)
+                            foreach (var messageKvp in leagueRegistrationMessages)
                             {
-                                Log.WriteLine("dbLeagueInstance was null!", LogLevel.CRITICAL);
-                                continue;
+                                messageKvp.Value.GenerateAndModifyTheMessage();
                             }
+                                /*
+                                CategoryType leagueCategoryName = findLeagueCategoryType.LeagueCategoryName;
 
-                            dbLeagueInstance.ModifyLeagueRegisterationChannelMessage();
+
+                                var leagueInterface =
+                                    LeagueManager.GetLeagueInstanceWithLeagueCategoryName(
+                                        leagueCategoryName);
+                                Log.WriteLine("Found " + nameof(leagueInterface) + ": " +
+                                    leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
+
+                                InterfaceLeague? dbLeagueInstance =
+                                    Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(
+                                        leagueInterface);
+
+                                if (dbLeagueInstance == null)
+                                {
+                                    Log.WriteLine("dbLeagueInstance was null!", LogLevel.CRITICAL);
+                                    continue;
+                                }*/
+
+                                //dbLeagueInstance.ModifyLeagueRegisterationChannelMessage();
 
                             break;
                         }
@@ -251,6 +264,39 @@ public class Leagues
 
         var leagueInterface =
             LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
+
+        Log.WriteLine(
+            "Found interface " + nameof(leagueInterface) + ": " +
+            leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
+
+        InterfaceLeague? dbLeagueInstance =
+            Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
+
+        if (dbLeagueInstance == null)
+        {
+            Log.WriteLine(nameof(dbLeagueInstance) +
+                " was null! Could not find the league.", LogLevel.CRITICAL);
+            return null;
+        }
+
+        Log.WriteLine(nameof(dbLeagueInstance) + " db: " +
+            dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
+        return dbLeagueInstance;
+    }
+
+    public InterfaceLeague? FindLeagueInterfaceWithLeagueCategoryName(
+        string _categoryName)
+    {
+        Log.WriteLine("Starting to find Ileague from db with: " +
+            _categoryName, LogLevel.VERBOSE);
+
+        CategoryType categoryType = (CategoryType)EnumExtensions.GetInstance(_categoryName);
+
+        Log.WriteLine("found: " + nameof(categoryType) + ": " +
+            categoryType.ToString(), LogLevel.VERBOSE);
+
+        var leagueInterface =
+            LeagueManager.GetLeagueInstanceWithLeagueCategoryName(categoryType);
 
         Log.WriteLine(
             "Found interface " + nameof(leagueInterface) + ": " +
