@@ -20,6 +20,6 @@ public interface InterfaceMessage
         KeyValuePair<string, InterfaceMessage> _interfaceMessageKvp, bool _displayMessage = true);
     public Task ModifyMessage(string _newContent);
     public abstract string GenerateMessage();
-    public Task GenerateAndModifyTheMessage();
+    public Task GenerateAndModifyTheMessage(bool _serialize = true);
     public Task<Discord.IMessage?> GetMessageById(IMessageChannel _channel);
 }

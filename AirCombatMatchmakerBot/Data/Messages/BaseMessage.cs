@@ -245,10 +245,14 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("Modifying the message: " + messageId + " done.", LogLevel.VERBOSE);
     }
 
-    public async Task GenerateAndModifyTheMessage()
+    public async Task GenerateAndModifyTheMessage(bool _serialize = true)
     {
-        await ModifyMessage(GenerateMessage());        
-        await SerializationManager.SerializeDB();
+        await ModifyMessage(GenerateMessage());
+
+        if (_serialize)
+        {
+            await SerializationManager.SerializeDB();
+        }
     }
 
     public abstract string GenerateMessage();
