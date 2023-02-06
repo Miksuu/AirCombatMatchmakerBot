@@ -37,6 +37,10 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         Log.WriteLine("found: " + nameof(interfaceLeague) +
             interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
+        ulong challengeChannelId = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
+            ChannelType.CHALLENGE).ChannelId;
+
         // Check that the player is in the PlayerData
         // (should be, he doesn't see this button before, except if hes admin)
         if (Database.Instance.PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(
@@ -54,11 +58,15 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
             Log.WriteLine("Found player: " + player.PlayerNickName +
                 " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
 
-            if (!interfaceLeague.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
-                interfaceLeague.LeaguePlayerCountPerTeam, _component.User.Id))
+            bool playerIsInATeamAlready = interfaceLeague.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
+                interfaceLeague.LeaguePlayerCountPerTeam, _component.User.Id);
+
+            bool playerIsInActiveTeamAlready = interfaceLeague.LeagueData.Teams.CheckIfPlayersTeamIsActiveById(
+                interfaceLeague.LeaguePlayerCountPerTeam, _component.User.Id);
+
+            if (!playerIsInATeamAlready)
             {
-                Log.WriteLine(
-                    "The player was not found in any team in the league", LogLevel.VERBOSE);
+                Log.WriteLine("The player was not found in any team in the league", LogLevel.VERBOSE);
 
                 // Create a team with unique ID and increment that ID
                 // after the data has been serialized
@@ -72,6 +80,10 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                     Log.WriteLine("This league is solo", LogLevel.VERBOSE);
 
                     interfaceLeague.LeagueData.Teams.AddToListOfTeams(newTeam);
+
+                    responseMsg = "Registration complete on: " + 
+                        EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName) + "\n" +
+                        " You can look for a match in: <#" + challengeChannelId + ">";
                 }
                 else
                 {
@@ -102,7 +114,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
                 interfaceLeague.LeagueData.Teams.IncrementCurrentTeamInt();
             }
-            else
+            else if (playerIsInATeamAlready && !playerIsInActiveTeamAlready)
             {
                 // Need to handle team related behaviour better later
 
@@ -112,13 +124,9 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 UserManager.SetTeamActiveAndGrantThePlayerRole(
                     interfaceLeague, _component.User.Id);
 
-                /*
-                LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
-                if (leagueRegistrationMessage == null)
-                {
-                    Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
-                    return nameof(leagueRegistrationMessage) + " was null!";
-                }*/
+                responseMsg = "You have rejoined: " +
+                    EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName) + "\n" +
+                    " You can look for a match in: <#" + challengeChannelId + ">";
 
                 LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
                 if (leagueRegistrationMessage == null)
@@ -129,6 +137,14 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 }
 
                 await _interfaceMessage.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
+            }
+            else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
+            {
+                Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + interfaceLeague.LeagueCategoryName +
+                    ", had a team already active", LogLevel.VERBOSE);
+                responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName) +
+                    "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
+                return (responseMsg, false);
             }
         }
         else

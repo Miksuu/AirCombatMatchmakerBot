@@ -97,6 +97,30 @@ public class Teams
         return false;
     }
 
+    public bool CheckIfPlayersTeamIsActiveById(
+        int _leagueTeamSize, ulong _idToSearchFor)
+    {
+        foreach (Team team in teamsList)
+        {
+            Log.WriteLine("Searching team: " + team.GetTeamName(_leagueTeamSize), LogLevel.VERBOSE);
+
+            foreach (Player teamPlayer in team.Players)
+            {
+                Log.WriteLine("Checking player: " + teamPlayer.PlayerNickName +
+                    " (" + teamPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
+
+                if (teamPlayer.PlayerDiscordId == _idToSearchFor)
+                {
+                    if (team.TeamActive) return true;
+                }
+            }
+        }
+
+        Log.WriteLine("Did not find any teams that the player was active in the league", LogLevel.VERBOSE);
+
+        return false;
+    }
+
     // Always run CheckIfPlayerIsAlreadyInATeamById() before!
     public Team ReturnTeamThatThePlayerIsIn(
         int _leagueTeamSize, ulong _idToSearchFor)
