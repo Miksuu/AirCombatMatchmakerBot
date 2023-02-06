@@ -65,8 +65,8 @@ public class Database
         {
             Log.WriteLine("Starting to process league: " + interfaceLeague.LeagueCategoryName, LogLevel.DEBUG);
 
+            // Place the teams to remove 
             List<int> teamsToRemove = new List<int>();
-
             foreach (Team team in interfaceLeague.LeagueData.Teams.TeamsList)
             {
                 Log.WriteLine("Looping through team: " + team.TeamName + "(" + team.TeamId + ")", LogLevel.VERBOSE);

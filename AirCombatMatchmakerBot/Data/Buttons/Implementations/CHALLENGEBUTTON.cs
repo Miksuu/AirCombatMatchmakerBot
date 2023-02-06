@@ -3,7 +3,6 @@ using System.Data;
 using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
-using System.Threading.Channels;
 
 [DataContract]
 public class CHALLENGEBUTTON : BaseButton
@@ -17,7 +16,7 @@ public class CHALLENGEBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override async Task<string> ActivateButtonFunction(
+    public override async Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         Log.WriteLine("Starting processing a challenge by: " +
@@ -42,15 +41,17 @@ public class CHALLENGEBUTTON : BaseButton
 
         if (categoryName == null)
         {
-            Log.WriteLine("CategoryName was null!", LogLevel.ERROR);
-            return "";
+            string errorMsg = nameof(categoryName) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return (errorMsg, false);
         }
 
         string? categoryNameString = categoryName.ToString();
         if (categoryNameString == null)
         {
-            Log.WriteLine("CategoryNameString was null!", LogLevel.ERROR);
-            return "";
+            string errorMsg = nameof(categoryName) + "String was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL); ;
+            return (errorMsg, false);
         }
 
         Log.WriteLine("categoryNameString: " + categoryNameString, LogLevel.VERBOSE);
@@ -60,9 +61,9 @@ public class CHALLENGEBUTTON : BaseButton
 
         if (dbLeagueInstance == null)
         {
-            Log.WriteLine(nameof(dbLeagueInstance) +
-                " was null! Could not find the league.", LogLevel.CRITICAL);
-            return "Error adding to the queue! could not find the league.";
+            string errorMsg = "Error adding to the queue! Could not find the league" + nameof(dbLeagueInstance) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return (errorMsg, false);
         }
 
 
@@ -72,7 +73,7 @@ public class CHALLENGEBUTTON : BaseButton
 
         if (response == "alreadyInQueue")
         {
-            return "You are already in the queue!";
+            return ("You are already in the queue!", false);
         }
 
         //string newMessage = _interfaceMessage.Message + postedChallengeMessage;
@@ -81,6 +82,6 @@ public class CHALLENGEBUTTON : BaseButton
 
         Log.WriteLine("After modifying message", LogLevel.VERBOSE);
 
-        return "";
+        return ("", true);
     }
 }

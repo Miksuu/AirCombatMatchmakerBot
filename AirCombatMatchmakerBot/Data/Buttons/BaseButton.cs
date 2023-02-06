@@ -129,6 +129,6 @@ public abstract class BaseButton : InterfaceButton
         return button;
     }
 
-    public abstract Task<string> ActivateButtonFunction(
-        SocketMessageComponent _component, InterfaceMessage _interfaceMessage);
+    public abstract Task<(string, bool)> ActivateButtonFunction(
+         SocketMessageComponent _component, InterfaceMessage _interfaceMessage);
 }

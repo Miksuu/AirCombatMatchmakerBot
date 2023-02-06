@@ -16,7 +16,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override async Task<string> ActivateButtonFunction(
+    public override async Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         string responseMsg = "";
@@ -27,12 +27,11 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
         InterfaceLeague? interfaceLeague =
             Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(ulong.Parse(splitStrings[0]));
-
         if (interfaceLeague == null)
         {
-            Log.WriteLine(nameof(interfaceLeague) +
-                " was null! Could not find the league.", LogLevel.CRITICAL);
-            return "";
+            string errorMsg = nameof(interfaceLeague) + " was null! Could not find the league.";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return (errorMsg, false);
         }
 
         Log.WriteLine("found: " + nameof(interfaceLeague) +
@@ -45,12 +44,11 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         {
             Player player = Database.Instance.PlayerData.GetAPlayerProfileById(
                 _component.User.Id);
-
             if (player.PlayerDiscordId == 0)
             {
-                Log.WriteLine("Player's: " + player.PlayerNickName +
-                    " id was 0!", LogLevel.CRITICAL);
-                return "";
+                string errorMsg = "Player's: " + player.PlayerNickName +" id was 0!";
+                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                return (errorMsg, false);
             }
 
             Log.WriteLine("Found player: " + player.PlayerNickName +
@@ -80,7 +78,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                     // Not implemented yet
                     Log.WriteLine("This league is team based with number of players per team: " +
                         interfaceLeague.LeaguePlayerCountPerTeam, LogLevel.ERROR);
-                    return "";
+                    return ("", false);
                 }
 
                 // Add the role for the player for the specific league and set him teamActive
@@ -92,8 +90,9 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
                 if (leagueRegistrationMessage == null)
                 {
-                    Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
-                    return nameof(leagueRegistrationMessage) + " was null!";
+                    string errorMsg = nameof(leagueRegistrationMessage) + " was null!";
+                    Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                    return (errorMsg, false);
                 }
 
                 await _interfaceMessage.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
@@ -102,7 +101,6 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                     interfaceLeague.LeagueData.Teams.TeamsList.Count, LogLevel.DEBUG);
 
                 interfaceLeague.LeagueData.Teams.IncrementCurrentTeamInt();
-                await SerializationManager.SerializeDB();
             }
             else
             {
@@ -125,8 +123,9 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
                 if (leagueRegistrationMessage == null)
                 {
-                    Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
-                    return nameof(leagueRegistrationMessage) + " was null!";
+                    string errorMsg = nameof(leagueRegistrationMessage) + " was null!";
+                    Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                    return (errorMsg, false);
                 }
 
                 await _interfaceMessage.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
@@ -139,10 +138,11 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
             Log.WriteLine("Player: " + _component.User.Id +
                 " (" + _component.User.Username + ")" +
                 " tried to join a league before registering", LogLevel.WARNING);
+            return (responseMsg, false);
         }
 
         interfaceLeague.UpdateLeagueLeaderboard();
 
-        return responseMsg;
+        return (responseMsg, true);
     }
 }

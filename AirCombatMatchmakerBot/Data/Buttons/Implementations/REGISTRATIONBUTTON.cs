@@ -16,13 +16,14 @@ public class REGISTRATIONBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override Task<string> ActivateButtonFunction(
+    public override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         Log.WriteLine("Starting player registration", LogLevel.DEBUG);
 
         string response = string.Empty;
         string registrationChannelCheck = string.Empty;
+        bool serialize = true;
 
         var registrationChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
@@ -51,6 +52,7 @@ public class REGISTRATIONBUTTON : BaseButton
         }
         else
         {
+            serialize = false;
             response = _component.User.Mention + ", " +
                 BotMessaging.GetMessageResponse(
                     _component.Data.CustomId,
@@ -58,6 +60,6 @@ public class REGISTRATIONBUTTON : BaseButton
                     _component.Channel.Name);
         }
 
-        return Task.FromResult(response);
+        return Task.FromResult((response, serialize));
     }
 }

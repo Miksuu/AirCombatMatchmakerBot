@@ -5,8 +5,6 @@ public static class ButtonHandler
 {
     public static async Task HandleButtonPress(SocketMessageComponent _component)
     {
-        string response = "EMPTY";
-
         Log.WriteLine("Button press detected by: " + _component.User.Id, LogLevel.VERBOSE);
 
         InterfaceMessage? interfaceMessage = null;
@@ -59,13 +57,17 @@ public static class ButtonHandler
             return;
         }
 
-        response = databaseButton.ActivateButtonFunction(
+        var responseTuple = databaseButton.ActivateButtonFunction(
             _component, interfaceMessage).Result;
 
-        await SerializationManager.SerializeDB();
-
-        if (response != "EMPTY") await _component.RespondAsync(response, ephemeral: true);
-        else { Log.WriteLine("the response was: " + response, LogLevel.CRITICAL); }
+        // Only serialize when the interaction was something that needs to be serialized (defined in ActivateButtonFunction())
+        if (responseTuple.Item2)
+        {
+            await SerializationManager.SerializeDB();
+        }
+        
+        if (responseTuple.Item1 != "") await _component.RespondAsync(responseTuple.Item1, ephemeral: true);
+        else { Log.WriteLine("the response was: " + responseTuple.Item1, LogLevel.CRITICAL); }
     }
 
     private static InterfaceButton? FindInterfaceButtonFromTheDatabase(

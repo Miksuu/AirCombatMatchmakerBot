@@ -27,12 +27,9 @@ public class BotRuntimeManager
                 BotReference.SetConnectionState(true);
                 Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
-
-
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
-
 
                 /*
                 var guild = BotReference.GetGuildRef();
@@ -85,7 +82,6 @@ public class BotRuntimeManager
             {
                 Log.WriteLine("Bot was already connected!", LogLevel.WARNING);
             }
-
         };
         
         // Receiving the tacview files

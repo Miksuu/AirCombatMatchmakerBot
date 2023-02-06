@@ -17,9 +17,9 @@ public class DISPUTEMATCHRESULTBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override Task<string> ActivateButtonFunction(
+    public override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        return Task.FromResult("");
+        return Task.FromResult(("Not implemented yet!", false));
     }
 }

@@ -17,7 +17,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
 
     public void CreateTheButton(){}
 
-    public override Task<string> ActivateButtonFunction(
+    public override async Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         string finalResponse = string.Empty;
@@ -30,49 +30,47 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
             _interfaceMessage.MessageChannelId);
-
         if (interfaceChannel == null)
         {
-            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult("Could not find: " + nameof(interfaceChannel));
+            string errorMsg = nameof(interfaceChannel) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return (errorMsg, false);
         }
 
         MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
         if (matchChannel == null)
         {
-            Log.WriteLine(nameof(matchChannel) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult("Could not find: " + nameof(matchChannel));
+            string errorMsg = nameof(matchChannel) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return (errorMsg, false);
         }
 
         var matchTuple =
             matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
-        buttonCategoryId, _interfaceMessage.MessageChannelId);
-
+                buttonCategoryId, _interfaceMessage.MessageChannelId);
         if (matchTuple.Item1 == null || matchTuple.Item2 == null)
         {
-            Log.WriteLine(nameof(matchTuple) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(matchTuple.Item3);
+            Log.WriteLine(matchTuple.Item3, LogLevel.CRITICAL);
+            return (matchTuple.Item3, false);
         }
 
         var reportDataTupleWithString = matchTuple.Item2.MatchReporting.GetTeamReportDatasOfTheMatchWithPlayerId(
             matchTuple.Item1, matchTuple.Item2, componentPlayerId);
-
         if (reportDataTupleWithString.Item1 == null)
         {
             Log.WriteLine(nameof(reportDataTupleWithString) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(reportDataTupleWithString.Item2);
+            return (reportDataTupleWithString.Item2, false);
         }
-
         if (reportDataTupleWithString.Item2 != "")
         {
             Log.WriteLine("User: " + componentPlayerId + " confirm a match on channel: " +
                 _component.Channel.Id + "!", LogLevel.WARNING);
-            return Task.FromResult(reportDataTupleWithString.Item2);
+            return (reportDataTupleWithString.Item2, false);
         }
 
         if (reportDataTupleWithString.Item1.ElementAt(0).ConfirmedMatch)
         {
-            return Task.FromResult("You have already confirmed the match!");
+            return ("You have already confirmed the match!", false);
         }
 
         reportDataTupleWithString.Item1.ElementAt(0).ConfirmedMatch = true;
@@ -91,16 +89,18 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
 
         if (confirmationMessage == null)
         {
-            Log.WriteLine(nameof(confirmationMessage) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(nameof(confirmationMessage) + " was null!");
+            string errorMsg = nameof(confirmationMessage) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return (errorMsg, false);
         }
 
         Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " + confirmationMessage.Message, LogLevel.DEBUG);
 
-        confirmationMessage.GenerateAndModifyTheMessage();
+        await confirmationMessage.GenerateAndModifyTheMessage();
 
-        Log.WriteLine("Reached end before the return with player id: " + componentPlayerId, LogLevel.DEBUG);
+        Log.WriteLine("Reached end before the return with player id: " + componentPlayerId +
+            " with finalResposne: " + finalResponse, LogLevel.DEBUG);
 
-        return Task.FromResult(finalResponse);
+        return (finalResponse, true);
     }
 }
