@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 [JsonObjectAttribute]   
 public interface InterfaceMessage
 {
-    //public MessageName MessageName { get; set; }
+    public MessageName MessageName { get; set; }
     public Dictionary<ButtonName, int> MessageButtonNamesWithAmount { get; set; }
     public string Message { get; set; }
     public ulong MessageId { get; set; }

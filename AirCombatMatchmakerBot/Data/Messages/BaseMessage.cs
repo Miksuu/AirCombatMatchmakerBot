@@ -6,7 +6,6 @@ using System.Threading.Channels;
 [DataContract]
 public abstract class BaseMessage : InterfaceMessage
 {
-    /*
     MessageName InterfaceMessage.MessageName
     {
         get
@@ -21,7 +20,7 @@ public abstract class BaseMessage : InterfaceMessage
                 + " to: " + value, LogLevel.VERBOSE);
             messageName = value;
         }
-    }*/
+    }
 
     Dictionary<ButtonName, int> InterfaceMessage.MessageButtonNamesWithAmount
     {
@@ -119,7 +118,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    //[DataMember] protected MessageName messageName;
+    [DataMember] protected MessageName messageName;
     [DataMember] protected Dictionary<ButtonName, int> messageButtonNamesWithAmount;
     [DataMember] protected string message = "";
     [DataMember] protected ulong messageId;
