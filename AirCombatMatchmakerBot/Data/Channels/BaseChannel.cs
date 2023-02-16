@@ -302,6 +302,13 @@ public abstract class BaseChannel : InterfaceChannel
                 Log.WriteLine("Created interfaceMessage instance: " +
                     interfaceMessage.MessageName, LogLevel.VERBOSE); */
 
+                InterfaceMessage interfaceMessage =
+                    (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
+
+                await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+                    _guild, this, true, leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId);
+
+                /*
                 if (interfaceMessagesWithIds.ContainsKey(
                     leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId)) continue;
 
@@ -312,7 +319,7 @@ public abstract class BaseChannel : InterfaceChannel
                 Log.WriteLine("Added to the dictionary, count is now: " +
                     interfaceMessagesWithIds.Count, LogLevel.VERBOSE);
 
-                Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
+                Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE); */
             }
         }
         else
