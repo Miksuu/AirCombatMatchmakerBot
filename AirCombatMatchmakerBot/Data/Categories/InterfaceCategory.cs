@@ -16,8 +16,7 @@ public interface InterfaceCategory
     public Task<SocketCategoryChannel?> CreateANewSocketCategoryChannelAndReturnIt(
         SocketGuild _guild, string _categoryName, SocketRole _role);
     public Task CreateChannelsForTheCategory(
-        InterfaceCategory _interfaceCategory, ulong _socketCategoryChannelId,
-        SocketGuild _guild);
+        ulong _socketCategoryChannelId, SocketGuild _guild);
 
     public Task<InterfaceChannel?> CreateSpecificChannelFromChannelType(
         SocketGuild _guild, ChannelType _channelType, ulong _socketCategoryChannelId,

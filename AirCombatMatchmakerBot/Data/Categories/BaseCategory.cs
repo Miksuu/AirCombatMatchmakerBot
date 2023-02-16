@@ -117,16 +117,15 @@ public abstract class BaseCategory : InterfaceCategory
     }
 
     public async Task CreateChannelsForTheCategory(
-        InterfaceCategory _interfaceCategory, ulong _socketCategoryChannelId,
-        SocketGuild _guild)
+        ulong _socketCategoryChannelId, SocketGuild _guild)
     {
         Log.WriteLine("Starting to create channels for: " + _socketCategoryChannelId + ")" + 
-            " Channel count: " + _interfaceCategory.ChannelTypes.Count +
+            " Channel count: " + channelTypes.Count +
             " and setting the references", LogLevel.DEBUG);
 
         socketCategoryChannelId = _socketCategoryChannelId;
 
-        foreach (ChannelType channelType in _interfaceCategory.ChannelTypes)
+        foreach (ChannelType channelType in channelTypes)
         {
             // Checks for missing match channels from the league category
             if (channelType == ChannelType.MATCHCHANNEL)
