@@ -103,7 +103,7 @@ public class Database
 
                 Log.WriteLine("Found and removed" + _playerDiscordId + " in team with id: " + teamId, LogLevel.DEBUG);
             }
-            
+
             var challengeMessage = Categories.FindCreatedCategoryWithChannelKvpWithId(
                 interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.
                     FindInterfaceChannelWithNameInTheCategory(
@@ -117,8 +117,14 @@ public class Database
 
             await challengeMessage.GenerateAndModifyTheMessage(false);
 
+
+            // Re-implement the player removal from here
+
+            /*
             Dictionary<string, InterfaceMessage> leagueRegistrationMessages = new Dictionary<string, InterfaceMessage>();
 
+            
+            // Replaced league name with the channel/catergoryname
             foreach (var kvp in interfaceChannel.InterfaceMessagesWithIds)
             {
                 if (kvp.Value.MessageName == MessageName.LEAGUEREGISTRATIONMESSAGE)
@@ -168,7 +174,7 @@ public class Database
                     interfaceChannel, interfaceLeague.DiscordLeagueReferences.LeagueCategoryId))
                 {
                     await leagueRegistrationMessage.GenerateAndModifyTheMessage();
-                }*/
+                }
             }
 
             Log.WriteLine("Done looping through " + leagueRegistrationMessages.Count + " messages", LogLevel.VERBOSE);
@@ -179,7 +185,7 @@ public class Database
             // Updates the leaderboard after the player has been removed from the league
             interfaceLeague.UpdateLeagueLeaderboard();
 
-            Log.WriteLine("Done processing league: " + interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+            Log.WriteLine("Done processing league: " + interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);*/
         }
 
         Log.WriteLine("Done processing all leagues", LogLevel.VERBOSE);

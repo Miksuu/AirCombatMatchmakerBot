@@ -93,7 +93,7 @@ public class Matches
                 interfaceChannel.ChannelId, categoryKvp.Value.SocketCategoryChannelId);
         }
 
-        await interfaceChannel.PrepareChannelMessages();
+        await interfaceChannel.PostChannelMessages(_guild);
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
 

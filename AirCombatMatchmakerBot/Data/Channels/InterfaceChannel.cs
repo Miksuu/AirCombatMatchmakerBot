@@ -10,7 +10,7 @@ public interface InterfaceChannel
     public ulong ChannelId { get; set; }
     public ulong ChannelsCategoryId { get; set; }
     public List<MessageName> ChannelMessages { get; set; }
-    public Dictionary<string, InterfaceMessage> InterfaceMessagesWithIds { get; set; }
+    public Dictionary<ulong, InterfaceMessage> InterfaceMessagesWithIds { get; set; }
 
     public abstract List<Overwrite> GetGuildPermissions(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
@@ -18,11 +18,9 @@ public interface InterfaceChannel
     public Task CreateAChannelForTheCategory(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
     public Task<string> CreateAMessageForTheChannelFromMessageName(
-        InterfaceChannel _interfaceChannel, MessageName _MessageName,
-        bool _displayMessage = true);
-    public Task PrepareChannelMessages();
-    public Task PostChannelMessages(SocketGuild _guild,
-        InterfaceChannel _databaseInterfaceChannel);
+        MessageName _MessageName, bool _displayMessage = true);
+    //public Task PrepareChannelMessages();
+    public Task PostChannelMessages(SocketGuild _guild);
     public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName);
     public Task<IMessageChannel?> GetMessageChannelById(DiscordSocketClient _client);

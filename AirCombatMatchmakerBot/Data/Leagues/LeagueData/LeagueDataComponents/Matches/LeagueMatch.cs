@@ -190,8 +190,9 @@ public class LeagueMatch
                 _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                     matchChannelId);
 
-            matchReporting.FinalResultForConfirmation = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                    interfaceChannel, MessageName.MATCHFINALRESULTMESSAGE, false);
+            matchReporting.FinalResultForConfirmation = 
+                await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                    MessageName.MATCHFINALRESULTMESSAGE, false);
         }
 
         _interfaceLeague.PostMatchReport(guild, matchReporting.FinalResultForConfirmation);

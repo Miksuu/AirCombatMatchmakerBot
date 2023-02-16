@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 [JsonObjectAttribute]   
 public interface InterfaceMessage
 {
-    public MessageName MessageName { get; set; }
+    //public MessageName MessageName { get; set; }
     public Dictionary<ButtonName, int> MessageButtonNamesWithAmount { get; set; }
     public string Message { get; set; }
     public ulong MessageId { get; set; }
@@ -16,8 +16,8 @@ public interface InterfaceMessage
     public List<InterfaceButton> ButtonsInTheMessage { get; set; }
 
     public Task<string> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        Discord.WebSocket.SocketGuild _guild, ulong _channelId, ulong _channelCategoryId,
-        KeyValuePair<string, InterfaceMessage> _interfaceMessageKvp, bool _displayMessage = true);
+        Discord.WebSocket.SocketGuild _guild, InterfaceChannel _interfaceChannel,
+        bool _displayMessage = true, ulong _leagueCategoryId = 0);
     public Task ModifyMessage(string _newContent);
     public abstract string GenerateMessage();
     public Task GenerateAndModifyTheMessage(bool _serialize = true);

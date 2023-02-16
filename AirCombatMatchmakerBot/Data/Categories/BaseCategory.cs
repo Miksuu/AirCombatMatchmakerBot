@@ -152,7 +152,7 @@ public abstract class BaseCategory : InterfaceCategory
             //CategoryAndChannelManager.matchChannelsIdWithCategoryId.Add();
             //CategoryAndChannelManager.channelsThatBelongToTheBot.Add(interfaceChannel.ChannelId);
 
-            await interfaceChannel.PrepareChannelMessages();
+            await interfaceChannel.PostChannelMessages(_guild);
         }
     }
 

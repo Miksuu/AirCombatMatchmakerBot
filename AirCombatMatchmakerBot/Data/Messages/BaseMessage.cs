@@ -6,6 +6,7 @@ using System.Threading.Channels;
 [DataContract]
 public abstract class BaseMessage : InterfaceMessage
 {
+    /*
     MessageName InterfaceMessage.MessageName
     {
         get
@@ -20,7 +21,7 @@ public abstract class BaseMessage : InterfaceMessage
                 + " to: " + value, LogLevel.VERBOSE);
             messageName = value;
         }
-    }
+    }*/
 
     Dictionary<ButtonName, int> InterfaceMessage.MessageButtonNamesWithAmount
     {
@@ -118,7 +119,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    [DataMember] protected MessageName messageName;
+    //[DataMember] protected MessageName messageName;
     [DataMember] protected Dictionary<ButtonName, int> messageButtonNamesWithAmount;
     [DataMember] protected string message = "";
     [DataMember] protected ulong messageId;
@@ -133,19 +134,19 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     public async Task<string> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        Discord.WebSocket.SocketGuild _guild, ulong _channelId, ulong _channelCategoryId,
-        KeyValuePair<string, InterfaceMessage> _interfaceMessageKvp, bool _displayMessage = true)
+        Discord.WebSocket.SocketGuild _guild, InterfaceChannel _interfaceChannel, 
+        bool _displayMessage = true, ulong _leagueCategoryId = 0)
     {
-        messageChannelId = _channelId;
-        messageCategoryId = _channelCategoryId;
+        messageChannelId = _interfaceChannel.ChannelId;
+        messageCategoryId = _interfaceChannel.ChannelsCategoryId;
 
         string messageForGenerating = string.Empty;
         var component = new ComponentBuilder();
 
         Log.WriteLine("Creating the channel message with id: "
-            + _channelId + " with categoryID: " + _channelCategoryId, LogLevel.VERBOSE);
+            + messageChannelId + " with categoryID: " + messageCategoryId, LogLevel.VERBOSE);
 
-        var textChannel = _guild.GetChannel(_channelId) as ITextChannel;
+        var textChannel = _guild.GetChannel(messageChannelId) as ITextChannel;
 
         if (textChannel == null)
         {
@@ -179,39 +180,41 @@ public abstract class BaseMessage : InterfaceMessage
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
                 component.WithButton(interfaceButton.CreateTheButton(
-                    finalCustomId, b, _channelCategoryId, _interfaceMessageKvp.Key));
+                    finalCustomId, b, messageCategoryId));
 
                 buttonsInTheMessage.Add(interfaceButton);
             }
         }
 
-        if (_interfaceMessageKvp.Value.MessageName == MessageName.LEAGUEREGISTRATIONMESSAGE)
+        if (messageName == MessageName.LEAGUEREGISTRATIONMESSAGE)
         {
-            LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessageKvp.Value as LEAGUEREGISTRATIONMESSAGE;
+            LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = this as LEAGUEREGISTRATIONMESSAGE;
             if (leagueRegistrationMessage == null)
             {
                 Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
                 return nameof(leagueRegistrationMessage) + " was null!";
             }
 
-            leagueRegistrationMessage.belongsToLeagueCategoryId = ulong.Parse(_interfaceMessageKvp.Key);
+            // Pass league id as parameter here
+            leagueRegistrationMessage.belongsToLeagueCategoryId = _leagueCategoryId;
 
             messageForGenerating = leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague();
         }
         else
         {
             messageForGenerating = "\n" + GenerateMessage();
-        }         
+        }
 
         if (_displayMessage)
         {
-            var generatedMessage = await textChannel.SendMessageAsync(
+            var userMessage = await textChannel.SendMessageAsync(
             messageForGenerating, components: component.Build());
 
-            messageId = generatedMessage.Id;
-        }
+            messageId = userMessage.Id;
+            message = messageForGenerating;
 
-        message = messageForGenerating;
+            _interfaceChannel.InterfaceMessagesWithIds.Add(messageId, this);
+        }
 
         Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);
 

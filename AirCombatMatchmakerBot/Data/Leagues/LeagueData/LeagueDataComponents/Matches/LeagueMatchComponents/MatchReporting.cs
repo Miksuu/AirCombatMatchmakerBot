@@ -252,11 +252,11 @@ public class MatchReporting
             {
                 Log.WriteLine("Creating new messages from: " + _playerId, LogLevel.DEBUG);
 
-                finalResultForConfirmation = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                    interfaceChannel, MessageName.MATCHFINALRESULTMESSAGE);
+                finalResultForConfirmation = await interfaceChannel.CreateAMessageForTheChannelFromMessageName( 
+                    MessageName.MATCHFINALRESULTMESSAGE);
 
                 await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                    interfaceChannel, MessageName.CONFIRMATIONMESSAGE);
+                    MessageName.CONFIRMATIONMESSAGE);
 
                 var client = BotReference.GetClientRef();
                 if (client == null)
