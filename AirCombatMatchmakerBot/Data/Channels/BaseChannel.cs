@@ -186,7 +186,7 @@ public abstract class BaseChannel : InterfaceChannel
                 Value.InterfaceChannels.FirstOrDefault(
                     x => x.Value.ChannelId == channelId);
 
-        foreach (MessageName messageName in channelMessages)
+        foreach (MessageName messageName in channelMessagesFromDb)
         {
             Log.WriteLine("on: " + nameof(messageName) + " " + messageName, LogLevel.VERBOSE);
 
@@ -234,27 +234,27 @@ public abstract class BaseChannel : InterfaceChannel
             return;
         }
 
-        var channelMessages = await channel.GetMessagesAsync(50, CacheMode.AllowDownload).FirstOrDefaultAsync();
-        if (channelMessages == null)
+        var channelMessagesFromDb = await channel.GetMessagesAsync(50, CacheMode.AllowDownload).FirstOrDefaultAsync();
+        if (channelMessagesFromDb == null)
         {
-            Log.WriteLine(nameof(channelMessages) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(channelMessagesFromDb) + " was null!", LogLevel.CRITICAL);
             return;
         }
 
         Log.WriteLine(nameof(interfaceMessagesWithIds) + " count: " +
-            interfaceMessagesWithIds.Count + " | " + nameof(channelMessages) +
-            " count: " + channelMessages.Count, LogLevel.VERBOSE);
-
+            interfaceMessagesWithIds.Count + " | " + nameof(channelMessagesFromDb) +
+            " count: " + channelMessagesFromDb.Count, LogLevel.VERBOSE);
 
         if (channelType == ChannelType.LEAGUEREGISTRATION)
         {
             Log.WriteLine("Starting to to prepare channel messages on " + channelType, LogLevel.VERBOSE);
 
+            /*
             // Add to a method later
             var databaseInterfaceChannel =
                 Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
                     x => x.Key == channelsCategoryId).Value.InterfaceChannels.FirstOrDefault(
-                        x => x.Value.ChannelId == channelId);
+                        x => x.Value.ChannelId == channelId);*/
 
             Log.WriteLine("After db find", LogLevel.VERBOSE);
 
@@ -302,33 +302,33 @@ public abstract class BaseChannel : InterfaceChannel
                 Log.WriteLine("Created interfaceMessage instance: " +
                     interfaceMessage.MessageName, LogLevel.VERBOSE); */
 
-                if (databaseInterfaceChannel.Value.InterfaceMessagesWithIds.ContainsKey(
+                if (interfaceMessagesWithIds.ContainsKey(
                     leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId)) continue;
 
-                databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Add(
+                interfaceMessagesWithIds.Add(
                     leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId,
-                        (InterfaceMessage)EnumExtensions.GetInstance(channelMessages.ElementAt(0).ToString()));
+                        (InterfaceMessage)EnumExtensions.GetInstance(channelMessagesFromDb.ElementAt(0).ToString()));
 
                 Log.WriteLine("Added to the dictionary, count is now: " +
-                    databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+                    interfaceMessagesWithIds.Count, LogLevel.VERBOSE);
 
                 Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
             }
         }
         else
         {
-            foreach (KeyValuePair<ulong, InterfaceMessage> interfaceMessageKvp in interfaceMessagesWithIds)
+            foreach (MessageName messageName in channelMessages)
             {
-                Log.WriteLine("Looping on message: " + interfaceMessageKvp.Value.MessageName + " with id: " +
-                    interfaceMessageKvp.Key, LogLevel.VERBOSE);
+                //Log.WriteLine("Looping on message: " + messageName, LogLevel.VERBOSE);
 
-                var messageKey = interfaceMessagesWithIds[interfaceMessageKvp.Key];
+                //var messageKey = interfaceMessagesWithIds[interfaceMessageKvp.Key];
 
+                /*
                 Log.WriteLine("messageKey id: " + messageKey.MessageId, LogLevel.VERBOSE);
 
-                Log.WriteLine("Any: " + channelMessages.Any(x => x.Id == messageKey.MessageId), LogLevel.DEBUG);
+                Log.WriteLine("Any: " + channelMessagesFromDb.Any(x => x.Id == messageKey.MessageId), LogLevel.DEBUG);
 
-                if (!channelMessages.Any(x => x.Id == messageKey.MessageId) && messageKey.MessageId != 0)
+                if (!channelMessagesFromDb.Any(x => x.Id == messageKey.MessageId) && messageKey.MessageId != 0)
                 {
                     Log.WriteLine("Message " + messageKey.MessageId +
                         "not found! Setting it to 0 and regenerating", LogLevel.WARNING);
@@ -340,9 +340,11 @@ public abstract class BaseChannel : InterfaceChannel
                 if (messageKey.MessageId != 0) continue;
 
                 Log.WriteLine("Key was 0, message does not exist. Creating it.", LogLevel.VERBOSE);
+                */
 
-                string newMessage = await interfaceMessageKvp.Value.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                    _guild, this, true);
+                InterfaceMessage interfaceMessage = (InterfaceMessage)EnumExtensions.GetInstance(messageName.ToString());
+
+                await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(_guild, this, true);
             }
 
             if (channelType == ChannelType.BOTLOG)
@@ -350,8 +352,6 @@ public abstract class BaseChannel : InterfaceChannel
                 BotMessageLogging.loggingChannelId = channelId;
             }
         }
-
-        return;
     }
 
     // Finds ANY message with that message name (there can be multiple of same messages now)

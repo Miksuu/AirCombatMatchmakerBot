@@ -201,8 +201,7 @@ public static class CategoryAndChannelManager
         }
 
         // Handle channel checking/creation
-        await interfaceCategory.CreateChannelsForTheCategory(
-            interfaceCategory, socketCategoryChannel.Id, _guild);
+        await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _guild);
     }
 
     // Maybe add inside the classes itself
