@@ -11,11 +11,11 @@ public class MATCHCHANNEL : BaseChannel
     public MATCHCHANNEL()
     {
         channelType = ChannelType.MATCHCHANNEL;
-        channelMessages = new List<MessageName>
+        channelMessages = new Dictionary<MessageName, bool>
         {
-            MessageName.MATCHSTARTMESSAGE,
-            MessageName.REPORTINGMESSAGE,
-            MessageName.REPORTINGSTATUSMESSAGE,
+            { MessageName.MATCHSTARTMESSAGE, false },
+            { MessageName.REPORTINGMESSAGE, false },
+            { MessageName.REPORTINGSTATUSMESSAGE, false },
         };
     }
 

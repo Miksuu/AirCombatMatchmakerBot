@@ -49,6 +49,21 @@ public class DiscordLeagueReferences
         }
     }
 
+    public ulong LeagueRegistrationMessageId
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(leagueRegistrationMessageId) + leagueRegistrationMessageId, LogLevel.VERBOSE);
+            return leagueRegistrationMessageId;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(leagueRegistrationMessageId) + leagueRegistrationMessageId
+                + " to: " + value, LogLevel.VERBOSE);
+            leagueRegistrationMessageId = value;
+        }
+    }
+
     // The reference to the category created by the system
     [DataMember] private ulong leagueCategoryId { get; set; }
 
@@ -57,6 +72,9 @@ public class DiscordLeagueReferences
 
     // Id of the role which gives access to the league channelTypes
     [DataMember] private ulong leagueRoleId { get; set; }
+
+    // Reference to the message related to this league on the #league-registration channel
+    [DataMember] private ulong leagueRegistrationMessageId { get; set; }
 
     public DiscordLeagueReferences()
     {

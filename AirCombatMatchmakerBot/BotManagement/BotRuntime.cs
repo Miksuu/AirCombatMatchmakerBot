@@ -33,7 +33,7 @@ public class BotRuntimeManager
 
                 
                 var guild = BotReference.GetGuildRef();
-                
+                /*
                 foreach (var ch in guild.Channels)
                 {
                     if (ch.Name == "info") continue;

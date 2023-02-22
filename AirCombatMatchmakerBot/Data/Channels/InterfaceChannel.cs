@@ -9,7 +9,7 @@ public interface InterfaceChannel
     public string ChannelName { get; set; }
     public ulong ChannelId { get; set; }
     public ulong ChannelsCategoryId { get; set; }
-    public List<MessageName> ChannelMessages { get; set; }
+    public Dictionary<MessageName, bool> ChannelMessages { get; set; }
     public Dictionary<ulong, InterfaceMessage> InterfaceMessagesWithIds { get; set; }
 
     public abstract List<Overwrite> GetGuildPermissions(
@@ -17,7 +17,7 @@ public interface InterfaceChannel
 
     public Task CreateAChannelForTheCategory(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
-    public Task<string> CreateAMessageForTheChannelFromMessageName(
+    public Task<(ulong, string)> CreateAMessageForTheChannelFromMessageName(
         MessageName _MessageName, bool _displayMessage = true);
     //public Task PrepareChannelMessages();
     public Task PostChannelMessages(SocketGuild _guild);

@@ -132,7 +132,7 @@ public abstract class BaseMessage : InterfaceMessage
         buttonsInTheMessage = new List<InterfaceButton>();
     }
 
-    public async Task<string> CreateTheMessageAndItsButtonsOnTheBaseClass(
+    public async Task<(ulong, string)> CreateTheMessageAndItsButtonsOnTheBaseClass(
         Discord.WebSocket.SocketGuild _guild, InterfaceChannel _interfaceChannel, 
         bool _displayMessage = true, ulong _leagueCategoryId = 0)
     {
@@ -150,7 +150,7 @@ public abstract class BaseMessage : InterfaceMessage
         if (textChannel == null)
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
-            return "Text channel was null!";
+            return (0, "textChannel was null!");
         }
 
         Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
@@ -191,7 +191,7 @@ public abstract class BaseMessage : InterfaceMessage
             if (leagueRegistrationMessage == null)
             {
                 Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
-                return nameof(leagueRegistrationMessage) + " was null!";
+                return (0, nameof(leagueRegistrationMessage) + " was null!");
             }
 
             // Pass league id as parameter here
@@ -204,10 +204,13 @@ public abstract class BaseMessage : InterfaceMessage
             messageForGenerating = "\n" + GenerateMessage();
         }
 
+        ulong tempId = 0;
         if (_displayMessage)
         {
             var userMessage = await textChannel.SendMessageAsync(
             messageForGenerating, components: component.Build());
+
+            tempId = userMessage.Id;
 
             messageId = userMessage.Id;
             message = messageForGenerating;
@@ -217,7 +220,7 @@ public abstract class BaseMessage : InterfaceMessage
 
         Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);
 
-        return messageForGenerating;
+        return (tempId, message);
     }
 
     public async Task ModifyMessage(string _newContent)

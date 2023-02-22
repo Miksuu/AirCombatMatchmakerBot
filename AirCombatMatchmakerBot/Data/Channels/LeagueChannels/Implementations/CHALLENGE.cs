@@ -10,9 +10,9 @@ public class CHALLENGE : BaseChannel
     public CHALLENGE()
     {
         channelType = ChannelType.CHALLENGE;
-        channelMessages = new List<MessageName>
+        channelMessages = new Dictionary<MessageName, bool>
         {
-            MessageName.CHALLENGEMESSAGE,
+            { MessageName.CHALLENGEMESSAGE, false },
         };
     }
 

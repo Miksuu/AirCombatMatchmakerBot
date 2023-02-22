@@ -10,9 +10,9 @@ public class REGISTRATIONCHANNEL : BaseChannel
     public REGISTRATIONCHANNEL()
     {
         channelType = ChannelType.REGISTRATIONCHANNEL;
-        channelMessages = new List<MessageName>
+        channelMessages = new Dictionary<MessageName, bool>
         {
-            MessageName.REGISTRATIONMESSAGE, 
+            { MessageName.REGISTRATIONMESSAGE, false }, 
         }; 
     }
 

@@ -11,7 +11,10 @@ public class LEAGUEREGISTRATION : BaseChannel
     public LEAGUEREGISTRATION()
     {
         channelType = ChannelType.LEAGUEREGISTRATION;
-        channelMessages = new List<MessageName> { MessageName.LEAGUEREGISTRATIONMESSAGE };
+        channelMessages = new Dictionary<MessageName, bool>
+        {
+            { MessageName.LEAGUEREGISTRATIONMESSAGE, false }
+        };
     }
 
     public override List<Overwrite> GetGuildPermissions(

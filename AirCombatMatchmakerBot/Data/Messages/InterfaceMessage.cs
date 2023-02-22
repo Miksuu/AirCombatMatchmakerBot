@@ -15,7 +15,7 @@ public interface InterfaceMessage
     public ulong MessageCategoryId { get; set; }
     public List<InterfaceButton> ButtonsInTheMessage { get; set; }
 
-    public Task<string> CreateTheMessageAndItsButtonsOnTheBaseClass(
+    public Task<(ulong, string)> CreateTheMessageAndItsButtonsOnTheBaseClass(
         Discord.WebSocket.SocketGuild _guild, InterfaceChannel _interfaceChannel,
         bool _displayMessage = true, ulong _leagueCategoryId = 0);
     public Task ModifyMessage(string _newContent);

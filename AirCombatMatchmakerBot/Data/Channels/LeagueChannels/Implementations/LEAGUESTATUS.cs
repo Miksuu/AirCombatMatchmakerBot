@@ -11,10 +11,7 @@ public class LEAGUESTATUS : BaseChannel
     {
         channelType = ChannelType.LEAGUESTATUS;
 
-        channelMessages = new List<MessageName>
-        {
-            MessageName.LEAGUESTATUSMESSAGE,
-        };
+        channelMessages = new Dictionary<MessageName, bool> { { MessageName.LEAGUESTATUSMESSAGE, false }, };
     }
 
     public override List<Overwrite> GetGuildPermissions(

@@ -252,8 +252,10 @@ public class MatchReporting
             {
                 Log.WriteLine("Creating new messages from: " + _playerId, LogLevel.DEBUG);
 
-                finalResultForConfirmation = await interfaceChannel.CreateAMessageForTheChannelFromMessageName( 
+                var messageTuple = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                     MessageName.MATCHFINALRESULTMESSAGE);
+
+                finalResultForConfirmation = messageTuple.Item2;
 
                 await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                     MessageName.CONFIRMATIONMESSAGE);

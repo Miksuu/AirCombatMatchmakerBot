@@ -11,7 +11,7 @@ public class MATCHREPORTSCHANNEL : BaseChannel
     public MATCHREPORTSCHANNEL()
     {
         channelType = ChannelType.MATCHREPORTSCHANNEL;
-        channelMessages = new List<MessageName>
+        channelMessages = new Dictionary<MessageName, bool>
         {
         };
     }
