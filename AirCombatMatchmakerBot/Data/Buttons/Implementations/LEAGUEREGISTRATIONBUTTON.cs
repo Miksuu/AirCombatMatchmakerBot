@@ -25,6 +25,11 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
         string[] splitStrings = _component.Data.CustomId.Split('_');
 
+        foreach (var item in splitStrings)
+        {
+            Log.WriteLine("item: " + item, LogLevel.DEBUG);
+        }
+
         InterfaceLeague? interfaceLeague =
             Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(ulong.Parse(splitStrings[0]));
         if (interfaceLeague == null)
@@ -50,7 +55,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 _component.User.Id);
             if (player.PlayerDiscordId == 0)
             {
-                string errorMsg = "Player's: " + player.PlayerNickName +" id was 0!";
+                string errorMsg = "Player's: " + player.PlayerNickName + " id was 0!";
                 Log.WriteLine(errorMsg, LogLevel.CRITICAL);
                 return (errorMsg, false);
             }

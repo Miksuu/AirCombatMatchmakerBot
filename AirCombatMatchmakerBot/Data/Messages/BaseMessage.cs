@@ -179,7 +179,7 @@ public abstract class BaseMessage : InterfaceMessage
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
                 component.WithButton(interfaceButton.CreateTheButton(
-                    finalCustomId, b, messageCategoryId));
+                    finalCustomId, b, messageCategoryId, _leagueCategoryId));
 
                 buttonsInTheMessage.Add(interfaceButton);
             }

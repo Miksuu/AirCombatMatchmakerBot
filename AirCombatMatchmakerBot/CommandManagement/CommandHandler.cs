@@ -3,7 +3,7 @@
 public static class CommandHandler
 {
     // Installs the commands that are predefined in the code itself
-    public static Task InstallCommandsAsync()
+    public async static Task InstallCommandsAsync()
     {
         Log.WriteLine("Starting to install the commands.", LogLevel.VERBOSE);
 
@@ -12,15 +12,15 @@ public static class CommandHandler
         if (client == null)
         {
             Exceptions.BotClientRefNull();
-            return Task.CompletedTask;
+            return;
         }
 
-        PrepareCommands();
+        await PrepareCommands();
 
         // Listens for command usage
         client.SlashCommandExecuted += SlashCommandHandler;
 
-        return Task.CompletedTask;
+        return;
     }
 
     private static async Task SlashCommandHandler(SocketSlashCommand _command)

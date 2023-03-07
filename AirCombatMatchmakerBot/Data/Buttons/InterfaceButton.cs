@@ -13,7 +13,8 @@ public interface InterfaceButton
     public string ButtonCustomId { get; set; }
 
     public Discord.ButtonBuilder CreateTheButton(
-        string _customId, int _buttonIndex, ulong _buttonCategoryId);
+        string _customId, int _buttonIndex, ulong _buttonCategoryId,
+        ulong _leagueCategoryId = 0);
     public abstract Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage);
 }

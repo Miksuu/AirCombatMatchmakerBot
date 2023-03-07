@@ -93,7 +93,8 @@ public abstract class BaseButton : InterfaceButton
     [DataMember] protected string buttonCustomId = "";
 
     public Discord.ButtonBuilder CreateTheButton(
-        string _customId, int _buttonIndex, ulong _buttonCategoryId)
+        string _customId, int _buttonIndex, ulong _buttonCategoryId,
+        ulong _leagueCategoryId = 0)
     {
         Log.WriteLine("Creating a button: " + buttonName + " | label: " +
             buttonLabel + " | custom-id:" + _customId + " with style: " +
@@ -110,7 +111,13 @@ public abstract class BaseButton : InterfaceButton
         // Create the button to match the league category id, for easier later referencing
         if (buttonName == ButtonName.LEAGUEREGISTRATIONBUTTON)
         {
-            _customId = _buttonCategoryId.ToString() + "_" + _buttonIndex;
+            if (_leagueCategoryId == 0)
+            {
+                Log.WriteLine("Failed to receive the _leagueCategoryId!", LogLevel.CRITICAL);
+                return new Discord.ButtonBuilder();
+            }
+
+            _customId = _leagueCategoryId.ToString() + "_" + _buttonIndex;
             Log.WriteLine("Setting league-registration button custom id to: " +
                 _customId, LogLevel.DEBUG);
         }
