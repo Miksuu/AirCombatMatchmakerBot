@@ -15,8 +15,6 @@ public class DISPUTEMATCHRESULTBUTTON : BaseButton
         buttonStyle = ButtonStyle.Danger;
     }
 
-    public void CreateTheButton(){}
-
     public override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {

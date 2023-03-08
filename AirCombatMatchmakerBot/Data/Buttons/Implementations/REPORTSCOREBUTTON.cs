@@ -16,8 +16,6 @@ public class REPORTSCOREBUTTON : BaseButton
         buttonStyle = ButtonStyle.Primary;
     }
 
-    public void CreateTheButton(){}
-
     public override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {

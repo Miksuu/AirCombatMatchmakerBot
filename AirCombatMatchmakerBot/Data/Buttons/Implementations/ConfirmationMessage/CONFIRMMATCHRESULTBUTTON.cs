@@ -15,8 +15,6 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
         buttonStyle = ButtonStyle.Success;
     }
 
-    public void CreateTheButton(){}
-
     public override async Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {

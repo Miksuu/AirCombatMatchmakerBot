@@ -14,8 +14,6 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         buttonStyle = ButtonStyle.Primary;
     }
 
-    public void CreateTheButton(){}
-
     public override async Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
