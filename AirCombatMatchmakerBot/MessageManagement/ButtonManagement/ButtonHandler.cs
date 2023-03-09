@@ -67,7 +67,7 @@ public static class ButtonHandler
         }
         
         if (responseTuple.Item1 != "") await _component.RespondAsync(responseTuple.Item1, ephemeral: true);
-        else { Log.WriteLine("the response was: " + responseTuple.Item1, LogLevel.CRITICAL); }
+        //else { Log.WriteLine("the response was: " + responseTuple.Item1, LogLevel.CRITICAL); }
     }
 
     private static InterfaceButton? FindInterfaceButtonFromTheDatabase(
