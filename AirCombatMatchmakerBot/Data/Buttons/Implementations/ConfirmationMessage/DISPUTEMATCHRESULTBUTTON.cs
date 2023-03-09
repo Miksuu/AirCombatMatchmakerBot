@@ -13,6 +13,7 @@ public class DISPUTEMATCHRESULTBUTTON : BaseButton
         buttonName = ButtonName.DISPUTEMATCHRESULTBUTTON;
         buttonLabel = "DISPUTE";
         buttonStyle = ButtonStyle.Danger;
+        ephemeralResponse = true;
     }
 
     public override Task<(string, bool)> ActivateButtonFunction(

@@ -13,6 +13,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
         buttonName = ButtonName.CONFIRMMATCHRESULTBUTTON;
         buttonLabel = "CONFIRM";
         buttonStyle = ButtonStyle.Success;
+        ephemeralResponse = true;
     }
 
     public override async Task<(string, bool)> ActivateButtonFunction(

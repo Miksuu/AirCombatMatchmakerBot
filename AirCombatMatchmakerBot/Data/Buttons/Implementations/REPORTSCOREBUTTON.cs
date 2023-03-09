@@ -14,6 +14,7 @@ public class REPORTSCOREBUTTON : BaseButton
         buttonName = ButtonName.REPORTSCOREBUTTON;
         buttonLabel = "0";
         buttonStyle = ButtonStyle.Primary;
+        ephemeralResponse = true;
     }
 
     public override Task<(string, bool)> ActivateButtonFunction(

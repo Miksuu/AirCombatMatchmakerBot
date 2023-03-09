@@ -12,6 +12,7 @@ public class CHALLENGEBUTTON : BaseButton
         buttonName = ButtonName.CHALLENGEBUTTON;
         buttonLabel = "CHALLENGE";
         buttonStyle = ButtonStyle.Primary;
+        ephemeralResponse = true;
     }
 
     public override async Task<(string, bool)> ActivateButtonFunction(

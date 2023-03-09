@@ -12,6 +12,7 @@ public class REGISTRATIONBUTTON : BaseButton
         buttonName = ButtonName.REGISTRATIONBUTTON;
         buttonLabel = "REGISTER";
         buttonStyle = ButtonStyle.Primary;
+        ephemeralResponse = true;
     }
 
     public override Task<(string, bool)> ActivateButtonFunction(

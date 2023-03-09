@@ -12,6 +12,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         buttonName = ButtonName.LEAGUEREGISTRATIONBUTTON;
         buttonLabel = "Join";
         buttonStyle = ButtonStyle.Primary;
+        ephemeralResponse = true;
     }
 
     public override async Task<(string, bool)> ActivateButtonFunction(

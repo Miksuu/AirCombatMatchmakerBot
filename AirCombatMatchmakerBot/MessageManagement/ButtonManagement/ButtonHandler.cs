@@ -66,7 +66,7 @@ public static class ButtonHandler
             await SerializationManager.SerializeDB();
         }
         
-        await _component.RespondAsync(responseTuple.Item1, ephemeral: true);
+        await _component.RespondAsync(responseTuple.Item1, ephemeral: databaseButton.EphemeralResponse);
         //else { Log.WriteLine("the response was: " + responseTuple.Item1, LogLevel.CRITICAL); }
     }
 

@@ -86,11 +86,29 @@ public abstract class BaseButton : InterfaceButton
         }
     }
 
+
+    bool InterfaceButton.EphemeralResponse
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(ephemeralResponse)
+                + ": " + ephemeralResponse, LogLevel.VERBOSE);
+            return ephemeralResponse;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(ephemeralResponse) +
+                ephemeralResponse + " to: " + value, LogLevel.VERBOSE);
+            ephemeralResponse = value;
+        }
+    }
+
     [DataMember] protected ButtonName buttonName;
     [DataMember] protected string buttonLabel = "";
     [DataMember] protected ButtonStyle buttonStyle;
     [DataMember] protected ulong buttonCategoryId;
     [DataMember] protected string buttonCustomId = "";
+    protected bool ephemeralResponse = false;
 
     public Discord.ButtonBuilder CreateTheButton(
         string _customId, int _buttonIndex, ulong _buttonCategoryId,
