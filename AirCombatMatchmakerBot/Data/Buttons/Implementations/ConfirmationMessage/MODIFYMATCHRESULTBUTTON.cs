@@ -16,7 +16,7 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
         ephemeralResponse = true;
     }
 
-    public override Task<(string, bool)> ActivateButtonFunction(
+    public async override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         var leagueInterfaceAndMatchTuple =
@@ -25,7 +25,7 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
         if (leagueInterfaceAndMatchTuple.Item1 == null || leagueInterfaceAndMatchTuple.Item2 == null)
         {
             Log.WriteLine(nameof(leagueInterfaceAndMatchTuple) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(("", false));
+            return ("", false);
         }
 
         var team = leagueInterfaceAndMatchTuple.Item1.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
@@ -33,7 +33,7 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
         if (team == null || team.TeamId == 0)
         {
             Log.WriteLine(nameof(team) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(("Team was null!", false));
+            return ("Team was null!", false);
         }
 
         var teamReportData = leagueInterfaceAndMatchTuple.Item2.MatchReporting.TeamIdsWithReportData.FirstOrDefault(
@@ -42,14 +42,30 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
         if (teamReportData.ConfirmedMatch)
         {
             Log.WriteLine("Team: " + team.TeamName + " had already confirmed the match!", LogLevel.VERBOSE);
-            return Task.FromResult(("You have already confirmed the match!", false));
+            return ("You have already confirmed the match!", false);
         }
 
         Log.WriteLine("Starting to reset report data", LogLevel.VERBOSE);
 
+        // Copy pasta from MatchReporting.cs, mmaybe replace to method
+        InterfaceChannel interfaceChannelToDeleteTheMessageIn = 
+            leagueInterfaceAndMatchTuple.Item1.FindLeaguesInterfaceCategory(
+                ).FindInterfaceChannelWithIdInTheCategory(
+                    _component.Channel.Id);
+        if (interfaceChannelToDeleteTheMessageIn == null)
+        {
+            Log.WriteLine(nameof(interfaceChannelToDeleteTheMessageIn) + " was null, with: " +
+                _component.Channel.Id, LogLevel.CRITICAL);
+            return (nameof(interfaceChannelToDeleteTheMessageIn) + " was null", false);
+        }
+
+        await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMATIONMESSAGE);
+
+        /*
         var msgID = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                 _component.Channel.Id).FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE).MessageId;
+        */
 
         // Resets the reported score of the modifying player
         teamReportData.ReportedScore.ObjectValue = "";
@@ -63,6 +79,9 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
             reportDataKvp.Value.ConfirmedMatch = false;
         }
 
+        leagueInterfaceAndMatchTuple.Item2.MatchReporting.ShowingConfirmationMessage = false;
+
+        return ("", true);
 
     }
 }
