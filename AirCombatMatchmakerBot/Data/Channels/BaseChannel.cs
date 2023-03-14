@@ -3,6 +3,8 @@ using Discord;
 using System.Runtime.Serialization;
 using System;
 using System.Threading.Channels;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 [DataContract]
 public abstract class BaseChannel : InterfaceChannel
@@ -166,49 +168,6 @@ public abstract class BaseChannel : InterfaceChannel
 
         return newMessageTuple;
     }
-
-    /*
-    public virtual async Task PrepareChannelMessages()
-    {
-        Log.WriteLine("Starting to prepare channel messages on: " + channelType, LogLevel.VERBOSE);
-
-        var guild = BotReference.GetGuildRef();
-
-        if (guild == null)
-        {
-            Exceptions.BotGuildRefNull();
-            return;
-        }
-
-        // Add to a method later
-        var databaseInterfaceChannel =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(channelsCategoryId).
-                Value.InterfaceChannels.FirstOrDefault(
-                    x => x.Value.ChannelId == channelId);
-
-        foreach (MessageName messageName in channelMessagesFromDb)
-        {
-            Log.WriteLine("on: " + nameof(messageName) + " " + messageName, LogLevel.VERBOSE);
-
-            InterfaceMessage interfaceMessage =
-                (InterfaceMessage)EnumExtensions.GetInstance(messageName.ToString());
-
-            if (databaseInterfaceChannel.Value.InterfaceMessagesWithIds.ContainsKey(
-                messageName.ToString())) continue;
-
-            Log.WriteLine("Does not contain the key: " +
-                messageName + ", continuing", LogLevel.VERBOSE);
-
-            databaseInterfaceChannel.Value.InterfaceMessagesWithIds.Add(
-                messageName.ToString(), interfaceMessage);
-
-            Log.WriteLine("Done with: " + messageName, LogLevel.VERBOSE);
-        }
-        Log.WriteLine("Done posting channel messages on " +
-            channelType + " id: " + channelId, LogLevel.VERBOSE);
-
-        await PostChannelMessages(guild, databaseInterfaceChannel.Value);
-    }*/
 
     public virtual async Task PostChannelMessages(SocketGuild _guild)
     {
@@ -377,7 +336,7 @@ public abstract class BaseChannel : InterfaceChannel
     public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName)
     {
-        Log.WriteLine("Getting CategoryKvp with name: " + _messageName, LogLevel.VERBOSE);
+        Log.WriteLine("Getting MessageName with name: " + _messageName, LogLevel.VERBOSE);
 
         var foundInterfaceMessage = interfaceMessagesWithIds.FirstOrDefault(
             x => x.Value.MessageName == _messageName);
@@ -389,6 +348,33 @@ public abstract class BaseChannel : InterfaceChannel
 
         Log.WriteLine("Found: " + foundInterfaceMessage.Value.MessageName, LogLevel.VERBOSE);
         return foundInterfaceMessage.Value;
+    }
+
+    // Finds all messages with that messageName
+    public List<InterfaceMessage>? FindAllInterfaceMessagesWithNameInTheChannel(
+        MessageName _messageName)
+    {
+        List <InterfaceMessage> interfaceMessageValues = new();
+
+        Log.WriteLine("Getting CategoryKvp with name: " + _messageName, LogLevel.VERBOSE);
+
+        var foundInterfaceMessages = interfaceMessagesWithIds.Where(
+            x => x.Value.MessageName == _messageName);
+        if (foundInterfaceMessages == null)
+        {
+            Log.WriteLine(nameof(foundInterfaceMessages) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        foreach (var message in foundInterfaceMessages)
+        {
+            Log.WriteLine("Found: " + message.Value.MessageName, LogLevel.VERBOSE);
+            interfaceMessageValues.Add(message.Value);
+        }
+
+        Log.WriteLine("returning messages with count: " + interfaceMessageValues.Count, LogLevel.VERBOSE);
+
+        return interfaceMessageValues;
     }
 
     public async Task<IMessageChannel?> GetMessageChannelById(DiscordSocketClient _client)
@@ -404,5 +390,59 @@ public abstract class BaseChannel : InterfaceChannel
 
         Log.WriteLine("Found: " + channel.Id, LogLevel.VERBOSE);
         return channel;
+    }
+
+    // Deletes all messages in a channel defined by enum MessageName
+    public async Task<string> DeleteMessagesInAChannelWithMessageName(
+        MessageName _messageNameToDelete)
+    {
+        var client = BotReference.GetClientRef();
+        if (client == null)
+        {
+            return Exceptions.BotClientRefNull();
+        }
+
+        List<InterfaceMessage> interfaceMessages =
+            FindAllInterfaceMessagesWithNameInTheChannel(_messageNameToDelete);
+        if (interfaceMessages == null)
+        {
+            Log.WriteLine(nameof(interfaceMessages) + " was null, with: " +
+                _messageNameToDelete, LogLevel.CRITICAL);
+            return nameof(interfaceMessages) + " was null";
+        }
+
+        var iMessageChannel = await GetMessageChannelById(client);
+        if (iMessageChannel == null)
+        {
+            Log.WriteLine(nameof(iMessageChannel) + " was null!", LogLevel.CRITICAL);
+            return nameof(iMessageChannel) + " was null";
+        }
+
+        foreach (var interfaceMessage in interfaceMessages)
+        {
+            Log.WriteLine("Looping on: " + interfaceMessage.MessageId, LogLevel.VERBOSE);
+
+            var message = await interfaceMessage.GetMessageById(iMessageChannel);
+            if (message == null)
+            {
+                Log.WriteLine(nameof(message) + " was null!", LogLevel.CRITICAL);
+                continue;
+            }
+
+            await message.DeleteAsync();
+            Log.WriteLine("Deleted the message: " + message.Id +
+                " deleting it from DB", LogLevel.VERBOSE);
+
+            if (!interfaceMessagesWithIds.Any(msg => msg.Value.MessageId == message.Id))
+            {
+                Log.WriteLine("Did not contain: " + message.Id, LogLevel.WARNING);
+                continue;
+            }
+
+            interfaceMessagesWithIds.Remove(message.Id);
+            Log.WriteLine("Deleted the message: " + message.Id + " from DB.", LogLevel.VERBOSE);
+        }
+
+        return "";
     }
 }

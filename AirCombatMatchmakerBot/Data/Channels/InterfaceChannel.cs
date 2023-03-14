@@ -19,9 +19,9 @@ public interface InterfaceChannel
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
     public Task<(ulong, string)> CreateAMessageForTheChannelFromMessageName(
         MessageName _MessageName, bool _displayMessage = true);
-    //public Task PrepareChannelMessages();
     public Task PostChannelMessages(SocketGuild _guild);
     public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName);
     public Task<IMessageChannel?> GetMessageChannelById(DiscordSocketClient _client);
+    public Task<string> DeleteMessagesInAChannelWithMessageName(MessageName _messageNameToDelete);
 }

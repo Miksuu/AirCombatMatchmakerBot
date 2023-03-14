@@ -260,13 +260,7 @@ public class MatchReporting
                 await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                     MessageName.CONFIRMATIONMESSAGE);
 
-                var client = BotReference.GetClientRef();
-                if (client == null)
-                {
-                    return Exceptions.BotClientRefNull();
-                }
-
-                // Maybe move this all to a method, useful when trying to delete a message from the interfaces
+                // Copypasted to MODIFYMATCHBUTTON.CS, maybe replace to method
                 InterfaceChannel interfaceChannelToDeleteTheMessageIn = _interfaceLeague.FindLeaguesInterfaceCategory(
                     ).FindInterfaceChannelWithIdInTheCategory(
                         _finalMatchResultMessage.MessageChannelId);
@@ -277,30 +271,7 @@ public class MatchReporting
                     return nameof(interfaceChannelToDeleteTheMessageIn) + " was null";
                 }
 
-                InterfaceMessage? interfaceMessage =
-                    interfaceChannelToDeleteTheMessageIn.FindInterfaceMessageWithNameInTheChannel(MessageName.REPORTINGSTATUSMESSAGE);
-                if (interfaceMessage == null)
-                {
-                    Log.WriteLine(nameof(interfaceMessage) + " was null, with: " +
-                        MessageName.REPORTINGSTATUSMESSAGE, LogLevel.CRITICAL);
-                    return nameof(interfaceMessage) + " was null";
-                }
-
-                var iMessageChannel = await interfaceChannelToDeleteTheMessageIn.GetMessageChannelById(client);
-                if (iMessageChannel == null)
-                {
-                    Log.WriteLine(nameof(iMessageChannel) + " was null!", LogLevel.CRITICAL);
-                    return nameof(iMessageChannel) + " was null";
-                }
-
-                var message = await interfaceMessage.GetMessageById(iMessageChannel);
-                if (message == null)
-                {
-                    Log.WriteLine(nameof(message) + " was null!", LogLevel.CRITICAL);
-                    return nameof(message) + " was null";
-                }
-                await message.DeleteAsync();
-                // end of deletion
+                await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(MessageName.REPORTINGSTATUSMESSAGE);
             }
         }
 

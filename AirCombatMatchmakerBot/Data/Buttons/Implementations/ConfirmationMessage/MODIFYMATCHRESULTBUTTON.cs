@@ -82,6 +82,5 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
         leagueInterfaceAndMatchTuple.Item2.MatchReporting.ShowingConfirmationMessage = false;
 
         return ("", true);
-
     }
 }
