@@ -32,7 +32,7 @@ public static class ButtonHandler
                 interfaceMessage = interfaceMessageKvp.Value;
             }
         }
-
+         
         if (interfaceMessage == null)
         {
             Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.CRITICAL);

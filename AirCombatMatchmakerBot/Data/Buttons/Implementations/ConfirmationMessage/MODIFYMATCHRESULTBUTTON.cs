@@ -13,11 +13,56 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
         buttonName = ButtonName.MODIFYMATCHRESULTBUTTON;
         buttonLabel = "MODIFY";
         buttonStyle = ButtonStyle.Primary;
+        ephemeralResponse = true;
     }
 
     public override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        return Task.FromResult(("Not implemented yet!", false));
+        var leagueInterfaceAndMatchTuple =
+            Database.Instance.Leagues.FindLeagueInterfaceAndLeagueMatchWithChannelId(
+                _component.Channel.Id);
+        if (leagueInterfaceAndMatchTuple.Item1 == null || leagueInterfaceAndMatchTuple.Item2 == null)
+        {
+            Log.WriteLine(nameof(leagueInterfaceAndMatchTuple) + " was null!", LogLevel.CRITICAL);
+            return Task.FromResult(("", false));
+        }
+
+        var team = leagueInterfaceAndMatchTuple.Item1.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
+            _component.User.Id);
+        if (team == null || team.TeamId == 0)
+        {
+            Log.WriteLine(nameof(team) + " was null!", LogLevel.CRITICAL);
+            return Task.FromResult(("Team was null!", false));
+        }
+
+        var teamReportData = leagueInterfaceAndMatchTuple.Item2.MatchReporting.TeamIdsWithReportData.FirstOrDefault(
+            x => team.TeamId == x.Key).Value;
+
+        if (teamReportData.ConfirmedMatch)
+        {
+            Log.WriteLine("Team: " + team.TeamName + " had already confirmed the match!", LogLevel.VERBOSE);
+            return Task.FromResult(("You have already confirmed the match!", false));
+        }
+
+        Log.WriteLine("Starting to reset report data", LogLevel.VERBOSE);
+
+        var msgID = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                _component.Channel.Id).FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE).MessageId;
+
+        // Resets the reported score of the modifying player
+        teamReportData.ReportedScore.ObjectValue = "";
+        teamReportData.ReportedScore.FieldFilled = false;
+
+        // Loop through the teams and set confirmed match to false
+        foreach (var reportDataKvp in leagueInterfaceAndMatchTuple.Item2.MatchReporting.TeamIdsWithReportData)
+        {
+            Log.WriteLine("Resetting " + reportDataKvp.Key + " 's confirmedMatch bool: "
+                + reportDataKvp.Value.ConfirmedMatch + " to false", LogLevel.VERBOSE);
+            reportDataKvp.Value.ConfirmedMatch = false;
+        }
+
+
     }
 }
