@@ -18,7 +18,8 @@ public interface InterfaceChannel
     public Task CreateAChannelForTheCategory(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
     public Task<(ulong, string)> CreateAMessageForTheChannelFromMessageName(
-        MessageName _MessageName, bool _displayMessage = true);
+        MessageName _MessageName, bool _displayMessage = true,
+        SocketMessageComponent? _component = null, bool _ephemeral = true);
     public Task PostChannelMessages(SocketGuild _guild);
     public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName);

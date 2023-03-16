@@ -271,7 +271,8 @@ public class MatchReporting
                     return nameof(interfaceChannelToDeleteTheMessageIn) + " was null";
                 }
 
-                await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(MessageName.REPORTINGSTATUSMESSAGE);
+                await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(
+                    MessageName.REPORTINGSTATUSMESSAGE);
             }
         }
 

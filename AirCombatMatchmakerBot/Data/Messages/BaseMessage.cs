@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.WebSocket;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading.Channels;
@@ -132,9 +133,11 @@ public abstract class BaseMessage : InterfaceMessage
         buttonsInTheMessage = new List<InterfaceButton>();
     }
 
+    // If the component is not null, this is a reply
     public async Task<(ulong, string)> CreateTheMessageAndItsButtonsOnTheBaseClass(
         Discord.WebSocket.SocketGuild _guild, InterfaceChannel _interfaceChannel, 
-        bool _displayMessage = true, ulong _leagueCategoryId = 0)
+        bool _displayMessage = true, ulong _leagueCategoryId = 0, 
+        SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
         messageChannelId = _interfaceChannel.ChannelId;
         messageCategoryId = _interfaceChannel.ChannelsCategoryId;
@@ -146,7 +149,6 @@ public abstract class BaseMessage : InterfaceMessage
             + messageChannelId + " with categoryID: " + messageCategoryId, LogLevel.VERBOSE);
 
         var textChannel = _guild.GetChannel(messageChannelId) as ITextChannel;
-
         if (textChannel == null)
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
@@ -196,7 +198,7 @@ public abstract class BaseMessage : InterfaceMessage
 
             // Pass league id as parameter here
             leagueRegistrationMessage.belongsToLeagueCategoryId = _leagueCategoryId;
-
+            
             messageForGenerating = leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague();
         }
         else
@@ -207,15 +209,27 @@ public abstract class BaseMessage : InterfaceMessage
         ulong tempId = 0;
         if (_displayMessage)
         {
-            var userMessage = await textChannel.SendMessageAsync(
-            messageForGenerating, components: component.Build());
+            var componentsBuilt = component.Build();
 
-            tempId = userMessage.Id;
+            // Send a regular message
+            if (_component == null)
+            {
+                var userMessage = await textChannel.SendMessageAsync(
+                    messageForGenerating, components: componentsBuilt);
 
-            messageId = userMessage.Id;
-            message = messageForGenerating;
+                tempId = userMessage.Id;
 
-            _interfaceChannel.InterfaceMessagesWithIds.Add(messageId, this);
+                messageId = userMessage.Id;
+                message = messageForGenerating;
+
+                _interfaceChannel.InterfaceMessagesWithIds.Add(messageId, this);
+            }
+            // Reply to a message
+            else
+            {
+                await _component.RespondAsync(
+                    messageForGenerating, ephemeral: _ephemeral, components: componentsBuilt);
+            }
         }
 
         Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);

@@ -48,18 +48,23 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
         Log.WriteLine("Starting to reset report data", LogLevel.VERBOSE);
 
         // Copy pasta from MatchReporting.cs, mmaybe replace to method
-        InterfaceChannel interfaceChannelToDeleteTheMessageIn = 
+        InterfaceChannel interfaceChannel = 
             leagueInterfaceAndMatchTuple.Item1.FindLeaguesInterfaceCategory(
                 ).FindInterfaceChannelWithIdInTheCategory(
                     _component.Channel.Id);
-        if (interfaceChannelToDeleteTheMessageIn == null)
+        if (interfaceChannel == null)
         {
-            Log.WriteLine(nameof(interfaceChannelToDeleteTheMessageIn) + " was null, with: " +
+            Log.WriteLine(nameof(interfaceChannel) + " was null, with: " +
                 _component.Channel.Id, LogLevel.CRITICAL);
-            return (nameof(interfaceChannelToDeleteTheMessageIn) + " was null", false);
+            return (nameof(interfaceChannel) + " was null", false);
         }
 
-        await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMATIONMESSAGE);
+        var messageTuple = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                    MessageName.MODIFYMATCHRESULTSMESSAGE, true, _component, ephemeralResponse);
+
+        
+
+        //await interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMATIONMESSAGE);
 
         /*
         var msgID = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
@@ -67,6 +72,7 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
                 _component.Channel.Id).FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE).MessageId;
         */
 
+        /*
         // Resets the reported score of the modifying player
         teamReportData.ReportedScore.ObjectValue = "";
         teamReportData.ReportedScore.FieldFilled = false;
@@ -79,7 +85,7 @@ public class MODIFYMATCHRESULTBUTTON : BaseButton
             reportDataKvp.Value.ConfirmedMatch = false;
         }
 
-        leagueInterfaceAndMatchTuple.Item2.MatchReporting.ShowingConfirmationMessage = false;
+        leagueInterfaceAndMatchTuple.Item2.MatchReporting.ShowingConfirmationMessage = false; */
 
         return ("", true);
     }

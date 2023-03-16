@@ -107,7 +107,6 @@ public abstract class BaseChannel : InterfaceChannel
     [DataMember] protected ulong channelsCategoryId { get; set; }
     [DataMember] protected Dictionary<MessageName, bool> channelMessages { get; set; }
     [DataMember] protected Dictionary<ulong, InterfaceMessage> interfaceMessagesWithIds { get; set; }
-
     public BaseChannel()
     {
         channelMessages = new Dictionary<MessageName, bool>();
@@ -145,14 +144,12 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public async Task<(ulong, string)> CreateAMessageForTheChannelFromMessageName(
-        MessageName _MessageName, bool _displayMessage = true)
+        MessageName _MessageName, bool _displayMessage = true, 
+        SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
         Log.WriteLine("Creating a message named: " + _MessageName.ToString(), LogLevel.DEBUG);
 
-        //messageNameString = _MessageName.ToString();
-
         var guild = BotReference.GetGuildRef();
-
         if (guild == null)
         {
             return (0, Exceptions.BotGuildRefNull());
@@ -164,7 +161,7 @@ public abstract class BaseChannel : InterfaceChannel
         //KeyValuePair<string, InterfaceMessage> interfaceMessageKvp = new(_MessageName.ToString(), interfaceMessage);
 
         var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            guild, this, _displayMessage);
+            guild, this, _displayMessage, 0, _component, _ephemeral);
 
         return newMessageTuple;
     }
@@ -431,7 +428,7 @@ public abstract class BaseChannel : InterfaceChannel
 
             await message.DeleteAsync();
             Log.WriteLine("Deleted the message: " + message.Id +
-                " deleting it from DB", LogLevel.VERBOSE);
+                " deleting it from DB count: " + interfaceMessagesWithIds.Count, LogLevel.VERBOSE);
 
             if (!interfaceMessagesWithIds.Any(msg => msg.Value.MessageId == message.Id))
             {
@@ -440,7 +437,8 @@ public abstract class BaseChannel : InterfaceChannel
             }
 
             interfaceMessagesWithIds.Remove(message.Id);
-            Log.WriteLine("Deleted the message: " + message.Id + " from DB.", LogLevel.VERBOSE);
+            Log.WriteLine("Deleted the message: " + message.Id + " from DB. count now:" +
+                interfaceMessagesWithIds.Count, LogLevel.VERBOSE);
         }
 
         return "";
