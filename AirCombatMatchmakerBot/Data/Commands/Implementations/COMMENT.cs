@@ -59,7 +59,8 @@ public class COMMENT : BaseCommand
         var finalResponseTuple =
             await leagueInterfaceWithTheMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
                  leagueInterfaceWithTheMatch.Item1, commandPlayerId,
-                    _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER);
+                    _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER,
+                    leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, commandChannelId);
 
         if (!finalResponseTuple.Item2)
         {

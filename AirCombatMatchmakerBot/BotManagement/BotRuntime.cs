@@ -162,6 +162,8 @@ public class BotRuntimeManager
                 return;
             }
 
+
+            /**7
             InterfaceMessage? reportingStatusMessage =
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                    interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).Value.
@@ -185,7 +187,9 @@ public class BotRuntimeManager
             // Process the tacview file, and delete the original message by the user
             var finalResponseTuple = interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
                 interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id, attachment.Url,
-                    TypeOfTheReportingObject.TACVIEWLINK).Result;
+                    TypeOfTheReportingObject.TACVIEWLINK, 
+                    interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId,
+                    _socketMessage.Channel.Id).Result;
 
             if (!finalResponseTuple.Item2)
             {
@@ -193,7 +197,8 @@ public class BotRuntimeManager
             }
 
             finalResponseTuple = await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.PrepareFinalMatchResult(
-                interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id, reportingStatusMessage);
+                interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
+                interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, _socketMessage.Channel.Id);
 
             if (!finalResponseTuple.Item2)
             {

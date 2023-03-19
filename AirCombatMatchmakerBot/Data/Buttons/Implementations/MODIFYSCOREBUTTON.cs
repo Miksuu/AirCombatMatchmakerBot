@@ -20,24 +20,12 @@ public class MODIFYSCOREBUTTON : BaseButton
     public override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        InterfaceMessage? matchFinalResultMessage =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                    _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
-                        MessageName.MATCHFINALRESULTMESSAGE);
-        if (matchFinalResultMessage == null)
-        {
-            string errorMsg = nameof(matchFinalResultMessage) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return Task.FromResult((errorMsg, false));
-        }
-
         string[] splitStrings = buttonCustomId.Split('_');
 
         ulong playerId = _component.User.Id;
         int playerReportedResult = int.Parse(splitStrings[1]);
 
-        Log.WriteLine("Pressed by: " + playerId + " in: " + matchFinalResultMessage.MessageChannelId +
+        Log.WriteLine("Pressed by: " + playerId + " in: " + _interfaceMessage.MessageChannelId +
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
@@ -57,7 +45,7 @@ public class MODIFYSCOREBUTTON : BaseButton
 
         var leagueMatchTuple = 
             matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
-                buttonCategoryId, matchFinalResultMessage.MessageChannelId);
+                buttonCategoryId, _interfaceMessage.MessageChannelId);
         if (leagueMatchTuple.Item1 == null || leagueMatchTuple.Item2 == null)
         {
             string errorMsg = nameof(leagueMatchTuple) + " was null!";
@@ -67,7 +55,8 @@ public class MODIFYSCOREBUTTON : BaseButton
 
         var finalResponseTuple = leagueMatchTuple.Item2.MatchReporting.ProcessPlayersSentReportObject(
             leagueMatchTuple.Item1, playerId, playerReportedResult.ToString(),
-            TypeOfTheReportingObject.REPORTEDSCORE).Result;
+            TypeOfTheReportingObject.REPORTEDSCORE, 
+            _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 
         Log.WriteLine("Reached end before the return with player id: " +
             playerId + " with response:" + finalResponseTuple.Item1, LogLevel.DEBUG);

@@ -118,8 +118,8 @@ public class MatchReporting
     }
 
     public async Task<(string, bool)> ProcessPlayersSentReportObject(
-        InterfaceLeague _interfaceLeague, ulong _playerId, //InterfaceMessage _finalMatchResultMessage,
-        string _reportedObjectByThePlayer, TypeOfTheReportingObject _typeOfTheReportingObject)
+        InterfaceLeague _interfaceLeague, ulong _playerId, string _reportedObjectByThePlayer,
+        TypeOfTheReportingObject _typeOfTheReportingObject, ulong _leagueCategoryId, ulong _messageChannelId)
     {
         string response = string.Empty;
 
@@ -186,6 +186,19 @@ public class MatchReporting
             }
         }
 
+        InterfaceMessage? reportingStatusMessage =
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                _leagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                    _messageChannelId).FindInterfaceMessageWithNameInTheChannel(
+                        MessageName.REPORTINGSTATUSMESSAGE);
+        if (reportingStatusMessage == null)
+        {
+            string errorMsg = nameof(reportingStatusMessage) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return (errorMsg, false);
+        }
+        await reportingStatusMessage.GenerateAndModifyTheMessage();
+
         foreach (var reportedTeamKvp in TeamIdsWithReportData)
         {
             Log.WriteLine("Reported team: " + reportedTeamKvp.Key +
@@ -208,13 +221,13 @@ public class MatchReporting
     }
 
     public async Task<(string, bool)> PrepareFinalMatchResult(
-        InterfaceLeague _interfaceLeague, ulong _playerId, InterfaceMessage _finalMatchResultMessage)
-        //TypeOfTheReportingObject _typeOfTheReportingObject)
+        InterfaceLeague _interfaceLeague, ulong _playerId,
+         ulong _leagueCategoryId, ulong _messageChannelId)
     {
         string response = string.Empty;
         //bool commentingAfter = false;
 
-        var responseTuple = CheckIfMatchCanBeSentToConfirmation(_finalMatchResultMessage).Result;
+        var responseTuple = CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId).Result;
         if (responseTuple.Item3 == null)
         {
             Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
@@ -241,11 +254,11 @@ public class MatchReporting
             // Copypasted to MODIFYMATCHBUTTON.CS, maybe replace to method
             InterfaceChannel interfaceChannelToDeleteTheMessageIn = _interfaceLeague.FindLeaguesInterfaceCategory(
                 ).FindInterfaceChannelWithIdInTheCategory(
-                    _finalMatchResultMessage.MessageChannelId);
+                    _messageChannelId);
             if (interfaceChannelToDeleteTheMessageIn == null)
             {
                 Log.WriteLine(nameof(interfaceChannelToDeleteTheMessageIn) + " was null, with: " +
-                    _finalMatchResultMessage.MessageChannelId, LogLevel.CRITICAL);
+                    _messageChannelId, LogLevel.CRITICAL);
                 return (nameof(interfaceChannelToDeleteTheMessageIn) + " was null", false);
             }
 
@@ -259,14 +272,13 @@ public class MatchReporting
     }
 
     private Task<(string, bool, InterfaceChannel?)> CheckIfMatchCanBeSentToConfirmation(
-        InterfaceMessage _interfaceMessage)
+        ulong _leagueCategoryId, ulong _messageChannelId)
     {
         InterfaceChannel? interfaceChannel = null;
         bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
 
         interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                _interfaceMessage.MessageChannelId);
+            _leagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
         if (interfaceChannel == null)
         {
             Log.WriteLine("channel was null!", LogLevel.CRITICAL);

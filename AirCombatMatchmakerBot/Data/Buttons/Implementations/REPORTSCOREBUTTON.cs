@@ -65,7 +65,8 @@ public class REPORTSCOREBUTTON : BaseButton
 
         var finalResponseTuple = leagueMatchTuple.Item2.MatchReporting.ProcessPlayersSentReportObject(
             leagueMatchTuple.Item1, playerId, playerReportedResult.ToString(),
-            TypeOfTheReportingObject.REPORTEDSCORE).Result;
+            TypeOfTheReportingObject.REPORTEDSCORE, 
+            _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 
         if (!finalResponseTuple.Item2)
         {
@@ -73,7 +74,8 @@ public class REPORTSCOREBUTTON : BaseButton
         }
 
         finalResponseTuple = await leagueMatchTuple.Item2.MatchReporting.PrepareFinalMatchResult(
-            leagueMatchTuple.Item1, playerId, reportingStatusMessage);
+            leagueMatchTuple.Item1, playerId,
+            _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId);
 
         if (!finalResponseTuple.Item2)
         {
