@@ -327,8 +327,6 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    //public bool CheckIf
-
     // Finds ANY message with that message name (there can be multiple of same messages now)
     public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName)

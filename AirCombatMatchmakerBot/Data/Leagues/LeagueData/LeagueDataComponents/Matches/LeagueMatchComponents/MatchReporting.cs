@@ -181,23 +181,41 @@ public class MatchReporting
                     break;
                 default:
                     Log.WriteLine("Unknown type! (not implemented?)", LogLevel.CRITICAL);
-                    response = "Unknown type: " + _reportedObjectByThePlayer + "(not implemented ?)";
+                    response = "Unknown type: " + _reportedObjectByThePlayer + "(not implemented?)";
                     break;
             }
         }
 
-        InterfaceMessage? reportingStatusMessage =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 _leagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                    _messageChannelId).FindInterfaceMessageWithNameInTheChannel(
-                        MessageName.REPORTINGSTATUSMESSAGE);
-        if (reportingStatusMessage == null)
+                    _messageChannelId);
+
+        // If the match is on the confirmation phase,
+        // edit that message instead of the reporting status message which would be null
+        MessageName messageNameToEdit = MessageName.REPORTINGSTATUSMESSAGE;
+        if (showingConfirmationMessage)
         {
-            string errorMsg = nameof(reportingStatusMessage) + " was null!";
+            messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
+
+            var interfaceMessage = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
+                MessageName.MATCHFINALRESULTMESSAGE);
+            if (interfaceMessage == null)
+            {
+                Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.CRITICAL);
+                return (nameof(interfaceMessage) + " was null!", false);
+            }
+            finalResultForConfirmation = interfaceMessage.GenerateMessage();
+        }
+
+        InterfaceMessage? messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
+                        messageNameToEdit);
+        if (messageToEdit == null)
+        {
+            string errorMsg = nameof(messageToEdit) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return (errorMsg, false);
         }
-        await reportingStatusMessage.GenerateAndModifyTheMessage();
+        await messageToEdit.GenerateAndModifyTheMessage();
 
         foreach (var reportedTeamKvp in TeamIdsWithReportData)
         {
@@ -225,7 +243,6 @@ public class MatchReporting
          ulong _leagueCategoryId, ulong _messageChannelId)
     {
         string response = string.Empty;
-        //bool commentingAfter = false;
 
         var responseTuple = CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId).Result;
         if (responseTuple.Item3 == null)

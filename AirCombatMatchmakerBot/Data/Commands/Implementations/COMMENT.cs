@@ -43,6 +43,7 @@ public class COMMENT : BaseCommand
             return "That's not your match to comment on!";
         }
 
+        /*
         InterfaceMessage? reportingStatusMessage =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).
@@ -54,7 +55,7 @@ public class COMMENT : BaseCommand
         {
             Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
             return nameof(reportingStatusMessage) + " was null!";
-        }
+        }*/
 
         var finalResponseTuple =
             await leagueInterfaceWithTheMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
@@ -67,6 +68,7 @@ public class COMMENT : BaseCommand
             return finalResponseTuple.Item1;
         }
 
+        /*
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).
                 Value.FindInterfaceChannelWithIdInTheCategory(commandChannelId);
@@ -82,25 +84,12 @@ public class COMMENT : BaseCommand
 
             leagueInterfaceWithTheMatch.Item2.MatchReporting.FinalResultForConfirmation =
                 messageToModifyCommentOn.Message;
-
-            //Log.WriteLine("final result for the confirmation is now: " + finalResultForConfirmation, LogLevel.VERBOSE);
         }
         // Probably dont need to do anything here
         else
         {
             Log.WriteLine("Message to modify was null", LogLevel.WARNING);
-        }
-
-        /*
-        finalResponseTuple = await leagueInterfaceWithTheMatch.Item2.MatchReporting.PrepareFinalMatchResult(
-            leagueMatchTuple.Item1, playerId, reportingStatusMessage, playerReportedResult.ToString(),
-            TypeOfTheReportingObject.REPORTEDSCORE);
-
-        if (!finalResponseTuple.Item2)
-        {
-            return finalResponseTuple.Item1;
         }*/
-
 
         return "Comment posted: " +  _firstOptionString;
     }
