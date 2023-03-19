@@ -175,10 +175,31 @@ public class BotRuntimeManager
                 return;
             }
 
-            // Process the tacview file, and delete the original message by the user
+
+            /*
             await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
                      interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
-                     reportingStatusMessage, attachment.Url, TypeOfTheReportingObject.TACVIEWLINK);
+                     reportingStatusMessage, attachment.Url, TypeOfTheReportingObject.TACVIEWLINK); */
+
+
+            // Process the tacview file, and delete the original message by the user
+            var finalResponseTuple = interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
+                interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id, attachment.Url,
+                    TypeOfTheReportingObject.TACVIEWLINK).Result;
+
+            if (!finalResponseTuple.Item2)
+            {
+                return;
+            }
+
+            finalResponseTuple = await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.PrepareFinalMatchResult(
+                interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id, reportingStatusMessage);
+
+            if (!finalResponseTuple.Item2)
+            {
+                return;
+            }
+
             await _socketMessage.DeleteAsync();
 
             await SerializationManager.SerializeDB();

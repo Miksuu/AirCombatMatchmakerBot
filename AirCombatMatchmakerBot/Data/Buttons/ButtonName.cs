@@ -24,4 +24,7 @@ public enum ButtonName
     MODIFYMATCHRESULTBUTTON = 5,
     [EnumMember(Value = "DISPUTEMATCHRESULTBUTTON")]
     DISPUTEMATCHRESULTBUTTON = 6,
+
+    [EnumMember(Value = "MODIFYSCOREBUTTON")]
+    MODIFYSCOREBUTTON = 7,
 }

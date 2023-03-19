@@ -119,7 +119,8 @@ public abstract class BaseButton : InterfaceButton
             buttonStyle + " | category-id: " + _buttonCategoryId, LogLevel.VERBOSE);
 
         // Report score specific stuff, add the index as label
-        if (buttonName == ButtonName.REPORTSCOREBUTTON)
+        if (buttonName == ButtonName.REPORTSCOREBUTTON || 
+            buttonName == ButtonName.MODIFYSCOREBUTTON)
         {
             buttonLabel = _buttonIndex.ToString();
             Log.WriteLine("is: " + nameof(buttonName) +

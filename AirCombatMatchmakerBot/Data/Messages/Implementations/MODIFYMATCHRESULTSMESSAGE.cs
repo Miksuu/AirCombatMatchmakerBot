@@ -14,7 +14,7 @@ public class MODIFYMATCHRESULTSMESSAGE : BaseMessage
         messageName = MessageName.MODIFYMATCHRESULTSMESSAGE;
         messageButtonNamesWithAmount = new Dictionary<ButtonName, int>
         {
-            { ButtonName.REPORTSCOREBUTTON, 4 }
+            { ButtonName.MODIFYSCOREBUTTON, 4 }
         };
         message = "Modify your results here: ";
     }

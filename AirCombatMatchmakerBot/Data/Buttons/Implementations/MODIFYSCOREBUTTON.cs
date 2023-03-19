@@ -7,42 +7,44 @@ using Discord.WebSocket;
 using System.Runtime.CompilerServices;
 
 [DataContract]
-public class REPORTSCOREBUTTON : BaseButton
+public class MODIFYSCOREBUTTON : BaseButton
 {
-    public REPORTSCOREBUTTON()
+    public MODIFYSCOREBUTTON()
     {
-        buttonName = ButtonName.REPORTSCOREBUTTON;
+        buttonName = ButtonName.MODIFYSCOREBUTTON;
         buttonLabel = "0";
         buttonStyle = ButtonStyle.Primary;
         ephemeralResponse = true;
     }
 
-    public async override Task<(string, bool)> ActivateButtonFunction(
+    public override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        InterfaceMessage? reportingStatusMessage =
+        InterfaceMessage? matchFinalResultMessage =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                     _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
-                        MessageName.REPORTINGSTATUSMESSAGE);
-        if (reportingStatusMessage == null)
+                        MessageName.MATCHFINALRESULTMESSAGE);
+        if (matchFinalResultMessage == null)
         {
-            string errorMsg = nameof(reportingStatusMessage) + " was null!";
+            string errorMsg = nameof(matchFinalResultMessage) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
+            return Task.FromResult((errorMsg, false));
         }
 
         string[] splitStrings = buttonCustomId.Split('_');
+
         ulong playerId = _component.User.Id;
         int playerReportedResult = int.Parse(splitStrings[1]);
 
-        Log.WriteLine("Pressed by: " + playerId + " in: " + reportingStatusMessage.MessageChannelId + 
+        Log.WriteLine("Pressed by: " + playerId + " in: " + matchFinalResultMessage.MessageChannelId +
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
-        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-            _interfaceMessage.MessageChannelId);
+        InterfaceChannel interfaceChannel = 
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                    _interfaceMessage.MessageChannelId);
 
         //Find the channel of the message and cast the interface to to the MATCHCHANNEL class       
         MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
@@ -50,39 +52,26 @@ public class REPORTSCOREBUTTON : BaseButton
         {
             string errorMsg = nameof(matchChannel) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
+            return Task.FromResult((errorMsg, false));
         }
 
         var leagueMatchTuple = 
             matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
-                buttonCategoryId, reportingStatusMessage.MessageChannelId);
+                buttonCategoryId, matchFinalResultMessage.MessageChannelId);
         if (leagueMatchTuple.Item1 == null || leagueMatchTuple.Item2 == null)
         {
             string errorMsg = nameof(leagueMatchTuple) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
+            return Task.FromResult((errorMsg, false));
         }
 
         var finalResponseTuple = leagueMatchTuple.Item2.MatchReporting.ProcessPlayersSentReportObject(
             leagueMatchTuple.Item1, playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE).Result;
 
-        if (!finalResponseTuple.Item2)
-        {
-            return (finalResponseTuple.Item1, false);
-        }
-
-        finalResponseTuple = await leagueMatchTuple.Item2.MatchReporting.PrepareFinalMatchResult(
-            leagueMatchTuple.Item1, playerId, reportingStatusMessage);
-
-        if (!finalResponseTuple.Item2)
-        {
-            return (finalResponseTuple.Item1, false);
-        }
-
         Log.WriteLine("Reached end before the return with player id: " +
             playerId + " with response:" + finalResponseTuple.Item1, LogLevel.DEBUG);
 
-        return (finalResponseTuple.Item1, true);
+        return Task.FromResult((finalResponseTuple.Item1, true));
     }
 }

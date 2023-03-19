@@ -56,10 +56,50 @@ public class COMMENT : BaseCommand
             return nameof(reportingStatusMessage) + " was null!";
         }
 
-        await leagueInterfaceWithTheMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
-                 leagueInterfaceWithTheMatch.Item1,
-                 commandPlayerId, reportingStatusMessage,
-                 _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER);
+        var finalResponseTuple =
+            await leagueInterfaceWithTheMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
+                 leagueInterfaceWithTheMatch.Item1, commandPlayerId,
+                    _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER);
+
+        if (!finalResponseTuple.Item2)
+        {
+            return finalResponseTuple.Item1;
+        }
+
+        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).
+                Value.FindInterfaceChannelWithIdInTheCategory(commandChannelId);
+
+        var messageToModifyCommentOn =
+            interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHFINALRESULTMESSAGE);
+
+        if (messageToModifyCommentOn != null)
+        {
+            await messageToModifyCommentOn.GenerateAndModifyTheMessage();
+
+            Log.WriteLine("Done modifying the comment", LogLevel.VERBOSE);
+
+            leagueInterfaceWithTheMatch.Item2.MatchReporting.FinalResultForConfirmation =
+                messageToModifyCommentOn.Message;
+
+            //Log.WriteLine("final result for the confirmation is now: " + finalResultForConfirmation, LogLevel.VERBOSE);
+        }
+        // Probably dont need to do anything here
+        else
+        {
+            Log.WriteLine("Message to modify was null", LogLevel.WARNING);
+        }
+
+        /*
+        finalResponseTuple = await leagueInterfaceWithTheMatch.Item2.MatchReporting.PrepareFinalMatchResult(
+            leagueMatchTuple.Item1, playerId, reportingStatusMessage, playerReportedResult.ToString(),
+            TypeOfTheReportingObject.REPORTEDSCORE);
+
+        if (!finalResponseTuple.Item2)
+        {
+            return finalResponseTuple.Item1;
+        }*/
+
 
         return "Comment posted: " +  _firstOptionString;
     }
