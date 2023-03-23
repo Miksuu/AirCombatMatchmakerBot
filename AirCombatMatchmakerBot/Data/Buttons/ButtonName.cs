@@ -20,11 +20,9 @@ public enum ButtonName
     // Match report result confirmation message
     [EnumMember(Value = "CONFIRMMATCHRESULTBUTTON")]
     CONFIRMMATCHRESULTBUTTON = 4,
-    [EnumMember(Value = "MODIFYMATCHRESULTBUTTON")]
-    MODIFYMATCHRESULTBUTTON = 5,
     [EnumMember(Value = "DISPUTEMATCHRESULTBUTTON")]
-    DISPUTEMATCHRESULTBUTTON = 6,
+    DISPUTEMATCHRESULTBUTTON = 5,
 
-    [EnumMember(Value = "MODIFYSCOREBUTTON")]
-    MODIFYSCOREBUTTON = 7,
+    [EnumMember(Value = "CONFIRMSCOREBUTTON")]
+    CONFIRMSCOREBUTTON = 6,
 }

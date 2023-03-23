@@ -7,14 +7,14 @@ using Discord.WebSocket;
 using System.Runtime.CompilerServices;
 
 [DataContract]
-public class MODIFYSCOREBUTTON : BaseButton
+public class CONFIRMSCOREBUTTON : BaseButton
 {
-    public MODIFYSCOREBUTTON()
+    public CONFIRMSCOREBUTTON()
     {
-        buttonName = ButtonName.MODIFYSCOREBUTTON;
-        buttonLabel = "0";
+        buttonName = ButtonName.CONFIRMSCOREBUTTON;
+        buttonLabel = "CONFIRM";
         buttonStyle = ButtonStyle.Primary;
-        ephemeralResponse = true;
+        ephemeralResponse = false;
     }
 
     public override Task<(string, bool)> ActivateButtonFunction(
@@ -53,9 +53,18 @@ public class MODIFYSCOREBUTTON : BaseButton
             return Task.FromResult((errorMsg, false));
         }
 
+        Log.WriteLine("Setting ConfirmedMatch false", LogLevel.VERBOSE);
+
+        foreach (var item in leagueMatchTuple.Item2.MatchReporting.TeamIdsWithReportData)
+        {
+            item.Value.ConfirmedMatch = false;
+        }
+
+        Log.WriteLine("Done setting ConfirmedMatch false", LogLevel.VERBOSE);
+
         var finalResponseTuple = leagueMatchTuple.Item2.MatchReporting.ProcessPlayersSentReportObject(
             leagueMatchTuple.Item1, playerId, playerReportedResult.ToString(),
-            TypeOfTheReportingObject.REPORTEDSCORE, 
+            TypeOfTheReportingObject.REPORTEDSCORE,
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 
         Log.WriteLine("Reached end before the return with player id: " +

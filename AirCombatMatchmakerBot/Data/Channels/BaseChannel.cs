@@ -158,8 +158,6 @@ public abstract class BaseChannel : InterfaceChannel
         InterfaceMessage interfaceMessage =
             (InterfaceMessage)EnumExtensions.GetInstance(_MessageName.ToString());
 
-        //KeyValuePair<string, InterfaceMessage> interfaceMessageKvp = new(_MessageName.ToString(), interfaceMessage);
-
         var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
             guild, this, _displayMessage, 0, _component, _ephemeral);
 

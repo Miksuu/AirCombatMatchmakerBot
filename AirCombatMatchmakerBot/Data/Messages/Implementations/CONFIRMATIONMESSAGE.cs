@@ -15,8 +15,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         messageButtonNamesWithAmount = new Dictionary<ButtonName, int>
         {
             { ButtonName.CONFIRMMATCHRESULTBUTTON, 1 },
-            { ButtonName.MODIFYMATCHRESULTBUTTON, 1 },
-            { ButtonName.DISPUTEMATCHRESULTBUTTON, 1 }
+            { ButtonName.DISPUTEMATCHRESULTBUTTON, 1 },
         };
         message = "You can either Confirm, Modify or Dispute the result below.";
     }
