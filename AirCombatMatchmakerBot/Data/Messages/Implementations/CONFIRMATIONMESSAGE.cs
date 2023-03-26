@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using Discord.WebSocket;
 using System.Threading.Channels;
 using System.Reflection;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class CONFIRMATIONMESSAGE : BaseMessage
@@ -12,11 +13,14 @@ public class CONFIRMATIONMESSAGE : BaseMessage
     public CONFIRMATIONMESSAGE()
     {
         messageName = MessageName.CONFIRMATIONMESSAGE;
-        messageButtonNamesWithAmount = new Dictionary<ButtonName, int>
-        {
-            { ButtonName.CONFIRMMATCHRESULTBUTTON, 1 },
-            { ButtonName.DISPUTEMATCHRESULTBUTTON, 1 },
-        };
+
+        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
+            new List<KeyValuePair<ButtonName, int>>()
+            {
+                new KeyValuePair<ButtonName, int>(ButtonName.CONFIRMMATCHRESULTBUTTON, 1),
+                new KeyValuePair<ButtonName, int>(ButtonName.DISPUTEMATCHRESULTBUTTON, 1),
+            });
+
         message = "You can either Confirm, Modify or Dispute the result below.";
     }
 

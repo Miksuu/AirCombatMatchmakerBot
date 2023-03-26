@@ -4,6 +4,7 @@ using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 using Discord.Commands;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class LEAGUEREGISTRATION : BaseChannel
@@ -11,10 +12,12 @@ public class LEAGUEREGISTRATION : BaseChannel
     public LEAGUEREGISTRATION()
     {
         channelType = ChannelType.LEAGUEREGISTRATION;
-        channelMessages = new Dictionary<MessageName, bool>
-        {
-            { MessageName.LEAGUEREGISTRATIONMESSAGE, false }
-        };
+
+        channelMessages = new ConcurrentDictionary<MessageName, bool>(
+            new List<KeyValuePair<MessageName, bool>>()
+            {
+                new KeyValuePair<MessageName, bool>(MessageName.LEAGUEREGISTRATIONMESSAGE, false),
+            });
     }
 
     public override List<Overwrite> GetGuildPermissions(

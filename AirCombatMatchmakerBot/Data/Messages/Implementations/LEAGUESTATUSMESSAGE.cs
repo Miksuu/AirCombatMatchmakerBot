@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using Discord.WebSocket;
 using System.Threading.Channels;
 using System.Reflection;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class LEAGUESTATUSMESSAGE : BaseMessage
@@ -12,7 +13,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
     public LEAGUESTATUSMESSAGE()
     {
         messageName = MessageName.LEAGUESTATUSMESSAGE;
-        messageButtonNamesWithAmount = new Dictionary<ButtonName, int> 
+        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int> 
         {
         };
         message = "Leaderboard:\n";

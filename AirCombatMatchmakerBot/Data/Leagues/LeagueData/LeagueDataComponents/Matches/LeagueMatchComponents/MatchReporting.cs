@@ -1,11 +1,6 @@
-﻿using Discord;
-using Discord.WebSocket;
-using System;
-using System.IO;
-using System.Net.Mail;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.Serialization;
-using System.Threading.Channels;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class MatchReporting
@@ -25,7 +20,7 @@ public class MatchReporting
         }
     }
 
-    public Dictionary<int, ReportData> TeamIdsWithReportData
+    public ConcurrentDictionary<int, ReportData> TeamIdsWithReportData
     {
         get
         {
@@ -87,7 +82,7 @@ public class MatchReporting
     }
 
     private EloSystem eloSystem { get; set; }
-    [DataMember] private Dictionary<int, ReportData> teamIdsWithReportData { get; set; }
+    [DataMember] private ConcurrentDictionary<int, ReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
     [DataMember] private string? finalResultForConfirmation { get; set; }
@@ -95,13 +90,13 @@ public class MatchReporting
     public MatchReporting()
     {
         eloSystem = new EloSystem();
-        teamIdsWithReportData = new Dictionary<int, ReportData>();
+        teamIdsWithReportData = new ConcurrentDictionary<int, ReportData>();
     }
 
-    public MatchReporting(Dictionary<int, string> _teamsInTheMatch)
+    public MatchReporting(ConcurrentDictionary<int, string> _teamsInTheMatch)
     {
         eloSystem = new EloSystem();
-        teamIdsWithReportData = new Dictionary<int, ReportData>();
+        teamIdsWithReportData = new ConcurrentDictionary<int, ReportData>();
 
         foreach (var teamKvp in _teamsInTheMatch)
         {
@@ -113,7 +108,7 @@ public class MatchReporting
 
             Log.WriteLine("Adding team: " + teamKvp.Key + " | " + teamKvp.Value, LogLevel.VERBOSE);
 
-            TeamIdsWithReportData.Add(teamKvp.Key, new ReportData(teamKvp.Value));
+            TeamIdsWithReportData.TryAdd(teamKvp.Key, new ReportData(teamKvp.Value));
         }
     }
 

@@ -89,7 +89,7 @@ public class Matches
         if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
             interfaceChannel.ChannelId))
         {
-            Database.Instance.Categories.MatchChannelsIdWithCategoryId.Add(
+            Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryAdd(
                 interfaceChannel.ChannelId, categoryKvp.Value.SocketCategoryChannelId);
         }
 

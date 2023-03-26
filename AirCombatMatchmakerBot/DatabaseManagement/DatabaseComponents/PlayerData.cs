@@ -2,14 +2,15 @@
 using Discord.WebSocket;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class PlayerData
 {
-    [DataMember] private Dictionary<ulong, Player> PlayerIDs { get; set; }
+    [DataMember] private ConcurrentDictionary<ulong, Player> PlayerIDs { get; set; }
     public PlayerData()
     {
-        PlayerIDs = new Dictionary<ulong, Player>();
+        PlayerIDs = new ConcurrentDictionary<ulong, Player>();
     }
 
     public void AddAPlayerProfile(Player _Player)
@@ -17,7 +18,7 @@ public class PlayerData
         Log.WriteLine("Adding a player profile: " + _Player.PlayerNickName + " (" +
             _Player.PlayerDiscordId + ") to the PlayerIDs list", LogLevel.VERBOSE);
 
-        PlayerIDs.Add(_Player.PlayerDiscordId, _Player);
+        PlayerIDs.TryAdd(_Player.PlayerDiscordId, _Player);
         Log.WriteLine("Done adding, count is now: " + PlayerIDs.Count, LogLevel.VERBOSE);
     }
 
@@ -172,7 +173,7 @@ public class PlayerData
         }
 
         Log.WriteLine("Deleting a player profile " + _playerDiscordId, LogLevel.DEBUG);
-        Database.Instance.PlayerData.PlayerIDs.Remove(_playerDiscordId);
+        Database.Instance.PlayerData.PlayerIDs.TryRemove(_playerDiscordId, out Player? _player);
 
         var user = GetSocketGuildUserById(_playerDiscordId);
 

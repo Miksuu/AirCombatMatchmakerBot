@@ -86,7 +86,6 @@ public abstract class BaseButton : InterfaceButton
         }
     }
 
-
     bool InterfaceButton.EphemeralResponse
     {
         get

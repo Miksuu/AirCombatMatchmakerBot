@@ -3,6 +3,7 @@ using Discord;
 using System.Runtime.Serialization;
 using Discord.Rest;
 using System;
+using System.Collections.Concurrent;
 
 [DataContract]
 public abstract class BaseCategory : InterfaceCategory
@@ -38,7 +39,7 @@ public abstract class BaseCategory : InterfaceCategory
         }
     }
 
-    Dictionary<ulong, InterfaceChannel> InterfaceCategory.InterfaceChannels
+    ConcurrentDictionary<ulong, InterfaceChannel> InterfaceCategory.InterfaceChannels
     {
         get
         {
@@ -72,13 +73,13 @@ public abstract class BaseCategory : InterfaceCategory
 
     [DataMember] protected CategoryType categoryTypes;
     [DataMember] protected List<ChannelType> channelTypes;
-    [DataMember] protected Dictionary<ulong, InterfaceChannel> interfaceChannels;
+    [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels;
     [DataMember] protected ulong socketCategoryChannelId;
 
     public BaseCategory()
     {
         channelTypes = new List<ChannelType>();
-        interfaceChannels = new Dictionary<ulong, InterfaceChannel>();
+        interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
@@ -214,7 +215,7 @@ public abstract class BaseCategory : InterfaceCategory
 
             interfaceChannel.InterfaceMessagesWithIds.Clear();
 
-            interfaceChannels.Add(interfaceChannel.ChannelId, interfaceChannel);
+            interfaceChannels.TryAdd(interfaceChannel.ChannelId, interfaceChannel);
 
             Log.WriteLine("Done adding to the db. Count is now: " +
                 interfaceChannels.Count +

@@ -1,10 +1,7 @@
 ﻿using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
-using System;
-using System.Threading.Channels;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
+using System.Collections.Concurrent;
 
 [DataContract]
 public abstract class BaseChannel : InterfaceChannel
@@ -69,7 +66,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    Dictionary<MessageName, bool> InterfaceChannel.ChannelMessages
+    ConcurrentDictionary<MessageName, bool> InterfaceChannel.ChannelMessages
     {
         get
         {
@@ -85,7 +82,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    Dictionary<ulong, InterfaceMessage> InterfaceChannel.InterfaceMessagesWithIds
+    ConcurrentDictionary<ulong, InterfaceMessage> InterfaceChannel.InterfaceMessagesWithIds
     {
         get
         {
@@ -105,12 +102,12 @@ public abstract class BaseChannel : InterfaceChannel
     [DataMember] protected string channelName { get; set; }
     [DataMember] protected ulong channelId { get; set; }
     [DataMember] protected ulong channelsCategoryId { get; set; }
-    [DataMember] protected Dictionary<MessageName, bool> channelMessages { get; set; }
-    [DataMember] protected Dictionary<ulong, InterfaceMessage> interfaceMessagesWithIds { get; set; }
+    [DataMember] protected ConcurrentDictionary<MessageName, bool> channelMessages { get; set; }
+    [DataMember] protected ConcurrentDictionary<ulong, InterfaceMessage> interfaceMessagesWithIds { get; set; }
     public BaseChannel()
     {
-        channelMessages = new Dictionary<MessageName, bool>();
-        interfaceMessagesWithIds = new Dictionary<ulong, InterfaceMessage>();
+        channelMessages = new ConcurrentDictionary<MessageName, bool>();
+        interfaceMessagesWithIds = new ConcurrentDictionary<ulong, InterfaceMessage>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(
@@ -270,11 +267,11 @@ public abstract class BaseChannel : InterfaceChannel
 
                 //string stringToGetTheInstanceFrom = channelMessagesFromDb.ElementAt(0).ToString();
 
-                interfaceMessagesWithIds.Add(
+                interfaceMessagesWithIds.TryAdd(
                     leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId,
                         (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString()));
 
-                Log.WriteLine("Added to the dictionary, count is now: " +
+                Log.WriteLine("Added to the ConcurrentDictionary, count is now: " +
                     interfaceMessagesWithIds.Count, LogLevel.VERBOSE);
 
                 //Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
@@ -432,7 +429,7 @@ public abstract class BaseChannel : InterfaceChannel
                 continue;
             }
 
-            interfaceMessagesWithIds.Remove(message.Id);
+            interfaceMessagesWithIds.TryRemove(message.Id, out InterfaceMessage? im);
             Log.WriteLine("Deleted the message: " + message.Id + " from DB. count now:" +
                 interfaceMessagesWithIds.Count, LogLevel.VERBOSE);
         }

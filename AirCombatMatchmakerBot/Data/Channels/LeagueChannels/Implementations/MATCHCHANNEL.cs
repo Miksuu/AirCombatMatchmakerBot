@@ -4,6 +4,7 @@ using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 using System.Reflection.Metadata.Ecma335;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class MATCHCHANNEL : BaseChannel
@@ -11,12 +12,14 @@ public class MATCHCHANNEL : BaseChannel
     public MATCHCHANNEL()
     {
         channelType = ChannelType.MATCHCHANNEL;
-        channelMessages = new Dictionary<MessageName, bool>
-        {
-            { MessageName.MATCHSTARTMESSAGE, false },
-            { MessageName.REPORTINGMESSAGE, false },
-            { MessageName.REPORTINGSTATUSMESSAGE, false },
-        };
+
+        channelMessages = new ConcurrentDictionary<MessageName, bool>(
+            new List<KeyValuePair<MessageName, bool>>()
+            {
+                new KeyValuePair<MessageName, bool>(MessageName.MATCHSTARTMESSAGE, false),
+                new KeyValuePair<MessageName, bool>(MessageName.REPORTINGMESSAGE, false),
+                new KeyValuePair<MessageName, bool>(MessageName.REPORTINGSTATUSMESSAGE, false),
+            });
     }
 
     public override List<Overwrite> GetGuildPermissions(

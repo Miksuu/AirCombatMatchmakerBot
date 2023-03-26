@@ -1,8 +1,7 @@
 ﻿using Discord;
-using System.Data;
-using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class CHALLENGE : BaseChannel
@@ -10,10 +9,12 @@ public class CHALLENGE : BaseChannel
     public CHALLENGE()
     {
         channelType = ChannelType.CHALLENGE;
-        channelMessages = new Dictionary<MessageName, bool>
-        {
-            { MessageName.CHALLENGEMESSAGE, false },
-        };
+
+        channelMessages = new ConcurrentDictionary<MessageName, bool>(
+            new List<KeyValuePair<MessageName, bool>>()
+            {
+                new KeyValuePair<MessageName, bool>(MessageName.CHALLENGEMESSAGE, false),
+            });
     }
 
     public override List<Overwrite> GetGuildPermissions(

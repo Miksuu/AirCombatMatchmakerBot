@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using Discord.WebSocket;
 using System.Threading.Channels;
 using System.Reflection;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class REGISTRATIONMESSAGE : BaseMessage
@@ -12,10 +13,13 @@ public class REGISTRATIONMESSAGE : BaseMessage
     public REGISTRATIONMESSAGE()
     {
         messageName = MessageName.REGISTRATIONMESSAGE;
-        messageButtonNamesWithAmount = new Dictionary<ButtonName, int> 
-        {
-            { ButtonName.REGISTRATIONBUTTON, 1 },
-        };
+
+        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
+            new List<KeyValuePair<ButtonName, int>>()
+            {
+                new KeyValuePair<ButtonName, int>(ButtonName.REGISTRATIONBUTTON, 1),
+            });
+
         message = "Click this button to register!";
     }
 

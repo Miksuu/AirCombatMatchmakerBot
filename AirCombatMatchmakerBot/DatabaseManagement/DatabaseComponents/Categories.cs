@@ -1,10 +1,11 @@
 ﻿using Discord.WebSocket;
 using System.Runtime.Serialization;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class Categories
 {
-    public Dictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels
+    public ConcurrentDictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels
     {
         get
         {
@@ -20,7 +21,7 @@ public class Categories
         }
     }
 
-    public Dictionary<ulong, ulong> MatchChannelsIdWithCategoryId
+    public ConcurrentDictionary<ulong, ulong> MatchChannelsIdWithCategoryId
     {
         get
         {
@@ -36,9 +37,9 @@ public class Categories
         }
     }
 
-    // Dictionary of channel categories and channelTypes inside them
-    [DataMember] private Dictionary<ulong, InterfaceCategory> createdCategoriesWithChannels { get; set; }
-    [DataMember] private Dictionary<ulong, ulong> matchChannelsIdWithCategoryId = new Dictionary<ulong, ulong>();
+    // ConcurrentDictionary of channel categories and channelTypes inside them
+    [DataMember] private ConcurrentDictionary<ulong, InterfaceCategory> createdCategoriesWithChannels { get; set; }
+    [DataMember] private ConcurrentDictionary<ulong, ulong> matchChannelsIdWithCategoryId = new ConcurrentDictionary<ulong, ulong>();
 
     public Categories()
     {
@@ -71,8 +72,8 @@ public class Categories
         ulong _id, InterfaceCategory _InterfaceCategory)
     {
         Log.WriteLine("Adding interfaceCategory: " + _InterfaceCategory.CategoryType +
-            "to the CreatedCategoriesWithChannels Dictionary" + " with id: " + _id, LogLevel.VERBOSE);
-        CreatedCategoriesWithChannels.Add(_id, _InterfaceCategory);
+            "to the CreatedCategoriesWithChannels ConcurrentDictionary" + " with id: " + _id, LogLevel.VERBOSE);
+        CreatedCategoriesWithChannels.TryAdd(_id, _InterfaceCategory);
         Log.WriteLine("Done adding, count is now: " +
             CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
     }
@@ -80,7 +81,7 @@ public class Categories
     public void RemoveFromCreatedCategoryWithChannelWithKey(ulong _id)
     {
         Log.WriteLine("Removing with id: " + _id, LogLevel.VERBOSE);
-        CreatedCategoriesWithChannels.Remove(_id);
+        CreatedCategoriesWithChannels.TryRemove(_id, out InterfaceCategory? _ic);
         Log.WriteLine("Done removing, count is now: " +
             CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
     }

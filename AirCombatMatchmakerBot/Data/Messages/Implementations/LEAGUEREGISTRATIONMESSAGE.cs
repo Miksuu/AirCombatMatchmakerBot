@@ -1,11 +1,5 @@
-using Discord;
-using System.Data;
-using System;
 using System.Runtime.Serialization;
-using Discord.WebSocket;
-using System.Threading.Channels;
-using System.Reflection;
-using System.Globalization;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
@@ -13,10 +7,13 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
     public LEAGUEREGISTRATIONMESSAGE()
     {
         messageName = MessageName.LEAGUEREGISTRATIONMESSAGE;
-        messageButtonNamesWithAmount = new Dictionary<ButtonName, int>
-        {
-            { ButtonName.LEAGUEREGISTRATIONBUTTON, 1 }
-        };
+
+        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
+            new List<KeyValuePair<ButtonName, int>>()
+            {
+                new KeyValuePair<ButtonName, int>(ButtonName.LEAGUEREGISTRATIONBUTTON, 1),
+            });
+
         message = "Insert league registration message here";
     }
 

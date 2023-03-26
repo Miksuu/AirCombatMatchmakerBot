@@ -1,10 +1,5 @@
-﻿using Discord;
-using System.Data;
-using System;
-using System.Runtime.Serialization;
-using Discord.WebSocket;
-using System.Threading.Channels;
-using System.Reflection;
+﻿using System.Runtime.Serialization;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class CHALLENGEMESSAGE : BaseMessage
@@ -12,10 +7,14 @@ public class CHALLENGEMESSAGE : BaseMessage
     public CHALLENGEMESSAGE()
     {
         messageName = MessageName.CHALLENGEMESSAGE;
-        messageButtonNamesWithAmount = new Dictionary<ButtonName, int> 
-        {
-            { ButtonName.CHALLENGEBUTTON, 1 }
-        };
+
+        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
+            new List<KeyValuePair<ButtonName, int>>()
+            {
+                new KeyValuePair<ButtonName, int>(ButtonName.CHALLENGEBUTTON, 1),
+            });
+
+
         message = "Insert the challenge message here";
     }
 

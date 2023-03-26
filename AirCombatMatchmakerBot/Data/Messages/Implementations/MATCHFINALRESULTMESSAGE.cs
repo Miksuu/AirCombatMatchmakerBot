@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using Discord.WebSocket;
 using System.Threading.Channels;
 using System.Reflection;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class MATCHFINALRESULTMESSAGE : BaseMessage
@@ -12,7 +13,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
     public MATCHFINALRESULTMESSAGE()
     {
         messageName = MessageName.MATCHFINALRESULTMESSAGE;
-        messageButtonNamesWithAmount = new Dictionary<ButtonName, int>
+        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
         {
         };
         message = "Insert the confirmation message here";
@@ -36,7 +37,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         finalMessage += "Match " + interfaceLeagueMatchTuple.Item2.MatchId + " has finished\n";
 
-        Dictionary<int, ReportData>? matchReportingTeamIdsWithReportData =
+        ConcurrentDictionary<int, ReportData>? matchReportingTeamIdsWithReportData =
             interfaceLeagueMatchTuple.Item2.MatchReporting.TeamIdsWithReportData;
 
         finalMessage += "\nPlayers: ";

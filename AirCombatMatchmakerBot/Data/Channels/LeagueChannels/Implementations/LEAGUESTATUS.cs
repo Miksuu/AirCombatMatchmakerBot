@@ -3,6 +3,7 @@ using System.Data;
 using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class LEAGUESTATUS : BaseChannel
@@ -11,7 +12,11 @@ public class LEAGUESTATUS : BaseChannel
     {
         channelType = ChannelType.LEAGUESTATUS;
 
-        channelMessages = new Dictionary<MessageName, bool> { { MessageName.LEAGUESTATUSMESSAGE, false }, };
+        channelMessages = new ConcurrentDictionary<MessageName, bool>(
+            new List<KeyValuePair<MessageName, bool>>()
+            {
+                        new KeyValuePair<MessageName, bool>(MessageName.LEAGUESTATUSMESSAGE, false),
+            });
     }
 
     public override List<Overwrite> GetGuildPermissions(

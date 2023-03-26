@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class DiscordLeagueReferences
@@ -18,7 +19,7 @@ public class DiscordLeagueReferences
         }
     }
 
-    public Dictionary<ChannelType, ulong> LeagueChannels
+    public ConcurrentDictionary<ChannelType, ulong> LeagueChannels
     {
         get
         {
@@ -68,7 +69,7 @@ public class DiscordLeagueReferences
     [DataMember] private ulong leagueCategoryId { get; set; }
 
     // The references for the channelTypes inside the category
-    [DataMember] private Dictionary<ChannelType, ulong> leagueChannels { get; set; }
+    [DataMember] private ConcurrentDictionary<ChannelType, ulong> leagueChannels { get; set; }
 
     // Id of the role which gives access to the league channelTypes
     [DataMember] private ulong leagueRoleId { get; set; }

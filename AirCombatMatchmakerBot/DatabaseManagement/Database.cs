@@ -121,7 +121,7 @@ public class Database
             // Re-implement the player removal from here
 
             /*
-            Dictionary<string, InterfaceMessage> leagueRegistrationMessages = new Dictionary<string, InterfaceMessage>();
+            ConcurrentDictionary<string, InterfaceMessage> leagueRegistrationMessages = new ConcurrentDictionary<string, InterfaceMessage>();
 
             
             // Replaced league name with the channel/catergoryname

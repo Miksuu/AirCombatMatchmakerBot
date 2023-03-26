@@ -1,11 +1,12 @@
 ﻿using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class LeagueMatch
 {
-    public Dictionary<int, string> TeamsInTheMatch
+    public ConcurrentDictionary<int, string> TeamsInTheMatch
     {
         get
         {
@@ -85,7 +86,7 @@ public class LeagueMatch
         }
     }
 
-    [DataMember] private Dictionary<int, string> teamsInTheMatch { get; set; }
+    [DataMember] private ConcurrentDictionary<int, string> teamsInTheMatch { get; set; }
     [DataMember] private int matchId { get; set; }
     [DataMember] private ulong matchChannelId { get; set; }
     [DataMember] private MatchReporting matchReporting { get; set; }
@@ -93,24 +94,24 @@ public class LeagueMatch
 
     public LeagueMatch()
     {
-        teamsInTheMatch = new Dictionary<int, string>();
+        teamsInTheMatch = new ConcurrentDictionary<int, string>();
         matchReporting = new MatchReporting();
     }
 
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
-        teamsInTheMatch = new Dictionary<int, string>();
+        teamsInTheMatch = new ConcurrentDictionary<int, string>();
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
         matchLeague = _interfaceLeague.LeagueCategoryName;
 
-        // Add the team's name to the dictionary as a value
+        // Add the team's name to the ConcurrentDictionary as a value
         foreach (int teamId in _teamsToFormMatchOn)
         {
             Team foundTeam =
                 _interfaceLeague.LeagueData.Teams.FindTeamById(
                     leagueTeamSize, teamId);
 
-            teamsInTheMatch.Add(teamId, foundTeam.GetTeamInAString(false, leagueTeamSize));
+            teamsInTheMatch.TryAdd(teamId, foundTeam.GetTeamInAString(false, leagueTeamSize));
         }
 
         matchId = Database.Instance.Leagues.LeaguesMatchCounter;
@@ -220,8 +221,9 @@ public class LeagueMatch
         }
 
         Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.InterfaceChannels.Remove(matchChannelId);
-        Database.Instance.Categories.MatchChannelsIdWithCategoryId.Remove(matchChannelId);
+            _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.InterfaceChannels.TryRemove(
+                matchChannelId, out InterfaceChannel? _ic);
+        Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(matchChannelId, out ulong _id);
 
         int matchIdTemp = matchId;
 

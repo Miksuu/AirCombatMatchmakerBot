@@ -31,9 +31,9 @@ public class BotRuntimeManager
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
-                
-                var guild = BotReference.GetGuildRef();
                 /*
+                var guild = BotReference.GetGuildRef();
+                
                 foreach (var ch in guild.Channels)
                 {
                     if (ch.Name == "info") continue;

@@ -1,13 +1,14 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 [JsonObjectAttribute]
 public interface InterfaceCategory
 {
     public CategoryType CategoryType { get; set; }
     public List<ChannelType> ChannelTypes { get; set; }
-    public Dictionary<ulong, InterfaceChannel> InterfaceChannels { get; set; }
+    public ConcurrentDictionary<ulong, InterfaceChannel> InterfaceChannels { get; set; }
     public ulong SocketCategoryChannelId { get; set; }
 
     public abstract List<Overwrite> GetGuildPermissions(

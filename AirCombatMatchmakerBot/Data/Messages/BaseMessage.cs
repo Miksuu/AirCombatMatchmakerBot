@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading.Channels;
+using System.Collections.Concurrent;
 
 [DataContract]
 public abstract class BaseMessage : InterfaceMessage
@@ -23,7 +24,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    Dictionary<ButtonName, int> InterfaceMessage.MessageButtonNamesWithAmount
+    ConcurrentDictionary<ButtonName, int> InterfaceMessage.MessageButtonNamesWithAmount
     {
         get
         {
@@ -120,7 +121,7 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     [DataMember] protected MessageName messageName;
-    [DataMember] protected Dictionary<ButtonName, int> messageButtonNamesWithAmount;
+    [DataMember] protected ConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount;
     [DataMember] protected string message = "";
     [DataMember] protected ulong messageId;
     [DataMember] protected ulong messageChannelId;
@@ -129,7 +130,7 @@ public abstract class BaseMessage : InterfaceMessage
 
     public BaseMessage()
     {
-        messageButtonNamesWithAmount = new Dictionary<ButtonName, int>();
+        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
         buttonsInTheMessage = new List<InterfaceButton>();
     }
 
@@ -222,7 +223,7 @@ public abstract class BaseMessage : InterfaceMessage
                 messageId = userMessage.Id;
                 message = messageForGenerating;
 
-                _interfaceChannel.InterfaceMessagesWithIds.Add(messageId, this);
+                _interfaceChannel.InterfaceMessagesWithIds.TryAdd(messageId, this);
             }
             // Reply to a message
             else

@@ -1,6 +1,7 @@
 ﻿using Discord.WebSocket;
 using Discord;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 [JsonObjectAttribute]
 public interface InterfaceChannel
@@ -9,8 +10,8 @@ public interface InterfaceChannel
     public string ChannelName { get; set; }
     public ulong ChannelId { get; set; }
     public ulong ChannelsCategoryId { get; set; }
-    public Dictionary<MessageName, bool> ChannelMessages { get; set; }
-    public Dictionary<ulong, InterfaceMessage> InterfaceMessagesWithIds { get; set; }
+    public ConcurrentDictionary<MessageName, bool> ChannelMessages { get; set; }
+    public ConcurrentDictionary<ulong, InterfaceMessage> InterfaceMessagesWithIds { get; set; }
 
     public abstract List<Overwrite> GetGuildPermissions(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray);

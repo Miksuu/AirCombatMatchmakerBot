@@ -3,7 +3,7 @@ using System.Data;
 using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
-using System.Reflection.Metadata.Ecma335;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class MATCHREPORTSCHANNEL : BaseChannel
@@ -11,7 +11,7 @@ public class MATCHREPORTSCHANNEL : BaseChannel
     public MATCHREPORTSCHANNEL()
     {
         channelType = ChannelType.MATCHREPORTSCHANNEL;
-        channelMessages = new Dictionary<MessageName, bool>
+        channelMessages = new ConcurrentDictionary<MessageName, bool>
         {
         };
     }

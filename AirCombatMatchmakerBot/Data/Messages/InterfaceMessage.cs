@@ -3,12 +3,13 @@ using Discord.WebSocket;
 using Newtonsoft.Json;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Collections.Concurrent;
 
 [JsonObjectAttribute]   
 public interface InterfaceMessage
 {
     public MessageName MessageName { get; set; }
-    public Dictionary<ButtonName, int> MessageButtonNamesWithAmount { get; set; }
+    public ConcurrentDictionary<ButtonName, int> MessageButtonNamesWithAmount { get; set; }
     public string Message { get; set; }
     public ulong MessageId { get; set; }
     public ulong MessageChannelId { get; set; }

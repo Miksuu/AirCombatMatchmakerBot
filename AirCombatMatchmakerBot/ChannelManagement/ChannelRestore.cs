@@ -27,7 +27,7 @@ public static class ChannelRestore
         var dbFinal = dbKeyValue.InterfaceChannels.FirstOrDefault(
             ic => ic.Value.ChannelId == _interfaceChannel.ChannelId);
 
-        dbKeyValue.InterfaceChannels.Remove(dbFinal.Value.ChannelId);
+        dbKeyValue.InterfaceChannels.TryRemove(dbFinal.Value.ChannelId, out InterfaceChannel? _ic);
 
         Log.WriteLine("Channel " + _interfaceChannel.ChannelType +
             " not found, regenerating it...", LogLevel.ERROR);
