@@ -1,10 +1,10 @@
 ﻿using System.Runtime.Serialization;
-using System.Threading.Channels;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class ChallengeStatus
 {
-    public List<int> TeamsInTheQueue
+    public ConcurrentBag<int> TeamsInTheQueue
     {
         get
         {
@@ -20,11 +20,11 @@ public class ChallengeStatus
         }
     }
 
-    [DataMember] private List<int> teamsInTheQueue { get; set; }
+    [DataMember] private ConcurrentBag<int> teamsInTheQueue { get; set; }
 
     public ChallengeStatus()
     {
-        teamsInTheQueue = new List<int>();
+        teamsInTheQueue = new ConcurrentBag<int>();
     }
 
     public void AddToTeamsInTheQueue(Team _Team)
@@ -111,7 +111,7 @@ public class ChallengeStatus
             teamsToFormMatchOn[t] = teamsInTheQueue.FirstOrDefault();
             Log.WriteLine("Done adding to " + nameof(teamsToFormMatchOn) +
                 ", Length: " + teamsToFormMatchOn.Length, LogLevel.VERBOSE);
-            teamsInTheQueue.RemoveAt(0);
+            teamsInTheQueue.TryPeek(out int removedValue);
             Log.WriteLine("Done removing from " + nameof(teamsInTheQueue) +
                 ", count: " + teamsInTheQueue.Count, LogLevel.VERBOSE);
         }

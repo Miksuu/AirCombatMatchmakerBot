@@ -4,7 +4,7 @@ using Discord.WebSocket;
 // Reference to the bot's client/guild reference variable
 public static class BotReference
 {
-    // Use this to use the bot's functions such as the listeners
+    // Use this to use the bot's functions such as the ConcurrentBageners
     private static DiscordSocketClient? clientRef;
     // Use guild ref to get the guild specific things, such as channels in a category
     private static SocketGuild? guildRef;

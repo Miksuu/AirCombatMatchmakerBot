@@ -66,7 +66,7 @@ public static class SerializationManager
                         continue;
                     }
 
-                    Database.Instance.CachedUsers.AddUserIdToCachedList(user.Id);
+                    Database.Instance.CachedUsers.AddUserIdToCachedConcurrentBag(user.Id);
                 }
                 else
                 {

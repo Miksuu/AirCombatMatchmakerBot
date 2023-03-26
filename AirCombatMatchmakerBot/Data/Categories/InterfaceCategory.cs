@@ -7,11 +7,11 @@ using System.Collections.Concurrent;
 public interface InterfaceCategory
 {
     public CategoryType CategoryType { get; set; }
-    public List<ChannelType> ChannelTypes { get; set; }
+    public ConcurrentBag<ChannelType> ChannelTypes { get; set; }
     public ConcurrentDictionary<ulong, InterfaceChannel> InterfaceChannels { get; set; }
     public ulong SocketCategoryChannelId { get; set; }
 
-    public abstract List<Overwrite> GetGuildPermissions(
+    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(
         SocketGuild _guild, SocketRole _role);
 
     public Task<SocketCategoryChannel?> CreateANewSocketCategoryChannelAndReturnIt(

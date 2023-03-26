@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Runtime.Serialization;
 
 [DataContract]
@@ -34,7 +35,7 @@ public class Team
         }
     }
 
-    public List<Player> Players
+    public ConcurrentBag<Player> Players
     {
         get
         {
@@ -82,7 +83,7 @@ public class Team
 
     [DataMember] private float skillRating { get; set; }
     [DataMember] private string teamName { get; set; }
-    [DataMember] private List<Player> players { get; set; }
+    [DataMember] private ConcurrentBag<Player> players { get; set; }
     [DataMember] private bool teamActive { get; set; }
     [DataMember] private int teamId { get; set; }
 
@@ -90,11 +91,11 @@ public class Team
     {
         skillRating = 1600;
         teamName = string.Empty;
-        players = new List<Player>();
+        players = new ConcurrentBag<Player>();
         teamActive = false;
     }
 
-    public Team(List<Player> _players, string _teamName, int _teamId)
+    public Team(ConcurrentBag<Player> _players, string _teamName, int _teamId)
     {
         skillRating = 1600;
         teamName = _teamName;
@@ -107,9 +108,12 @@ public class Team
         string playersInATeam = string.Empty;
         for (int p = 0; p < players.Count; p++)
         {
-            playersInATeam += players[p].GetPlayerIdAsMention();
-            if (p !=  players.Count - 1) playersInATeam += ", ";
+            playersInATeam += players.ElementAt(p).GetPlayerIdAsMention();
+            if (p != players.Count - 1) playersInATeam += ", ";
         }
+
+        Log.WriteLine("Players in the team: " + playersInATeam, LogLevel.DEBUG);
+
         return playersInATeam;
     }
 

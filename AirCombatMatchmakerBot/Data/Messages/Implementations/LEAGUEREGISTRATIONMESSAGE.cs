@@ -9,7 +9,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         messageName = MessageName.LEAGUEREGISTRATIONMESSAGE;
 
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
-            new List<KeyValuePair<ButtonName, int>>()
+            new ConcurrentBag<KeyValuePair<ButtonName, int>>()
             {
                 new KeyValuePair<ButtonName, int>(ButtonName.LEAGUEREGISTRATIONBUTTON, 1),
             });
@@ -107,7 +107,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         for (int u = 0; u < _interfaceLeague.LeagueUnits.Count; ++u)
         {
             allowedUnits +=
-                EnumExtensions.GetEnumMemberAttrValue(_interfaceLeague.LeagueUnits[u]);
+                EnumExtensions.GetEnumMemberAttrValue(_interfaceLeague.LeagueUnits.ElementAt(u));
 
             // Is not the last index
             if (u != _interfaceLeague.LeagueUnits.Count - 1)
@@ -116,6 +116,8 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
             }
         }
 
+        Log.WriteLine("Allowed units: " + allowedUnits, LogLevel.DEBUG);
+
         return allowedUnits;
     }
 
@@ -123,7 +125,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
     {
         int count = 0;
 
-        foreach (Team team in _interfaceLeague.LeagueData.Teams.TeamsList)
+        foreach (Team team in _interfaceLeague.LeagueData.Teams.TeamsConcurrentBag)
         {
             string teamName = team.GetTeamName(_interfaceLeague.LeaguePlayerCountPerTeam);
 

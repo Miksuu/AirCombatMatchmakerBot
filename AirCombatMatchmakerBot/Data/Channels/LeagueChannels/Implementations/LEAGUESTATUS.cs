@@ -13,16 +13,16 @@ public class LEAGUESTATUS : BaseChannel
         channelType = ChannelType.LEAGUESTATUS;
 
         channelMessages = new ConcurrentDictionary<MessageName, bool>(
-            new List<KeyValuePair<MessageName, bool>>()
+            new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                         new KeyValuePair<MessageName, bool>(MessageName.LEAGUESTATUSMESSAGE, false),
             });
     }
 
-    public override List<Overwrite> GetGuildPermissions(
+    public override ConcurrentBag<Overwrite> GetGuildPermissions(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
-        return new List<Overwrite>
+        return new ConcurrentBag<Overwrite>
         {
         };
     }

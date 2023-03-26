@@ -1,6 +1,7 @@
 ﻿using Discord.WebSocket;
 using Discord;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 [JsonObjectAttribute]
 public interface InterfaceLeague
@@ -10,12 +11,12 @@ public interface InterfaceLeague
     public Era LeagueEra { get; set; }
     public int LeaguePlayerCountPerTeam { get; set; }
 
-    public List<UnitName> LeagueUnits { get; set; }
+    public ConcurrentBag<UnitName> LeagueUnits { get; set; }
 
     public LeagueData LeagueData { get; set; }
     public DiscordLeagueReferences DiscordLeagueReferences { get; set; }
 
-    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
+    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
     public InterfaceCategory FindLeaguesInterfaceCategory();
     public void PostMatchReport(SocketGuild _guild, string _finalResult);
     public void UpdateLeagueLeaderboard();

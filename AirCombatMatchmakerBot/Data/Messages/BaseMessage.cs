@@ -104,7 +104,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    List<InterfaceButton> InterfaceMessage.ButtonsInTheMessage
+    ConcurrentBag<InterfaceButton> InterfaceMessage.ButtonsInTheMessage
     {
         get
         {
@@ -126,12 +126,12 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected ulong messageId;
     [DataMember] protected ulong messageChannelId;
     [DataMember] protected ulong messageCategoryId;
-    [DataMember] protected List<InterfaceButton> buttonsInTheMessage;
+    [DataMember] protected ConcurrentBag<InterfaceButton> buttonsInTheMessage;
 
     public BaseMessage()
     {
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
-        buttonsInTheMessage = new List<InterfaceButton>();
+        buttonsInTheMessage = new ConcurrentBag<InterfaceButton>();
     }
 
     // If the component is not null, this is a reply

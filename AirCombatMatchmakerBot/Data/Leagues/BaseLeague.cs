@@ -1,10 +1,7 @@
 ﻿using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
-using Newtonsoft.Json.Linq;
-using System.Threading.Channels;
-using System;
-using Discord.Rest;
+using System.Collections.Concurrent;
 
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
@@ -54,7 +51,7 @@ public abstract class BaseLeague : InterfaceLeague
         }
     }
 
-    List<UnitName> InterfaceLeague.LeagueUnits
+    ConcurrentBag<UnitName> InterfaceLeague.LeagueUnits
     {
         get
         {
@@ -103,7 +100,7 @@ public abstract class BaseLeague : InterfaceLeague
     [DataMember] protected CategoryType leagueCategoryName;
     [DataMember] protected Era leagueEra;
     [DataMember] protected int leaguePlayerCountPerTeam;
-    [DataMember] protected List<UnitName> leagueUnits = new List<UnitName>();
+    [DataMember] protected ConcurrentBag<UnitName> leagueUnits = new ConcurrentBag<UnitName>();
     [DataMember] protected LeagueData leagueData = new LeagueData();
     [DataMember] protected DiscordLeagueReferences discordLeagueReferences = new DiscordLeagueReferences();
 
@@ -111,7 +108,7 @@ public abstract class BaseLeague : InterfaceLeague
     {
     }
 
-    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
+    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 
     public InterfaceCategory? FindLeaguesInterfaceCategory()
     {

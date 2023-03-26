@@ -1,31 +1,31 @@
 ﻿using Discord.WebSocket;
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class Matches
 {
-    public List<LeagueMatch> MatchesList
+    public ConcurrentBag<LeagueMatch> MatchesConcurrentBag
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(matchesList) + " with count of: " +
-                matchesList.Count, LogLevel.VERBOSE);
-            return matchesList;
+            Log.WriteLine("Getting " + nameof(matchesConcurrentBag) + " with count of: " +
+                matchesConcurrentBag.Count, LogLevel.VERBOSE);
+            return matchesConcurrentBag;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(matchesList) + matchesList
+            Log.WriteLine("Setting " + nameof(matchesConcurrentBag) + matchesConcurrentBag
                 + " to: " + value, LogLevel.VERBOSE);
-            matchesList = value;
+            matchesConcurrentBag = value;
         }
     }
 
-    [DataMember] private List<LeagueMatch> matchesList { get; set; }
+    [DataMember] private ConcurrentBag<LeagueMatch> matchesConcurrentBag { get; set; }
 
     public Matches() 
     {
-        matchesList = new List<LeagueMatch>();
+        matchesConcurrentBag = new ConcurrentBag<LeagueMatch>();
     }
 
     public async void CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
@@ -46,9 +46,9 @@ public class Matches
         }
 
         LeagueMatch newMatch = new(_interfaceLeague, _teamsToFormMatchOn);
-        MatchesList.Add(newMatch);
-        Log.WriteLine("Added to the " + nameof(matchesList) + " count is now: " +
-            matchesList.Count, LogLevel.VERBOSE);
+        MatchesConcurrentBag.Add(newMatch);
+        Log.WriteLine("Added to the " + nameof(matchesConcurrentBag) + " count is now: " +
+            matchesConcurrentBag.Count, LogLevel.VERBOSE);
 
         await CreateAMatchChannel(guild, newMatch, _interfaceLeague);
 
@@ -105,12 +105,12 @@ public class Matches
         Log.WriteLine("Getting match by channelId: " + _channelId, LogLevel.VERBOSE);
 
         /*
-        foreach (var item in MatchesList)
+        foreach (var item in MatchesConcurrentBag)
         {
             Log.WriteLine("ChannelID debug: " + item.MatchChannelId, LogLevel.DEBUG);
         }*/
 
-        LeagueMatch? foundMatch = MatchesList.FirstOrDefault(x => x.MatchChannelId == _channelId);
+        LeagueMatch? foundMatch = MatchesConcurrentBag.FirstOrDefault(x => x.MatchChannelId == _channelId);
 
         if (foundMatch == null) 
         {

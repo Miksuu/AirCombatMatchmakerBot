@@ -63,7 +63,7 @@ public class LeagueData
     {
         Log.WriteLine("Starting to find a active team by player id: " + _playerId, LogLevel.VERBOSE);
 
-        foreach (Team team in Teams.TeamsList)
+        foreach (Team team in Teams.TeamsConcurrentBag)
         {
             Team? foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
 
@@ -85,7 +85,7 @@ public class LeagueData
     {
         Log.WriteLine("Starting to find team with id: " + _teamId, LogLevel.VERBOSE);
 
-        Team? foundTeam = Teams.TeamsList.FirstOrDefault(t => t.TeamId == _teamId && t.TeamActive);
+        Team? foundTeam = Teams.TeamsConcurrentBag.FirstOrDefault(t => t.TeamId == _teamId && t.TeamActive);
 
         if (foundTeam == null)
         {

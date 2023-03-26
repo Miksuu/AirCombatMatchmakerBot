@@ -1,9 +1,11 @@
 ﻿using System.Runtime.Serialization;
+using System.Collections.Concurrent;
+using Discord;
 
 [DataContract]
 public class CachedUsers
 {
-    public List<ulong> CachedUserIDs
+    public ConcurrentBag<ulong> CachedUserIDs
     {
         get
         {
@@ -19,41 +21,47 @@ public class CachedUsers
         }
     }
 
-    [DataMember] private List<ulong> cachedUserIDs { get; set; }
+    [DataMember] private ConcurrentBag<ulong> cachedUserIDs { get; set; }
 
     public CachedUsers()
     {
-        cachedUserIDs = new List<ulong>();
+        cachedUserIDs = new ConcurrentBag<ulong>();
     }
 
-    public void AddUserIdToCachedList(ulong _userId)
+    public void AddUserIdToCachedConcurrentBag(ulong _userId)
     {
-        Log.WriteLine("Adding " + _userId + " to the cache list", LogLevel.VERBOSE);
+        Log.WriteLine("Adding " + _userId + " to the cache ConcurrentBag", LogLevel.VERBOSE);
         if (!CachedUserIDs.Contains(_userId))
         {
             cachedUserIDs.Add(_userId);
             Log.WriteLine("Added " + _userId +
-                " to cached users list.", LogLevel.DEBUG);
+                " to cached users ConcurrentBag.", LogLevel.DEBUG);
         }
         else
         {
-            Log.WriteLine("User " + _userId + " is already on the list", LogLevel.VERBOSE);
+            Log.WriteLine("User " + _userId + " is already on the ConcurrentBag", LogLevel.VERBOSE);
         }
     }
 
-    public void RemoveUserFromTheCachedList(ulong _userId)
+    public void RemoveUserFromTheCachedConcurrentBag(ulong _userId)
     {
-        Log.WriteLine("Removing " + _userId + " from the cache list", LogLevel.VERBOSE);
+        Log.WriteLine("Removing " + _userId + " from the cache ConcurrentBag", LogLevel.VERBOSE);
 
         if (!CachedUserIDs.Contains(_userId))
         {
-            Log.WriteLine("User " + _userId + " is not present on the list!", LogLevel.WARNING);
+            Log.WriteLine("User " + _userId + " is not present on the ConcurrentBag!", LogLevel.WARNING);
             return;
         }
 
-        CachedUserIDs.Remove(_userId);
+        //CachedUserIDs.TryRemove(_userId);
 
-        Log.WriteLine("Removed " + _userId + " from the cached users list.", LogLevel.DEBUG);
+        while (CachedUserIDs.TryTake(out ulong element) && !element.Equals(_userId))
+        {
+            // If the element is not the one to remove, add it back to the bag
+            CachedUserIDs.Add(element);
+        }
+
+        Log.WriteLine("Removed " + _userId + " from the cached users ConcurrentBag.", LogLevel.DEBUG);
     }
 
 }

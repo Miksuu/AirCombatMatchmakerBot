@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
+using Discord;
 
 [DataContract]
 public class LeagueMatch
@@ -231,9 +232,15 @@ public class LeagueMatch
         Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
             Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
 
-        _interfaceLeague.LeagueData.Matches.MatchesList.RemoveAll(m => m.matchId == tempMatch.matchId);
-        Log.WriteLine("Removed match " + matchIdTemp, LogLevel.DEBUG);
 
+        //_interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Clear(m => m.matchId == tempMatch.matchId);
+
+        foreach (var item in _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Where(
+            m => m.matchId == tempMatch.MatchId))
+        {
+            _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? _leagueMatch);
+            Log.WriteLine("Removed match " + item.MatchId, LogLevel.DEBUG);
+        }
 
         // When removing the player from the database, no need for this because it's done after he is gone from the league
         if (!_removingPlayerFromDatabase)

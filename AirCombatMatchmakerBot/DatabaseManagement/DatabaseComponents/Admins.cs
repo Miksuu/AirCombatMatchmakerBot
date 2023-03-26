@@ -1,10 +1,11 @@
 ﻿using Discord.WebSocket;
 using System.Runtime.Serialization;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class Admins
 {
-    List<ulong> AdminIDs
+    ConcurrentBag<ulong> AdminIDs
     {
         get
         {
@@ -20,12 +21,12 @@ public class Admins
         }
     }
 
-    [DataMember] private List<ulong> adminIDs { get; set; }
+    [DataMember] private ConcurrentBag<ulong> adminIDs { get; set; }
 
     public Admins()
     {
         // Load this from json
-        adminIDs = new List<ulong> {
+        adminIDs = new ConcurrentBag<ulong> {
             111788167195033600
         };
     }

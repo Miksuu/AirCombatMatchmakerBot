@@ -1,6 +1,7 @@
 using Discord;
 using Discord.WebSocket;
 using System.Numerics;
+using System.Collections.Concurrent;
 
 public static class UserManager
 {
@@ -13,7 +14,7 @@ public static class UserManager
         // Check if the user is already in the database
         if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(_user.Id))
         {
-            Log.WriteLine("User is not in the PlayerID's list," +
+            Log.WriteLine("User is not in the PlayerID's ConcurrentBag," +
                 " disregarding any further action", LogLevel.VERBOSE);
             return;
         }
@@ -21,7 +22,7 @@ public static class UserManager
         Log.WriteLine("User: " + _user.Username + " (" + _user.Id + ")" +
             " joined with previous profile, adding him to the cache.", LogLevel.DEBUG);
 
-        Database.Instance.CachedUsers.AddUserIdToCachedList(_user.Id);
+        Database.Instance.CachedUsers.AddUserIdToCachedConcurrentBag(_user.Id);
 
         await RoleManager.GrantUserAccess(_user.Id, "Member");
 
@@ -45,13 +46,13 @@ public static class UserManager
 
         Database.Instance.Leagues.HandleSettingTeamsInactiveThatUserWasIn(_userId);
 
-        Database.Instance.CachedUsers.RemoveUserFromTheCachedList(_userId);
+        Database.Instance.CachedUsers.RemoveUserFromTheCachedConcurrentBag(_userId);
 
         return Task.CompletedTask;
     }
 
 
-    public static async void HandleQuitUsersDuringDowntimeFromIdList(List<ulong> _userIds)
+    public static async void HandleQuitUsersDuringDowntimeFromIdConcurrentBag(ConcurrentBag<ulong> _userIds)
     {
         // Maybe make own log level for this
         Log.WriteLine("Handling " + _userIds.Count +

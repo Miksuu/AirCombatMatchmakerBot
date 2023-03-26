@@ -1,11 +1,7 @@
-﻿using Discord;
-using System.Data;
-using System;
+﻿using System.Data;
 using System.Runtime.Serialization;
-using Discord.WebSocket;
-using System.Threading.Channels;
-using System.Reflection;
 using System.Collections.Concurrent;
+using Discord;
 
 [DataContract]
 public class LEAGUESTATUSMESSAGE : BaseMessage
@@ -22,7 +18,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
     public override string GenerateMessage()
     {
         string finalMessage = "Leaderboard:\n";
-        List<Team> sortedTeamListByElo = new List<Team>();
+        ConcurrentBag<Team> sortedTeamConcurrentBagByElo = new ConcurrentBag<Team>();
 
         InterfaceLeague? interfaceLeague = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
 
@@ -32,14 +28,16 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
             return nameof(interfaceLeague) + " was null!";
         }
 
-        sortedTeamListByElo = interfaceLeague.LeagueData.Teams.TeamsList.OrderByDescending(x => x.SkillRating).ToList();
+        sortedTeamConcurrentBagByElo =
+            new ConcurrentBag<Team>(interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.OrderByDescending(
+                x => x.SkillRating));
 
-        foreach (Team team in sortedTeamListByElo)
+        foreach (Team team in sortedTeamConcurrentBagByElo)
         {
             finalMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
         }
 
-        Log.WriteLine("Generated the leaderboard", LogLevel.VERBOSE);
+        Log.WriteLine("Generated the leaderboard: " + finalMessage, LogLevel.VERBOSE);
 
         return finalMessage;
     }

@@ -1,15 +1,11 @@
-using Discord;
 using Discord.WebSocket;
-using System;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Threading.Channels;
+using System.Collections.Concurrent;
 
 public static class CategoryAndChannelManager
 {
     // Do not create these categories,
     // as they are used as template (such as generating from a league template)
-    private static List<CategoryType> categoriesThatWontGetGenerated = new List<CategoryType> {
+    private static ConcurrentBag<CategoryType> categoriesThatWontGetGenerated = new ConcurrentBag<CategoryType> {
         CategoryType.LEAGUETEMPLATE };
 
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()

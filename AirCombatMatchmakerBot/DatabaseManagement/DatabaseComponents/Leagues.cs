@@ -1,10 +1,10 @@
-﻿using Discord.WebSocket;
+﻿using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
 [DataContract]
 public class Leagues
 {
-    public List<InterfaceLeague> StoredLeagues
+    public ConcurrentBag<InterfaceLeague> StoredLeagues
     {
         get
         {
@@ -36,12 +36,12 @@ public class Leagues
         }
     }
 
-    [DataMember] private List<InterfaceLeague> storedLeagues { get; set; }
+    [DataMember] private ConcurrentBag<InterfaceLeague> storedLeagues { get; set; }
     [DataMember] private int leaguesMatchCounter { get; set; }
 
     public Leagues()
     {
-        storedLeagues = new List<InterfaceLeague>();
+        storedLeagues = new ConcurrentBag<InterfaceLeague>();
         leaguesMatchCounter = 1;
     }
 
@@ -106,7 +106,7 @@ public class Leagues
     public void AddToStoredLeagues(InterfaceLeague _ILeague)
     {
         Log.WriteLine("Adding ILeague: " + _ILeague.LeagueCategoryName +
-            "to the StoredLeague list", LogLevel.VERBOSE);
+            "to the StoredLeague ConcurrentBag", LogLevel.VERBOSE);
         StoredLeagues.Add(_ILeague);
         Log.WriteLine("Done adding, count is now: " + StoredLeagues.Count, LogLevel.VERBOSE);
     }
@@ -130,7 +130,7 @@ public class Leagues
 
             string? storedLeagueString = storedLeague.ToString();
 
-            foreach (Team team in storedLeague.LeagueData.Teams.TeamsList)
+            foreach (Team team in storedLeague.LeagueData.Teams.TeamsConcurrentBag)
             {
                 if (!teamFound)
                 {

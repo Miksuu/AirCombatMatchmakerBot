@@ -1,6 +1,5 @@
 ﻿using Discord;
-using System.Data;
-using System;
+using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 
@@ -75,7 +74,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 // Create a team with unique ID and increment that ID
                 // after the data has been serialized
                 Team newTeam = new Team(
-                    new List<Player> { player },
+                    new ConcurrentBag<Player> { player },
                     player.PlayerNickName,
                     interfaceLeague.LeagueData.Teams.CurrentTeamInt);
 
@@ -83,7 +82,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 {
                     Log.WriteLine("This league is solo", LogLevel.VERBOSE);
 
-                    interfaceLeague.LeagueData.Teams.AddToListOfTeams(newTeam);
+                    interfaceLeague.LeagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
 
                     responseMsg = "Registration complete on: " + 
                         EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName) + "\n" +
@@ -114,7 +113,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                 await _interfaceMessage.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
 
                 Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
-                    interfaceLeague.LeagueData.Teams.TeamsList.Count, LogLevel.DEBUG);
+                    interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
 
                 interfaceLeague.LeagueData.Teams.IncrementCurrentTeamInt();
             }

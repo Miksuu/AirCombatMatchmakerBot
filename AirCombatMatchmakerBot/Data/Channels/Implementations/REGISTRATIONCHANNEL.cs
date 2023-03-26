@@ -11,16 +11,16 @@ public class REGISTRATIONCHANNEL : BaseChannel
         channelType = ChannelType.REGISTRATIONCHANNEL;
 
         channelMessages = new ConcurrentDictionary<MessageName, bool>(
-        new List<KeyValuePair<MessageName, bool>>()
+        new ConcurrentBag<KeyValuePair<MessageName, bool>>()
         {
             new KeyValuePair<MessageName, bool>(MessageName.REGISTRATIONMESSAGE, false),
         });
     }
 
-    public override List<Overwrite> GetGuildPermissions(
+    public override ConcurrentBag<Overwrite> GetGuildPermissions(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
-        return new List<Overwrite>
+        return new ConcurrentBag<Overwrite>
         {
             new Overwrite(RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
                 _guild, "Member").Result.Id, PermissionTarget.Role,

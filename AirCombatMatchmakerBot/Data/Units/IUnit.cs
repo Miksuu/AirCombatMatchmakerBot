@@ -5,5 +5,5 @@ using Newtonsoft.Json;
 public interface IUnit
 {
     public UnitName UnitName { get; set; } // Name of the plane
-    //public List<Era> UnitEras { get; set; }
+    //public ConcurrentBag<Era> UnitEras { get; set; }
 }

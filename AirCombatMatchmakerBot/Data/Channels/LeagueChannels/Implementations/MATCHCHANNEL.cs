@@ -14,7 +14,7 @@ public class MATCHCHANNEL : BaseChannel
         channelType = ChannelType.MATCHCHANNEL;
 
         channelMessages = new ConcurrentDictionary<MessageName, bool>(
-            new List<KeyValuePair<MessageName, bool>>()
+            new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                 new KeyValuePair<MessageName, bool>(MessageName.MATCHSTARTMESSAGE, false),
                 new KeyValuePair<MessageName, bool>(MessageName.REPORTINGMESSAGE, false),
@@ -22,29 +22,29 @@ public class MATCHCHANNEL : BaseChannel
             });
     }
 
-    public override List<Overwrite> GetGuildPermissions(
+    public override ConcurrentBag<Overwrite> GetGuildPermissions(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
-        List<Overwrite> listOfOverwrites = new List<Overwrite>();
+        ConcurrentBag<Overwrite> ConcurrentBagOfOverwrites = new ConcurrentBag<Overwrite>();
 
         Log.WriteLine("Overwriting permissions for: " + channelName +
             " users that will be allowed access count: " +
             _allowedUsersIdsArray.Length, LogLevel.VERBOSE);
 
-        listOfOverwrites.Add(new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
+        ConcurrentBagOfOverwrites.Add(new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)));
 
         foreach (ulong userId in _allowedUsersIdsArray)
         {
-            Log.WriteLine("Adding " + userId + " to the permission allowed list on: " +
+            Log.WriteLine("Adding " + userId + " to the permission allowed ConcurrentBag on: " +
                 channelName, LogLevel.VERBOSE);
 
-            listOfOverwrites.Add(
+            ConcurrentBagOfOverwrites.Add(
                 new Overwrite(userId, PermissionTarget.User,
                     new OverwritePermissions(viewChannel: PermValue.Allow)));
         }
 
-        return listOfOverwrites;
+        return ConcurrentBagOfOverwrites;
     }
 
     public (InterfaceLeague?, LeagueMatch?, string) FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(

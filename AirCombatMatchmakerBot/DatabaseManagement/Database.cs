@@ -1,8 +1,5 @@
 using Discord;
-using Discord.WebSocket;
-using System.Diagnostics;
-using System.Runtime.Serialization;
-using System.Security.Cryptography.X509Certificates;
+using System.Collections.Concurrent;
 
 [Serializable]
 public class Database
@@ -36,7 +33,7 @@ public class Database
     public CachedUsers CachedUsers { get; set; }
     public Categories Categories { get; set; }
     public Leagues Leagues { get; set; }
-    public List<LeagueMatch> ArchivedLeagueMatches { get; set; }
+    public ConcurrentBag<LeagueMatch> ArchivedLeagueMatches { get; set; }
 
     public Database()
     {
@@ -45,7 +42,7 @@ public class Database
         Categories = new Categories();
         PlayerData = new PlayerData();
         Leagues = new Leagues();
-        ArchivedLeagueMatches = new List<LeagueMatch>();
+        ArchivedLeagueMatches = new ConcurrentBag<LeagueMatch>();
     }
 
     public async Task RemovePlayerFromTheDatabase(ulong _playerDiscordId)
@@ -53,7 +50,7 @@ public class Database
         Log.WriteLine("Removing player: " + _playerDiscordId + " from the database.", LogLevel.DEBUG);
 
         await PlayerData.DeletePlayerProfile(_playerDiscordId);
-        CachedUsers.RemoveUserFromTheCachedList(_playerDiscordId);
+        CachedUsers.RemoveUserFromTheCachedConcurrentBag(_playerDiscordId);
 
         var interfaceChannel = Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
             CategoryType.REGISTRATIONCATEGORY).Value.FindInterfaceChannelWithNameInTheCategory(
@@ -66,8 +63,8 @@ public class Database
             Log.WriteLine("Starting to process league: " + interfaceLeague.LeagueCategoryName, LogLevel.DEBUG);
 
             // Place the teams to remove 
-            List<int> teamsToRemove = new List<int>();
-            foreach (Team team in interfaceLeague.LeagueData.Teams.TeamsList)
+            ConcurrentBag<int> teamsToRemove = new ConcurrentBag<int>();
+            foreach (Team team in interfaceLeague.LeagueData.Teams.TeamsConcurrentBag)
             {
                 Log.WriteLine("Looping through team: " + team.TeamName + "(" + team.TeamId + ")", LogLevel.VERBOSE);
                 if (team.Players.Any(p => p.PlayerDiscordId == _playerDiscordId))
@@ -78,14 +75,19 @@ public class Database
                     teamsToRemove.Add(team.TeamId);
 
                 }
-                Log.WriteLine("done looping through teams: " + interfaceLeague.LeagueData.Teams.TeamsList.Count, LogLevel.VERBOSE);
+                Log.WriteLine("done looping through teams: " + interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.VERBOSE);
             }
 
             foreach (int teamId in teamsToRemove)
             {
-                interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Remove(teamId);
+                //interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.TryRemove(teamId);
 
-                foreach (LeagueMatch match in interfaceLeague.LeagueData.Matches.MatchesList)
+                while (interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.TryTake(out int element) && !element.Equals(teamId))
+                {
+                    interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Add(element);
+                }
+
+                foreach (LeagueMatch match in interfaceLeague.LeagueData.Matches.MatchesConcurrentBag)
                 {
                     if (match.TeamsInTheMatch.ContainsKey(teamId))
                     {
@@ -99,7 +101,14 @@ public class Database
                     }
                 }
 
-                interfaceLeague.LeagueData.Teams.TeamsList.RemoveAll(t => t.TeamId == teamId);
+                //interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.RemoveAll(t => t.TeamId == teamId);
+
+                foreach (var item in interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Where(
+                    t => t.TeamId == teamId))
+                {
+                    interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.TryTake(out Team? _removedTeam);
+                    Log.WriteLine("Removed match " + item.TeamId, LogLevel.DEBUG);
+                }
 
                 Log.WriteLine("Found and removed" + _playerDiscordId + " in team with id: " + teamId, LogLevel.DEBUG);
             }

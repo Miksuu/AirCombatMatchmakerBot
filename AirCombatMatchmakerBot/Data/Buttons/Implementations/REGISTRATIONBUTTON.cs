@@ -41,7 +41,7 @@ public class REGISTRATIONBUTTON : BaseButton
         // Checks that the player does not exist in the database already, true if this is not the case
         if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
         {
-            Database.Instance.CachedUsers.AddUserIdToCachedList(_component.User.Id);
+            Database.Instance.CachedUsers.AddUserIdToCachedConcurrentBag(_component.User.Id);
 
             response = _component.User.Mention + ", " +
                 BotMessaging.GetMessageResponse(

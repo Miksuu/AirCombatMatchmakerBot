@@ -15,7 +15,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         messageName = MessageName.CONFIRMATIONMESSAGE;
 
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
-            new List<KeyValuePair<ButtonName, int>>()
+            new ConcurrentBag<KeyValuePair<ButtonName, int>>()
             {
                 new KeyValuePair<ButtonName, int>(ButtonName.CONFIRMMATCHRESULTBUTTON, 1),
                 new KeyValuePair<ButtonName, int>(ButtonName.DISPUTEMATCHRESULTBUTTON, 1),

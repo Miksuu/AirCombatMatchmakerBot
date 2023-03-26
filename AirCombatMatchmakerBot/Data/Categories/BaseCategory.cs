@@ -23,7 +23,7 @@ public abstract class BaseCategory : InterfaceCategory
         }
     }
 
-    List<ChannelType> InterfaceCategory.ChannelTypes
+    ConcurrentBag<ChannelType> InterfaceCategory.ChannelTypes
     {
         get
         {
@@ -72,17 +72,17 @@ public abstract class BaseCategory : InterfaceCategory
     }
 
     [DataMember] protected CategoryType categoryTypes;
-    [DataMember] protected List<ChannelType> channelTypes;
+    [DataMember] protected ConcurrentBag<ChannelType> channelTypes;
     [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels;
     [DataMember] protected ulong socketCategoryChannelId;
 
     public BaseCategory()
     {
-        channelTypes = new List<ChannelType>();
+        channelTypes = new ConcurrentBag<ChannelType>();
         interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
     }
 
-    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
+    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 
     public async Task<SocketCategoryChannel?> CreateANewSocketCategoryChannelAndReturnIt(
         SocketGuild _guild, string _categoryName, SocketRole _role)
@@ -219,7 +219,7 @@ public abstract class BaseCategory : InterfaceCategory
 
             Log.WriteLine("Done adding to the db. Count is now: " +
                 interfaceChannels.Count +
-                " for the list of category: " + categoryTypes.ToString() +
+                " for the ConcurrentBag of category: " + categoryTypes.ToString() +
                 " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
         }
 
@@ -261,7 +261,7 @@ public abstract class BaseCategory : InterfaceCategory
 
         Matches matches = interfaceLeague.LeagueData.Matches;
 
-        foreach (LeagueMatch match in matches.MatchesList)
+        foreach (LeagueMatch match in matches.MatchesConcurrentBag)
         {
             Log.WriteLine("Looping on match id: " + match.MatchId +
                 " with channelId: " + match.MatchChannelId, LogLevel.VERBOSE);

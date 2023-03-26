@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using System.Runtime.Serialization;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class ONEMODERNBFMGUNS : BaseLeague
@@ -11,7 +12,7 @@ public class ONEMODERNBFMGUNS : BaseLeague
         leagueEra = Era.MODERN;
         leaguePlayerCountPerTeam = 1;
 
-        leagueUnits = new List<UnitName> {
+        leagueUnits = new ConcurrentBag<UnitName> {
             UnitName.FA18C,
             UnitName.F16C,
             UnitName.M2000C,
@@ -21,8 +22,8 @@ public class ONEMODERNBFMGUNS : BaseLeague
         };
     }
 
-    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
+    public override ConcurrentBag<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
     {
-        return new List<Overwrite>();
+        return new ConcurrentBag<Overwrite>();
     }
 }

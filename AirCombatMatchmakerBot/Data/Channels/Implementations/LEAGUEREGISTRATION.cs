@@ -14,16 +14,16 @@ public class LEAGUEREGISTRATION : BaseChannel
         channelType = ChannelType.LEAGUEREGISTRATION;
 
         channelMessages = new ConcurrentDictionary<MessageName, bool>(
-            new List<KeyValuePair<MessageName, bool>>()
+            new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                 new KeyValuePair<MessageName, bool>(MessageName.LEAGUEREGISTRATIONMESSAGE, false),
             });
     }
 
-    public override List<Overwrite> GetGuildPermissions(
+    public override ConcurrentBag<Overwrite> GetGuildPermissions(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
-        return new List<Overwrite>
+        return new ConcurrentBag<Overwrite>
         {
             new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)),

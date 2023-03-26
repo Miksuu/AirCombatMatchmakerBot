@@ -14,7 +14,7 @@ public interface InterfaceMessage
     public ulong MessageId { get; set; }
     public ulong MessageChannelId { get; set; }
     public ulong MessageCategoryId { get; set; }
-    public List<InterfaceButton> ButtonsInTheMessage { get; set; }
+    public ConcurrentBag<InterfaceButton> ButtonsInTheMessage { get; set; }
 
     public Task<(ulong, string)> CreateTheMessageAndItsButtonsOnTheBaseClass(
         Discord.WebSocket.SocketGuild _guild, InterfaceChannel _interfaceChannel,

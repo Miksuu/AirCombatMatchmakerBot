@@ -1,6 +1,5 @@
 ﻿using Discord;
-using System.Data;
-using System;
+using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 
@@ -10,7 +9,7 @@ public class LEAGUETEMPLATE : BaseCategory
     public LEAGUETEMPLATE()
     {
         categoryTypes = CategoryType.LEAGUETEMPLATE;
-        channelTypes = new List<ChannelType>()
+        channelTypes = new ConcurrentBag<ChannelType>()
         {
             ChannelType.LEAGUESTATUS,
             ChannelType.CHALLENGE,
@@ -19,11 +18,11 @@ public class LEAGUETEMPLATE : BaseCategory
         };
     }
 
-    public override List<Overwrite> GetGuildPermissions(
+    public override ConcurrentBag<Overwrite> GetGuildPermissions(
         SocketGuild _guild, SocketRole _role)
     {
         Log.WriteLine("executing permissions from LEAGUETEMPLATE", LogLevel.VERBOSE);
-        return new List<Overwrite>
+        return new ConcurrentBag<Overwrite>
         {
             new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)),

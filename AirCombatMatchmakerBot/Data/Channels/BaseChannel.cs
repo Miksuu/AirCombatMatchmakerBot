@@ -110,7 +110,7 @@ public abstract class BaseChannel : InterfaceChannel
         interfaceMessagesWithIds = new ConcurrentDictionary<ulong, InterfaceMessage>();
     }
 
-    public abstract List<Overwrite> GetGuildPermissions(
+    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
 
     public async Task CreateAChannelForTheCategory(SocketGuild _guild,
@@ -341,10 +341,10 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     // Finds all messages with that messageName
-    public List<InterfaceMessage>? FindAllInterfaceMessagesWithNameInTheChannel(
+    public ConcurrentBag<InterfaceMessage>? FindAllInterfaceMessagesWithNameInTheChannel(
         MessageName _messageName)
     {
-        List <InterfaceMessage> interfaceMessageValues = new();
+        ConcurrentBag <InterfaceMessage> interfaceMessageValues = new();
 
         Log.WriteLine("Getting CategoryKvp with name: " + _messageName, LogLevel.VERBOSE);
 
@@ -392,7 +392,7 @@ public abstract class BaseChannel : InterfaceChannel
             return Exceptions.BotClientRefNull();
         }
 
-        List<InterfaceMessage> interfaceMessages =
+        ConcurrentBag<InterfaceMessage> interfaceMessages =
             FindAllInterfaceMessagesWithNameInTheChannel(_messageNameToDelete);
         if (interfaceMessages == null)
         {

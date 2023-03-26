@@ -383,11 +383,11 @@ public class MatchReporting
         return teamsInTheMatch;
     }
 
-    public (List<ReportData>?, string) GetTeamReportDatasOfTheMatchWithPlayerId(
+    public (ConcurrentBag<ReportData>?, string) GetTeamReportDatasOfTheMatchWithPlayerId(
         InterfaceLeague _interfaceLeague, LeagueMatch _leagueMatch, ulong _playerId)
     {
-        List<Team> foundTeams = new List<Team>();
-        List<ReportData> reportDatas = new List<ReportData>();
+        ConcurrentBag<Team> foundTeams = new ConcurrentBag<Team>();
+        ConcurrentBag<ReportData> reportDatas = new ConcurrentBag<ReportData>();
 
         Log.WriteLine("Getting ReportData on match: " + _leagueMatch.MatchId +
             " with: " + _playerId, LogLevel.DEBUG);

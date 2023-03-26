@@ -3,6 +3,7 @@ using System.Data;
 using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
+using System.Collections.Concurrent;
 
 [DataContract]
 public class BOTCOMMANDS : BaseChannel
@@ -12,10 +13,10 @@ public class BOTCOMMANDS : BaseChannel
         channelType = ChannelType.BOTCOMMANDS;
     }
 
-    public override List<Overwrite> GetGuildPermissions(
+    public override ConcurrentBag<Overwrite> GetGuildPermissions(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
-        return new List<Overwrite>
+        return new ConcurrentBag<Overwrite>
         {
         };
     }
