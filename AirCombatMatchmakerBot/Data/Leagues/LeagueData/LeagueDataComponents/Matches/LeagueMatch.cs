@@ -105,6 +105,9 @@ public class LeagueMatch
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
         matchLeague = _interfaceLeague.LeagueCategoryName;
 
+        Log.WriteLine("Teams to from the match on: " + _teamsToFormMatchOn[0] +
+            ", " + _teamsToFormMatchOn[1], LogLevel.DEBUG);
+
         // Add the team's name to the ConcurrentDictionary as a value
         foreach (int teamId in _teamsToFormMatchOn)
         {
@@ -112,7 +115,16 @@ public class LeagueMatch
                 _interfaceLeague.LeagueData.Teams.FindTeamById(
                     leagueTeamSize, teamId);
 
+            Log.WriteLine("Found team: " + foundTeam.TeamId, LogLevel.DEBUG);
+
             teamsInTheMatch.TryAdd(teamId, foundTeam.GetTeamInAString(false, leagueTeamSize));
+
+            Log.WriteLine("Count is now: " + teamsInTheMatch.Count, LogLevel.DEBUG);
+        }
+
+        foreach (var item in teamsInTheMatch)
+        {
+            Log.WriteLine("final teamsInTheMatch: " + item.Key, LogLevel.DEBUG);
         }
 
         matchId = Database.Instance.Leagues.LeaguesMatchCounter;

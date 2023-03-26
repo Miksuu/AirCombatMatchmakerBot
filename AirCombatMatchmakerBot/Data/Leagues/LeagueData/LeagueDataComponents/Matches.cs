@@ -30,7 +30,7 @@ public class Matches
 
     public async void CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
-        Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] +
+        Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1], LogLevel.VERBOSE);
 
         var guild = BotReference.GetGuildRef();

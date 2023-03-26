@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using Discord;
 
 [DataContract]
 public class ChallengeStatus
@@ -111,7 +112,7 @@ public class ChallengeStatus
             teamsToFormMatchOn[t] = teamsInTheQueue.FirstOrDefault();
             Log.WriteLine("Done adding to " + nameof(teamsToFormMatchOn) +
                 ", Length: " + teamsToFormMatchOn.Length, LogLevel.VERBOSE);
-            teamsInTheQueue.TryPeek(out int removedValue);
+            teamsInTheQueue = new ConcurrentBag<int>(teamsInTheQueue.Except(new[] { teamsToFormMatchOn[t] }));
             Log.WriteLine("Done removing from " + nameof(teamsInTheQueue) +
                 ", count: " + teamsInTheQueue.Count, LogLevel.VERBOSE);
         }

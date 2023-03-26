@@ -36,8 +36,15 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         {
             finalMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
         }
+        if (sortedTeamConcurrentBagByElo.Count > 0)
+        {
+            Log.WriteLine("Generated the leaderboard (" + sortedTeamConcurrentBagByElo.Count + "): " + finalMessage, LogLevel.VERBOSE);
+        }
+        else
+        {
+            Log.WriteLine("Generated the leaderboard: " + finalMessage, LogLevel.VERBOSE);
+        }
 
-        Log.WriteLine("Generated the leaderboard: " + finalMessage, LogLevel.VERBOSE);
 
         return finalMessage;
     }
