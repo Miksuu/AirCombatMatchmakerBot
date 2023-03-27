@@ -23,19 +23,18 @@ public static class BotMessageLogging
 
         if (BotReference.GetConnectionState())
         {
-            var guild = BotReference.GetGuildRef();
-
-            if (guild == null)
+            var client = BotReference.GetClientRef();
+            if (client == null)
             {
-                Exceptions.BotGuildRefNull();
-                return; 
+                Exceptions.BotClientRefNull();
+                return;
             }
 
-            if (guild.GetTextChannel(loggingChannelId) != null)
+            var loggingChannel = await client.GetChannelAsync(loggingChannelId) as ITextChannel;
+
+            if (loggingChannel != null)
             {
-                await guild.
-                    GetTextChannel(loggingChannelId).
-                    SendMessageAsync(completeLogString);
+                await loggingChannel.SendMessageAsync(completeLogString);
             }
             // Do not print anything here, might end up in circular dependency 
             // (or need to handle it, which might be unnecessary)

@@ -246,17 +246,19 @@ public abstract class BaseMessage : InterfaceMessage
             " that has msg id: " + messageId + " with content: " + message +
             " with new content:" + _newContent, LogLevel.DEBUG);
 
-        var guild = BotReference.GetGuildRef();
-
-        if (guild == null)
+        var client = BotReference.GetClientRef();
+        if (client == null)
         {
-            Exceptions.BotGuildRefNull();
+            Exceptions.BotClientRefNull();
             return;
         }
 
-        Log.WriteLine("Found guild", LogLevel.VERBOSE);
-
-        var channel = guild.GetTextChannel(messageChannelId) as ITextChannel;
+        var channel = await client.GetChannelAsync(messageChannelId) as ITextChannel;
+        if (channel == null)
+        {
+            Log.WriteLine(nameof(channel) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
 
         Log.WriteLine("Found channel: " + channel.Id, LogLevel.VERBOSE);
 

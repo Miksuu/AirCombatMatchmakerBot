@@ -129,7 +129,7 @@ public abstract class BaseLeague : InterfaceLeague
         return interfaceCategory;
     }
 
-    public async void PostMatchReport(SocketGuild _guild, string _finalResult)
+    public async Task PostMatchReport(string _finalResult)
     {
         InterfaceCategory leagueCategory =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
@@ -138,8 +138,14 @@ public abstract class BaseLeague : InterfaceLeague
         InterfaceChannel matchReportsChannelInterface =
             leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
 
-        var textChannel = _guild.GetChannel(matchReportsChannelInterface.ChannelId) as ITextChannel;
+        var client = BotReference.GetClientRef();
+        if (client == null)
+        {
+            Exceptions.BotClientRefNull();
+            return;
+        }
 
+        var textChannel = await client.GetChannelAsync(matchReportsChannelInterface.ChannelId) as ITextChannel;
         if (textChannel == null)
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.ERROR);

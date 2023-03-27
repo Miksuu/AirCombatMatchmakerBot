@@ -18,6 +18,6 @@ public interface InterfaceLeague
 
     public abstract ConcurrentBag<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
     public InterfaceCategory FindLeaguesInterfaceCategory();
-    public void PostMatchReport(SocketGuild _guild, string _finalResult);
+    public Task PostMatchReport(string _finalResult);
     public void UpdateLeagueLeaderboard();
 }

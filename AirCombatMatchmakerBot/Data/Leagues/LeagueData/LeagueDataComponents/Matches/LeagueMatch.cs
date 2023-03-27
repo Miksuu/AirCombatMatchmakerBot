@@ -210,7 +210,7 @@ public class LeagueMatch
             matchReporting.FinalResultForConfirmation = messageTuple.Item2;
         }
 
-        _interfaceLeague.PostMatchReport(guild, matchReporting.FinalResultForConfirmation);
+        await _interfaceLeague.PostMatchReport(matchReporting.FinalResultForConfirmation);
 
         LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(matchChannelId);
 
