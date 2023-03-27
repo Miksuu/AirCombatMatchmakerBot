@@ -136,7 +136,7 @@ public abstract class BaseMessage : InterfaceMessage
 
     // If the component is not null, this is a reply
     public async Task<(ulong, string)> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        Discord.WebSocket.SocketGuild _guild, InterfaceChannel _interfaceChannel, 
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, 
         bool _displayMessage = true, ulong _leagueCategoryId = 0, 
         SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
@@ -149,7 +149,7 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("Creating the channel message with id: "
             + messageChannelId + " with categoryID: " + messageCategoryId, LogLevel.VERBOSE);
 
-        var textChannel = _guild.GetChannel(messageChannelId) as ITextChannel;
+        var textChannel = await _client.GetChannelAsync(messageChannelId) as ITextChannel;
         if (textChannel == null)
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
@@ -265,14 +265,15 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("Modifying the message: " + messageId + " done.", LogLevel.VERBOSE);
     }
 
-    public async Task GenerateAndModifyTheMessage(bool _serialize = true)
+    public async Task GenerateAndModifyTheMessage()
     {
         await ModifyMessage(GenerateMessage());
 
+        /*
         if (_serialize)
         {
             await SerializationManager.SerializeDB();
-        }
+        }*/
     }
 
     public abstract string GenerateMessage();

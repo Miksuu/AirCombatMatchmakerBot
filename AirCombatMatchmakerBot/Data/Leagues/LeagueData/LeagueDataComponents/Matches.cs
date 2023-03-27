@@ -33,10 +33,10 @@ public class Matches
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1], LogLevel.VERBOSE);
 
-        var guild = BotReference.GetGuildRef();
-        if (guild == null)
+        var client = BotReference.GetClientRef();
+        if (client == null)
         {
-            Exceptions.BotGuildRefNull();
+            Exceptions.BotClientRefNull();
             return;
         }
 
@@ -50,15 +50,13 @@ public class Matches
         Log.WriteLine("Added to the " + nameof(matchesConcurrentBag) + " count is now: " +
             matchesConcurrentBag.Count, LogLevel.VERBOSE);
 
-        await CreateAMatchChannel(guild, newMatch, _interfaceLeague);
+        await CreateAMatchChannel(newMatch, _interfaceLeague, client);
 
         await SerializationManager.SerializeDB();
     }
 
     public async Task<ulong> CreateAMatchChannel(
-        SocketGuild _guild,
-        LeagueMatch _leagueMatch,
-        InterfaceLeague _interfaceLeague)
+        LeagueMatch _leagueMatch, InterfaceLeague _interfaceLeague, DiscordSocketClient _client)
     {
         // Get the category by the league category name passed in the method
         var categoryKvp =
@@ -73,7 +71,7 @@ public class Matches
 
         // Prepare the match with the ID of the current new match
         InterfaceChannel? interfaceChannel = await categoryKvp.Value.CreateSpecificChannelFromChannelType(
-                _guild, ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
+                ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
                 overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
                 _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague));
 
@@ -93,7 +91,7 @@ public class Matches
                 interfaceChannel.ChannelId, categoryKvp.Value.SocketCategoryChannelId);
         }
 
-        await interfaceChannel.PostChannelMessages(_guild);
+        await interfaceChannel.PostChannelMessages(_client);
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
 

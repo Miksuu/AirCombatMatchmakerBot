@@ -128,6 +128,13 @@ public abstract class BaseChannel : InterfaceChannel
             channelTypeString = channelName;
         }
 
+        var client = BotReference.GetClientRef();
+        if (client == null)
+        {
+            Exceptions.BotClientRefNull();
+            return;
+        }
+
         var channel = await _guild.CreateTextChannelAsync(channelTypeString, x =>
         {
             x.PermissionOverwrites = GetGuildPermissions(_guild, _allowedUsersIdsArray);
@@ -146,38 +153,31 @@ public abstract class BaseChannel : InterfaceChannel
     {
         Log.WriteLine("Creating a message named: " + _MessageName.ToString(), LogLevel.DEBUG);
 
-        var guild = BotReference.GetGuildRef();
-        if (guild == null)
-        {
-            return (0, Exceptions.BotGuildRefNull());
-        }
-
         InterfaceMessage interfaceMessage =
             (InterfaceMessage)EnumExtensions.GetInstance(_MessageName.ToString());
 
+        var client = BotReference.GetClientRef();
+        if (client == null)
+        {
+            Exceptions.BotClientRefNull();
+            return (0, "client was null!");
+        }
+
         var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            guild, this, _displayMessage, 0, _component, _ephemeral);
+            client, this, _displayMessage, 0, _component, _ephemeral);
 
         return newMessageTuple;
     }
 
-    public virtual async Task PostChannelMessages(SocketGuild _guild)
+    public virtual async Task PostChannelMessages(DiscordSocketClient _client)
     {
         //Log.WriteLine("Starting to post channel messages on: " + channelType, LogLevel.VERBOSE);
 
         Log.WriteLine("Finding channel: " + channelType + " (" + channelId +
             ") parent category with id: " + channelsCategoryId, LogLevel.VERBOSE);
 
-        // Had to use client here instead of guild for searching the channel, otherwise didn't work (??)
-        var client = BotReference.GetClientRef();
-        if (client == null)
-        {
-            Exceptions.BotClientRefNull();
-            return;
-        }
-
         // If the message doesn't exist, set it ID to 0 to regenerate it
-        var channel = client.GetChannelAsync(channelId).Result as ITextChannel;
+        var channel = _client.GetChannelAsync(channelId).Result as ITextChannel;
 
         if (channel == null)
         {
@@ -200,15 +200,6 @@ public abstract class BaseChannel : InterfaceChannel
         {
             Log.WriteLine("Starting to to prepare channel messages on " + channelType +
                 " count: " + Enum.GetValues(typeof(CategoryType)).Length, LogLevel.VERBOSE);
-
-            /*
-            // Add to a method later
-            var databaseInterfaceChannel =
-                Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
-                    x => x.Key == channelsCategoryId).Value.InterfaceChannels.FirstOrDefault(
-                        x => x.Value.ChannelId == channelId);*/
-
-            //Log.WriteLine("After db find", LogLevel.VERBOSE);
 
             foreach (CategoryType leagueName in Enum.GetValues(typeof(CategoryType)))
             {
@@ -259,7 +250,7 @@ public abstract class BaseChannel : InterfaceChannel
                     (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
 
                 var messageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                        _guild, this, true, leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId);
+                        _client, this, true, leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId);
 
                 Log.WriteLine("messagetuple:" + messageTuple.Item1 + " | " + messageTuple.Item2, LogLevel.DEBUG);
 
@@ -284,33 +275,10 @@ public abstract class BaseChannel : InterfaceChannel
                 // Skip the messages that have been generated already
                 if (!channelMessages.ElementAt(m).Value)
                 {
-                    //Log.WriteLine("Looping on message: " + messageName, LogLevel.VERBOSE);
-
-                    //var messageKey = interfaceMessagesWithIds[interfaceMessageKvp.Key];
-
-                    /*
-                    Log.WriteLine("messageKey id: " + messageKey.MessageId, LogLevel.VERBOSE);
-
-                    Log.WriteLine("Any: " + channelMessagesFromDb.Any(x => x.Id == messageKey.MessageId), LogLevel.DEBUG);
-
-                    if (!channelMessagesFromDb.Any(x => x.Id == messageKey.MessageId) && messageKey.MessageId != 0)
-                    {
-                        Log.WriteLine("Message " + messageKey.MessageId +
-                            "not found! Setting it to 0 and regenerating", LogLevel.WARNING);
-                    1
-                        messageKey.ButtonsInTheMessage.Clear();
-                        messageKey.MessageId = 0;
-                    }
-
-                    if (messageKey.MessageId != 0) continue;
-
-                    Log.WriteLine("Key was 0, message does not exist. Creating it.", LogLevel.VERBOSE);
-                    */
-
                     InterfaceMessage interfaceMessage =
                         (InterfaceMessage)EnumExtensions.GetInstance(channelMessages.ElementAt(m).Key.ToString());
 
-                    await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(_guild, this, true);
+                    await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(_client, this, true);
                     channelMessages[channelMessages.ElementAt(m).Key] = true;
                 }
             }

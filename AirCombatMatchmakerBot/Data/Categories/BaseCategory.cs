@@ -118,7 +118,7 @@ public abstract class BaseCategory : InterfaceCategory
     }
 
     public async Task CreateChannelsForTheCategory(
-        ulong _socketCategoryChannelId, SocketGuild _guild)
+        ulong _socketCategoryChannelId, DiscordSocketClient _client)
     {
         Log.WriteLine("Starting to create channels for: " + _socketCategoryChannelId + ")" + 
             " Channel count: " + channelTypes.Count +
@@ -131,12 +131,12 @@ public abstract class BaseCategory : InterfaceCategory
             // Checks for missing match channels from the league category
             if (channelType == ChannelType.MATCHCHANNEL)
             {
-                await CreateTheMissingMatchChannels(_guild, socketCategoryChannelId);
+                await CreateTheMissingMatchChannels(_client, socketCategoryChannelId);
                 continue;
             }
 
             InterfaceChannel? interfaceChannel = 
-                await CreateSpecificChannelFromChannelType(_guild, channelType, _socketCategoryChannelId);
+                await CreateSpecificChannelFromChannelType(channelType, _socketCategoryChannelId);
 
             if (interfaceChannel == null)
             {
@@ -152,12 +152,12 @@ public abstract class BaseCategory : InterfaceCategory
             //CategoryAndChannelManager.matchChannelsIdWithCategoryId.Add();
             //CategoryAndChannelManager.channelsThatBelongToTheBot.Add(interfaceChannel.ChannelId);
 
-            await interfaceChannel.PostChannelMessages(_guild);
+            await interfaceChannel.PostChannelMessages(_client);
         }
     }
 
     public async Task<InterfaceChannel?> CreateSpecificChannelFromChannelType(
-        SocketGuild _guild, ChannelType _channelType, ulong _socketCategoryChannelId,
+        ChannelType _channelType, ulong _socketCategoryChannelId,
         string _overrideChannelName = "",// Keeps the functionality, but overrides the channel name
                                          // It is used for creating matches with correct name ID right now.
         params ulong[] _allowedUsersIdsArray)
@@ -165,6 +165,13 @@ public abstract class BaseCategory : InterfaceCategory
         bool channelExists = false;
 
         Log.WriteLine("Creating channel name: " + _channelType, LogLevel.DEBUG);
+
+        var guild = BotReference.GetGuildRef();
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return null;
+        }
 
         InterfaceChannel? interfaceChannel = GetChannelInstance(_channelType.ToString());
 
@@ -195,7 +202,7 @@ public abstract class BaseCategory : InterfaceCategory
                 interfaceChannel.ChannelType + " from db", LogLevel.DEBUG);
 
             channelExists = ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
-                                _socketCategoryChannelId, interfaceChannel, _guild);
+                _socketCategoryChannelId, interfaceChannel, guild);
         }
 
         interfaceChannel.ChannelsCategoryId = _socketCategoryChannelId;
@@ -211,7 +218,7 @@ public abstract class BaseCategory : InterfaceCategory
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
                     categoryTypes).Key;
 
-            await interfaceChannel.CreateAChannelForTheCategory(_guild, _allowedUsersIdsArray);
+            await interfaceChannel.CreateAChannelForTheCategory(guild, _allowedUsersIdsArray);
 
             interfaceChannel.InterfaceMessagesWithIds.Clear();
 
@@ -237,16 +244,9 @@ public abstract class BaseCategory : InterfaceCategory
     }
 
     private async static Task CreateTheMissingMatchChannels(
-        SocketGuild _guild, ulong _socketCategoryChannelId)
+        DiscordSocketClient _client, ulong _socketCategoryChannelId)
     {
         Log.WriteLine("Checking for missing matches in: " + _socketCategoryChannelId, LogLevel.VERBOSE);
-
-        var client = BotReference.GetClientRef();
-        if (client == null)
-        {
-            Exceptions.BotClientRefNull();
-            return;
-        }
 
         InterfaceLeague? interfaceLeague =
             Database.Instance.Leagues.GetILeagueByCategoryId(_socketCategoryChannelId);
@@ -266,7 +266,7 @@ public abstract class BaseCategory : InterfaceCategory
             Log.WriteLine("Looping on match id: " + match.MatchId +
                 " with channelId: " + match.MatchChannelId, LogLevel.VERBOSE);
 
-            var matchChannel = client.GetChannelAsync(match.MatchChannelId).Result as ITextChannel;
+            var matchChannel = _client.GetChannelAsync(match.MatchChannelId).Result as ITextChannel;
 
             if (matchChannel != null)
             {
@@ -277,7 +277,7 @@ public abstract class BaseCategory : InterfaceCategory
             Log.WriteLine(nameof(matchChannel) + " was not found!" +
                 " Expected to find a channel with match id: " + match.MatchId, LogLevel.WARNING);
 
-            await matches.CreateAMatchChannel(_guild, match, interfaceLeague);
+            await matches.CreateAMatchChannel(match, interfaceLeague, _client);
         }
     }
 

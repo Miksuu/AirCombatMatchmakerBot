@@ -80,6 +80,7 @@ public class BotRuntimeManager
                 await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
 
                 await SerializationManager.SerializeUsersOnTheServer();
+                await SerializationManager.SerializeDB();
 
                 await CommandHandler.InstallCommandsAsync();
             }

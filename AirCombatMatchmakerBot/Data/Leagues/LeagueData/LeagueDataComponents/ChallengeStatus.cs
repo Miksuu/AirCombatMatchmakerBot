@@ -88,7 +88,7 @@ public class ChallengeStatus
         return teamsInTheQueue;
     }
 
-    public Task CheckChallengeStatus(InterfaceLeague _interfaceLeague)
+    public async Task CheckChallengeStatus(InterfaceLeague _interfaceLeague)
     {
         int[] teamsToFormMatchOn = new int[2];
 
@@ -100,7 +100,7 @@ public class ChallengeStatus
         {
             Log.WriteLine(nameof(teamsInTheQueue) + " count: " + TeamsInTheQueue.Count +
                 " is smaller than 2, returning.", LogLevel.DEBUG);
-            return Task.CompletedTask;
+            return;
         }
 
         Log.WriteLine(nameof(teamsInTheQueue) + " count: " + teamsInTheQueue.Count +
@@ -119,8 +119,8 @@ public class ChallengeStatus
 
         Log.WriteLine("Done looping.", LogLevel.VERBOSE);
 
-        _interfaceLeague.LeagueData.Matches.CreateAMatch(_interfaceLeague, teamsToFormMatchOn);
+        await _interfaceLeague.LeagueData.Matches.CreateAMatch(_interfaceLeague, teamsToFormMatchOn);
 
-        return Task.CompletedTask;
+        return;
     }
 }

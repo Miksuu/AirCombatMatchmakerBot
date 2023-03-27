@@ -17,11 +17,11 @@ public interface InterfaceMessage
     public ConcurrentBag<InterfaceButton> ButtonsInTheMessage { get; set; }
 
     public Task<(ulong, string)> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        Discord.WebSocket.SocketGuild _guild, InterfaceChannel _interfaceChannel,
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel,
         bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
     public Task ModifyMessage(string _newContent);
     public abstract string GenerateMessage();
-    public Task GenerateAndModifyTheMessage(bool _serialize = true);
+    public Task GenerateAndModifyTheMessage();
     public Task<Discord.IMessage?> GetMessageById(IMessageChannel _channel);
 }

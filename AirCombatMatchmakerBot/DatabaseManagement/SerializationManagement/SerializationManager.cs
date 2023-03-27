@@ -32,7 +32,7 @@ public static class SerializationManager
         Log.WriteLine("DB SERIALIZATION DONE!", LogLevel.SERIALIZATION);
     }
 
-    public static async Task SerializeUsersOnTheServer()
+    public static Task SerializeUsersOnTheServer()
     {
         Log.WriteLine("Serializing users on the server", LogLevel.SERIALIZATION);
 
@@ -41,7 +41,7 @@ public static class SerializationManager
         if (guild == null)
         {
             Exceptions.BotGuildRefNull();
-            return;
+            return Task.CompletedTask;
         }
 
         foreach (SocketGuildUser user in guild.Users)
@@ -76,9 +76,10 @@ public static class SerializationManager
         }
         Log.WriteLine("Done looping through current users.", LogLevel.VERBOSE);
 
-        await SerializeDB(true);
+        return Task.CompletedTask;
 
-        Log.WriteLine("User serialization done on the server", LogLevel.SERIALIZATION);
+        //await SerializeDB(true);
+        //Log.WriteLine("User serialization done on the server", LogLevel.SERIALIZATION);
     }
 
     public static Task DeSerializeDB()

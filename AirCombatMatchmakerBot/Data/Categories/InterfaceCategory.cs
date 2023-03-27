@@ -17,10 +17,10 @@ public interface InterfaceCategory
     public Task<SocketCategoryChannel?> CreateANewSocketCategoryChannelAndReturnIt(
         SocketGuild _guild, string _categoryName, SocketRole _role);
     public Task CreateChannelsForTheCategory(
-        ulong _socketCategoryChannelId, SocketGuild _guild);
+        ulong _socketCategoryChannelId, DiscordSocketClient _client);
 
     public Task<InterfaceChannel?> CreateSpecificChannelFromChannelType(
-        SocketGuild _guild, ChannelType _channelType, ulong _socketCategoryChannelId,
+        ChannelType _channelType, ulong _socketCategoryChannelId,
         string _overrideChannelName = "", params ulong[] _allowedUsersIdsArray);
     public InterfaceChannel FindInterfaceChannelWithIdInTheCategory(
         ulong _idToSearchWith);

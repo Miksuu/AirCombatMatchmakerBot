@@ -13,10 +13,10 @@ public static class CategoryAndChannelManager
         Log.WriteLine("Starting to create categories and channels for" +
             " the discord server", LogLevel.VERBOSE);
 
-        var guild = BotReference.GetGuildRef();
-        if (guild == null)
+        var client = BotReference.GetClientRef();
+        if (client == null)
         {
-            Exceptions.BotGuildRefNull();
+            Exceptions.BotClientRefNull();
             return;
         }
 
@@ -36,7 +36,7 @@ public static class CategoryAndChannelManager
                 continue;
             }
 
-            await GenerateACategoryFromName(guild, categoryName);
+            await GenerateACategoryFromName(client, categoryName);
         }
 
         Log.WriteLine("Done looping through the category names, serialiazing.",
@@ -45,7 +45,7 @@ public static class CategoryAndChannelManager
     }
 
     private static async Task GenerateACategoryFromName(
-        SocketGuild _guild, CategoryType _categoryName)
+        DiscordSocketClient _client, CategoryType _categoryName)
     {
         string finalCategoryName = "";
         bool isLeague = false;
@@ -53,6 +53,13 @@ public static class CategoryAndChannelManager
         InterfaceCategory? interfaceCategory = null;
 
         Log.WriteLine("Generating category named: " + _categoryName, LogLevel.VERBOSE);
+
+        var guild = BotReference.GetGuildRef();
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
 
         // For league category generating
         if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(_categoryName))
@@ -117,7 +124,7 @@ public static class CategoryAndChannelManager
             {
                 // Checks if the channel is also in the discord server itself too, not only database
                 contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
-                    ct, _guild);
+                    ct, guild);
                 break;
             }
         }
@@ -146,7 +153,7 @@ public static class CategoryAndChannelManager
                 dbCategory.Key + " named: " +
                 dbCategory.Value.CategoryType, LogLevel.VERBOSE);
 
-            socketCategoryChannel = _guild.GetCategoryChannel(dbCategory.Key);
+            socketCategoryChannel = guild.GetCategoryChannel(dbCategory.Key);
 
             // Insert a fix here if the category is still in DB but does not exist
 
@@ -158,11 +165,11 @@ public static class CategoryAndChannelManager
         {
             SocketRole role =
                 RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
-                    _guild, finalCategoryName).Result;
+                    guild, finalCategoryName).Result;
 
             socketCategoryChannel =
                 await interfaceCategory.CreateANewSocketCategoryChannelAndReturnIt(
-                    _guild, finalCategoryName, role);
+                    guild, finalCategoryName, role);
             if (socketCategoryChannel == null)
             {
                 Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);
@@ -197,7 +204,7 @@ public static class CategoryAndChannelManager
         }
 
         // Handle channel checking/creation
-        await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _guild);
+        await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _client);
     }
 
     // Maybe add inside the classes itself

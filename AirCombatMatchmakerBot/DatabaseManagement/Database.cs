@@ -124,7 +124,7 @@ public class Database
                 continue;
             }
 
-            await challengeMessage.GenerateAndModifyTheMessage(false);
+            await challengeMessage.GenerateAndModifyTheMessage();
 
 
             // Re-implement the player removal from here
