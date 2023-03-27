@@ -28,7 +28,7 @@ public class Matches
         matchesConcurrentBag = new ConcurrentBag<LeagueMatch>();
     }
 
-    public async void CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
+    public async Task CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1], LogLevel.VERBOSE);

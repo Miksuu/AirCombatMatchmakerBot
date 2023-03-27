@@ -33,7 +33,6 @@ public class BotRuntimeManager
 
                 
                 var guild = BotReference.GetGuildRef();
-                
                 foreach (var ch in guild.Channels)
                 {
                     if (ch.Name == "info") continue;
@@ -46,6 +45,11 @@ public class BotRuntimeManager
                     Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
                     await cat.DeleteAsync();
                 }
+
+                // !!!
+                // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
+                // !!!
+
                 /*
                 foreach (var item in guild.Emotes)
                 {
@@ -95,7 +99,7 @@ public class BotRuntimeManager
             }*/
 
                 // Disregards any message that's not inside the bot's match channels
-                if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
+            if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
                 _socketMessage.Channel.Id))
             {
                 return;
