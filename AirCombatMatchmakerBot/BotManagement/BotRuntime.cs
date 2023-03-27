@@ -66,7 +66,6 @@ public class BotRuntimeManager
 
                 // Checks the users that left during down time and sets their teams active
                 await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
-                await SerializationManager.SerializeUsersOnTheServer();
 
                 client.UserJoined += UserManager.HandleUserJoin;
                 client.ButtonExecuted += ButtonHandler.HandleButtonPress;
@@ -79,6 +78,8 @@ public class BotRuntimeManager
                 //client.ChannelCreated += ChannelManager.FinishChannelCreationFromDelegate;
 
                 await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
+
+                await SerializationManager.SerializeUsersOnTheServer();
 
                 await CommandHandler.InstallCommandsAsync();
             }

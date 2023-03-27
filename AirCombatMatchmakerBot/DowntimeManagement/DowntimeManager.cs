@@ -59,7 +59,7 @@ public static class DowntimeManager
             await UserManager.HandleUserJoin(user);
         }
 
-        await SerializationManager.SerializeDB();
+        //await SerializationManager.SerializeDB();
     }
 
     public static Task CheckForUsersThatLeftDuringDowntime()

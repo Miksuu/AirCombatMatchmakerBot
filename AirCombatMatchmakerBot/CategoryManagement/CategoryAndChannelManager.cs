@@ -41,7 +41,7 @@ public static class CategoryAndChannelManager
 
         Log.WriteLine("Done looping through the category names, serialiazing.",
             LogLevel.VERBOSE);
-        await SerializationManager.SerializeDB();
+        //await SerializationManager.SerializeDB();
     }
 
     private static async Task GenerateACategoryFromName(
