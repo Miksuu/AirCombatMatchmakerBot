@@ -135,85 +135,111 @@ public class BotRuntimeManager
                 return;
             }
 
-            var attachment = _socketMessage.Attachments.FirstOrDefault();
-            if (attachment == null)
+            //var attachment = _socketMessage.Attachments.FirstOrDefault();
+
+            List<string> allowedFileFormats = new List<string>
             {
-                Log.WriteLine(nameof(attachment) + " was null!", LogLevel.CRITICAL);
-                return;
+                "acmi", // Tacview file format
+                "mp4", "webm", "mov", // videos
+                "png", "jpg", "jpeg", "gif", // images
+            };
+
+            string acmiUrl = "";
+
+            foreach (var attachment in _socketMessage.Attachments)
+            {
+                if (attachment == null)
+                {
+                    Log.WriteLine(nameof(attachment) + " was null!", LogLevel.CRITICAL);
+                    continue;
+                }
+
+                Log.WriteLine("Found attachment: " + attachment.Filename, LogLevel.VERBOSE);
+
+                foreach (string fileFormat in allowedFileFormats)
+                {
+                    string constructedFileFormatString = "." + fileFormat.ToLower();
+
+                    if (!attachment.Filename.ToLower().EndsWith(constructedFileFormatString))
+                    {
+                        Log.WriteLine(_socketMessage.Author.Id +
+                            " tried to send a file that is not a .acmi file!" +
+                            " URL:" + attachment.Url, LogLevel.WARNING);
+
+                        await _socketMessage.Channel.SendMessageAsync("\n" +
+                                  _socketMessage.Author.Mention +
+                                  ", make sure the attachment you are sending is in .acmi format!");
+
+                        await _socketMessage.DeleteAsync();
+
+                        continue;
+                    }
+
+                    if (constructedFileFormatString == ".acmi" && acmiUrl == "")
+                    {
+                        acmiUrl = attachment.Url;
+                    }
+                }
             }
 
-            Log.WriteLine("Found attachment: " + attachment.Filename, LogLevel.VERBOSE);
-
-            if (!attachment.Filename.EndsWith(".acmi"))
+            if (acmiUrl != "")
             {
-                Log.WriteLine(_socketMessage.Author.Id +
-                    " tried to send a file that is not a .acmi file!" +
-                    " URL:" + attachment.Url, LogLevel.WARNING);
+                var interfaceLeagueWithLeagueMatch =
+                    Database.Instance.Leagues.FindLeagueInterfaceAndLeagueMatchWithChannelId(_socketMessage.Channel.Id);
 
-                await _socketMessage.Channel.SendMessageAsync("\n" +
-                          _socketMessage.Author.Mention +
-                          ", make sure the attachment you are sending is in .acmi format!");
+                if (interfaceLeagueWithLeagueMatch.Item1 == null || interfaceLeagueWithLeagueMatch.Item2 == null)
+                {
+                    Log.WriteLine(nameof(interfaceLeagueWithLeagueMatch) + " was null!", LogLevel.CRITICAL);
+                    return;
+                }
+
+
+                /**7
+                InterfaceMessage? reportingStatusMessage =
+                    Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                       interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).Value.
+                           FindInterfaceChannelWithIdInTheCategory(
+                                _socketMessage.Channel.Id).FindInterfaceMessageWithNameInTheChannel(
+                                    MessageName.REPORTINGSTATUSMESSAGE);
+
+                if (reportingStatusMessage == null)
+                {
+                    Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
+                    return;
+                }
+
+
+                /*
+                await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
+                         interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
+                         reportingStatusMessage, attachment.Url, TypeOfTheReportingObject.TACVIEWLINK); */
+
+
+                // Process the tacview file, and delete the original message by the user
+                var finalResponseTuple = interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
+                    interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id, acmiUrl,
+                        TypeOfTheReportingObject.TACVIEWLINK,
+                        interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId,
+                        _socketMessage.Channel.Id).Result;
+
+                if (!finalResponseTuple.Item2)
+                {
+                    return;
+                }
+
+                finalResponseTuple = await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.PrepareFinalMatchResult(
+                    interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
+                    interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, _socketMessage.Channel.Id);
+
+                if (!finalResponseTuple.Item2)
+                {
+                    return;
+                }
 
                 await _socketMessage.DeleteAsync();
 
-                return;
+                await SerializationManager.SerializeDB();
             }
-
-            var interfaceLeagueWithLeagueMatch = 
-                Database.Instance.Leagues.FindLeagueInterfaceAndLeagueMatchWithChannelId(_socketMessage.Channel.Id);
-
-            if (interfaceLeagueWithLeagueMatch.Item1 == null || interfaceLeagueWithLeagueMatch.Item2 == null)
-            {
-                Log.WriteLine(nameof(interfaceLeagueWithLeagueMatch) + " was null!", LogLevel.CRITICAL);
-                return;
-            }
-
-
-            /**7
-            InterfaceMessage? reportingStatusMessage =
-                Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                   interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).Value.
-                       FindInterfaceChannelWithIdInTheCategory(
-                            _socketMessage.Channel.Id).FindInterfaceMessageWithNameInTheChannel(
-                                MessageName.REPORTINGSTATUSMESSAGE);
-
-            if (reportingStatusMessage == null)
-            {
-                Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
-                return;
-            }
-
-
-            /*
-            await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
-                     interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
-                     reportingStatusMessage, attachment.Url, TypeOfTheReportingObject.TACVIEWLINK); */
-
-
-            // Process the tacview file, and delete the original message by the user
-            var finalResponseTuple = interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
-                interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id, attachment.Url,
-                    TypeOfTheReportingObject.TACVIEWLINK, 
-                    interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId,
-                    _socketMessage.Channel.Id).Result;
-
-            if (!finalResponseTuple.Item2)
-            {
-                return;
-            }
-
-            finalResponseTuple = await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.PrepareFinalMatchResult(
-                interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
-                interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, _socketMessage.Channel.Id);
-
-            if (!finalResponseTuple.Item2)
-            {
-                return;
-            }
-
-            await _socketMessage.DeleteAsync();
-
-            await SerializationManager.SerializeDB();
 
             return;
         };
