@@ -1,5 +1,6 @@
 ﻿using Discord.WebSocket;
 using Discord;
+using System.Net.Mail;
 
 // The main class to what the bot's functions revolve around
 public class BotRuntimeManager
@@ -31,7 +32,7 @@ public class BotRuntimeManager
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
-                
+                /*
                 var guild = BotReference.GetGuildRef();
                 foreach (var ch in guild.Channels)
                 {
@@ -146,6 +147,8 @@ public class BotRuntimeManager
 
             string acmiUrl = "";
 
+            string cachedBadFileName = "";
+
             foreach (var attachment in _socketMessage.Attachments)
             {
                 if (attachment == null)
@@ -158,32 +161,35 @@ public class BotRuntimeManager
 
                 foreach (string fileFormat in allowedFileFormats)
                 {
-                    string constructedFileFormatString = "." + fileFormat.ToLower();
-
-                    if (!attachment.Filename.ToLower().EndsWith(constructedFileFormatString))
+                    if (!allowedFileFormats.Contains(fileFormat))
                     {
-                        Log.WriteLine(_socketMessage.Author.Id +
-                            " tried to send a file that is not a .acmi file!" +
-                            " URL:" + attachment.Url, LogLevel.WARNING);
-
-                        await _socketMessage.Channel.SendMessageAsync("\n" +
-                                  _socketMessage.Author.Mention +
-                                  ", make sure the attachment you are sending is in .acmi format!");
-
-                        await _socketMessage.DeleteAsync();
-
-                        continue;
+                        cachedBadFileName = attachment.Filename;
                     }
 
-                    if (constructedFileFormatString == ".acmi" && acmiUrl == "")
+                    if (fileFormat == "acmi" && acmiUrl == "")
                     {
                         acmiUrl = attachment.Url;
                     }
                 }
             }
 
-            if (acmiUrl != "")
+            if (cachedBadFileName != "")
             {
+                Log.WriteLine(_socketMessage.Author.Id +
+                " tried to send a file that is not a .acmi file!" +
+                " URL:" + cachedBadFileName, LogLevel.WARNING);
+
+                await _socketMessage.Channel.SendMessageAsync("\n" +
+                  _socketMessage.Author.Mention +
+                  ", make sure the attachment you are sending is in a valid format!");
+
+                await _socketMessage.DeleteAsync();
+                return;
+            }
+            else if (acmiUrl != "")
+            {
+                Log.WriteLine("acmiUrl detected: " + acmiUrl, LogLevel.DEBUG);
+
                 var interfaceLeagueWithLeagueMatch =
                     Database.Instance.Leagues.FindLeagueInterfaceAndLeagueMatchWithChannelId(_socketMessage.Channel.Id);
 
