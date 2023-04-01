@@ -83,12 +83,12 @@ public class COMMENT : BaseCommand
             Log.WriteLine("Done modifying the comment", LogLevel.VERBOSE);
 
             leagueInterfaceWithTheMatch.Item2.MatchReporting.FinalResultForConfirmation =
-                messageToModifyCommentOn.Message;
+                messageToModifyCommentOn.MessageDescription;
         }
         // Probably dont need to do anything here
         else
         {
-            Log.WriteLine("Message to modify was null", LogLevel.WARNING);
+            Log.WriteLine("MessageDescription to modify was null", LogLevel.WARNING);
         }*/
 
         return "Comment posted: " +  _firstOptionString;

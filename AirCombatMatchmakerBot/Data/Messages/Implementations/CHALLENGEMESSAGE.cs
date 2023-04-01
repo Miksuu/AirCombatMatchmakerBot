@@ -15,7 +15,7 @@ public class CHALLENGEMESSAGE : BaseMessage
             });
 
 
-        message = "Insert the challenge message here";
+        messageDescription = "Insert the challenge message here";
     }
 
     public override string GenerateMessage()

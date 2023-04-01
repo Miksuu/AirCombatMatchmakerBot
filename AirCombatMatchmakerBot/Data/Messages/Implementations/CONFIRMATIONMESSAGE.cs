@@ -21,7 +21,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.DISPUTEMATCHRESULTBUTTON, 1),
             });
 
-        message = "You can either Confirm, Modify or Dispute the result below.";
+        messageDescription = "You can either Confirm, Modify or Dispute the result below.";
     }
 
     public override string GenerateMessage()
@@ -41,7 +41,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         Log.WriteLine("Found interfaceChannel:" + interfaceChannel.ChannelId, LogLevel.VERBOSE);
 
-        //Find the channel of the message and cast the interface to to the MATCHCHANNEL class       
+        //Find the channel of the messageDescription and cast the interface to to the MATCHCHANNEL class       
         MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
         if (matchChannel == null)
         {

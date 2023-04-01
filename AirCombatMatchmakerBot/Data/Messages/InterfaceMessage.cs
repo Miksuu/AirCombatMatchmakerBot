@@ -10,7 +10,11 @@ public interface InterfaceMessage
 {
     public MessageName MessageName { get; set; }
     public ConcurrentDictionary<ButtonName, int> MessageButtonNamesWithAmount { get; set; }
-    public string Message { get; set; }
+
+    // Embed properties
+    public string MessageEmbedTitle { get; set; }
+    public string MessageDescription { get; set; }
+    public Discord.Color MessageEmbedColor { get; set; }
     public ulong MessageId { get; set; }
     public ulong MessageChannelId { get; set; }
     public ulong MessageCategoryId { get; set; }

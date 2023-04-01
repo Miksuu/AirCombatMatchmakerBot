@@ -15,7 +15,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
     {
         messageName = MessageName.REPORTINGSTATUSMESSAGE;
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
-        message = "Insert the reporting status message here";
+        messageDescription = "Insert the reporting status message here";
     }
 
     public override string GenerateMessage()

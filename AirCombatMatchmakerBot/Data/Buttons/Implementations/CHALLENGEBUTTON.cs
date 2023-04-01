@@ -75,7 +75,7 @@ public class CHALLENGEBUTTON : BaseButton
             return ("You are already in the queue!", false);
         }
 
-        //string newMessage = _interfaceMessage.Message + postedChallengeMessage;
+        //string newMessage = _interfaceMessage.MessageDescription + postedChallengeMessage;
 
         await _interfaceMessage.GenerateAndModifyTheMessage();
 

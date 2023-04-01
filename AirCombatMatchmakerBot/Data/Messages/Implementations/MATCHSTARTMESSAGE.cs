@@ -12,7 +12,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
     public MATCHSTARTMESSAGE()
     {
         messageName = MessageName.MATCHSTARTMESSAGE;
-        message = "Insert the match start message here";
+        messageDescription = "Insert the match start message here";
     }
 
     public override string GenerateMessage()

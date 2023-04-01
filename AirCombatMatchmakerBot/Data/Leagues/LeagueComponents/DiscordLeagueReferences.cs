@@ -74,7 +74,7 @@ public class DiscordLeagueReferences
     // Id of the role which gives access to the league channelTypes
     [DataMember] private ulong leagueRoleId { get; set; }
 
-    // Reference to the message related to this league on the #league-registration channel
+    // Reference to the messageDescription related to this league on the #league-registration channel
     [DataMember] private ulong leagueRegistrationMessageId { get; set; }
 
     public DiscordLeagueReferences()

@@ -12,7 +12,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int> 
         {
         };
-        message = "Leaderboard:\n";
+        messageDescription = "Leaderboard:\n";
     }
 
     public override string GenerateMessage()

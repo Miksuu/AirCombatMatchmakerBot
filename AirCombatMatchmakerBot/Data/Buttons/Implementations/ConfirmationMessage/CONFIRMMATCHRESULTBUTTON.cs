@@ -93,7 +93,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
             return (errorMsg, false);
         }
 
-        Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " + confirmationMessage.Message, LogLevel.DEBUG);
+        Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " + confirmationMessage.MessageDescription, LogLevel.DEBUG);
 
         await confirmationMessage.GenerateAndModifyTheMessage();
 

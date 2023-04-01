@@ -101,7 +101,7 @@ public class BotRuntimeManager
                 Log.WriteLine(item.Key + " | " + item.Value, LogLevel.DEBUG);
             }*/
 
-                // Disregards any message that's not inside the bot's match channels
+                // Disregards any messageDescription that's not inside the bot's match channels
             if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
                 _socketMessage.Channel.Id))
             {
@@ -121,7 +121,7 @@ public class BotRuntimeManager
 
             //var socketMessageComponent = _socketMessage.ToComponent();
 
-            // Check if the message contains a file and only one file
+            // Check if the messageDescription contains a file and only one file
             if (_socketMessage.Attachments.Count != 1)
             {
                 Log.WriteLine("Message: " + _socketMessage.Id +
@@ -221,7 +221,7 @@ public class BotRuntimeManager
                          reportingStatusMessage, attachment.Url, TypeOfTheReportingObject.TACVIEWLINK); */
 
 
-                // Process the tacview file, and delete the original message by the user
+                // Process the tacview file, and delete the original messageDescription by the user
                 var finalResponseTuple = interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
                     interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id, acmiUrl,
                         TypeOfTheReportingObject.TACVIEWLINK,

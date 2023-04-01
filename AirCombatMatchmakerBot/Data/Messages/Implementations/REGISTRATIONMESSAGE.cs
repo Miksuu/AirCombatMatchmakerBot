@@ -20,11 +20,11 @@ public class REGISTRATIONMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.REGISTRATIONBUTTON, 1),
             });
 
-        message = "Click this button to register!";
+        messageDescription = "Click this button to register!";
     }
 
     public override string GenerateMessage()
     {
-        return message;
+        return messageDescription;
     }
 }

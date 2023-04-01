@@ -16,7 +16,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
         {
         };
-        message = "Insert the confirmation message here";
+        messageDescription = "Insert the confirmation message here";
     }
 
     public override string GenerateMessage()

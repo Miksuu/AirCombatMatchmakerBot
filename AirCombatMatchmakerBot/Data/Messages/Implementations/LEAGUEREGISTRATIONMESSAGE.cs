@@ -14,14 +14,14 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.LEAGUEREGISTRATIONBUTTON, 1),
             });
 
-        message = "Insert league registration message here";
+        messageDescription = "Insert league registration message here";
     }
 
     [DataMember] public ulong belongsToLeagueCategoryId;
 
     public override string GenerateMessage()
     {
-        return message;
+        return messageDescription;
     }
 
     public string GenerateMessageForSpecificCategoryLeague()
@@ -36,46 +36,6 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
             Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
             return nameof(interfaceLeague) + " was null!";
         }
-
-        /*
-        // Find the category fo the message ID
-        var category = Database.Instance.Categories.CreatedCategoriesWithChannels.FirstOrDefault(
-            x => x.Value.CategoryType == CategoryType.REGISTRATIONCATEGORY);
-
-        if (category.Value == null)
-        {
-            Log.WriteLine(nameof(category) + " was null!", LogLevel.CRITICAL);
-            return nameof(category) + " was null!";
-        }
-
-        Log.WriteLine("Found category: " + category.Value.CategoryType, LogLevel.DEBUG);
-
-        var channel = category.Value.InterfaceChannels.FirstOrDefault(
-                x => x.Value.ChannelType == ChannelType.LEAGUEREGISTRATION);
-
-        if (channel.Value == null)
-        {
-            Log.WriteLine(nameof(channel) + " was null!", LogLevel.CRITICAL);
-            return nameof(channel) + " was null!";
-        }
-
-        Log.WriteLine("Found channel: " + channel.Value.ChannelName, LogLevel.DEBUG);*/
-
-        /*
-        InterfaceMessage interfaceMessage = channel.Value.InterfaceMessagesWithIds.FirstOrDefault(
-            x => x.Key == discordLeagueReferences.LeagueCategoryId.ToString()).Value;
-       
-
-        Log.WriteLine("Found messageId: " + interfaceMessage.MessageId, LogLevel.VERBOSE); */
-
-        //await interfaceMessage.ModifyMessage(GenerateALeagueJoinButtonMessage());
-
-        /*
-        string? leagueEnumAttrValue =
-            EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName);
-
-        Log.WriteLine(nameof(leagueEnumAttrValue) + ": " +
-            leagueEnumAttrValue, LogLevel.VERBOSE); */
 
         string returned = "\n" + EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName) + "\n" +
             GetAllowedUnitsAsString(interfaceLeague) + "\n" +

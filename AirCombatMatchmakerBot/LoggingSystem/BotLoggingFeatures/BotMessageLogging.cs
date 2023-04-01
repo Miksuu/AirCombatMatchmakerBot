@@ -7,7 +7,7 @@ public static class BotMessageLogging
 {
     public static ulong loggingChannelId;
 
-    // Send message to a specific channel in discord with the log information
+    // Send messageDescription to a specific channel in discord with the log information
     public static async void SendLogMessage(string _logMessage, LogLevel _logLevel)
     {
         string completeLogString = "";

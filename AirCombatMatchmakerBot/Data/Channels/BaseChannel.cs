@@ -176,7 +176,7 @@ public abstract class BaseChannel : InterfaceChannel
         Log.WriteLine("Finding channel: " + channelType + " (" + channelId +
             ") parent category with id: " + channelsCategoryId, LogLevel.VERBOSE);
 
-        // If the message doesn't exist, set it ID to 0 to regenerate it
+        // If the messageDescription doesn't exist, set it ID to 0 to regenerate it
         var channel = _client.GetChannelAsync(channelId).Result as ITextChannel;
 
         if (channel == null)
@@ -290,7 +290,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    // Finds ANY message with that message name (there can be multiple of same messages now)
+    // Finds ANY messageDescription with that messageDescription name (there can be multiple of same messages now)
     public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName)
     {

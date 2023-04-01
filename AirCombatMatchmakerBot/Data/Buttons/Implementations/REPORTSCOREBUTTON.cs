@@ -44,7 +44,7 @@ public class REPORTSCOREBUTTON : BaseButton
             _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
             _interfaceMessage.MessageChannelId);
 
-        //Find the channel of the message and cast the interface to to the MATCHCHANNEL class       
+        //Find the channel of the messageDescription and cast the interface to to the MATCHCHANNEL class       
         MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
         if (matchChannel == null)
         {

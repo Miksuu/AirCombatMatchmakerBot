@@ -101,7 +101,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
                     interfaceLeague, _component.User.Id);
 
                 
-                // Modify the message to have the new player count
+                // Modify the messageDescription to have the new player count
                 LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
                 if (leagueRegistrationMessage == null)
                 {

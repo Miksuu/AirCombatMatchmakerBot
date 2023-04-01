@@ -186,7 +186,7 @@ public class MatchReporting
                     _messageChannelId);
 
         // If the match is on the confirmation phase,
-        // edit that message instead of the reporting status message which would be null
+        // edit that messageDescription instead of the reporting status messageDescription which would be null
         MessageName messageNameToEdit = MessageName.REPORTINGSTATUSMESSAGE;
         if (showingConfirmationMessage)
         {

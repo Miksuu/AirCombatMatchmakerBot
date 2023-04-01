@@ -40,10 +40,10 @@ public static class ButtonHandler
         }
 
         Log.WriteLine("Found: " + interfaceMessage.MessageChannelId + " | " +
-            interfaceMessage.MessageId + " | " + interfaceMessage.Message, LogLevel.DEBUG);
+            interfaceMessage.MessageId + " | " + interfaceMessage.MessageDescription, LogLevel.DEBUG);
 
         if (interfaceMessage.MessageCategoryId == 0 || interfaceMessage.MessageChannelId == 0 ||
-            interfaceMessage.MessageId == 0 || interfaceMessage.Message == "")
+            interfaceMessage.MessageId == 0 || interfaceMessage.MessageDescription == "")
         {
             Log.WriteLine("Channel id, msg or it's id was null!", LogLevel.ERROR);
         }
@@ -97,7 +97,7 @@ public static class ButtonHandler
 
         Log.WriteLine("Found channel: " + databaseChannel.Value.ChannelType, LogLevel.VERBOSE);
 
-        // Find the database message
+        // Find the database messageDescription
         var databaseMessage = databaseChannel.Value.InterfaceMessagesWithIds.FirstOrDefault(
             m => m.Value.MessageId == _component.Message.Id);
         if (databaseMessage.Value == null)

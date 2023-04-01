@@ -40,19 +40,51 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    string InterfaceMessage.Message
+    string InterfaceMessage.MessageEmbedTitle
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(message)
-                + ": " + message, LogLevel.VERBOSE);
-            return message;
+            Log.WriteLine("Getting " + nameof(messageEmbedTitle)
+                + ": " + messageEmbedTitle, LogLevel.VERBOSE);
+            return messageEmbedTitle;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(message) +
-                message + " to: " + value, LogLevel.VERBOSE);
-            message = value;
+            Log.WriteLine("Setting " + nameof(messageEmbedTitle) +
+                messageEmbedTitle + " to: " + value, LogLevel.VERBOSE);
+            messageEmbedTitle = value;
+        }
+    }
+
+    string InterfaceMessage.MessageDescription
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(messageDescription)
+                + ": " + messageDescription, LogLevel.VERBOSE);
+            return messageDescription;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(messageDescription) +
+                messageDescription + " to: " + value, LogLevel.VERBOSE);
+            messageDescription = value;
+        }
+    }
+
+    Discord.Color InterfaceMessage.MessageEmbedColor
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(messageEmbedColor)
+                + ": " + messageEmbedColor, LogLevel.VERBOSE);
+            return messageEmbedColor;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(messageEmbedColor) +
+                messageEmbedColor + " to: " + value, LogLevel.VERBOSE);
+            messageEmbedColor = value;
         }
     }
 
@@ -122,7 +154,12 @@ public abstract class BaseMessage : InterfaceMessage
 
     [DataMember] protected MessageName messageName;
     [DataMember] protected ConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount;
-    [DataMember] protected string message = "";
+
+    // Embed properties
+    [DataMember] protected string messageEmbedTitle = "";
+    [DataMember] protected string messageDescription = ""; // Not necessary for embed
+    [DataMember] protected Discord.Color messageEmbedColor = Discord.Color.DarkGrey;
+
     [DataMember] protected ulong messageId;
     [DataMember] protected ulong messageChannelId;
     [DataMember] protected ulong messageCategoryId;
@@ -212,43 +249,33 @@ public abstract class BaseMessage : InterfaceMessage
         {
             var componentsBuilt = component.Build();
 
-            // Send a regular message
+            // Send a regular messageDescription
             if (_component == null)
             {
                 var embed = new EmbedBuilder();
 
-                // set the title, description, and color of the embedded message
-                embed.WithTitle("Hello, world!")
-                     .WithDescription("This is a sample embedded message.")
-                     .WithColor(Color.Green);
+                // set the title, description, and color of the embedded messageDescription
+                embed.WithTitle(messageEmbedTitle)
+                     .WithDescription(messageForGenerating)
+                     .WithColor(messageEmbedColor);
 
-                // add a field to the embedded message
-                embed.AddField("Field Name", "Field Value");
+                // add a field to the embedded messageDescription
+                //embed.AddField("Field Name", "Field Value");
 
-                // add a thumbnail image to the embedded message
+                // add a thumbnail image to the embedded messageDescription
                 //embed.WithThumbnailUrl("https://example.com/thumbnail.png");
 
-                /*
-                // create a new instance of the message to send
-                var message = new MessageBuilder()
-                    .WithEmbed(embed.Build())
-                    .Build();
-
-                // send the message to a specified channel
-                await Context.Channel.SendMessageAsync(message);
-                */
-
                 var userMessage = await textChannel.SendMessageAsync(
-                    messageForGenerating, false, embed.Build(), components: componentsBuilt);
+                    "", false, embed.Build(), components: componentsBuilt);
 
                 tempId = userMessage.Id;
 
                 messageId = userMessage.Id;
-                message = messageForGenerating;
+                messageDescription = messageForGenerating;
 
                 _interfaceChannel.InterfaceMessagesWithIds.TryAdd(messageId, this);
             }
-            // Reply to a message
+            // Reply to a messageDescription
             else
             {
                 await _component.RespondAsync(
@@ -258,15 +285,15 @@ public abstract class BaseMessage : InterfaceMessage
 
         Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);
 
-        return (tempId, message);
+        return (tempId, messageDescription);
     }
 
     public async Task ModifyMessage(string _newContent)
     {
-        message = _newContent;
+        messageDescription = _newContent;
 
         Log.WriteLine("Modifying a message on channel id: " + messageChannelId +
-            " that has msg id: " + messageId + " with content: " + message +
+            " that has msg id: " + messageId + " with content: " + messageDescription +
             " with new content:" + _newContent, LogLevel.DEBUG);
 
         var client = BotReference.GetClientRef();
@@ -285,7 +312,14 @@ public abstract class BaseMessage : InterfaceMessage
 
         Log.WriteLine("Found channel: " + channel.Id, LogLevel.VERBOSE);
 
-        await channel.ModifyMessageAsync(messageId, m => m.Content = message);
+        var embed = new EmbedBuilder();
+
+        // set the title, description, and color of the embedded messageDescription
+        embed.WithTitle(messageEmbedTitle)
+             .WithDescription(messageDescription)
+             .WithColor(messageEmbedColor);
+
+        await channel.ModifyMessageAsync(messageId, m => m.Embed = embed.Build());
 
         Log.WriteLine("Modifying the message: " + messageId + " done.", LogLevel.VERBOSE);
     }

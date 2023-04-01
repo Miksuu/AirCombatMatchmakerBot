@@ -17,7 +17,7 @@ public enum ButtonName
     [EnumMember(Value = "REPORTSCOREBUTTON")]
     REPORTSCOREBUTTON = 3,
 
-    // Match report result confirmation message
+    // Match report result confirmation messageDescription
     [EnumMember(Value = "CONFIRMMATCHRESULTBUTTON")]
     CONFIRMMATCHRESULTBUTTON = 4,
     [EnumMember(Value = "DISPUTEMATCHRESULTBUTTON")]
