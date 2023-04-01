@@ -215,8 +215,31 @@ public abstract class BaseMessage : InterfaceMessage
             // Send a regular message
             if (_component == null)
             {
+                var embed = new EmbedBuilder();
+
+                // set the title, description, and color of the embedded message
+                embed.WithTitle("Hello, world!")
+                     .WithDescription("This is a sample embedded message.")
+                     .WithColor(Color.Green);
+
+                // add a field to the embedded message
+                embed.AddField("Field Name", "Field Value");
+
+                // add a thumbnail image to the embedded message
+                //embed.WithThumbnailUrl("https://example.com/thumbnail.png");
+
+                /*
+                // create a new instance of the message to send
+                var message = new MessageBuilder()
+                    .WithEmbed(embed.Build())
+                    .Build();
+
+                // send the message to a specified channel
+                await Context.Channel.SendMessageAsync(message);
+                */
+
                 var userMessage = await textChannel.SendMessageAsync(
-                    messageForGenerating, components: componentsBuilt);
+                    messageForGenerating, false, embed.Build(), components: componentsBuilt);
 
                 tempId = userMessage.Id;
 
@@ -270,12 +293,6 @@ public abstract class BaseMessage : InterfaceMessage
     public async Task GenerateAndModifyTheMessage()
     {
         await ModifyMessage(GenerateMessage());
-
-        /*
-        if (_serialize)
-        {
-            await SerializationManager.SerializeDB();
-        }*/
     }
 
     public abstract string GenerateMessage();
