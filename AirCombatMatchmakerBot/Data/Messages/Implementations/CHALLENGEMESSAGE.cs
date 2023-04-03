@@ -49,7 +49,7 @@ public class CHALLENGEMESSAGE : BaseMessage
                     Log.WriteLine("Found: " + channelIdToLookFor +
                         " is league: " + leagueName, LogLevel.DEBUG);
 
-                    string challengeMessage = ". \n" +
+                    string challengeMessage =
                         leagueName + " challenge. Players In The Queue: \n";
 
                     var leagueCategory = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);

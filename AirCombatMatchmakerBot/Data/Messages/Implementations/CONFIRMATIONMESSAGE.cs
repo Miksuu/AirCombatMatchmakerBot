@@ -21,7 +21,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.DISPUTEMATCHRESULTBUTTON, 1),
             });
 
-        messageDescription = "You can either Confirm, Modify or Dispute the result below.";
+        messageDescription = "You can either Confirm/Dispute the result below.";
     }
 
     public override string GenerateMessage()
@@ -91,7 +91,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
             matchTuple.Item2.FinishTheMatch(interfaceLeague);
         }
 
-        finalMessage += "You can either Confirm, Modify or Dispute the result below.";
+        finalMessage += "You can either Confirm/Dispute the result below.";
 
         Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 
