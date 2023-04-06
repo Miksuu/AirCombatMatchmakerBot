@@ -129,7 +129,7 @@ public abstract class BaseLeague : InterfaceLeague
         return interfaceCategory;
     }
 
-    public async Task PostMatchReport(string _finalResult)
+    public async Task PostMatchReport(string _finalResultMessage, string _finalResultTitle)
     {
         InterfaceCategory leagueCategory =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
@@ -152,7 +152,8 @@ public abstract class BaseLeague : InterfaceLeague
             return;
         }
 
-        await textChannel.SendMessageAsync(_finalResult);
+        await matchReportsChannelInterface.CreateARawMessageForTheChannelFromMessageName(
+            _finalResultMessage, _finalResultTitle);
     }
 
     public void UpdateLeagueLeaderboard()

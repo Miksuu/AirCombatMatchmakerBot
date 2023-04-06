@@ -34,4 +34,7 @@ public enum MessageName
 
     [EnumMember(Value = "MODIFY MATCH RESULTS MESSAGE")]
     MODIFYMATCHRESULTSMESSAGE = 9,
+
+    [EnumMember(Value = "RAW MESSAGE INPUT")]
+    RAWMESSAGEINPUT = 10,
 }

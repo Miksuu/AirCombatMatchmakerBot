@@ -2,6 +2,7 @@
 using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Threading.Channels;
 
 [DataContract]
 public abstract class BaseChannel : InterfaceChannel
@@ -148,7 +149,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public async Task<(ulong, string)> CreateAMessageForTheChannelFromMessageName(
-        MessageName _MessageName, bool _displayMessage = true, 
+        MessageName _MessageName, bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
         Log.WriteLine("Creating a message named: " + _MessageName.ToString(), LogLevel.DEBUG);
@@ -164,6 +165,37 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+            client, this, _displayMessage, 0, _component, _ephemeral);
+
+        return newMessageTuple;
+    }
+
+    public async Task<(ulong, string)> CreateARawMessageForTheChannelFromMessageName(
+        string _input, string _embedTitle = "", bool _displayMessage = true,
+        SocketMessageComponent? _component = null, bool _ephemeral = true)
+    {
+        Log.WriteLine("Creating a raw message: " + _input, LogLevel.DEBUG);
+
+        InterfaceMessage interfaceMessage =
+            (InterfaceMessage)EnumExtensions.GetInstance(MessageName.RAWMESSAGEINPUT.ToString());
+
+        var rawMessageInput = interfaceMessage as RAWMESSAGEINPUT;
+        if (rawMessageInput == null)
+        {
+            Log.WriteLine(nameof(rawMessageInput) + " was null!", LogLevel.CRITICAL);
+            return (0, "client was null!");
+        }
+
+        rawMessageInput.GenerateRawMessage(_input, _embedTitle);
+
+        var client = BotReference.GetClientRef();
+        if (client == null)
+        {
+            Exceptions.BotClientRefNull();
+            return (0, "client was null!");
+        }
+
+        var newMessageTuple = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
             client, this, _displayMessage, 0, _component, _ephemeral);
 
         return newMessageTuple;
@@ -238,12 +270,6 @@ public abstract class BaseChannel : InterfaceChannel
                 Log.WriteLine(nameof(leagueInterfaceFromDatabase) + " before creating leagueButtonRegisterationCustomId: "
                     + leagueInterfaceFromDatabase.ToString(), LogLevel.VERBOSE);
 
-                /*
-                InterfaceMessage interfaceMessage =
-                    
-                Log.WriteLine("Created interfaceMessage instance: " +
-                    interfaceMessage.MessageName, LogLevel.VERBOSE); */
-
                 if (leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueRegistrationMessageId != 0) continue;
 
                 InterfaceMessage interfaceMessage =
@@ -252,11 +278,9 @@ public abstract class BaseChannel : InterfaceChannel
                 var messageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
                         _client, this, true, leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId);
 
-                Log.WriteLine("messagetuple:" + messageTuple.Item1 + " | " + messageTuple.Item2, LogLevel.DEBUG);
+                Log.WriteLine("messagetuple:" + messageTuple.Item1 + " | " + messageTuple.Item2, LogLevel.VERBOSE);
 
                 leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueRegistrationMessageId = messageTuple.Item1;
-
-                //string stringToGetTheInstanceFrom = channelMessagesFromDb.ElementAt(0).ToString();
 
                 interfaceMessagesWithIds.TryAdd(
                     leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId,
@@ -265,7 +289,7 @@ public abstract class BaseChannel : InterfaceChannel
                 Log.WriteLine("Added to the ConcurrentDictionary, count is now: " +
                     interfaceMessagesWithIds.Count, LogLevel.VERBOSE);
 
-                //Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
+                Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
             }
         }
         else

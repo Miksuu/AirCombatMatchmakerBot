@@ -81,11 +81,27 @@ public class MatchReporting
         }
     }
 
+    public string? FinalResultTitleForConfirmation
+    {
+        get
+        {
+            Log.WriteLine("Getting finalResultTitleForConfirmation", LogLevel.VERBOSE);
+            return finalResultTitleForConfirmation;
+        }
+        set
+        {
+            Log.WriteLine("Setting finalResultTitleForConfirmation"
+                + " to: " + value, LogLevel.VERBOSE);
+            finalResultTitleForConfirmation = value;
+        }
+    }
+
     private EloSystem eloSystem { get; set; }
     [DataMember] private ConcurrentDictionary<int, ReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
     [DataMember] private string? finalResultForConfirmation { get; set; }
+    [DataMember] private string? finalResultTitleForConfirmation { get; set; }
 
     public MatchReporting()
     {
@@ -200,6 +216,8 @@ public class MatchReporting
                 return (nameof(interfaceMessage) + " was null!", false);
             }
             finalResultForConfirmation = interfaceMessage.GenerateMessage();
+            // Must be called after GenerateMessage() since it's defined there
+            finalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
         }
 
         InterfaceMessage? messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(

@@ -21,6 +21,9 @@ public interface InterfaceChannel
     public Task<(ulong, string)> CreateAMessageForTheChannelFromMessageName(
         MessageName _MessageName, bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
+    public Task<(ulong, string)> CreateARawMessageForTheChannelFromMessageName(
+        string _input, string _embedTitle = "", bool _displayMessage = true,
+        SocketMessageComponent? _component = null, bool _ephemeral = true);
     public Task PostChannelMessages(DiscordSocketClient _client);
     public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName);
