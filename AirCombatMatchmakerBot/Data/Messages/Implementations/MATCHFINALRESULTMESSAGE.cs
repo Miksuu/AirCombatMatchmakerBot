@@ -1,10 +1,4 @@
-﻿using Discord;
-using System.Data;
-using System;
-using System.Runtime.Serialization;
-using Discord.WebSocket;
-using System.Threading.Channels;
-using System.Reflection;
+﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [DataContract]
@@ -21,9 +15,9 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
-        Log.WriteLine("Starting to generate the message for the match final result", LogLevel.DEBUG);
+        Log.WriteLine("Starting to generate the message for the match final result", LogLevel.VERBOSE);
 
-        string finalMessage = " \n";
+        string finalMessage = string.Empty;
 
         var interfaceLeagueMatchTuple = Database.Instance.Leagues.FindMatchAndItsInterfaceLeagueByCategoryAndChannelId(
             messageCategoryId, messageChannelId);
@@ -35,7 +29,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
             return "Error, could not find the league or match";
         }
 
-        finalMessage += "Match " + interfaceLeagueMatchTuple.Item2.MatchId + " has finished\n";
+        messageEmbedTitle = "Match " + interfaceLeagueMatchTuple.Item2.MatchId + " has finished\n";
 
         ConcurrentDictionary<int, ReportData>? matchReportingTeamIdsWithReportData =
             interfaceLeagueMatchTuple.Item2.MatchReporting.TeamIdsWithReportData;

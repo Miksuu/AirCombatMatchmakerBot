@@ -63,8 +63,10 @@ public class Matches
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
                 _interfaceLeague.LeagueCategoryName);
 
+        string leagueMatchIdString = _leagueMatch.MatchId.ToString();
+
         // Prep the channel name with match id
-        string overriddenMatchName = "match-" + _leagueMatch.MatchId.ToString();
+        string overriddenMatchName = "match-" + leagueMatchIdString;
 
         Log.WriteLine("Starting to create a new match channel: " +
             overriddenMatchName, LogLevel.VERBOSE);
@@ -80,7 +82,6 @@ public class Matches
             Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.ERROR);
             return 0;
         }
-
 
         _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 

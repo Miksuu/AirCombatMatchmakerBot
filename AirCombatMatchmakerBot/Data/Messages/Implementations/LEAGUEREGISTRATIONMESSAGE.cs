@@ -37,11 +37,13 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
             return nameof(interfaceLeague) + " was null!";
         }
 
-        string returned = "\n" + EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName) + "\n" +
+        messageEmbedTitle = EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName);
+
+        string returned =
             GetAllowedUnitsAsString(interfaceLeague) + "\n" +
             GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(interfaceLeague);
 
-        Log.WriteLine(returned, LogLevel.DEBUG);
+        Log.WriteLine(returned, LogLevel.VERBOSE);
 
         return returned;
     }

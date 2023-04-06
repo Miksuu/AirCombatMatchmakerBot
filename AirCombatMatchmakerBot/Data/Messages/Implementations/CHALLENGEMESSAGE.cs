@@ -14,7 +14,6 @@ public class CHALLENGEMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.CHALLENGEBUTTON, 1),
             });
 
-
         messageDescription = "Insert the challenge message here";
     }
 
@@ -49,8 +48,9 @@ public class CHALLENGEMESSAGE : BaseMessage
                     Log.WriteLine("Found: " + channelIdToLookFor +
                         " is league: " + leagueName, LogLevel.DEBUG);
 
-                    string challengeMessage =
-                        leagueName + " challenge. Players In The Queue: \n";
+
+                    messageEmbedTitle = leagueName + " challenge.";
+                    string challengeMessage = "Players In The Queue: \n";
 
                     var leagueCategory = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
                     if (leagueCategory == null)

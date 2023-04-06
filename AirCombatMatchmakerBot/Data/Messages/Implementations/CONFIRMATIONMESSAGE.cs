@@ -21,7 +21,8 @@ public class CONFIRMATIONMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.DISPUTEMATCHRESULTBUTTON, 1),
             });
 
-        messageDescription = "You can either Confirm/Dispute the result below.";
+        messageEmbedTitle = "Match confirmation";
+        messageDescription = "";
     }
 
     public override string GenerateMessage()

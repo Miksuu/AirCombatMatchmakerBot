@@ -9,15 +9,16 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
     public LEAGUESTATUSMESSAGE()
     {
         messageName = MessageName.LEAGUESTATUSMESSAGE;
-        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int> 
+        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
         {
         };
-        messageDescription = "Leaderboard:\n";
+        messageEmbedTitle = "Leaderboard:\n"; ;
+        messageDescription = "";
     }
 
     public override string GenerateMessage()
     {
-        string finalMessage = "Leaderboard:\n";
+        string finalMessage = string.Empty;
         ConcurrentBag<Team> sortedTeamConcurrentBagByElo = new ConcurrentBag<Team>();
 
         InterfaceLeague? interfaceLeague = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
@@ -44,7 +45,6 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         {
             Log.WriteLine("Generated the leaderboard: " + finalMessage, LogLevel.VERBOSE);
         }
-
 
         return finalMessage;
     }

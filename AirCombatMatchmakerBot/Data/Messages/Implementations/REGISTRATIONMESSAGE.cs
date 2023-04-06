@@ -20,7 +20,7 @@ public class REGISTRATIONMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.REGISTRATIONBUTTON, 1),
             });
 
-        messageDescription = "Click this button to register!";
+        messageEmbedTitle = "Click this button to register!";
     }
 
     public override string GenerateMessage()

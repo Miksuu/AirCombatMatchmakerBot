@@ -15,12 +15,13 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
     {
         messageName = MessageName.REPORTINGSTATUSMESSAGE;
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
+        messageEmbedTitle = "Current reporting status";
         messageDescription = "Insert the reporting status message here";
     }
 
     public override string GenerateMessage()
     {
-        string reportingStatusMessage = "Current reporting status: \n";
+        string reportingStatusMessage = string.Empty;
 
         InterfaceLeague? interfaceLeague =
             Database.Instance.Leagues.GetILeagueByCategoryId(messageCategoryId);
