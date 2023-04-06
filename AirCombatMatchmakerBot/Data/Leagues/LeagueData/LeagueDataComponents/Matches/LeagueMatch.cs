@@ -207,7 +207,8 @@ public class LeagueMatch
             var messageTuple = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                     MessageName.MATCHFINALRESULTMESSAGE, false);
 
-            matchReporting.FinalResultForConfirmation = messageTuple.Item2;
+            matchReporting.FinalResultForConfirmation = messageTuple.Item2.MessageDescription;
+            matchReporting.FinalResultTitleForConfirmation = messageTuple.Item2.MessageEmbedTitle;
         }
 
         await _interfaceLeague.PostMatchReport(

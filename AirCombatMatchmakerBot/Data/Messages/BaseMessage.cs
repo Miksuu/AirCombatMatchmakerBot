@@ -172,7 +172,7 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     // If the component is not null, this is a reply
-    public async Task<(ulong, string)> CreateTheMessageAndItsButtonsOnTheBaseClass(
+    public async Task<(ulong, InterfaceMessage)> CreateTheMessageAndItsButtonsOnTheBaseClass(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, 
         bool _displayMessage = true, ulong _leagueCategoryId = 0, 
         SocketMessageComponent? _component = null, bool _ephemeral = true)
@@ -190,7 +190,8 @@ public abstract class BaseMessage : InterfaceMessage
         if (textChannel == null)
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
-            return (0, "textChannel was null!");
+            InterfaceMessage? interfaceMessage = null;
+            return (0, interfaceMessage);
         }
 
         Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
@@ -231,7 +232,7 @@ public abstract class BaseMessage : InterfaceMessage
             if (leagueRegistrationMessage == null)
             {
                 Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
-                return (0, nameof(leagueRegistrationMessage) + " was null!");
+                return (0, leagueRegistrationMessage);
             }
 
             // Pass league id as parameter here
@@ -285,7 +286,7 @@ public abstract class BaseMessage : InterfaceMessage
 
         Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);
 
-        return (tempId, messageDescription);
+        return (tempId, this);
     }
 
     public async Task ModifyMessage(string _newContent)

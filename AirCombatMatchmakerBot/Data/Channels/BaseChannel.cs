@@ -148,7 +148,7 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
     }
 
-    public async Task<(ulong, string)> CreateAMessageForTheChannelFromMessageName(
+    public async Task<(ulong, InterfaceMessage)> CreateAMessageForTheChannelFromMessageName(
         MessageName _MessageName, bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
@@ -161,7 +161,7 @@ public abstract class BaseChannel : InterfaceChannel
         if (client == null)
         {
             Exceptions.BotClientRefNull();
-            return (0, "client was null!");
+            return (0, interfaceMessage);
         }
 
         var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
@@ -170,7 +170,7 @@ public abstract class BaseChannel : InterfaceChannel
         return newMessageTuple;
     }
 
-    public async Task<(ulong, string)> CreateARawMessageForTheChannelFromMessageName(
+    public async Task<(ulong, InterfaceMessage)> CreateARawMessageForTheChannelFromMessageName(
         string _input, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
@@ -183,7 +183,7 @@ public abstract class BaseChannel : InterfaceChannel
         if (rawMessageInput == null)
         {
             Log.WriteLine(nameof(rawMessageInput) + " was null!", LogLevel.CRITICAL);
-            return (0, "client was null!");
+            return (0, interfaceMessage);
         }
 
         rawMessageInput.GenerateRawMessage(_input, _embedTitle);
@@ -192,7 +192,7 @@ public abstract class BaseChannel : InterfaceChannel
         if (client == null)
         {
             Exceptions.BotClientRefNull();
-            return (0, "client was null!");
+            return (0, interfaceMessage);
         }
 
         var newMessageTuple = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(

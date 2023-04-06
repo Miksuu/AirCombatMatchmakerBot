@@ -20,7 +20,7 @@ public interface InterfaceMessage
     public ulong MessageCategoryId { get; set; }
     public ConcurrentBag<InterfaceButton> ButtonsInTheMessage { get; set; }
 
-    public Task<(ulong, string)> CreateTheMessageAndItsButtonsOnTheBaseClass(
+    public Task<(ulong, InterfaceMessage)> CreateTheMessageAndItsButtonsOnTheBaseClass(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel,
         bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true);

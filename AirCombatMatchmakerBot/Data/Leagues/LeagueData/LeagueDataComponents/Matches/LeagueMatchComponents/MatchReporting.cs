@@ -276,7 +276,8 @@ public class MatchReporting
             var messageTuple = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.MATCHFINALRESULTMESSAGE);
 
-            finalResultForConfirmation = messageTuple.Item2;
+            finalResultForConfirmation = messageTuple.Item2.MessageDescription;
+            finalResultTitleForConfirmation = messageTuple.Item2.MessageEmbedTitle;
 
             await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMATIONMESSAGE);
