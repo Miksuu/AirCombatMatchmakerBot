@@ -72,7 +72,7 @@ public abstract class BaseCategory : InterfaceCategory
     }
 
     [DataMember] protected CategoryType categoryTypes;
-    [DataMember] protected ConcurrentBag<ChannelType> channelTypes;
+    protected ConcurrentBag<ChannelType> channelTypes;
     [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels;
     [DataMember] protected ulong socketCategoryChannelId;
 

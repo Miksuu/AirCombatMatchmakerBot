@@ -158,7 +158,7 @@ public abstract class BaseMessage : InterfaceMessage
     // Embed properties
     [DataMember] protected string messageEmbedTitle = "";
     [DataMember] protected string messageDescription = ""; // Not necessary for embed
-    [DataMember] protected Discord.Color messageEmbedColor = Discord.Color.DarkGrey;
+    protected Discord.Color messageEmbedColor = Discord.Color.DarkGrey;
 
     [DataMember] protected ulong messageId;
     [DataMember] protected ulong messageChannelId;
