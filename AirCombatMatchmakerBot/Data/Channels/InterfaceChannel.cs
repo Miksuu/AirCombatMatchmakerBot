@@ -18,10 +18,10 @@ public interface InterfaceChannel
 
     public Task CreateAChannelForTheCategory(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
-    public Task<(ulong, InterfaceMessage)> CreateAMessageForTheChannelFromMessageName(
+    public Task<InterfaceMessage?> CreateAMessageForTheChannelFromMessageName(
         MessageName _MessageName, bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
-    public Task<(ulong, InterfaceMessage)> CreateARawMessageForTheChannelFromMessageName(
+    public Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageName(
         string _input, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
     public Task PostChannelMessages(DiscordSocketClient _client);

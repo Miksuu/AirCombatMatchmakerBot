@@ -204,11 +204,16 @@ public class LeagueMatch
                 _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                     matchChannelId);
 
-            var messageTuple = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+            var interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                     MessageName.MATCHFINALRESULTMESSAGE, false);
+            if (interfaceMessage == null)
+            {
+                Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.ERROR);
+                return;
+            }
 
-            matchReporting.FinalResultForConfirmation = messageTuple.Item2.MessageDescription;
-            matchReporting.FinalResultTitleForConfirmation = messageTuple.Item2.MessageEmbedTitle;
+            matchReporting.FinalResultForConfirmation = interfaceMessage.MessageDescription;
+            matchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
         }
 
         await _interfaceLeague.PostMatchReport(

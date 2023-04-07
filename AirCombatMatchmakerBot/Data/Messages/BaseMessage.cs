@@ -172,7 +172,7 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     // If the component is not null, this is a reply
-    public async Task<(ulong, InterfaceMessage)> CreateTheMessageAndItsButtonsOnTheBaseClass(
+    public async Task<InterfaceMessage?> CreateTheMessageAndItsButtonsOnTheBaseClass(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, 
         bool _displayMessage = true, ulong _leagueCategoryId = 0, 
         SocketMessageComponent? _component = null, bool _ephemeral = true)
@@ -191,7 +191,7 @@ public abstract class BaseMessage : InterfaceMessage
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
             InterfaceMessage? interfaceMessage = null;
-            return (0, interfaceMessage);
+            return interfaceMessage;
         }
 
         Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
@@ -232,7 +232,7 @@ public abstract class BaseMessage : InterfaceMessage
             if (leagueRegistrationMessage == null)
             {
                 Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
-                return (0, leagueRegistrationMessage);
+                return leagueRegistrationMessage;
             }
 
             // Pass league id as parameter here
@@ -245,7 +245,6 @@ public abstract class BaseMessage : InterfaceMessage
             messageForGenerating = "\n" + GenerateMessage();
         }
 
-        ulong tempId = 0;
         if (_displayMessage)
         {
             var componentsBuilt = component.Build();
@@ -269,8 +268,6 @@ public abstract class BaseMessage : InterfaceMessage
                 var userMessage = await textChannel.SendMessageAsync(
                     "", false, embed.Build(), components: componentsBuilt);
 
-                tempId = userMessage.Id;
-
                 messageId = userMessage.Id;
                 messageDescription = messageForGenerating;
 
@@ -286,7 +283,7 @@ public abstract class BaseMessage : InterfaceMessage
 
         Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);
 
-        return (tempId, this);
+        return this;
     }
 
     public async Task ModifyMessage(string _newContent)

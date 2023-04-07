@@ -273,11 +273,17 @@ public class MatchReporting
 
             Log.WriteLine("Creating new messages from: " + _playerId, LogLevel.DEBUG);
 
-            var messageTuple = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+            var interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.MATCHFINALRESULTMESSAGE);
+            if (interfaceMessage == null)
+            {
+                string errorMsg = nameof(interfaceMessage) + " was null!";
+                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                return (errorMsg, false);
+            }
 
-            finalResultForConfirmation = messageTuple.Item2.MessageDescription;
-            finalResultTitleForConfirmation = messageTuple.Item2.MessageEmbedTitle;
+            finalResultForConfirmation = interfaceMessage.MessageDescription;
+            finalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
             await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMATIONMESSAGE);
