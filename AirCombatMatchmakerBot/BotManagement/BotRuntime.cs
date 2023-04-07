@@ -242,7 +242,15 @@ public class BotRuntimeManager
                     return;
                 }
 
+                await FileManager.SaveTacviewFromUserUpload(
+                    interfaceLeagueWithLeagueMatch.Item1.LeagueCategoryName,
+                    interfaceLeagueWithLeagueMatch.Item2.MatchId, _socketMessage);
+
+                ulong smId = _socketMessage.Author.Id;
+
                 await _socketMessage.DeleteAsync();
+
+                Log.WriteLine("Done deleting message from: " + smId, LogLevel.VERBOSE);
 
                 await SerializationManager.SerializeDB();
             }

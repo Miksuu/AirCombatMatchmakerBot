@@ -311,10 +311,9 @@ public class MatchReporting
     private Task<(string, bool, InterfaceChannel?)> CheckIfMatchCanBeSentToConfirmation(
         ulong _leagueCategoryId, ulong _messageChannelId)
     {
-        InterfaceChannel? interfaceChannel = null;
         bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
 
-        interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+        InterfaceChannel? interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             _leagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
         if (interfaceChannel == null)
         {
