@@ -14,7 +14,8 @@ public class BOTSTUFF : BaseCategory
         channelTypes = new ConcurrentBag<ChannelType>()
         {
             ChannelType.BOTLOG,
-            ChannelType.BOTCOMMANDS
+            ChannelType.BOTCOMMANDS,
+            ChannelType.TACVIEWSTORAGE,
         };
     }
 

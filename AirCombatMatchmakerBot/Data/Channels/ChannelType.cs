@@ -16,6 +16,8 @@ public enum ChannelType
     BOTCOMMANDS,
     [EnumMember(Value = "bot-log")]
     BOTLOG,
+    [EnumMember(Value = "tacview-storage")]
+    TACVIEWSTORAGE,
 
     // League categories
     [EnumMember(Value = "league-status")]
