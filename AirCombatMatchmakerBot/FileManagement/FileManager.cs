@@ -48,9 +48,19 @@ static class FileManager
                 {
                     using (var stream = await response.Content.ReadAsStreamAsync())
                     {
-                        using (var fileStream = new FileStream(_finalPath, FileMode.Create))
+                        if (!File.Exists(_finalPath))
                         {
-                            await stream.CopyToAsync(fileStream);
+                            using (var fileStream = new FileStream(_finalPath, FileMode.CreateNew))
+                            {
+                                await stream.CopyToAsync(fileStream);
+                            }
+                        } 
+                        else
+                        {
+                            using (var fileStream = new FileStream(_finalPath, FileMode.Truncate))
+                            {
+                                await stream.CopyToAsync(fileStream);
+                            }
                         }
                     }
                 }
