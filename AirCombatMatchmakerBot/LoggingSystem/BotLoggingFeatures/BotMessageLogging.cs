@@ -30,12 +30,17 @@ public static class BotMessageLogging
                 return;
             }
 
-            var loggingChannel = await client.GetChannelAsync(loggingChannelId) as ITextChannel;
-
-            if (loggingChannel != null)
+            // Temp fix, insert in to db or something
+            if (loggingChannelId != 0)
             {
-                await loggingChannel.SendMessageAsync(completeLogString);
+                var loggingChannel = await client.GetChannelAsync(loggingChannelId) as ITextChannel;
+
+                if (loggingChannel != null)
+                {
+                    await loggingChannel.SendMessageAsync(completeLogString);
+                }
             }
+
             // Do not print anything here, might end up in circular dependency 
             // (or need to handle it, which might be unnecessary)
         }
