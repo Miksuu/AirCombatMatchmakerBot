@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
 using Discord;
+using System.Diagnostics;
 
 [DataContract]
 public class LeagueMatch
@@ -216,8 +217,17 @@ public class LeagueMatch
             matchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
         }
 
+        FileManager.AttachmentData[] attachmentDatas = FileManager.FindTacviewAttachmentsForACertainMatch(
+            matchId, _interfaceLeague).Result;
+
+        /*
+        foreach (var item in attachmentDatas)
+        {
+            Log.WriteLine("attachmentData: " + item.attachmentName + " | " + item.attachmentLink, LogLevel.DEBUG);
+        }*/
+
         await _interfaceLeague.PostMatchReport(
-            matchReporting.FinalResultForConfirmation, matchReporting.FinalResultTitleForConfirmation);
+            matchReporting.FinalResultForConfirmation, matchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
         LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(matchChannelId);
 

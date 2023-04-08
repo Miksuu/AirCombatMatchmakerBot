@@ -98,7 +98,7 @@ public class Teams
         return false;
     }
 
-    public bool CheckIfPlayersTeamIsActiveById(
+    public Team CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
         int _leagueTeamSize, ulong _idToSearchFor)
     {
         foreach (Team team in teamsConcurrentBag)
@@ -112,14 +112,14 @@ public class Teams
 
                 if (teamPlayer.PlayerDiscordId == _idToSearchFor)
                 {
-                    if (team.TeamActive) return true;
+                    if (team.TeamActive) return team;
                 }
             }
         }
 
         Log.WriteLine("Did not find any teams that the player was active in the league", LogLevel.VERBOSE);
 
-        return false;
+        return new Team();
     }
 
     // Always run CheckIfPlayerIsAlreadyInATeamById() before!

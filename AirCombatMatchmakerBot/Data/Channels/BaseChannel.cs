@@ -172,7 +172,8 @@ public abstract class BaseChannel : InterfaceChannel
 
     public async Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageName(
         string _input, string _embedTitle = "", bool _displayMessage = true,
-        SocketMessageComponent? _component = null, bool _ephemeral = true)
+        SocketMessageComponent? _component = null, bool _ephemeral = true, 
+        params string[] _files)
     {
         Log.WriteLine("Creating a raw message: " + _input, LogLevel.DEBUG);
 
@@ -196,10 +197,45 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var newMessageTuple = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, _displayMessage, 0, _component, _ephemeral);
+            client, this, _displayMessage, 0, _component, _ephemeral, _files);
 
         return newMessageTuple;
     }
+
+    public async Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
+    string _input, FileManager.AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
+    SocketMessageComponent? _component = null, bool _ephemeral = true)
+    {
+        Log.WriteLine("Creating a raw message with attachmentdata: " + _input +
+            " count: " + _attachmentDatas.Length, LogLevel.DEBUG);
+
+        InterfaceMessage interfaceMessage =
+            (InterfaceMessage)EnumExtensions.GetInstance(MessageName.RAWMESSAGEINPUT.ToString());
+
+        var rawMessageInput = interfaceMessage as RAWMESSAGEINPUT;
+        if (rawMessageInput == null)
+        {
+            Log.WriteLine(nameof(rawMessageInput) + " was null!", LogLevel.CRITICAL);
+            return interfaceMessage;
+        }
+
+        rawMessageInput.GenerateRawMessage(_input, _embedTitle);
+
+        var client = BotReference.GetClientRef();
+        if (client == null)
+        {
+            Exceptions.BotClientRefNull();
+            return interfaceMessage;
+        }
+
+        interfaceMessage = rawMessageInput;
+
+        var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
+            client, this, _attachmentDatas, _displayMessage, 0, _component, _ephemeral);
+
+        return newMessageTuple;
+    }
+
 
     public virtual async Task PostChannelMessages(DiscordSocketClient _client)
     {
@@ -384,7 +420,7 @@ public abstract class BaseChannel : InterfaceChannel
             return Exceptions.BotClientRefNull();
         }
 
-        ConcurrentBag<InterfaceMessage> interfaceMessages =
+        ConcurrentBag<InterfaceMessage?> interfaceMessages =
             FindAllInterfaceMessagesWithNameInTheChannel(_messageNameToDelete);
         if (interfaceMessages == null)
         {

@@ -25,4 +25,7 @@ public enum ButtonName
 
     [EnumMember(Value = "CONFIRMSCOREBUTTON")]
     CONFIRMSCOREBUTTON = 6,
+
+    [EnumMember(Value = "LINKBUTTON")]
+    LINKBUTTON = 7,
 }

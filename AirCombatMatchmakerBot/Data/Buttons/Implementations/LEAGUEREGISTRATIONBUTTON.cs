@@ -64,8 +64,8 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
             bool playerIsInATeamAlready = interfaceLeague.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
                 interfaceLeague.LeaguePlayerCountPerTeam, _component.User.Id);
 
-            bool playerIsInActiveTeamAlready = interfaceLeague.LeagueData.Teams.CheckIfPlayersTeamIsActiveById(
-                interfaceLeague.LeaguePlayerCountPerTeam, _component.User.Id);
+            bool playerIsInActiveTeamAlready = interfaceLeague.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
+                interfaceLeague.LeaguePlayerCountPerTeam, _component.User.Id).TeamActive;
 
             if (!playerIsInATeamAlready)
             {

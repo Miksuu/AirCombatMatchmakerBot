@@ -144,14 +144,6 @@ public abstract class BaseCategory : InterfaceCategory
                 continue;
             }
 
-            /*
-            interfaceChannel.ChannelId = socketCategoryChannelId;
-            interfaceChannel.ChannelsCategoryId= _socketCategoryChannelId;
-            */
-
-            //CategoryAndChannelManager.matchChannelsIdWithCategoryId.Add();
-            //CategoryAndChannelManager.channelsThatBelongToTheBot.Add(interfaceChannel.ChannelId);
-
             await interfaceChannel.PostChannelMessages(_client);
         }
     }

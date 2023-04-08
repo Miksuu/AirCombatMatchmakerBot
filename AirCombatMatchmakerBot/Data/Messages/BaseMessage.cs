@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading.Channels;
 using System.Collections.Concurrent;
+using System.IO;
+using System.IO.Pipes;
 
 [DataContract]
 public abstract class BaseMessage : InterfaceMessage
@@ -152,6 +154,22 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
+    Discord.IUserMessage InterfaceMessage.CachedUserMessage
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(cachedUserMessage)
+                + ": " + cachedUserMessage, LogLevel.VERBOSE);
+            return cachedUserMessage;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(cachedUserMessage) +
+                cachedUserMessage + " to: " + value, LogLevel.VERBOSE);
+            cachedUserMessage = value;
+        }
+    }
+
     [DataMember] protected MessageName messageName;
     [DataMember] protected ConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount;
 
@@ -165,6 +183,8 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected ulong messageCategoryId;
     [DataMember] protected ConcurrentBag<InterfaceButton> buttonsInTheMessage;
 
+    protected Discord.IUserMessage cachedUserMessage;
+
     public BaseMessage()
     {
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
@@ -175,7 +195,8 @@ public abstract class BaseMessage : InterfaceMessage
     public async Task<InterfaceMessage?> CreateTheMessageAndItsButtonsOnTheBaseClass(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, 
         bool _displayMessage = true, ulong _leagueCategoryId = 0, 
-        SocketMessageComponent? _component = null, bool _ephemeral = true)
+        SocketMessageComponent? _component = null, bool _ephemeral = true,
+        params string[] _files)
     {
         messageChannelId = _interfaceChannel.ChannelId;
         messageCategoryId = _interfaceChannel.ChannelsCategoryId;
@@ -265,10 +286,127 @@ public abstract class BaseMessage : InterfaceMessage
                 // add a thumbnail image to the embedded messageDescription
                 //embed.WithThumbnailUrl("https://example.com/thumbnail.png");
 
+                if (_files.Length == 0)
+                {
+                    var userMessage = await textChannel.SendMessageAsync(
+                        "", false, embed.Build(), components: componentsBuilt);
+
+                    messageId = userMessage.Id;
+                    
+                }
+                else
+                {
+                    var iMessageChannel = await _interfaceChannel.GetMessageChannelById(_client);
+                    if (iMessageChannel == null)
+                    {
+                        Log.WriteLine(nameof(iMessageChannel) + " was null!", LogLevel.CRITICAL);
+                        return this;
+                    }
+                    List<FileAttachment> attachments = new List<FileAttachment>();
+                    for (int i = 0; i < _files.Length; i++)
+                    {
+
+                        FileStream fileStream = new FileStream(_files[i], FileMode.Open, FileAccess.Read);
+
+                        string newName = "Match-" + _files[i].Split('-').Last();
+                        attachments.Add(new FileAttachment(fileStream, newName));
+                    }
+                    cachedUserMessage = await iMessageChannel.SendFilesAsync(attachments);
+                }
+
+                messageDescription = messageForGenerating;
+
+                _interfaceChannel.InterfaceMessagesWithIds.TryAdd(messageId, this);
+            }
+            // Reply to a messageDescription
+            else
+            {
+                await _component.RespondAsync(
+                    messageForGenerating, ephemeral: _ephemeral, components: componentsBuilt);
+            }
+        }
+
+        Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);
+
+        return this;
+    }
+
+    public async Task<InterfaceMessage?> CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, FileManager.AttachmentData[] _attachmentDatas,
+        bool _displayMessage = true, ulong _leagueCategoryId = 0,
+        SocketMessageComponent? _component = null, bool _ephemeral = true)
+    {
+        messageChannelId = _interfaceChannel.ChannelId;
+        messageCategoryId = _interfaceChannel.ChannelsCategoryId;
+
+        string messageForGenerating = string.Empty;
+        var component = new ComponentBuilder();
+
+        Log.WriteLine("Creating the channel message with id: "
+            + messageChannelId + " with categoryID: " + messageCategoryId, LogLevel.VERBOSE);
+
+        var textChannel = await _client.GetChannelAsync(messageChannelId) as ITextChannel;
+        if (textChannel == null)
+        {
+            Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
+            InterfaceMessage? interfaceMessage = null;
+            return interfaceMessage;
+        }
+
+        Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
+
+
+        for (int a = 0; a < _attachmentDatas.Length; a++)
+        {
+            Log.WriteLine("Looping through link button for " + _attachmentDatas[a], LogLevel.VERBOSE);
+
+            //string finalCustomId = "";
+
+            InterfaceButton interfaceButton =
+                 (InterfaceButton)EnumExtensions.GetInstance(
+                     ButtonName.LINKBUTTON.ToString());
+
+            Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " +
+                interfaceButton.ButtonName, LogLevel.DEBUG);
+
+            //finalCustomId = interfaceButton.ButtonName + "_" + a;
+
+            //Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
+
+            LINKBUTTON linkButton = interfaceButton as LINKBUTTON;
+
+            component.WithButton(linkButton.CreateALinkButton(_attachmentDatas[a]));
+
+            buttonsInTheMessage.Add(interfaceButton);
+        }
+
+        messageForGenerating = "\n" + GenerateMessage();
+
+        if (_displayMessage)
+        {
+            var componentsBuilt = component.Build();
+
+            // Send a regular messageDescription
+            if (_component == null)
+            {
+                var embed = new EmbedBuilder();
+
+                // set the title, description, and color of the embedded messageDescription
+                embed.WithTitle(messageEmbedTitle)
+                     .WithDescription(messageForGenerating)
+                     .WithColor(messageEmbedColor);
+
+                // add a field to the embedded messageDescription
+                //embed.AddField("Field Name", "Field Value");
+
+                // add a thumbnail image to the embedded messageDescription
+                //embed.WithThumbnailUrl("https://example.com/thumbnail.png");
+
                 var userMessage = await textChannel.SendMessageAsync(
                     "", false, embed.Build(), components: componentsBuilt);
 
                 messageId = userMessage.Id;
+
                 messageDescription = messageForGenerating;
 
                 _interfaceChannel.InterfaceMessagesWithIds.TryAdd(messageId, this);

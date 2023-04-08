@@ -1,6 +1,4 @@
-﻿using Discord.WebSocket;
-using Discord;
-using System.Net.Mail;
+﻿using Discord;
 
 // The main class to what the bot's functions revolve around
 public class BotRuntimeManager
@@ -198,28 +196,6 @@ public class BotRuntimeManager
                     Log.WriteLine(nameof(interfaceLeagueWithLeagueMatch) + " was null!", LogLevel.CRITICAL);
                     return;
                 }
-
-
-                /**7
-                InterfaceMessage? reportingStatusMessage =
-                    Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                       interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).Value.
-                           FindInterfaceChannelWithIdInTheCategory(
-                                _socketMessage.Channel.Id).FindInterfaceMessageWithNameInTheChannel(
-                                    MessageName.REPORTINGSTATUSMESSAGE);
-
-                if (reportingStatusMessage == null)
-                {
-                    Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
-                    return;
-                }
-
-
-                /*
-                await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
-                         interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
-                         reportingStatusMessage, attachment.Url, TypeOfTheReportingObject.TACVIEWLINK); */
-
 
                 // Process the tacview file, and delete the original messageDescription by the user
                 var finalResponseTuple = interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
