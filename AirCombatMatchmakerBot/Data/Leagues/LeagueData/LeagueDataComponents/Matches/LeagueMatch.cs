@@ -213,7 +213,12 @@ public class LeagueMatch
                 return;
             }
 
+            var matchFinalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
+
             matchReporting.FinalResultForConfirmation = interfaceMessage.MessageDescription;
+            matchReporting.FinalMessageForMatchReportingChannel = matchFinalResultMessage.AlternativeMessage;
+
+
             matchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
         }
 
@@ -227,7 +232,7 @@ public class LeagueMatch
         }*/
 
         await _interfaceLeague.PostMatchReport(
-            matchReporting.FinalResultForConfirmation, matchReporting.FinalResultTitleForConfirmation, attachmentDatas);
+            matchReporting.FinalMessageForMatchReportingChannel, matchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
         LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(matchChannelId);
 

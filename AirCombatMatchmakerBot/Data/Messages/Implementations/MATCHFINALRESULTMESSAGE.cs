@@ -13,6 +13,23 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         messageDescription = "Insert the confirmation message here";
     }
 
+    public string AlternativeMessage
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(alternativeMessage) + ": " + alternativeMessage, LogLevel.VERBOSE);
+            return alternativeMessage;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(alternativeMessage) + alternativeMessage
+                + " to: " + value, LogLevel.VERBOSE);
+            alternativeMessage = value;
+        }
+    }
+
+    [DataMember] protected string alternativeMessage = "";
+
     public override string GenerateMessage()
     {
         Log.WriteLine("Starting to generate the message for the match final result", LogLevel.VERBOSE);
@@ -84,6 +101,9 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
             if (rIndex == 0) finalMessage += " | ";
             rIndex++;
         }
+
+        // Cache the finalMessage on to the alternativeMessage form for match results page where tacviews have link buttons
+        alternativeMessage = finalMessage;
 
         finalMessage += "\nTacviews: ";
 

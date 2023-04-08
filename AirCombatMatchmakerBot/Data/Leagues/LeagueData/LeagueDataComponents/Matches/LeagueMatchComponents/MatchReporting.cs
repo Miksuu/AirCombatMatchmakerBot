@@ -81,6 +81,21 @@ public class MatchReporting
         }
     }
 
+    public string? FinalMessageForMatchReportingChannel
+    {
+        get
+        {
+            Log.WriteLine("Getting finalMessageForMatchReportingChannel", LogLevel.VERBOSE);
+            return finalMessageForMatchReportingChannel;
+        }
+        set
+        {
+            Log.WriteLine("Setting finalMessageForMatchReportingChannel"
+                + " to: " + value, LogLevel.VERBOSE);
+            finalMessageForMatchReportingChannel = value;
+        }
+    }
+
     public string? FinalResultTitleForConfirmation
     {
         get
@@ -101,6 +116,7 @@ public class MatchReporting
     [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
     [DataMember] private string? finalResultForConfirmation { get; set; }
+    [DataMember] private string? finalMessageForMatchReportingChannel { get; set; }
     [DataMember] private string? finalResultTitleForConfirmation { get; set; }
 
     public MatchReporting()
@@ -282,7 +298,10 @@ public class MatchReporting
                 return (errorMsg, false);
             }
 
+            MATCHFINALRESULTMESSAGE? finalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
             finalResultForConfirmation = interfaceMessage.MessageDescription;
+            finalMessageForMatchReportingChannel = finalResultMessage.AlternativeMessage;
+
             finalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
             await interfaceChannel.CreateAMessageForTheChannelFromMessageName(

@@ -184,6 +184,7 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected ConcurrentBag<InterfaceButton> buttonsInTheMessage;
 
     protected Discord.IUserMessage cachedUserMessage;
+    
 
     public BaseMessage()
     {
