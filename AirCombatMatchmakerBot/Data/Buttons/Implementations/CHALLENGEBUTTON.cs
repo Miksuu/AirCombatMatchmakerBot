@@ -65,8 +65,7 @@ public class CHALLENGEBUTTON : BaseButton
             return (errorMsg, false);
         }
 
-
-        string response = await dbLeagueInstance.LeagueData.ChallengeStatus.PostChallengeToThisLeague(
+        string response = dbLeagueInstance.LeagueData.ChallengeStatus.PostChallengeToThisLeague(
             _component.User.Id, dbLeagueInstance.LeaguePlayerCountPerTeam,
             dbLeagueInstance);
 

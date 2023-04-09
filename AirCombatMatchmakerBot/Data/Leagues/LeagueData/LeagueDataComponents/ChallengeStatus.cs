@@ -52,7 +52,7 @@ public class ChallengeStatus
     }
 
     // Remove the _leaguePlayerCountPerTeam param, might be useless
-    public async Task<string> PostChallengeToThisLeague(
+    public string PostChallengeToThisLeague(
         ulong _playerId, int _leaguePlayerCountPerTeam, InterfaceLeague _interfaceLeague)
     {
         Team? team =
@@ -78,7 +78,7 @@ public class ChallengeStatus
 
         AddToTeamsInTheQueue(team);
 
-        await CheckChallengeStatus(_interfaceLeague);
+        CheckChallengeStatus(_interfaceLeague);
 
         string teamsInTheQueue =
             ReturnTeamsInTheQueueOfAChallenge(_leaguePlayerCountPerTeam, _interfaceLeague.LeagueData);
@@ -88,7 +88,7 @@ public class ChallengeStatus
         return teamsInTheQueue;
     }
 
-    public async Task CheckChallengeStatus(InterfaceLeague _interfaceLeague)
+    public async void CheckChallengeStatus(InterfaceLeague _interfaceLeague)
     {
         int[] teamsToFormMatchOn = new int[2];
 

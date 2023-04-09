@@ -28,7 +28,7 @@ public class Matches
         matchesConcurrentBag = new ConcurrentBag<LeagueMatch>();
     }
 
-    public async Task CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
+    public Task CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1], LogLevel.VERBOSE);
@@ -37,7 +37,7 @@ public class Matches
         if (client == null)
         {
             Exceptions.BotClientRefNull();
-            return;
+            return Task.CompletedTask;
         }
 
         if (_teamsToFormMatchOn.Length != 2)
@@ -50,12 +50,19 @@ public class Matches
         Log.WriteLine("Added to the " + nameof(matchesConcurrentBag) + " count is now: " +
             matchesConcurrentBag.Count, LogLevel.VERBOSE);
 
-        await CreateAMatchChannel(newMatch, _interfaceLeague, client);
+        CreateAMatchChannel(newMatch, _interfaceLeague, client);
 
-        await SerializationManager.SerializeDB();
+        return Task.CompletedTask;
     }
 
-    public async Task<ulong> CreateAMatchChannel(
+    public void CreateAMatchChannel(
+        LeagueMatch _leagueMatch, InterfaceLeague _interfaceLeague, DiscordSocketClient _client)
+    {
+        Thread secondThread = new Thread(() => InitChannelOnSecondThread(_leagueMatch, _interfaceLeague, _client));
+        secondThread.Start();
+    }
+
+    public void InitChannelOnSecondThread(
         LeagueMatch _leagueMatch, InterfaceLeague _interfaceLeague, DiscordSocketClient _client)
     {
         // Get the category by the league category name passed in the method
@@ -72,15 +79,15 @@ public class Matches
             overriddenMatchName, LogLevel.VERBOSE);
 
         // Prepare the match with the ID of the current new match
-        InterfaceChannel? interfaceChannel = await categoryKvp.Value.CreateSpecificChannelFromChannelType(
+        InterfaceChannel? interfaceChannel = categoryKvp.Value.CreateSpecificChannelFromChannelType(
                 ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
                 overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
-                _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague));
+                _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague)).Result;
 
         if (interfaceChannel == null)
         {
             Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.ERROR);
-            return 0;
+            return;
         }
 
         _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
@@ -97,22 +104,22 @@ public class Matches
         if (interfaceMessage == null)
         {
             Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.ERROR);
-            return 0;
+            return;
         }
 
         PINGMESSAGE? pingMessage = interfaceMessage as PINGMESSAGE;
         if (pingMessage == null)
         {
             Log.WriteLine(nameof(pingMessage) + " was null!", LogLevel.ERROR);
-            return 0;
+            return;
         }
         pingMessage.PostAndDeleteTheMessage(_client, _interfaceLeague, _leagueMatch, interfaceChannel);
 
-        await interfaceChannel.PostChannelMessages(_client);
+        interfaceChannel.PostChannelMessages(_client);
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
 
-        return _leagueMatch.MatchChannelId;
+        return;
     }
 
     public LeagueMatch? FindLeagueMatchByTheChannelId(ulong _channelId)

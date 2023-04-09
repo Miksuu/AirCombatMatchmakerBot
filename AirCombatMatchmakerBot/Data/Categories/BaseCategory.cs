@@ -269,7 +269,7 @@ public abstract class BaseCategory : InterfaceCategory
             Log.WriteLine(nameof(matchChannel) + " was not found!" +
                 " Expected to find a channel with match id: " + match.MatchId, LogLevel.WARNING);
 
-            await matches.CreateAMatchChannel(match, interfaceLeague, _client);
+            matches.CreateAMatchChannel(match, interfaceLeague, _client);
         }
     }
 
