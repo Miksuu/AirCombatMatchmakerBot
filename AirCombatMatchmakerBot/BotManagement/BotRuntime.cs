@@ -209,13 +209,16 @@ public class BotRuntimeManager
                     return;
                 }
 
-                finalResponseTuple = await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.PrepareFinalMatchResult(
-                    interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
-                    interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, _socketMessage.Channel.Id);
-
-                if (!finalResponseTuple.Item2)
+                if (!interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ShowingConfirmationMessage)
                 {
-                    return;
+                    finalResponseTuple = await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.PrepareFinalMatchResult(
+                        interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
+                        interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, _socketMessage.Channel.Id);
+
+                    if (!finalResponseTuple.Item2)
+                    {
+                        return;
+                    }
                 }
 
                 await FileManager.SaveTacviewFromUserUpload(
