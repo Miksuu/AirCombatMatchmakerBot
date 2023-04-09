@@ -30,7 +30,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         }
 
         sortedTeamConcurrentBagByElo =
-            new ConcurrentBag<Team>(interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.OrderByDescending(
+            new ConcurrentBag<Team>(interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.OrderBy(
                 x => x.SkillRating));
 
         foreach (Team team in sortedTeamConcurrentBagByElo)
