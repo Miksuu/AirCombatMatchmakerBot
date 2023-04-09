@@ -201,6 +201,7 @@ public class MatchReporting
                     TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink.SetObjectValueAndFieldBool(
                         _reportedObjectByThePlayer, EmojiName.WHITECHECKMARK);
 
+                    // Makes the other tacview submission to be optional
                     foreach (var item in TeamIdsWithReportData)
                     {
                         if (item.Key != reportingTeam.TeamId)
@@ -331,6 +332,9 @@ public class MatchReporting
                 return (nameof(interfaceChannelToDeleteTheMessageIn) + " was null", false);
             }
 
+            // Delete the messages which aren't useful for confirmation phase anymore
+            await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(
+                MessageName.REPORTINGMESSAGE);
             await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(
                 MessageName.REPORTINGSTATUSMESSAGE);
         }
