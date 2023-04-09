@@ -81,18 +81,22 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                     continue;
                 }
 
-                if (reportObject.FieldFilled == true)
+                if (reportObject.CurrentStatus == EmojiName.WHITECHECKMARK)
                 {
                     finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
                 }
+                else if (reportObject.CurrentStatus == EmojiName.YELLOWSQUARE)
+                {
+                    finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.YELLOWSQUARE);
+                }
                 else
                 {
-                    finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(reportObject.DefaultStateEmoji);
+                    finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(reportObject.CachedDefaultStatus);
                 }
 
                 Log.WriteLine("Found: " + nameof(reportObject) + " with values: " +
                     reportObject.FieldNameDisplay + ", " + reportObject.ObjectValue + ", " +
-                    reportObject.FieldFilled + ", " + reportObject.DefaultStateEmoji.ToString() + ", with" +
+                    reportObject.CurrentStatus + ", " + reportObject.CachedDefaultStatus.ToString() + ", with" +
                     finalCheckMark, LogLevel.DEBUG);
 
                 reportingStatusPerTeam += finalCheckMark + " " + reportObject.FieldNameDisplay + ": " +

@@ -116,7 +116,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
-            if (!reportDataKvp.Value.CommentByTheUser.FieldFilled)
+            if (reportDataKvp.Value.CommentByTheUser.CurrentStatus == EmojiName.YELLOWSQUARE)
             {
                 Log.WriteLine(reportDataKvp.Value.TeamName + " did not comment.", LogLevel.VERBOSE);
                 continue;

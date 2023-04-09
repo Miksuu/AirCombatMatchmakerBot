@@ -33,6 +33,7 @@ public class ReportObject
         }
     }
 
+    /*
     public bool FieldFilled
     {
         get
@@ -61,12 +62,43 @@ public class ReportObject
                 + " to: " + value, LogLevel.VERBOSE);
             defaultStateEmoji = value;
         }
+    }*/
+
+    public EmojiName CurrentStatus
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(currentStatus), LogLevel.VERBOSE);
+            return currentStatus;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(currentStatus)
+                + " to: " + value, LogLevel.VERBOSE);
+            currentStatus = value;
+        }
+    }
+    public EmojiName CachedDefaultStatus
+    {
+        get
+        {
+            Log.WriteLine("Getting " + nameof(cachedDefaultStatus), LogLevel.VERBOSE);
+            return cachedDefaultStatus;
+        }
+        set
+        {
+            Log.WriteLine("Setting " + nameof(cachedDefaultStatus)
+                + " to: " + value, LogLevel.VERBOSE);
+            cachedDefaultStatus = value;
+        }
     }
 
     [DataMember] private string? fieldNameDisplay { get; set; }
     [DataMember] private string? objectValue { get; set; }
-    [DataMember] private bool fieldFilled { get; set; }
-    [DataMember] private EmojiName defaultStateEmoji { get; set; }
+    //[DataMember] private bool fieldFilled { get; set; }
+    //[DataMember] private EmojiName defaultStateEmoji { get; set; }
+    [DataMember] private EmojiName currentStatus { get; set; }
+    [DataMember] private EmojiName cachedDefaultStatus { get; set; }
 
     public ReportObject()
     {
@@ -75,15 +107,16 @@ public class ReportObject
     public ReportObject(string _fieldNameDisplay, EmojiName _defaultStateEmoji)
     {
         fieldNameDisplay = _fieldNameDisplay;
-        defaultStateEmoji = _defaultStateEmoji;
+        cachedDefaultStatus = _defaultStateEmoji;
+        currentStatus = _defaultStateEmoji;
     }
 
-    public void SetObjectValueAndFieldBool(string _value, bool _fieldBool)
+    public void SetObjectValueAndFieldBool(string _value, EmojiName _currentStatus)
     {
         Log.WriteLine("Setting " + nameof(ReportObject) + "'s value to: " + _value
-            + " with bool: " + _fieldBool, LogLevel.VERBOSE);
+            + " with bool: " + _currentStatus, LogLevel.VERBOSE);
 
         objectValue = _value;
-        fieldFilled = _fieldBool;
+        currentStatus = _currentStatus;
     }
 }

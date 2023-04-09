@@ -194,17 +194,30 @@ public class MatchReporting
             {
                 case TypeOfTheReportingObject.REPORTEDSCORE:
                     TeamIdsWithReportData[reportingTeam.TeamId].ReportedScore.SetObjectValueAndFieldBool(
-                        _reportedObjectByThePlayer, true);
+                        _reportedObjectByThePlayer, EmojiName.WHITECHECKMARK);
                     response = "You reported score of: " + _reportedObjectByThePlayer;
                     break;
                 case TypeOfTheReportingObject.TACVIEWLINK:
                     TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink.SetObjectValueAndFieldBool(
-                        _reportedObjectByThePlayer, true);
+                        _reportedObjectByThePlayer, EmojiName.WHITECHECKMARK);
+
+                    foreach (var item in TeamIdsWithReportData)
+                    {
+                        if (item.Key != reportingTeam.TeamId)
+                        {
+                            if (item.Value.TacviewLink.CurrentStatus == EmojiName.REDSQUARE)
+                            {
+                                item.Value.TacviewLink.SetObjectValueAndFieldBool(
+                                    item.Value.TacviewLink.ObjectValue, EmojiName.YELLOWSQUARE);
+                            }
+                        } 
+                    }
+
                     response = "You posted tacview link: " + _reportedObjectByThePlayer;
                     break;
                 case TypeOfTheReportingObject.COMMENTBYTHEUSER:
                     TeamIdsWithReportData[reportingTeam.TeamId].CommentByTheUser.SetObjectValueAndFieldBool(
-                        _reportedObjectByThePlayer, true);
+                        _reportedObjectByThePlayer, EmojiName.WHITECHECKMARK);
                     break;
                 default:
                     Log.WriteLine("Unknown type! (not implemented?)", LogLevel.CRITICAL);
@@ -381,12 +394,12 @@ public class MatchReporting
                 }
 
                 // Skips optional fields
-                if (reportObject.DefaultStateEmoji == EmojiName.YELLOWSQUARE) continue;
+                if (reportObject.CurrentStatus == EmojiName.YELLOWSQUARE) continue;
 
-                if (!reportObject.FieldFilled)
+                if (reportObject.CurrentStatus != EmojiName.WHITECHECKMARK)
                 {
                     Log.WriteLine("Team: " + teamKvp.Value.TeamName + "'s " + reportObject.FieldNameDisplay +
-                        " was " + reportObject.FieldFilled + " with value: " + reportObject.ObjectValue, LogLevel.DEBUG);
+                        " was " + reportObject.CurrentStatus + " with value: " + reportObject.ObjectValue, LogLevel.DEBUG);
                     return false;
                 }
             }
