@@ -37,4 +37,7 @@ public enum MessageName
 
     [EnumMember(Value = "RAW MESSAGE INPUT")]
     RAWMESSAGEINPUT = 10,
+
+    [EnumMember(Value = "PING MESSAGE")]
+    PINGMESSAGE = 11,
 }

@@ -23,7 +23,7 @@ public interface InterfaceMessage
     public Discord.IUserMessage CachedUserMessage { get; set; }
 
     public Task<InterfaceMessage?> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        DiscordSocketClient _client, InterfaceChannel _interfaceChannel,
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, bool _embed,
         bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true,
         params string[] _files);

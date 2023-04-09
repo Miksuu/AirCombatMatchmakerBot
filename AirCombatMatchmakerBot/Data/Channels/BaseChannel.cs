@@ -165,7 +165,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, _displayMessage, 0, _component, _ephemeral);
+            client, this, true, _displayMessage, 0, _component, _ephemeral);
 
         return newMessageTuple;
     }
@@ -197,7 +197,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var newMessageTuple = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, _displayMessage, 0, _component, _ephemeral, _files);
+            client, this, true, _displayMessage, 0, _component, _ephemeral, _files);
 
         return newMessageTuple;
     }
@@ -245,6 +245,7 @@ public abstract class BaseChannel : InterfaceChannel
             ") parent category with id: " + channelsCategoryId, LogLevel.VERBOSE);
 
         // If the messageDescription doesn't exist, set it ID to 0 to regenerate it
+
         var channel = _client.GetChannelAsync(channelId).Result as ITextChannel;
 
         if (channel == null)
@@ -310,9 +311,9 @@ public abstract class BaseChannel : InterfaceChannel
 
                 InterfaceMessage interfaceMessage =
                     (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
-
+                
                 var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                        _client, this, true, leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId);
+                        _client, this, true, true, leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId);
 
                 //Log.WriteLine("messagetuple:" + newInterfaceMessage.id + " | " + newInterfaceMessage.Item2, LogLevel.VERBOSE);
 
@@ -338,7 +339,7 @@ public abstract class BaseChannel : InterfaceChannel
                     InterfaceMessage interfaceMessage =
                         (InterfaceMessage)EnumExtensions.GetInstance(channelMessages.ElementAt(m).Key.ToString());
 
-                    await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(_client, this, true);
+                    await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(_client, this, true, true);
                     channelMessages[channelMessages.ElementAt(m).Key] = true;
                 }
             }
