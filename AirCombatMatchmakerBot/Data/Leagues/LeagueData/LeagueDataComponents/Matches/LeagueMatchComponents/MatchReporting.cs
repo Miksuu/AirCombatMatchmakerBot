@@ -162,7 +162,9 @@ public class MatchReporting
         }
 
         // Can receive comments still even though the the confirmation is under way
-        if (showingConfirmationMessage && _typeOfTheReportingObject != TypeOfTheReportingObject.COMMENTBYTHEUSER)
+        if (showingConfirmationMessage && (
+            _typeOfTheReportingObject != TypeOfTheReportingObject.COMMENTBYTHEUSER ||
+            _typeOfTheReportingObject != TypeOfTheReportingObject.TACVIEWLINK))
         {
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already in confirmation.", LogLevel.VERBOSE);
