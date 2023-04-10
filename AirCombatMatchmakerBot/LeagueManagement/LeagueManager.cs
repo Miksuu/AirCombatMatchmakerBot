@@ -9,7 +9,7 @@ public static class LeagueManager
         return (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
 
-    public static Task CreateLeaguesOnStartupIfNecessary()
+    public async static Task CreateLeaguesOnStartupIfNecessary()
     {
         Log.WriteLine("Starting to create leagues for the discord server", LogLevel.VERBOSE);
 
@@ -18,7 +18,7 @@ public static class LeagueManager
         if (guild == null)
         {
             Exceptions.BotGuildRefNull();
-            return Task.CompletedTask;
+            return;
         }
 
         // Get all of the league category names and loop through them to create the database entries
@@ -39,7 +39,7 @@ public static class LeagueManager
             {
                 Log.WriteLine(nameof(interfaceLeagueCategory).ToString() +
                     " was null!", LogLevel.CRITICAL);
-                return Task.CompletedTask;
+                return;
             }
 
             // Add the new newly from the interface implementations added units here
@@ -56,7 +56,16 @@ public static class LeagueManager
                 if (interfaceLeague == null)
                 {
                     Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
-                    return Task.CompletedTask;
+                    return;
+                }
+                // Clears the queue on the startup
+                if (interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Count > 0)
+                {
+                    interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Clear();
+                    await Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                        interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
+                            ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE).GenerateAndModifyTheMessage();
+
                 }
 
                 interfaceLeague.LeagueUnits = interfaceLeagueCategory.LeagueUnits;
@@ -76,8 +85,6 @@ public static class LeagueManager
 
             Database.Instance.Leagues.AddToStoredLeagues(interfaceLeagueCategory);
         }
-
-        return Task.CompletedTask;
     }
 
     public static InterfaceLeague GetLeagueInstanceWithLeagueCategoryName(CategoryType _leagueCategoryType)
