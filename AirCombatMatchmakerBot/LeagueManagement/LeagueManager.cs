@@ -62,10 +62,16 @@ public static class LeagueManager
                 if (interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Count > 0)
                 {
                     interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Clear();
-                    await Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                    var message = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                         interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
-                            ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE).GenerateAndModifyTheMessage();
+                            ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
+                    if (message == null) 
+                    {
+                        Log.WriteLine(nameof(message) + " was null!", LogLevel.DEBUG);
+                        continue;
+                    }
 
+                    await message.GenerateAndModifyTheMessage();
                 }
 
                 interfaceLeague.LeagueUnits = interfaceLeagueCategory.LeagueUnits;
