@@ -14,10 +14,10 @@ public interface InterfaceChannel
     public ConcurrentDictionary<ulong, InterfaceMessage> InterfaceMessagesWithIds { get; set; }
 
     public abstract ConcurrentBag<Overwrite> GetGuildPermissions(
-        SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
+        SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray);
 
     public Task CreateAChannelForTheCategory(
-        SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
+        SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray);
     public Task<InterfaceMessage?> CreateAMessageForTheChannelFromMessageName(
         MessageName _MessageName, bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true);

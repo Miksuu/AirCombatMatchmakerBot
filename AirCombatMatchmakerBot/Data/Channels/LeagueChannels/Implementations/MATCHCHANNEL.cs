@@ -23,7 +23,7 @@ public class MATCHCHANNEL : BaseChannel
     }
 
     public override ConcurrentBag<Overwrite> GetGuildPermissions(
-        SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
+        SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray)
     {
         ConcurrentBag<Overwrite> ConcurrentBagOfOverwrites = new ConcurrentBag<Overwrite>();
 

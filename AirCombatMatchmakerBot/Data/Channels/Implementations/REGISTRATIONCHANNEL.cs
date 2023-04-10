@@ -18,10 +18,12 @@ public class REGISTRATIONCHANNEL : BaseChannel
     }
 
     public override ConcurrentBag<Overwrite> GetGuildPermissions(
-        SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
+        SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray)
     {
         return new ConcurrentBag<Overwrite>
         {
+            new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
+                new OverwritePermissions(sendMessages: PermValue.Deny)),
             new Overwrite(RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
                 _guild, "Member").Result.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)),

@@ -14,7 +14,7 @@ public class BOTCOMMANDS : BaseChannel
     }
 
     public override ConcurrentBag<Overwrite> GetGuildPermissions(
-        SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
+        SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray)
     {
         return new ConcurrentBag<Overwrite>
         {

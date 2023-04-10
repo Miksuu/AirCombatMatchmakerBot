@@ -112,9 +112,9 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public abstract ConcurrentBag<Overwrite> GetGuildPermissions(
-        SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
+        SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray);
 
-    public async Task CreateAChannelForTheCategory(SocketGuild _guild,
+    public async Task CreateAChannelForTheCategory(SocketGuild _guild, SocketRole _role,
          params ulong[] _allowedUsersIdsArray)
     {
         Log.WriteLine("Creating a channel named: " + channelType +
@@ -138,7 +138,7 @@ public abstract class BaseChannel : InterfaceChannel
 
         var channel = await _guild.CreateTextChannelAsync(channelTypeString, x =>
         {
-            x.PermissionOverwrites = GetGuildPermissions(_guild, _allowedUsersIdsArray);
+            x.PermissionOverwrites = GetGuildPermissions(_guild, _role, _allowedUsersIdsArray);
             x.CategoryId = channelsCategoryId;
         });
 

@@ -20,10 +20,15 @@ public class LEAGUESTATUS : BaseChannel
     }
 
     public override ConcurrentBag<Overwrite> GetGuildPermissions(
-        SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
+        SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray)
     {
         return new ConcurrentBag<Overwrite>
-        {
-        };
+            {
+                new Overwrite(
+                    _guild.EveryoneRole.Id, PermissionTarget.Role,
+                    new OverwritePermissions(sendMessages: PermValue.Deny, viewChannel: PermValue.Deny)),
+                new Overwrite(_role.Id, PermissionTarget.Role,
+                    new OverwritePermissions(viewChannel: PermValue.Allow)),
+            };
     }
 }

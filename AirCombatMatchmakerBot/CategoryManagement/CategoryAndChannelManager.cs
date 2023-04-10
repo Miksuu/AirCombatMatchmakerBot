@@ -129,6 +129,8 @@ public static class CategoryAndChannelManager
             }
         }
 
+        SocketRole? role = null;
+
         // The category exists,
         // just find it from the database and then get the id of the socketchannel
         if (contains)
@@ -163,7 +165,7 @@ public static class CategoryAndChannelManager
         // If the category doesn't exist at all, create it and add it to the database
         else
         {
-            SocketRole role =
+            role =
                 RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
                     guild, finalCategoryName).Result;
 
@@ -204,7 +206,7 @@ public static class CategoryAndChannelManager
         }
 
         // Handle channel checking/creation
-        await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _client);
+        await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _client, role);
     }
 
     // Maybe add inside the classes itself
