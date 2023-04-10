@@ -12,6 +12,7 @@ public class CHALLENGEMESSAGE : BaseMessage
             new ConcurrentBag<KeyValuePair<ButtonName, int>>()
             {
                 new KeyValuePair<ButtonName, int>(ButtonName.CHALLENGEBUTTON, 1),
+                new KeyValuePair<ButtonName, int>(ButtonName.CHALLENGEQUEUECANCELBUTTON, 1),
             });
 
         messageDescription = "Insert the challenge message here";

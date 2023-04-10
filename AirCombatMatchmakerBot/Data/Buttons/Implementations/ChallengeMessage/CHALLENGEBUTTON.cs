@@ -10,8 +10,8 @@ public class CHALLENGEBUTTON : BaseButton
     public CHALLENGEBUTTON()
     {
         buttonName = ButtonName.CHALLENGEBUTTON;
-        buttonLabel = "CHALLENGE";
-        buttonStyle = ButtonStyle.Primary;
+        buttonLabel = "Enter Queue";
+        buttonStyle = ButtonStyle.Success;
         ephemeralResponse = true;
     }
 
