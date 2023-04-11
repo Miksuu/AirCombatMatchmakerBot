@@ -1,6 +1,4 @@
-﻿using Discord;
-
-public static class BotMessaging
+﻿public static class BotMessaging
 {
     // Send messageDescription to a user with a mention
     public static string GetMessageResponse(
