@@ -58,13 +58,6 @@ public class Matches
     public void CreateAMatchChannel(
         LeagueMatch _leagueMatch, InterfaceLeague _interfaceLeague, DiscordSocketClient _client)
     {
-        Thread secondThread = new Thread(() => InitChannelOnSecondThread(_leagueMatch, _interfaceLeague, _client));
-        secondThread.Start();
-    }
-
-    public void InitChannelOnSecondThread(
-        LeagueMatch _leagueMatch, InterfaceLeague _interfaceLeague, DiscordSocketClient _client)
-    {
         // Get the category by the league category name passed in the method
         var categoryKvp =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
@@ -99,25 +92,14 @@ public class Matches
                 interfaceChannel.ChannelId, categoryKvp.Value.SocketCategoryChannelId);
         }
 
-        /*
-        InterfaceMessage interfaceMessage =
-            (InterfaceMessage)EnumExtensions.GetInstance(MessageName.PINGMESSAGE.ToString());
-        if (interfaceMessage == null)
-        {
-            Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.ERROR);
-            return;
-        }
+        Thread secondThread = new Thread(() => InitChannelOnSecondThread(_client, interfaceChannel));
+        secondThread.Start();
+    }
 
-        /*
-        PINGMESSAGE? pingMessage = interfaceMessage as PINGMESSAGE;
-        if (pingMessage == null)
-        {
-            Log.WriteLine(nameof(pingMessage) + " was null!", LogLevel.ERROR);
-            return;
-        }
-        pingMessage.PostAndDeleteTheMessage(_client, _interfaceLeague, _leagueMatch, interfaceChannel);*/
-
-        interfaceChannel.PostChannelMessages(_client);
+    public void InitChannelOnSecondThread(
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel)
+    {
+        _interfaceChannel.PostChannelMessages(_client);
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
 
