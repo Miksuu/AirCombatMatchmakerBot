@@ -17,7 +17,7 @@ public static class Log
         string date = DateTime.Now.Date.ToString("dd.MM.yyyy", culture);
         string time = DateTime.Now.ToString("hh:mm:ss.fff", culture);
 
-        string logMessageRaw = (date + " " + time + " - [LOG | " + _logLevel + "] " +
+        string logMessageRaw = (date + " " + time + " {Thread: " + System.Environment.CurrentManagedThreadId + "} - [LOG | " + _logLevel + "] " +
             LogLevelNormalization.logLevelNormalizationStrings[_logLevel] + " " +
             Path.GetFileName(_filePath) + ": " + _memberName + "()" +
             ", line " + _lineNumber + ": " + _message);
