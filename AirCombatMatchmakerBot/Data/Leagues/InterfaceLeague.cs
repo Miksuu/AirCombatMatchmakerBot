@@ -21,4 +21,6 @@ public interface InterfaceLeague
     public Task PostMatchReport(string _finalResultMessage, string _finalResultTitle,
         FileManager.AttachmentData[] _attachmentDatas);
     public void UpdateLeagueLeaderboard();
+
+    public Task<(string, bool)> RegisterUserToALeague(ulong _userId);
 }

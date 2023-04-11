@@ -17,15 +17,13 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
     public override async Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        string responseMsg = "";
-
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
 
         string[] splitStrings = _component.Data.CustomId.Split('_');
 
         foreach (var item in splitStrings)
         {
-            Log.WriteLine("item: " + item, LogLevel.DEBUG);
+            Log.WriteLine("item: " + item, LogLevel.VERBOSE);
         }
 
         InterfaceLeague? interfaceLeague =
@@ -37,131 +35,27 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
             return (errorMsg, false);
         }
 
-        Log.WriteLine("found: " + nameof(interfaceLeague) +
-            interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+        var responseTuple = interfaceLeague.RegisterUserToALeague(_component.User.Id).Result;
 
-        ulong challengeChannelId = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
-            ChannelType.CHALLENGE).ChannelId;
-
-        // Check that the player is in the PlayerData
-        // (should be, he doesn't see this button before, except if hes admin)
-        if (Database.Instance.PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(
-            _component.User.Id))
+        if (responseTuple.Item2)
         {
-            Player player = Database.Instance.PlayerData.GetAPlayerProfileById(
-                _component.User.Id);
-            if (player.PlayerDiscordId == 0)
-            {
-                string errorMsg = "Player's: " + player.PlayerNickName + " id was 0!";
-                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                return (errorMsg, false);
-            }
-
-            Log.WriteLine("Found player: " + player.PlayerNickName +
-                " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
-
-            bool playerIsInATeamAlready = interfaceLeague.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
-                interfaceLeague.LeaguePlayerCountPerTeam, _component.User.Id);
-
-            bool playerIsInActiveTeamAlready = interfaceLeague.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
-                interfaceLeague.LeaguePlayerCountPerTeam, _component.User.Id).TeamActive;
-
-            if (!playerIsInATeamAlready)
-            {
-                Log.WriteLine("The player was not found in any team in the league", LogLevel.VERBOSE);
-
-                // Create a team with unique ID and increment that ID
-                // after the data has been serialized
-                Team newTeam = new Team(
-                    new ConcurrentBag<Player> { player },
-                    player.PlayerNickName,
-                    interfaceLeague.LeagueData.Teams.CurrentTeamInt);
-
-                if (interfaceLeague.LeaguePlayerCountPerTeam < 2)
-                {
-                    Log.WriteLine("This league is solo", LogLevel.VERBOSE);
-
-                    interfaceLeague.LeagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
-
-                    responseMsg = "Registration complete on: " + 
-                        EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName) + "\n" +
-                        " You can look for a match in: <#" + challengeChannelId + ">";
-                }
-                else
-                {
-                    // Not implemented yet
-                    Log.WriteLine("This league is team based with number of players per team: " +
-                        interfaceLeague.LeaguePlayerCountPerTeam, LogLevel.ERROR);
-                    return ("", false);
-                }
-
-                // Add the role for the player for the specific league and set him teamActive
-                UserManager.SetTeamActiveAndGrantThePlayerRole(
-                    interfaceLeague, _component.User.Id);
-
-                
-                // Modify the messageDescription to have the new player count
-                LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
-                if (leagueRegistrationMessage == null)
-                {
-                    string errorMsg = nameof(leagueRegistrationMessage) + " was null!";
-                    Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                    return (errorMsg, false);
-                }
-
-                await _interfaceMessage.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
-
-                Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
-                    interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
-
-                interfaceLeague.LeagueData.Teams.IncrementCurrentTeamInt();
-            }
-            else if (playerIsInATeamAlready && !playerIsInActiveTeamAlready)
-            {
-                // Need to handle team related behaviour better later
-
-                Log.WriteLine("The player was already in a team in that league!" +
-                    " Setting him active", LogLevel.DEBUG);
-
-                UserManager.SetTeamActiveAndGrantThePlayerRole(
-                    interfaceLeague, _component.User.Id);
-
-                responseMsg = "You have rejoined: " +
-                    EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName) + "\n" +
-                    " You can look for a match in: <#" + challengeChannelId + ">";
-
-                LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
-                if (leagueRegistrationMessage == null)
-                {
-                    string errorMsg = nameof(leagueRegistrationMessage) + " was null!";
-                    Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                    return (errorMsg, false);
-                }
-
-                await _interfaceMessage.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
-            }
-            else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
-            {
-                Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + interfaceLeague.LeagueCategoryName +
-                    ", had a team already active", LogLevel.VERBOSE);
-                responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName) +
-                    "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
-                return (responseMsg, false);
-            }
-        }
-        else
-        {
-            responseMsg = "Error joining the league! Press the register button first!" +
-                " (only admins should be able to see this)";
-            Log.WriteLine("Player: " + _component.User.Id +
-                " (" + _component.User.Username + ")" +
-                " tried to join a league before registering", LogLevel.WARNING);
-            return (responseMsg, false);
+            // Improved response time
+            new Thread(() => InitMessageModifyOnSecondThread(_interfaceMessage)).Start();
         }
 
-        interfaceLeague.UpdateLeagueLeaderboard();
+        return responseTuple;
+    }
 
-        return (responseMsg, true);
+    private async void InitMessageModifyOnSecondThread(InterfaceMessage _interfaceMessage)
+    {
+        LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
+        if (leagueRegistrationMessage == null)
+        {
+            string errorMsg = nameof(leagueRegistrationMessage) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return;
+        }
+
+        await _interfaceMessage.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
     }
 }
