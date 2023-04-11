@@ -13,6 +13,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
     {
         messageName = MessageName.MATCHSTARTMESSAGE;
         messageDescription = "Insert the match start message here";
+        mentionMatchPlayers = true;
     }
 
     public override string GenerateMessage()

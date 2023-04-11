@@ -99,6 +99,7 @@ public class Matches
                 interfaceChannel.ChannelId, categoryKvp.Value.SocketCategoryChannelId);
         }
 
+        /*
         InterfaceMessage interfaceMessage =
             (InterfaceMessage)EnumExtensions.GetInstance(MessageName.PINGMESSAGE.ToString());
         if (interfaceMessage == null)
@@ -107,13 +108,14 @@ public class Matches
             return;
         }
 
+        /*
         PINGMESSAGE? pingMessage = interfaceMessage as PINGMESSAGE;
         if (pingMessage == null)
         {
             Log.WriteLine(nameof(pingMessage) + " was null!", LogLevel.ERROR);
             return;
         }
-        pingMessage.PostAndDeleteTheMessage(_client, _interfaceLeague, _leagueMatch, interfaceChannel);
+        pingMessage.PostAndDeleteTheMessage(_client, _interfaceLeague, _leagueMatch, interfaceChannel);*/
 
         interfaceChannel.PostChannelMessages(_client);
 

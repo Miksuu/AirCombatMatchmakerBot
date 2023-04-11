@@ -183,6 +183,8 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected ulong messageCategoryId;
     [DataMember] protected ConcurrentBag<InterfaceButton> buttonsInTheMessage;
 
+    protected bool mentionMatchPlayers = false;
+
     protected Discord.IUserMessage cachedUserMessage;
     
 
@@ -274,6 +276,36 @@ public abstract class BaseMessage : InterfaceMessage
             // Send a regular messageDescription
             if (_component == null)
             {
+                string finalMentionMessage = "";
+                if (mentionMatchPlayers)
+                {
+                    MATCHCHANNEL? matchChannel = (MATCHCHANNEL)_interfaceChannel;
+                    if (matchChannel == null)
+                    {
+                        string errorMsg = nameof(matchChannel) + " was null!";
+                        Log.WriteLine(errorMsg, LogLevel.ERROR);
+                        //return null;
+                    }
+
+                    var leagueMatchTuple =
+                        matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
+                            messageCategoryId, messageChannelId);
+                    if (leagueMatchTuple.Item1 == null || leagueMatchTuple.Item2 == null)
+                    {
+                        string errorMsg = nameof(leagueMatchTuple) + " was null!";
+                        Log.WriteLine(errorMsg, LogLevel.ERROR);
+                        //return null;
+                    }
+                    else
+                    {
+                        ulong[] playerIdsInTheMatch = leagueMatchTuple.Item2.GetIdsOfThePlayersInTheMatchAsArray(leagueMatchTuple.Item1);
+                        foreach (ulong id in playerIdsInTheMatch)
+                        {
+                            finalMentionMessage += "<@" + id.ToString() + "> ";
+                        }
+                    }
+                }
+
                 if (_embed)
                 {
                     var embed = new EmbedBuilder();
@@ -292,7 +324,7 @@ public abstract class BaseMessage : InterfaceMessage
                     if (_files.Length == 0)
                     {
                         cachedUserMessage = await textChannel.SendMessageAsync(
-                            "", false, embed.Build(), components: componentsBuilt);
+                            finalMentionMessage, false, embed.Build(), components: componentsBuilt);
 
                         messageId = cachedUserMessage.Id;
                     }
