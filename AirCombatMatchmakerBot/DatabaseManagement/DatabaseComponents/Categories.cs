@@ -56,7 +56,42 @@ public class Categories
         return FoundCategoryKvp;
     }
 
+    public InterfaceMessage? FindInterfaceMessageWithComponentChannelIdAndMessageId(
+        ulong _componentChannelId, ulong _componentMessageId)
+    {
+        Log.WriteLine("Getting CategoryKvp with channel id: " + _componentChannelId, LogLevel.VERBOSE);
+        foreach (var createdCategory in createdCategoriesWithChannels)
+        {
+            Log.WriteLine("Looping on: " + createdCategory.Value.CategoryType, LogLevel.VERBOSE);
 
+            var interfaceChannelTemp = createdCategory.Value.InterfaceChannels.FirstOrDefault(
+                    x => x.Value.ChannelId == _componentChannelId);
+            if (interfaceChannelTemp.Key == 0 || interfaceChannelTemp.Value == null)
+            {
+                Log.WriteLine("Was null, continuing...", LogLevel.VERBOSE);
+                continue;
+            }
+
+            Log.WriteLine("Found " + nameof(interfaceChannelTemp) + ":" + interfaceChannelTemp.Value.ChannelName + " with id: " +
+                interfaceChannelTemp.Key, LogLevel.VERBOSE);
+
+            var interfaceMessageKvp =
+                interfaceChannelTemp.Value.InterfaceMessagesWithIds.FirstOrDefault(
+                    x => x.Value.MessageId == _componentMessageId);
+            if (interfaceMessageKvp.Key == 0 || interfaceMessageKvp.Value == null)
+            {
+                Log.WriteLine(nameof(interfaceMessageKvp) + " was null!", LogLevel.CRITICAL);
+                continue;
+            }
+
+            Log.WriteLine("Found " + nameof(interfaceMessageKvp) + ":" + interfaceMessageKvp.Value.MessageName + " with id: " +
+                interfaceMessageKvp.Key, LogLevel.VERBOSE);
+
+            return interfaceMessageKvp.Value;
+        }
+
+        return null;
+    }
 
     public KeyValuePair<ulong, InterfaceCategory> FindCreatedCategoryWithChannelKvpByCategoryName(
         CategoryType? _categoryType)

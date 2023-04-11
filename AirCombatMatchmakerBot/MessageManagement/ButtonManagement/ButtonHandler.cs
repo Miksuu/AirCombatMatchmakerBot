@@ -7,32 +7,11 @@ public static class ButtonHandler
     {
         Log.WriteLine("Button press detected by: " + _component.User.Id, LogLevel.VERBOSE);
 
-        InterfaceMessage? interfaceMessage = null;
+        ulong componentChannelId = _component.Channel.Id;
+        ulong componentMessageId = _component.Message.Id;
 
-        foreach (var interfaceCategoryKvp in Database.Instance.Categories.CreatedCategoriesWithChannels)
-        {
-            if (interfaceCategoryKvp.Value.InterfaceChannels.Any(
-                x => x.Value.ChannelId == _component.Channel.Id))
-            {
-                var interfaceChannelTemp =
-                    interfaceCategoryKvp.Value.InterfaceChannels.FirstOrDefault(
-                        x => x.Value.ChannelId == _component.Channel.Id);
-
-                if (!interfaceChannelTemp.Value.InterfaceMessagesWithIds.Any(
-                    x => x.Value.MessageId == _component.Message.Id))
-                {
-                    Log.WriteLine("message not found! with " + _component.Message.Id, LogLevel.ERROR);
-                    continue;
-                }
-
-                var interfaceMessageKvp =
-                    interfaceChannelTemp.Value.InterfaceMessagesWithIds.FirstOrDefault(
-                        x => x.Value.MessageId == _component.Message.Id);
-
-                interfaceMessage = interfaceMessageKvp.Value;
-            }
-        }
-         
+        InterfaceMessage? interfaceMessage = Database.Instance.Categories.FindInterfaceMessageWithComponentChannelIdAndMessageId(
+            componentChannelId, componentMessageId);
         if (interfaceMessage == null)
         {
             Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.CRITICAL);
