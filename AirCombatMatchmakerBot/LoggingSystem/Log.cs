@@ -42,8 +42,11 @@ public static class Log
             case (LogLevel.CRITICAL): return Color.DarkRed;
             case (LogLevel.ERROR): return Color.Red;
             case (LogLevel.WARNING): return Color.Orange;
+            case (LogLevel.IMPORTANT): return Color.Gold;
             case (LogLevel.SERIALIZATION): return Color.Blue;
             case (LogLevel.DEBUG): return Color.Teal;
+            case (LogLevel.SET_VERBOSE): return Color.Magenta;
+            case (LogLevel.GET_VERBOSE): return Color.Green;
             case (LogLevel.VERBOSE): return Color.Purple;
         }
 

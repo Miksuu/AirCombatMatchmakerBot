@@ -11,13 +11,13 @@ public abstract class BaseButton : InterfaceButton
         get
         {
             Log.WriteLine("Getting " + nameof(buttonName) + ": " +
-                buttonName, LogLevel.VERBOSE);
+                buttonName, LogLevel.GET_VERBOSE);
             return buttonName;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(buttonName) + buttonName
-                + " to: " + value, LogLevel.VERBOSE);
+                + " to: " + value, LogLevel.SET_VERBOSE);
             buttonName = value;
         }
     }
@@ -27,13 +27,13 @@ public abstract class BaseButton : InterfaceButton
         get
         {
             Log.WriteLine("Getting " + nameof(buttonLabel) + ": " +
-                buttonLabel, LogLevel.VERBOSE);
+                buttonLabel, LogLevel.GET_VERBOSE);
             return buttonLabel;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(buttonLabel) + buttonLabel
-                + " to: " + value, LogLevel.VERBOSE);
+                + " to: " + value, LogLevel.SET_VERBOSE);
             buttonLabel = value;
         }
     }
@@ -43,13 +43,13 @@ public abstract class BaseButton : InterfaceButton
         get
         {
             Log.WriteLine("Getting " + nameof(buttonStyle) + ": " +
-                buttonStyle, LogLevel.VERBOSE);
+                buttonStyle, LogLevel.GET_VERBOSE);
             return buttonStyle;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(buttonStyle) + buttonStyle
-                + " to: " + value, LogLevel.VERBOSE);
+                + " to: " + value, LogLevel.SET_VERBOSE);
             buttonStyle = value;
         }
     }
@@ -59,13 +59,13 @@ public abstract class BaseButton : InterfaceButton
         get
         {
             Log.WriteLine("Getting " + nameof(buttonCategoryId)
-                + ": " + buttonCategoryId, LogLevel.VERBOSE);
+                + ": " + buttonCategoryId, LogLevel.GET_VERBOSE);
             return buttonCategoryId;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(buttonCategoryId) +
-                buttonCategoryId + " to: " + value, LogLevel.VERBOSE);
+                buttonCategoryId + " to: " + value, LogLevel.SET_VERBOSE);
             buttonCategoryId = value;
         }
     }
@@ -75,13 +75,13 @@ public abstract class BaseButton : InterfaceButton
         get
         {
             Log.WriteLine("Getting " + nameof(buttonCustomId) + ": " +
-                buttonCustomId, LogLevel.VERBOSE);
+                buttonCustomId, LogLevel.GET_VERBOSE);
             return buttonCustomId;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(buttonCustomId) + buttonCustomId
-                + " to: " + value, LogLevel.VERBOSE);
+                + " to: " + value, LogLevel.SET_VERBOSE);
             buttonCustomId = value;
         }
     }
@@ -91,13 +91,13 @@ public abstract class BaseButton : InterfaceButton
         get
         {
             Log.WriteLine("Getting " + nameof(ephemeralResponse)
-                + ": " + ephemeralResponse, LogLevel.VERBOSE);
+                + ": " + ephemeralResponse, LogLevel.GET_VERBOSE);
             return ephemeralResponse;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(ephemeralResponse) +
-                ephemeralResponse + " to: " + value, LogLevel.VERBOSE);
+                ephemeralResponse + " to: " + value, LogLevel.SET_VERBOSE);
             ephemeralResponse = value;
         }
     }
