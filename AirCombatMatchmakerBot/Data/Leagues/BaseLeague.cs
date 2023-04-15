@@ -108,7 +108,7 @@ public abstract class BaseLeague : InterfaceLeague
     {
     }
 
-    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
+    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 
     public InterfaceCategory? FindLeaguesInterfaceCategory()
     {

@@ -13,10 +13,10 @@ public class TACVIEWSTORAGE : BaseChannel
         channelType = ChannelType.TACVIEWSTORAGE;
     }
 
-    public override ConcurrentBag<Overwrite> GetGuildPermissions(
+    public override List<Overwrite> GetGuildPermissions(
         SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray)
     {
-        return new ConcurrentBag<Overwrite>
+        return new List<Overwrite>
         {
         };
     }

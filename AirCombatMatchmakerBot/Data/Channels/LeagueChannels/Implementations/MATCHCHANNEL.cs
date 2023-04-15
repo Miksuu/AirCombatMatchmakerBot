@@ -22,16 +22,16 @@ public class MATCHCHANNEL : BaseChannel
             });
     }
 
-    public override ConcurrentBag<Overwrite> GetGuildPermissions(
+    public override List<Overwrite> GetGuildPermissions(
         SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray)
     {
-        ConcurrentBag<Overwrite> ConcurrentBagOfOverwrites = new ConcurrentBag<Overwrite>();
+        List<Overwrite> listOfOverwrites = new List<Overwrite>();
 
         Log.WriteLine("Overwriting permissions for: " + channelName +
             " users that will be allowed access count: " +
             _allowedUsersIdsArray.Length, LogLevel.VERBOSE);
 
-        ConcurrentBagOfOverwrites.Add(new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
+        listOfOverwrites.Add(new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)));
 
         foreach (ulong userId in _allowedUsersIdsArray)
@@ -39,12 +39,12 @@ public class MATCHCHANNEL : BaseChannel
             Log.WriteLine("Adding " + userId + " to the permission allowed ConcurrentBag on: " +
                 channelName, LogLevel.VERBOSE);
 
-            ConcurrentBagOfOverwrites.Add(
+            listOfOverwrites.Add(
                 new Overwrite(userId, PermissionTarget.User,
                     new OverwritePermissions(viewChannel: PermValue.Allow)));
         }
 
-        return ConcurrentBagOfOverwrites;
+        return listOfOverwrites;
     }
 
     public (InterfaceLeague?, LeagueMatch?, string) FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(

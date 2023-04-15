@@ -22,8 +22,8 @@ public class ONEMODERNBFMFOXTWO : BaseLeague
         };
     }
 
-    public override ConcurrentBag<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
+    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
     {
-        return new ConcurrentBag<Overwrite>();
+        return new List<Overwrite>();
     }
 }

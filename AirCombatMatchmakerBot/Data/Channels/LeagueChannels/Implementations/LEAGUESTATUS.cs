@@ -19,10 +19,10 @@ public class LEAGUESTATUS : BaseChannel
             });
     }
 
-    public override ConcurrentBag<Overwrite> GetGuildPermissions(
+    public override List<Overwrite> GetGuildPermissions(
         SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray)
     {
-        return new ConcurrentBag<Overwrite>
+        return new List<Overwrite>
             {
                 new Overwrite(
                     _guild.EveryoneRole.Id, PermissionTarget.Role,

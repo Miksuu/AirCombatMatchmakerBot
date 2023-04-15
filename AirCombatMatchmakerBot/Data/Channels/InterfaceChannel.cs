@@ -13,7 +13,7 @@ public interface InterfaceChannel
     public ConcurrentDictionary<MessageName, bool> ChannelMessages { get; set; }
     public ConcurrentDictionary<ulong, InterfaceMessage> InterfaceMessagesWithIds { get; set; }
 
-    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(
+    public abstract List<Overwrite> GetGuildPermissions(
         SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray);
 
     public Task CreateAChannelForTheCategory(

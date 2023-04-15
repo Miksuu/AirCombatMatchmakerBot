@@ -11,7 +11,7 @@ public interface InterfaceCategory
     public ConcurrentDictionary<ulong, InterfaceChannel> InterfaceChannels { get; set; }
     public ulong SocketCategoryChannelId { get; set; }
 
-    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(
+    public abstract List<Overwrite> GetGuildPermissions(
         SocketGuild _guild, SocketRole _role);
 
     public Task<SocketCategoryChannel?> CreateANewSocketCategoryChannelAndReturnIt(

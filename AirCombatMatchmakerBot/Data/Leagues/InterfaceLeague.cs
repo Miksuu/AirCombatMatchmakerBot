@@ -16,7 +16,7 @@ public interface InterfaceLeague
     public LeagueData LeagueData { get; set; }
     public DiscordLeagueReferences DiscordLeagueReferences { get; set; }
 
-    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
+    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
     public InterfaceCategory FindLeaguesInterfaceCategory();
     public Task PostMatchReport(string _finalResultMessage, string _finalResultTitle,
         FileManager.AttachmentData[] _attachmentDatas);

@@ -82,7 +82,7 @@ public abstract class BaseCategory : InterfaceCategory
         interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
     }
 
-    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
+    public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 
     public async Task<SocketCategoryChannel?> CreateANewSocketCategoryChannelAndReturnIt(
         SocketGuild _guild, string _categoryName, SocketRole _role)

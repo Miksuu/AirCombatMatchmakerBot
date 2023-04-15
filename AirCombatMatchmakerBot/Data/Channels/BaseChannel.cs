@@ -111,7 +111,7 @@ public abstract class BaseChannel : InterfaceChannel
         interfaceMessagesWithIds = new ConcurrentDictionary<ulong, InterfaceMessage>();
     }
 
-    public abstract ConcurrentBag<Overwrite> GetGuildPermissions(
+    public abstract List<Overwrite> GetGuildPermissions(
         SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray);
 
     public async Task CreateAChannelForTheCategory(SocketGuild _guild, SocketRole _role,

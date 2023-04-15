@@ -16,10 +16,10 @@ public class REGISTRATIONCATEGORY : BaseCategory
         };
     }
 
-    public override ConcurrentBag<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
+    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
     {
         Log.WriteLine("executing permissions from REGISTRATIONCATEGORY", LogLevel.VERBOSE);
-        return new ConcurrentBag<Overwrite>
+        return new List<Overwrite>
         {
         };
     }
