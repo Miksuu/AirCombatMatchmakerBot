@@ -6,7 +6,7 @@ using Discord.WebSocket;
 using System.Threading.Channels;
 
 [DataContract]
-public class CONFIRMMATCHENTRYBUTTON : BaseButton
+public class CONFIRMMATCHENTRYBUTTON : BaseMatchButton
 {
     public CONFIRMMATCHENTRYBUTTON()
     {

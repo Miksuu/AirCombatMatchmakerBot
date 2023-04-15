@@ -11,6 +11,12 @@ public abstract class BaseMatchButton : BaseButton, InterfaceButton
         Log.WriteLine("Starting to find with: " + _interfaceMessage.MessageId +
             " and with category id: " + _interfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
 
+        if (interfaceLeagueCached != null || leagueMatchCached != null)
+        {
+            Log.WriteLine("Already cached, returning", LogLevel.VERBOSE);
+            return "";
+        }
+
         InterfaceChannel interfaceChannel =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
