@@ -1,12 +1,9 @@
 using Discord;
-using System.Data;
-using System;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
-using System.Threading.Channels;
 
 [DataContract]
-public class CONFIRMMATCHRESULTBUTTON : BaseButton
+public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
 {
     public CONFIRMMATCHRESULTBUTTON()
     {
@@ -19,6 +16,16 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
     public override async Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
+        FindMatchTupleAndInsertItToTheCache(_interfaceMessage);
+        if (interfaceLeagueCached == null || leagueMatchCached == null)
+        {
+            string errorMsg = nameof(interfaceLeagueCached) + " or " +
+                nameof(leagueMatchCached) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            //return (errorMsg, false);
+            return (errorMsg, false);
+        }
+
         string finalResponse = string.Empty;
 
         ulong componentPlayerId = _component.User.Id;
@@ -26,35 +33,9 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
         Log.WriteLine("Activating button function: " + buttonName.ToString() + " by: " +
             componentPlayerId + " in msg: " + _interfaceMessage.MessageId, LogLevel.VERBOSE);
 
-        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-            _interfaceMessage.MessageChannelId);
-        if (interfaceChannel == null)
-        {
-            string errorMsg = nameof(interfaceChannel) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
-        }
-
-        MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
-        if (matchChannel == null)
-        {
-            string errorMsg = nameof(matchChannel) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
-        }
-
-        var matchTuple =
-            matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
-                buttonCategoryId, _interfaceMessage.MessageChannelId);
-        if (matchTuple.Item1 == null || matchTuple.Item2 == null)
-        {
-            Log.WriteLine(matchTuple.Item3, LogLevel.CRITICAL);
-            return (matchTuple.Item3, false);
-        }
-
-        var reportDataTupleWithString = matchTuple.Item2.MatchReporting.GetTeamReportDatasOfTheMatchWithPlayerId(
-            matchTuple.Item1, matchTuple.Item2, componentPlayerId);
+        var reportDataTupleWithString =
+            leagueMatchCached.MatchReporting.GetTeamReportDatasOfTheMatchWithPlayerId(
+            interfaceLeagueCached, leagueMatchCached, componentPlayerId);
         if (reportDataTupleWithString.Item1 == null)
         {
             Log.WriteLine(nameof(reportDataTupleWithString) + " was null!", LogLevel.CRITICAL);
@@ -76,8 +57,9 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
 
         if (reportDataTupleWithString.Item1.ElementAt(1).ConfirmedMatch == true)
         {
-            matchTuple.Item2.MatchReporting.MatchDone = true;
-            Log.WriteLine("Both teams are done with the reporting on match: " + matchTuple.Item2.MatchId, LogLevel.DEBUG);
+            leagueMatchCached.MatchReporting.MatchDone = true;
+            Log.WriteLine("Both teams are done with the reporting on match: " +
+                leagueMatchCached.MatchId, LogLevel.DEBUG);
         }
 
         InterfaceMessage? confirmationMessage =

@@ -38,6 +38,6 @@ public enum MessageName
     [EnumMember(Value = "RAW MESSAGE INPUT")]
     RAWMESSAGEINPUT,
 
-    [EnumMember(Value = "RAW MESSAGE INPUT")]
+    [EnumMember(Value = "CONFIRM MATCH ENTRY MESSAGE")]
     CONFIRMMATCHENTRYMESSAGE,    
 }
