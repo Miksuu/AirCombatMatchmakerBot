@@ -86,6 +86,23 @@ public class BotRuntimeManager
             else
             {
                 Log.WriteLine("Bot was already connected!", LogLevel.WARNING);
+
+                client.UserJoined -= UserManager.HandleUserJoin;
+                client.ButtonExecuted -= ButtonHandler.HandleButtonPress;
+                //client.MessageUpdated += UserManager.MessageUpdated;
+
+                // If a member's nickname changes
+                client.GuildMemberUpdated -= Database.Instance.PlayerData.HandleRegisteredMemberUpdated;
+                client.UserLeft -= UserManager.HandleUserLeaveDelegate;
+
+
+                client.UserJoined += UserManager.HandleUserJoin;
+                client.ButtonExecuted += ButtonHandler.HandleButtonPress;
+                //client.MessageUpdated += UserManager.MessageUpdated;
+
+                // If a member's nickname changes
+                client.GuildMemberUpdated += Database.Instance.PlayerData.HandleRegisteredMemberUpdated;
+                client.UserLeft += UserManager.HandleUserLeaveDelegate;
             }
         };
         
