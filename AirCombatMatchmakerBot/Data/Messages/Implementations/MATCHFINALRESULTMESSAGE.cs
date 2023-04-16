@@ -102,16 +102,6 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
             rIndex++;
         }
 
-        // Cache the finalMessage on to the alternativeMessage form for match results page where tacviews have link buttons
-        alternativeMessage = finalMessage;
-
-        finalMessage += "\nTacviews: ";
-
-        foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
-        {
-            finalMessage += reportDataKvp.Value.TacviewLink.ObjectValue + "\n";
-        }
-
         finalMessage += "\n";
 
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
@@ -123,6 +113,16 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
             }
 
             finalMessage += reportDataKvp.Value.TeamName + " commented: " + reportDataKvp.Value.CommentByTheUser.ObjectValue + "\n";
+        }
+
+        // Cache the finalMessage on to the alternativeMessage form for match results page where tacviews have link buttons
+        alternativeMessage = finalMessage;
+
+        finalMessage += "\nTacviews: ";
+
+        foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
+        {
+            finalMessage += reportDataKvp.Value.TacviewLink.ObjectValue + "\n";
         }
 
         Log.WriteLine("Returning: " + finalMessage, LogLevel.DEBUG);
