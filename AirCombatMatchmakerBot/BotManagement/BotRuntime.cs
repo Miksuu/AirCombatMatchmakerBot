@@ -1,4 +1,5 @@
 ﻿using Discord;
+using System.IO;
 
 // The main class to what the bot's functions revolve around
 public class BotRuntimeManager
@@ -44,6 +45,10 @@ public class BotRuntimeManager
                     Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
                     await cat.DeleteAsync();
                 }
+
+                // Delete the old tacviews so it doesn't throw error from old files
+                string pathToDelete = @"C:\AirCombatMatchmakerBot\Data\Tacviews";
+                if (Directory.Exists(pathToDelete)) Directory.Delete(pathToDelete, true);
 
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
