@@ -5,11 +5,11 @@ public abstract class BaseChallengeChannelButton : BaseButton, InterfaceButton
 {
     protected InterfaceLeague? interfaceLeagueCached { get; set; }
 
-    protected InterfaceLeague? FindInterfaceLeagueAndCacheIt(ulong _componentChannelId)
+    protected void FindInterfaceLeagueAndCacheIt(ulong _componentChannelId)
     {
         Log.WriteLine("Starting to find dbLeagueInstace with: " + _componentChannelId, LogLevel.VERBOSE);
 
-        InterfaceLeague? dbLeagueInstance = null;
+        //InterfaceLeague? dbLeagueInstance = null;
 
         // Find the category of the given button, temp, could optimise it here
         CategoryType ? categoryName = null;
@@ -31,7 +31,7 @@ public abstract class BaseChallengeChannelButton : BaseButton, InterfaceButton
         {
             string errorMsg = nameof(categoryName) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return dbLeagueInstance;
+            return;
         }
 
         Log.WriteLine("after foreach with: " + categoryName.Value, LogLevel.VERBOSE);
@@ -41,24 +41,22 @@ public abstract class BaseChallengeChannelButton : BaseButton, InterfaceButton
         {
             string errorMsg = nameof(categoryName) + "String was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL); ;
-            return dbLeagueInstance;
+            return;
         }
 
         Log.WriteLine("categoryNameString: " + categoryNameString, LogLevel.VERBOSE);
 
-        dbLeagueInstance =
+        interfaceLeagueCached =
             Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(buttonCategoryId);
 
-        if (dbLeagueInstance == null)
+        if (interfaceLeagueCached == null)
         {
             string errorMsg = "Error adding to the queue! Could not find the league" +
-                nameof(dbLeagueInstance) + " was null!";
+                nameof(interfaceLeagueCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return dbLeagueInstance;
+            return;
         }
-        Log.WriteLine("Found: " + nameof(dbLeagueInstance) + dbLeagueInstance.LeagueCategoryName +
+        Log.WriteLine("Found: " + nameof(interfaceLeagueCached) + interfaceLeagueCached.LeagueCategoryName +
             " with channelID: " + _componentChannelId + ", returning it", LogLevel.VERBOSE);
-
-        return dbLeagueInstance;
     }
 }

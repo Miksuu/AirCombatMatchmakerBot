@@ -97,4 +97,27 @@ public class LeagueData
 
         return foundTeam;
     }
+
+    public bool CheckIfPlayerIsParcipiatingInTheLeague(ulong _playerId)
+    {
+        Log.WriteLine("Checking if: " + _playerId + " is participiating in league.", LogLevel.VERBOSE);
+
+        foreach (Team team in Teams.TeamsConcurrentBag)
+        {
+            Team? foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
+
+            if (foundTeam != null)
+            {
+                Log.WriteLine("Found team: " + foundTeam.TeamName +
+                    " with id: " + foundTeam.TeamId, LogLevel.DEBUG);
+                return true;
+            }
+
+            Log.WriteLine(nameof(team) + " was not found (null), continuing", LogLevel.VERBOSE);
+        }
+
+        Log.WriteLine("Didn't find that " + _playerId + " was participiating.", LogLevel.VERBOSE);
+
+        return false;
+    }
 }

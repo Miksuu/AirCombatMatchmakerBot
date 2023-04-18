@@ -69,30 +69,16 @@ public class ChallengeStatus
 
     // Remove the _leaguePlayerCountPerTeam param, might be useless
     public string PostChallengeToThisLeague(
-        ulong _playerId, int _leaguePlayerCountPerTeam, InterfaceLeague _interfaceLeague)
+        int _leaguePlayerCountPerTeam, InterfaceLeague _interfaceLeague, Team _playerTeam)
     {
-        Team? team =
-            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
-
-        if (team == null)
+        if (CheckIfPlayerTeamIsAlreadyInQueue(_playerTeam))
         {
-            Log.WriteLine(nameof(team) +
-                " was null! Could not find the team.", LogLevel.CRITICAL);
-            return "Error! Team not found";
-        }
-
-        Log.WriteLine("Team found: " + team.GetTeamName(_leaguePlayerCountPerTeam) +
-            " (" + team.TeamId + ")" +" adding it to the challenge queue: " +
-            TeamsInTheQueue, LogLevel.VERBOSE);
-
-        if (TeamsInTheQueue.Any(x => x == team.TeamId))
-        {
-            Log.WriteLine("Team " + team.GetTeamName(_leaguePlayerCountPerTeam) +
-                " (" + team.TeamId + ")" + " was already in queue!", LogLevel.DEBUG);
+            Log.WriteLine("Team " + _playerTeam.GetTeamName(_leaguePlayerCountPerTeam) +
+                " (" + _playerTeam.TeamId + ")" + " was already in queue!", LogLevel.DEBUG);
             return "alreadyInQueue";
         }
 
-        AddToTeamsInTheQueue(team);
+        AddToTeamsInTheQueue(_playerTeam);
 
         CheckChallengeStatus(_interfaceLeague);
 
@@ -121,16 +107,13 @@ public class ChallengeStatus
             " (" + team.TeamId + ")" + " adding it to the challenge queue: " +
             TeamsInTheQueue, LogLevel.VERBOSE);
 
-        if (!TeamsInTheQueue.Any(x => x == team.TeamId))
+        if (!CheckIfPlayerTeamIsAlreadyInQueue(team))
         {
-            Log.WriteLine("Team " + team.GetTeamName(_leaguePlayerCountPerTeam) +
-                " (" + team.TeamId + ")" + " was already in queue!", LogLevel.DEBUG);
+            Log.WriteLine(team.TeamId + " not in queue", LogLevel.VERBOSE);
             return "notInTheQueue";
         }
 
         RemoveFromTeamsInTheQueue(team);
-
-        //CheckChallengeStatus(_interfaceLeague);
 
         string teamsInTheQueue =
             ReturnTeamsInTheQueueOfAChallenge(_leaguePlayerCountPerTeam, _interfaceLeague.LeagueData);
@@ -138,6 +121,28 @@ public class ChallengeStatus
         Log.WriteLine("Teams in the queue: " + teamsInTheQueue, LogLevel.VERBOSE);
 
         return teamsInTheQueue;
+    }
+
+    public bool CheckIfPlayerTeamIsAlreadyInQueue(Team _playerTeam)
+    {
+        int teamId = _playerTeam.TeamId;
+
+        Log.WriteLine("Checking if " + teamId + " was already in queue.", LogLevel.VERBOSE);
+
+        foreach (var item in TeamsInTheQueue)
+        {
+            Log.WriteLine("team in queue: " + item, LogLevel.VERBOSE);
+        }
+
+        if (TeamsInTheQueue.Any(x => x == teamId))
+        {
+            Log.WriteLine("TeamId: " + teamId + " was already in queue!", LogLevel.DEBUG);
+            return true;
+        }
+
+        Log.WriteLine("TeamId: " + teamId + " was not already in queue!", LogLevel.VERBOSE);
+
+        return false;
     }
 
     public async void CheckChallengeStatus(InterfaceLeague _interfaceLeague)
