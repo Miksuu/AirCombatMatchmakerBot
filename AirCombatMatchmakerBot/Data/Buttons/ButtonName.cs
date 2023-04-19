@@ -33,4 +33,7 @@ public enum ButtonName
 
     [EnumMember(Value = "CONFIRMMATCHENTRYBUTTON")]
     CONFIRMMATCHENTRYBUTTON,
+
+    [EnumMember(Value = "PLANESELECTIONBUTTON")]
+    PLANESELECTIONBUTTON,
 }
