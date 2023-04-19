@@ -31,8 +31,9 @@ public enum ButtonName
     [EnumMember(Value = "LINKBUTTON")]
     LINKBUTTON,
 
+    /*
     [EnumMember(Value = "CONFIRMMATCHENTRYBUTTON")]
-    CONFIRMMATCHENTRYBUTTON,
+    CONFIRMMATCHENTRYBUTTON,*/
 
     [EnumMember(Value = "PLANESELECTIONBUTTON")]
     PLANESELECTIONBUTTON,
