@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 [DataContract]
 public abstract class BaseMessage : InterfaceMessage
@@ -509,6 +510,36 @@ public abstract class BaseMessage : InterfaceMessage
                 buttonsInTheMessage.Add(interfaceButton);
             }
         }
+    }
+
+    // CustomID, Label and the type to generate from the inherited class
+    protected void GenerateButtonsWithCustomPropertiesAndIds(
+        Dictionary<string, string> _buttonsToGenerate, ButtonName _buttonTypeToGenerate,
+        ComponentBuilder _component, ulong _leagueCategoryId)
+    {
+        Log.WriteLine("buttons to generate count:" + _buttonsToGenerate, LogLevel.VERBOSE);
+
+        int buttonId = 0;
+        foreach (var buttonToGenerateKvp in _buttonsToGenerate)
+        {
+            InterfaceButton interfaceButton =
+                 (InterfaceButton)EnumExtensions.GetInstance(
+                     _buttonTypeToGenerate.ToString());
+
+            interfaceButton.ButtonLabel = buttonToGenerateKvp.Value;
+
+            Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " +
+                interfaceButton.ButtonName + " with customId: " + "customId: " +
+                buttonToGenerateKvp.Key, LogLevel.DEBUG);
+
+            _component.WithButton(interfaceButton.CreateTheButton(
+                buttonToGenerateKvp.Key, ++buttonId, messageCategoryId, _leagueCategoryId));
+
+            buttonsInTheMessage.Add(interfaceButton);
+        }
+
+        Log.WriteLine("Done generating buttons", LogLevel.VERBOSE);
+
     }
 
     public abstract string GenerateMessage();
