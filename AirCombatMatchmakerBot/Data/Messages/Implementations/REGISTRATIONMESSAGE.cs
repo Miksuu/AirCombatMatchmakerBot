@@ -23,7 +23,7 @@ public class REGISTRATIONMESSAGE : BaseMessage
         messageEmbedTitle = "Click this button to register!";
     }
 
-    public override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateCustomMessageButtonNamesWithAmount()
     {
 
     }

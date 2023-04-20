@@ -25,7 +25,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         messageDescription = "";
     }
 
-    public override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateCustomMessageButtonNamesWithAmount()
     {
 
     }

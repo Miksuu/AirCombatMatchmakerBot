@@ -16,6 +16,11 @@ public class DISPUTEMATCHRESULTBUTTON : BaseButton
         ephemeralResponse = true;
     }
 
+    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId)
+    {
+        return "";
+    }
+
     public override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {

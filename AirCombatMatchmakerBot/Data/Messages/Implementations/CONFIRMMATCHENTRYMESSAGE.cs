@@ -19,7 +19,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         GenerateCustomMessageButtonNamesWithAmount();
     }
 
-    public override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateCustomMessageButtonNamesWithAmount()
     {
 
     }

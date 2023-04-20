@@ -18,7 +18,7 @@ public class CHALLENGEMESSAGE : BaseMessage
         messageDescription = "Insert the challenge message here";
     }
 
-    public override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateCustomMessageButtonNamesWithAmount()
     {
 
     }

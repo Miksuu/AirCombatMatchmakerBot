@@ -108,6 +108,7 @@ public abstract class BaseButton : InterfaceButton
     [DataMember] protected ulong buttonCategoryId;
     [DataMember] protected string buttonCustomId = "";
     protected bool ephemeralResponse = false;
+    //[DataMember] protected int buttonIndex = 0;
 
     public Discord.ButtonBuilder CreateTheButton(
         string _customId, int _buttonIndex, ulong _buttonCategoryId,
@@ -115,29 +116,21 @@ public abstract class BaseButton : InterfaceButton
     {
         Log.WriteLine("Creating a button: " + buttonName + " | label: " +
             buttonLabel + " | custom-id:" + _customId + " with style: " +
-            buttonStyle + " | category-id: " + _buttonCategoryId, LogLevel.VERBOSE);
+            buttonStyle + " | category-id: " + _buttonCategoryId + " with buttonIndex:" +
+            _buttonIndex, LogLevel.VERBOSE);
 
-        // Report score specific stuff, add the index as label
-        if (buttonName == ButtonName.REPORTSCOREBUTTON)
+        //buttonIndex = _buttonIndex;
+
+        string tempCustomId = GenerateCustomButtonProperties(_buttonIndex, _leagueCategoryId);
+        Log.WriteLine("tempCustomId: " + tempCustomId, LogLevel.VERBOSE);
+
+        if (tempCustomId != "")
         {
-            buttonLabel = _buttonIndex.ToString();
-            Log.WriteLine("is: " + nameof(buttonName) +
-                " set label to: " + buttonLabel, LogLevel.VERBOSE);
+            Log.WriteLine("Button had " + nameof(GenerateCustomButtonProperties) + " generated for it.", LogLevel.VERBOSE);
+            _customId = tempCustomId;
         }
 
-        // Create the button to match the league category id, for easier later referencing
-        if (buttonName == ButtonName.LEAGUEREGISTRATIONBUTTON)
-        {
-            if (_leagueCategoryId == 0)
-            {
-                Log.WriteLine("Failed to receive the _leagueCategoryId!", LogLevel.CRITICAL);
-                return new Discord.ButtonBuilder();
-            }
-
-            _customId = _leagueCategoryId.ToString() + "_" + _buttonIndex;
-            Log.WriteLine("Setting league-registration button custom id to: " +
-                _customId, LogLevel.DEBUG);
-        }
+        Log.WriteLine("_customId: " + _customId, LogLevel.VERBOSE);
 
         // Insert the button category id for faster reference later
         buttonCategoryId = _buttonCategoryId;
@@ -152,6 +145,8 @@ public abstract class BaseButton : InterfaceButton
 
         return button;
     }
+
+    protected abstract string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId);
 
     public abstract Task<(string, bool)> ActivateButtonFunction(
          SocketMessageComponent _component, InterfaceMessage _interfaceMessage);

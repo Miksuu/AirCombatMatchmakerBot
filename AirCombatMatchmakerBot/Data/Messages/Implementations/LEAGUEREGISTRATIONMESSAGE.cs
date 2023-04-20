@@ -19,7 +19,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
     [DataMember] public ulong belongsToLeagueCategoryId;
 
-    public override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateCustomMessageButtonNamesWithAmount()
     {
 
     }

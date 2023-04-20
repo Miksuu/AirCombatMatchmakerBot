@@ -30,7 +30,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
     [DataMember] protected string alternativeMessage = "";
 
-    public override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateCustomMessageButtonNamesWithAmount()
     {
 
     }

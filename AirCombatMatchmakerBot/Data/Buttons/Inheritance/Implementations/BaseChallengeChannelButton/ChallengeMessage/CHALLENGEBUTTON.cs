@@ -16,6 +16,11 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
         ephemeralResponse = true;
     }
 
+    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId)
+    {
+        return "";
+    }
+
     public override async Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {

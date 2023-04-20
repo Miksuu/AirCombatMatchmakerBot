@@ -16,7 +16,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
         mentionMatchPlayers = true;
     }
 
-    public override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateCustomMessageButtonNamesWithAmount()
     {
 
     }

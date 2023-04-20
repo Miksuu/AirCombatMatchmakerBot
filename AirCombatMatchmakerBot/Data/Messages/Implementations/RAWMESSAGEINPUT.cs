@@ -18,7 +18,7 @@ public class RAWMESSAGEINPUT : BaseMessage
         messageDescription = "Empty message"; 
     }
 
-    public override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateCustomMessageButtonNamesWithAmount()
     {
 
     }

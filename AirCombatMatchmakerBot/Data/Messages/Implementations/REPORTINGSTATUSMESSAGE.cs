@@ -19,7 +19,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         messageDescription = "Insert the reporting status message here";
     }
 
-    public override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateCustomMessageButtonNamesWithAmount()
     {
 
     }

@@ -502,7 +502,7 @@ public abstract class BaseMessage : InterfaceMessage
         await ModifyMessage(GenerateMessage());
     }
 
-    public abstract void GenerateCustomMessageButtonNamesWithAmount();
+    protected abstract void GenerateCustomMessageButtonNamesWithAmount();
     public abstract string GenerateMessage();
 
     public async Task<Discord.IMessage?> GetMessageById(IMessageChannel _channel)

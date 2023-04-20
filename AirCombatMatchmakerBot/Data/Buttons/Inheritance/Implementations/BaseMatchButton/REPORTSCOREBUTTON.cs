@@ -17,6 +17,15 @@ public class REPORTSCOREBUTTON : BaseButton
         ephemeralResponse = true;
     }
 
+    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId)
+    {
+        buttonLabel = _buttonIndex.ToString();
+        Log.WriteLine("is: " + nameof(buttonName) +
+            " set label to: " + buttonLabel, LogLevel.VERBOSE);
+
+        return "";
+    }
+
     public async override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {

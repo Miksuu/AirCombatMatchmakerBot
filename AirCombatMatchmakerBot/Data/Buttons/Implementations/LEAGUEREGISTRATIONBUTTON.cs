@@ -14,6 +14,23 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         ephemeralResponse = true;
     }
 
+    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId)
+    {
+        string customId = string.Empty;
+
+        if (_leagueCategoryId == 0)
+        {
+            Log.WriteLine("Failed to receive the _leagueCategoryId!", LogLevel.CRITICAL);
+            return customId;
+        }
+
+        customId = _leagueCategoryId.ToString() + "_" + _buttonIndex;
+        Log.WriteLine("Setting league-registration button custom id to: " +
+            customId, LogLevel.DEBUG);
+
+        return customId;
+    }
+
     public override async Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
