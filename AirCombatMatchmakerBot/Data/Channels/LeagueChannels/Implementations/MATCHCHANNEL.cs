@@ -14,8 +14,9 @@ public class MATCHCHANNEL : BaseChannel
             new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                 new KeyValuePair<MessageName, bool>(MessageName.MATCHSTARTMESSAGE, false),
-                new KeyValuePair<MessageName, bool>(MessageName.REPORTINGMESSAGE, false),
-                new KeyValuePair<MessageName, bool>(MessageName.REPORTINGSTATUSMESSAGE, false),
+                new KeyValuePair<MessageName, bool>(MessageName.CONFIRMMATCHENTRYMESSAGE, false),
+                //new KeyValuePair<MessageName, bool>(MessageName.REPORTINGMESSAGE, false),
+                //new KeyValuePair<MessageName, bool>(MessageName.REPORTINGSTATUSMESSAGE, false),
             });
     }
 

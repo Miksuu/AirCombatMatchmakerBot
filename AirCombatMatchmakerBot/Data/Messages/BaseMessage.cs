@@ -222,7 +222,7 @@ public abstract class BaseMessage : InterfaceMessage
             messageButtonNamesWithAmount.Count, LogLevel.VERBOSE);
 
         // Generates either normal buttons, or custom amount of buttons with different properties
-        GenerateButtons(component, _leagueCategoryId);
+        GenerateButtons(component, messageCategoryId);
 
         // Add this as inherited button method
         if (messageName == MessageName.LEAGUEREGISTRATIONMESSAGE)
@@ -539,7 +539,6 @@ public abstract class BaseMessage : InterfaceMessage
         }
 
         Log.WriteLine("Done generating buttons", LogLevel.VERBOSE);
-
     }
 
     public abstract string GenerateMessage();
