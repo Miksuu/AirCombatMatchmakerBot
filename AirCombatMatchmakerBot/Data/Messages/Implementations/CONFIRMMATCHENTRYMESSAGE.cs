@@ -11,7 +11,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
             new ConcurrentBag<KeyValuePair<ButtonName, int>>()
             {
-                new KeyValuePair<ButtonName, int>(ButtonName.CONFIRMMATCHENTRYBUTTON, 1),
+                //new KeyValuePair<ButtonName, int>(ButtonName.CONFIRMMATCHENTRYBUTTON, 1),
             });
 
         messageEmbedTitle = "This message confirms the match entry [add more detailed message here]";
