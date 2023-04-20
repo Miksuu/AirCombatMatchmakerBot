@@ -165,7 +165,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, true, _displayMessage, 0, _component, _ephemeral);
+            client, this, true, _displayMessage, _component, _ephemeral);
 
         return newMessageTuple;
     }
@@ -197,7 +197,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var newMessageTuple = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, true, _displayMessage, 0, _component, _ephemeral, _files);
+            client, this, true, _displayMessage, _component, _ephemeral, _files);
 
         return newMessageTuple;
     }
@@ -313,7 +313,7 @@ public abstract class BaseChannel : InterfaceChannel
                     (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
                 
                 var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                        _client, this, true, true, leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId);
+                        _client, this, true, true);
 
                 //Log.WriteLine("messagetuple:" + newInterfaceMessage.id + " | " + newInterfaceMessage.Item2, LogLevel.VERBOSE);
 
