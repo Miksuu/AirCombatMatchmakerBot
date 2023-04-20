@@ -16,6 +16,11 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         messageDescription = "";
     }
 
+    public override void GenerateCustomMessageButtonNamesWithAmount()
+    {
+
+    }
+
     public override string GenerateMessage()
     {
         string finalMessage = string.Empty;

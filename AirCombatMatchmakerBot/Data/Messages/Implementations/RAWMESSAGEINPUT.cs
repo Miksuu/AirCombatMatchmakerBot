@@ -18,6 +18,11 @@ public class RAWMESSAGEINPUT : BaseMessage
         messageDescription = "Empty message"; 
     }
 
+    public override void GenerateCustomMessageButtonNamesWithAmount()
+    {
+
+    }
+
     public override string GenerateMessage()
     {
         return messageDescription;

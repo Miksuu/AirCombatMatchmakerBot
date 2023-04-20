@@ -25,6 +25,11 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         messageDescription = "";
     }
 
+    public override void GenerateCustomMessageButtonNamesWithAmount()
+    {
+
+    }
+
     public override string GenerateMessage()
     {
         Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);

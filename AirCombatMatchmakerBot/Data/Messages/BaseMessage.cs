@@ -1,11 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using System.Reflection;
 using System.Runtime.Serialization;
-using System.Threading.Channels;
 using System.Collections.Concurrent;
-using System.IO;
-using System.IO.Pipes;
 
 [DataContract]
 public abstract class BaseMessage : InterfaceMessage
@@ -506,6 +502,7 @@ public abstract class BaseMessage : InterfaceMessage
         await ModifyMessage(GenerateMessage());
     }
 
+    public abstract void GenerateCustomMessageButtonNamesWithAmount();
     public abstract string GenerateMessage();
 
     public async Task<Discord.IMessage?> GetMessageById(IMessageChannel _channel)

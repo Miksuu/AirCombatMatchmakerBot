@@ -20,6 +20,11 @@ public class REPORTINGMESSAGE : BaseMessage
             "Optionally, you can use the /comment command to post a comment on the match.";
     }
 
+    public override void GenerateCustomMessageButtonNamesWithAmount()
+    {
+
+    }
+
     public override string GenerateMessage()
     {
         return messageDescription;

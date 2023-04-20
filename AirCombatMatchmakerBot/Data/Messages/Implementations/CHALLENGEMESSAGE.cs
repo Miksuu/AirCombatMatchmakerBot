@@ -18,6 +18,11 @@ public class CHALLENGEMESSAGE : BaseMessage
         messageDescription = "Insert the challenge message here";
     }
 
+    public override void GenerateCustomMessageButtonNamesWithAmount()
+    {
+
+    }
+
     public override string GenerateMessage()
     {
         Log.WriteLine("Generating a challenge queue message with _channelId: " +

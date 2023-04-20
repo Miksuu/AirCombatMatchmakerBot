@@ -19,6 +19,11 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         messageDescription = "Insert the reporting status message here";
     }
 
+    public override void GenerateCustomMessageButtonNamesWithAmount()
+    {
+
+    }
+
     public override string GenerateMessage()
     {
         string reportingStatusMessage = string.Empty;

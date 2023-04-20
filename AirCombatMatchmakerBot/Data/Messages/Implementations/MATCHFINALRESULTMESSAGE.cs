@@ -30,6 +30,11 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
     [DataMember] protected string alternativeMessage = "";
 
+    public override void GenerateCustomMessageButtonNamesWithAmount()
+    {
+
+    }
+
     public override string GenerateMessage()
     {
         Log.WriteLine("Starting to generate the message for the match final result", LogLevel.VERBOSE);
