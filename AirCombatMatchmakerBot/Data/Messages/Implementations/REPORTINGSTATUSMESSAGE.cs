@@ -19,9 +19,9 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         messageDescription = "Insert the reporting status message here";
     }
 
-    protected override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
     {
-
+        base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
     public override string GenerateMessage()

@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.ComponentModel;
 
 [DataContract]
 public abstract class BaseMessage : InterfaceMessage
@@ -219,33 +220,10 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("messageButtonNames.Count: " +
             messageButtonNamesWithAmount.Count, LogLevel.VERBOSE);
 
-        foreach (var buttonNameWithAmount in messageButtonNamesWithAmount)
-        {
-            Log.WriteLine("Looping through button name: " + buttonNameWithAmount.Key + 
-                " with amount: " + buttonNameWithAmount.Value, LogLevel.DEBUG);
+        // Generates either normal buttons, or custom amount of buttons with different properties
+        GenerateButtons(component, _leagueCategoryId);
 
-            for (int b = 0; b < buttonNameWithAmount.Value; ++b)
-            {
-                string finalCustomId = "";
-
-                InterfaceButton interfaceButton =
-                     (InterfaceButton)EnumExtensions.GetInstance(
-                         buttonNameWithAmount.Key.ToString());
-
-                Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " +
-                    interfaceButton.ButtonName, LogLevel.DEBUG);
-
-                finalCustomId = interfaceButton.ButtonName + "_" + b;
-
-                Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
-
-                component.WithButton(interfaceButton.CreateTheButton(
-                    finalCustomId, b, messageCategoryId, _leagueCategoryId));
-
-                buttonsInTheMessage.Add(interfaceButton);
-            }
-        }
-
+        // Add this as inherited button method
         if (messageName == MessageName.LEAGUEREGISTRATIONMESSAGE)
         {
             LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = this as LEAGUEREGISTRATIONMESSAGE;
@@ -502,7 +480,37 @@ public abstract class BaseMessage : InterfaceMessage
         await ModifyMessage(GenerateMessage());
     }
 
-    protected abstract void GenerateCustomMessageButtonNamesWithAmount();
+    protected abstract void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId);
+    protected void GenerateRegularButtons(ComponentBuilder _component, ulong _leagueCategoryId)
+    {
+        foreach (var buttonNameWithAmount in messageButtonNamesWithAmount)
+        {
+            Log.WriteLine("Looping through button name: " + buttonNameWithAmount.Key +
+                " with amount: " + buttonNameWithAmount.Value, LogLevel.DEBUG);
+
+            for (int b = 0; b < buttonNameWithAmount.Value; ++b)
+            {
+                string finalCustomId = "";
+
+                InterfaceButton interfaceButton =
+                     (InterfaceButton)EnumExtensions.GetInstance(
+                         buttonNameWithAmount.Key.ToString());
+
+                Log.WriteLine("button: " + interfaceButton.ButtonLabel + " name: " +
+                    interfaceButton.ButtonName, LogLevel.DEBUG);
+
+                finalCustomId = interfaceButton.ButtonName + "_" + b;
+
+                Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
+
+                _component.WithButton(interfaceButton.CreateTheButton(
+                    finalCustomId, b, messageCategoryId, _leagueCategoryId));
+
+                buttonsInTheMessage.Add(interfaceButton);
+            }
+        }
+    }
+
     public abstract string GenerateMessage();
 
     public async Task<Discord.IMessage?> GetMessageById(IMessageChannel _channel)

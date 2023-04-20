@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using Discord;
 
 [DataContract]
 public class MATCHFINALRESULTMESSAGE : BaseMessage
@@ -30,9 +31,9 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
     [DataMember] protected string alternativeMessage = "";
 
-    protected override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
     {
-
+        base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
     public override string GenerateMessage()

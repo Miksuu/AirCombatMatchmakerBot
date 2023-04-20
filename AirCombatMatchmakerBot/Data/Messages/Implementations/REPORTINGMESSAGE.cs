@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using Discord;
 
 [DataContract]
 public class REPORTINGMESSAGE : BaseMessage
@@ -18,13 +19,11 @@ public class REPORTINGMESSAGE : BaseMessage
         messageDescription = "After the match has been completed, click on the buttons below to report your score.\n" +
             "Upload your Tacview by dragging it to the window and post it.\n" +
             "Optionally, you can use the /comment command to post a comment on the match.";
-
-        GenerateCustomMessageButtonNamesWithAmount();
     }
 
-    protected override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
     {
-
+        base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
     public override string GenerateMessage()

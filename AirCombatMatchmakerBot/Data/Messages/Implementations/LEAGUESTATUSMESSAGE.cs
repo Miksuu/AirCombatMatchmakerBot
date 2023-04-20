@@ -16,9 +16,9 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         messageDescription = "";
     }
 
-    protected override void GenerateCustomMessageButtonNamesWithAmount()
+    protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
     {
-
+        base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
     public override string GenerateMessage()
