@@ -29,11 +29,6 @@ public class CONFIRMSCOREBUTTON : BaseMatchButton
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
-        InterfaceChannel interfaceChannel = 
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                    _interfaceMessage.MessageChannelId);
-
         FindMatchTupleAndInsertItToTheCache(_interfaceMessage);
         if (interfaceLeagueCached == null || leagueMatchCached == null)
         {
