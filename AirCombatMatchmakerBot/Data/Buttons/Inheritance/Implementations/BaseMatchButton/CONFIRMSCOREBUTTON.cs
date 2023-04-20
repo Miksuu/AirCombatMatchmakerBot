@@ -7,7 +7,7 @@ using Discord.WebSocket;
 using System.Runtime.CompilerServices;
 
 [DataContract]
-public class CONFIRMSCOREBUTTON : BaseButton
+public class CONFIRMSCOREBUTTON : BaseMatchButton
 {
     public CONFIRMSCOREBUTTON()
     {
@@ -34,36 +34,26 @@ public class CONFIRMSCOREBUTTON : BaseButton
                 _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                     _interfaceMessage.MessageChannelId);
 
-        //Find the channel of the messageDescription and cast the interface to to the MATCHCHANNEL class       
-        MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
-        if (matchChannel == null)
+        FindMatchTupleAndInsertItToTheCache(_interfaceMessage);
+        if (interfaceLeagueCached == null || leagueMatchCached == null)
         {
-            string errorMsg = nameof(matchChannel) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return Task.FromResult((errorMsg, false));
-        }
-
-        var leagueMatchTuple = 
-            matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
-                buttonCategoryId, _interfaceMessage.MessageChannelId);
-        if (leagueMatchTuple.Item1 == null || leagueMatchTuple.Item2 == null)
-        {
-            string errorMsg = nameof(leagueMatchTuple) + " was null!";
+            string errorMsg = nameof(interfaceLeagueCached) + " or " +
+                nameof(leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return Task.FromResult((errorMsg, false));
         }
 
         Log.WriteLine("Setting ConfirmedMatch false", LogLevel.VERBOSE);
 
-        foreach (var item in leagueMatchTuple.Item2.MatchReporting.TeamIdsWithReportData)
+        foreach (var item in leagueMatchCached.MatchReporting.TeamIdsWithReportData)
         {
             item.Value.ConfirmedMatch = false;
         }
 
         Log.WriteLine("Done setting ConfirmedMatch false", LogLevel.VERBOSE);
 
-        var finalResponseTuple = leagueMatchTuple.Item2.MatchReporting.ProcessPlayersSentReportObject(
-            leagueMatchTuple.Item1, playerId, playerReportedResult.ToString(),
+        var finalResponseTuple = leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
+            interfaceLeagueCached, playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE,
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 

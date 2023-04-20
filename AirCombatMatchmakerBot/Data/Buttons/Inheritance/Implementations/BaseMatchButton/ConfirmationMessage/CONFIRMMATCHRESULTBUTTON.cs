@@ -22,7 +22,6 @@ public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
             string errorMsg = nameof(interfaceLeagueCached) + " or " +
                 nameof(leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            //return (errorMsg, false);
             return (errorMsg, false);
         }
 
