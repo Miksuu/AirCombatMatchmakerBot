@@ -7,7 +7,7 @@ using Discord.WebSocket;
 using System.Runtime.CompilerServices;
 
 [DataContract]
-public class REPORTSCOREBUTTON : BaseButton
+public class REPORTSCOREBUTTON : BaseMatchButton
 {
     public REPORTSCOREBUTTON()
     {
@@ -49,31 +49,17 @@ public class REPORTSCOREBUTTON : BaseButton
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
-        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-            _interfaceMessage.MessageChannelId);
-
-        //Find the channel of the messageDescription and cast the interface to to the MATCHCHANNEL class       
-        MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
-        if (matchChannel == null)
+        FindMatchTupleAndInsertItToTheCache(_interfaceMessage);
+        if (interfaceLeagueCached == null || leagueMatchCached == null)
         {
-            string errorMsg = nameof(matchChannel) + " was null!";
+            string errorMsg = nameof(interfaceLeagueCached) + " or " +
+                nameof(leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return (errorMsg, false);
         }
 
-        var leagueMatchTuple = 
-            matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
-                buttonCategoryId, reportingStatusMessage.MessageChannelId);
-        if (leagueMatchTuple.Item1 == null || leagueMatchTuple.Item2 == null)
-        {
-            string errorMsg = nameof(leagueMatchTuple) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
-        }
-
-        var finalResponseTuple = leagueMatchTuple.Item2.MatchReporting.ProcessPlayersSentReportObject(
-            leagueMatchTuple.Item1, playerId, playerReportedResult.ToString(),
+        var finalResponseTuple = leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
+            interfaceLeagueCached, playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE, 
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 
@@ -82,8 +68,8 @@ public class REPORTSCOREBUTTON : BaseButton
             return (finalResponseTuple.Item1, false);
         }
 
-        finalResponseTuple = await leagueMatchTuple.Item2.MatchReporting.PrepareFinalMatchResult(
-            leagueMatchTuple.Item1, playerId,
+        finalResponseTuple = await leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
+            interfaceLeagueCached, playerId,
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId);
 
         if (!finalResponseTuple.Item2)
