@@ -1,9 +1,9 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public abstract class BaseUnit : IUnit
+public abstract class BaseUnit : InterfaceUnit
 {
-    UnitName IUnit.UnitName
+    UnitName InterfaceUnit.UnitName
     {
         get => unitName;
         set => unitName = value;

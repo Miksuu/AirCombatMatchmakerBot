@@ -33,37 +33,6 @@ public class ReportObject
         }
     }
 
-    /*
-    public bool FieldFilled
-    {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(fieldFilled), LogLevel.VERBOSE);
-            return fieldFilled;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(fieldFilled)
-                + " to: " + value, LogLevel.VERBOSE);
-            fieldFilled = value;
-        }
-    }
-
-    public EmojiName DefaultStateEmoji
-    {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(defaultStateEmoji), LogLevel.VERBOSE);
-            return defaultStateEmoji;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(defaultStateEmoji)
-                + " to: " + value, LogLevel.VERBOSE);
-            defaultStateEmoji = value;
-        }
-    }*/
-
     public EmojiName CurrentStatus
     {
         get
@@ -95,8 +64,6 @@ public class ReportObject
 
     [DataMember] private string? fieldNameDisplay { get; set; }
     [DataMember] private string? objectValue { get; set; }
-    //[DataMember] private bool fieldFilled { get; set; }
-    //[DataMember] private EmojiName defaultStateEmoji { get; set; }
     [DataMember] private EmojiName currentStatus { get; set; }
     [DataMember] private EmojiName cachedDefaultStatus { get; set; }
 

@@ -7,7 +7,7 @@ using Discord.WebSocket;
 using System.Runtime.CompilerServices;
 
 [DataContract]
-public class PLANESELECTIONBUTTON : BaseButton
+public class PLANESELECTIONBUTTON : BaseMatchButton
 {
     public PLANESELECTIONBUTTON()
     {
@@ -25,6 +25,22 @@ public class PLANESELECTIONBUTTON : BaseButton
     public override Task<(string, bool)> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
+        string finalResponse = string.Empty;
+        ulong componentPlayerId = _component.User.Id;
+
+        FindMatchTupleAndInsertItToTheCache(_interfaceMessage);
+        if (interfaceLeagueCached == null || leagueMatchCached == null)
+        {
+            string errorMsg = nameof(interfaceLeagueCached) + " or " +
+                nameof(leagueMatchCached) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return Task.FromResult((errorMsg, false));
+        }
+
+
+
+        //var playerTeamReportData = leagueMatchCached.MatchReporting.Set
+
         return Task.FromResult(("", true));
     }
 }

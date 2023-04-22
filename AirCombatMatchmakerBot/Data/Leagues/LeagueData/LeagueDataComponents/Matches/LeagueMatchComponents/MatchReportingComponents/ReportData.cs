@@ -63,21 +63,21 @@ public class ReportData
         }
     }
 
-    /*
-    public float CachedSkillRating
+    public Dictionary<ulong, ReportObject> SelectedUnitsByTheTeamMembers
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(cachedSkillRating) + ": " + cachedSkillRating, LogLevel.VERBOSE);
-            return cachedSkillRating;
+            Log.WriteLine("Getting " + nameof(selectedUnitsByTheTeamMembers) +
+                " with count: " + selectedUnitsByTheTeamMembers.Count, LogLevel.VERBOSE);
+            return selectedUnitsByTheTeamMembers;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(cachedSkillRating)
-                + " to: " + value, LogLevel.VERBOSE);
-            cachedSkillRating = value;
+            Log.WriteLine("Setting " + nameof(selectedUnitsByTheTeamMembers)
+                + " to: " + value + " with count: " + selectedUnitsByTheTeamMembers.Count, LogLevel.VERBOSE);
+            selectedUnitsByTheTeamMembers = value;
         }
-    }*/
+    }
 
     public float FinalEloDelta
     {
@@ -112,8 +112,8 @@ public class ReportData
     [DataMember] private string teamName { get; set; }
     [DataMember] private ReportObject reportedScore { get; set; }
     [DataMember] private ReportObject tacviewLink { get; set; }
-    [DataMember] private ReportObject commentByTheUser { get; set; }
-    //[DataMember] private float cachedSkillRating { get; set; }
+    [DataMember] private ReportObject commentByTheUser { get; set; }    // Convert to dictionary for 2v2 etc
+    [DataMember] private Dictionary<ulong, ReportObject> selectedUnitsByTheTeamMembers { get; set; }
     [DataMember] private float finalEloDelta { get; set; }
     [DataMember] private bool confirmedMatch { get; set; }
 
@@ -123,5 +123,6 @@ public class ReportData
         reportedScore = new ReportObject("Reported score", EmojiName.REDSQUARE);
         tacviewLink = new ReportObject("Tacview link", EmojiName.REDSQUARE);
         commentByTheUser = new ReportObject("Comment", EmojiName.YELLOWSQUARE);
+        selectedUnitsByTheTeamMembers = new Dictionary<ulong, ReportObject>();
     }
 }
