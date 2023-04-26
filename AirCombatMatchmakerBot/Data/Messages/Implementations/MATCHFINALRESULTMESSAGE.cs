@@ -54,7 +54,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         messageEmbedTitle = "Match " + interfaceLeagueMatchTuple.Item2.MatchId + " has finished\n";
 
-        ConcurrentDictionary<int, ReportData>? matchReportingTeamIdsWithReportData =
+        ConcurrentDictionary<int, TeamReportData>? matchReportingTeamIdsWithReportData =
             interfaceLeagueMatchTuple.Item2.MatchReporting.TeamIdsWithReportData;
 
         finalMessage += "\nPlayers: ";
@@ -74,7 +74,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         int sIndex = 0;
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
-            finalMessage += reportDataKvp.Value.ReportedScore.ObjectValue;
+            finalMessage += reportDataKvp.Value.ReportedScore.PlayerReportDatas.First().Value.ObjectValue;
             if (sIndex == 0) finalMessage += " - ";
             sIndex++;
         }
@@ -112,13 +112,27 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
-            if (reportDataKvp.Value.CommentByTheUser.CurrentStatus == EmojiName.YELLOWSQUARE)
-            {
-                Log.WriteLine(reportDataKvp.Value.TeamName + " did not comment.", LogLevel.VERBOSE);
-                continue;
-            }
+            Log.WriteLine("Looping through team: " + reportDataKvp.Value.TeamName, LogLevel.VERBOSE);
+            var commentsByTheTeamMembers = reportDataKvp.Value.CommentsByTheTeamMembers;
 
-            finalMessage += reportDataKvp.Value.TeamName + " commented: " + reportDataKvp.Value.CommentByTheUser.ObjectValue + "\n";
+            foreach (var commentKvp in commentsByTheTeamMembers.PlayerReportDatas)
+            {
+                Log.WriteLine("Looping on " + nameof(commentKvp) + " id: " + commentKvp.Key, LogLevel.VERBOSE);
+
+                var playerName = "<@" + commentKvp.Key + ">";
+
+                if (commentKvp.Value.CurrentStatus == EmojiName.YELLOWSQUARE)
+                {
+                    Log.WriteLine("player: " + commentKvp.Key + " on team: " +
+                        reportDataKvp.Value.TeamName + " did not comment.", LogLevel.VERBOSE);
+                    continue;
+                }
+
+                finalMessage +=
+                    playerName + " commented: " + commentKvp.Value.ObjectValue + "\n";
+
+                Log.WriteLine("finalMessage is now: " + finalMessage, LogLevel.VERBOSE);
+            }
         }
 
         // Cache the finalMessage on to the alternativeMessage form for match results page where tacviews have link buttons
@@ -128,7 +142,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
-            finalMessage += reportDataKvp.Value.TacviewLink.ObjectValue + "\n";
+            finalMessage += reportDataKvp.Value.TacviewLink.PlayerReportDatas.First().Value.ObjectValue + "\n";
         }
 
         Log.WriteLine("Returning: " + finalMessage, LogLevel.DEBUG);

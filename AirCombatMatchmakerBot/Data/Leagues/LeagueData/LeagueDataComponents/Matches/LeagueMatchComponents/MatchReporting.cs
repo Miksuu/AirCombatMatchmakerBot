@@ -20,7 +20,7 @@ public class MatchReporting
         }
     }
 
-    public ConcurrentDictionary<int, ReportData> TeamIdsWithReportData
+    public ConcurrentDictionary<int, TeamReportData> TeamIdsWithReportData
     {
         get
         {
@@ -112,7 +112,7 @@ public class MatchReporting
     }
 
     private EloSystem eloSystem { get; set; }
-    [DataMember] private ConcurrentDictionary<int, ReportData> teamIdsWithReportData { get; set; }
+    [DataMember] private ConcurrentDictionary<int, TeamReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
     [DataMember] private string? finalResultForConfirmation { get; set; }
@@ -122,13 +122,13 @@ public class MatchReporting
     public MatchReporting()
     {
         eloSystem = new EloSystem();
-        teamIdsWithReportData = new ConcurrentDictionary<int, ReportData>();
+        teamIdsWithReportData = new ConcurrentDictionary<int, TeamReportData>();
     }
 
     public MatchReporting(ConcurrentDictionary<int, string> _teamsInTheMatch)
     {
         eloSystem = new EloSystem();
-        teamIdsWithReportData = new ConcurrentDictionary<int, ReportData>();
+        teamIdsWithReportData = new ConcurrentDictionary<int, TeamReportData>();
 
         foreach (var teamKvp in _teamsInTheMatch)
         {
@@ -140,7 +140,7 @@ public class MatchReporting
 
             Log.WriteLine("Adding team: " + teamKvp.Key + " | " + teamKvp.Value, LogLevel.VERBOSE);
 
-            TeamIdsWithReportData.TryAdd(teamKvp.Key, new ReportData(teamKvp.Value));
+            TeamIdsWithReportData.TryAdd(teamKvp.Key, new TeamReportData(teamKvp.Value));
         }
     }
 
@@ -150,7 +150,7 @@ public class MatchReporting
     {
         string response = string.Empty;
 
-        Log.WriteLine("Processing player's sent " + nameof(ReportObject) + " in league: " +
+        Log.WriteLine("Processing player's sent " + nameof(PlayerReportData) + " in league: " +
             _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
             _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
 
@@ -374,7 +374,7 @@ public class MatchReporting
 
         foreach (var teamKvp in TeamIdsWithReportData)
         {
-            FieldInfo[] fieldInfos = typeof(ReportData).GetFields(
+            FieldInfo[] fieldInfos = typeof(TeamReportData).GetFields(
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
 
             Log.WriteLine("Got field infos, length: " + fieldInfos.Length + " for team: " +
@@ -384,13 +384,13 @@ public class MatchReporting
             {
                 Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
 
-                // Only process the ReportObject fields (ignore teamName)
-                if (field.FieldType != typeof(ReportObject)) continue;
+                // Only process the PlayerReportData fields (ignore teamName)
+                if (field.FieldType != typeof(PlayerReportData)) continue;
 
-                Log.WriteLine("This is " + nameof(ReportObject) + " field: " +
+                Log.WriteLine("This is " + nameof(PlayerReportData) + " field: " +
                     field.FieldType, LogLevel.VERBOSE);
 
-                ReportObject? reportObject = (ReportObject?)field.GetValue(teamKvp.Value);
+                PlayerReportData? reportObject = (PlayerReportData?)field.GetValue(teamKvp.Value);
                 if (reportObject == null)
                 {
                     Log.WriteLine(nameof(reportObject) + " was null!", LogLevel.CRITICAL);
@@ -443,11 +443,11 @@ public class MatchReporting
         return teamsInTheMatch;
     }
 
-    public (List<ReportData>?, string) GetTeamReportDatasOfTheMatchWithPlayerId(
+    public (List<TeamReportData>?, string) GetTeamReportDatasOfTheMatchWithPlayerId(
         InterfaceLeague _interfaceLeague, LeagueMatch _leagueMatch, ulong _playerId)
     {
         List<Team> foundTeams = new List<Team>();
-        List<ReportData> reportDatas = new List<ReportData>();
+        List<TeamReportData> reportDatas = new List<TeamReportData>();
 
         Log.WriteLine("Getting ReportData on match: " + _leagueMatch.MatchId +
             " with: " + _playerId, LogLevel.DEBUG);

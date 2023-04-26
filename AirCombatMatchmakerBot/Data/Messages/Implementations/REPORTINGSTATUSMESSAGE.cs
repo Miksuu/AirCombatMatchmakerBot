@@ -62,7 +62,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 continue;
             }
 
-            FieldInfo[] fields = typeof(ReportData).GetFields(
+            FieldInfo[] fields = typeof(TeamReportData).GetFields(
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
 
             Log.WriteLine("fields count: " + fields.Length, LogLevel.DEBUG);
@@ -73,13 +73,13 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
                 Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
 
-                // Only process the ReportObject fields (ignore teamName)
-                if (field.FieldType != typeof(ReportObject)) continue;
+                // Only process the PlayerReportData fields (ignore teamName)
+                if (field.FieldType != typeof(PlayerReportData)) continue;
 
-                Log.WriteLine("This is " + nameof(ReportObject) + " field: " +
+                Log.WriteLine("This is " + nameof(PlayerReportData) + " field: " +
                     field.FieldType, LogLevel.VERBOSE);
 
-                ReportObject? reportObject = (ReportObject?)field.GetValue(teamReportData);
+                PlayerReportData? reportObject = (PlayerReportData?)field.GetValue(teamReportData);
                 if (reportObject == null)
                 {
                     Log.WriteLine(nameof(reportObject) + " was null!", LogLevel.CRITICAL);
