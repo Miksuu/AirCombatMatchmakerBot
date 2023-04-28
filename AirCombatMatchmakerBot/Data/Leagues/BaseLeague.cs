@@ -121,7 +121,7 @@ public abstract class BaseLeague : InterfaceLeague
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
-            return null;
+            return interfaceCategory;
         }
 
         Log.WriteLine("Found: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);

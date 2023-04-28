@@ -100,7 +100,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     [DataMember] protected ChannelType channelType { get; set; }
-    [DataMember] protected string channelName { get; set; }
+    [DataMember] protected string? channelName { get; set; }
     [DataMember] protected ulong channelId { get; set; }
     [DataMember] protected ulong channelsCategoryId { get; set; }
     [DataMember] protected ConcurrentDictionary<MessageName, bool> channelMessages { get; set; }

@@ -3,7 +3,7 @@ using Discord.WebSocket;
 
 public static class MessageReceiver
 {
-    public async static void ReceiveMessage(SocketMessage _socketMessage)
+    public async static Task ReceiveMessage(SocketMessage _socketMessage)
     {
                 /*
         Log.WriteLine("Looking for: " + _socketMessage.Channel.Id, LogLevel.DEBUG);

@@ -165,8 +165,7 @@ public static class CategoryAndChannelManager
         // If the category doesn't exist at all, create it and add it to the database
         else
         {
-            role =
-                RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
+            role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
                     guild, finalCategoryName).Result;
 
             socketCategoryChannel =
@@ -203,6 +202,12 @@ public static class CategoryAndChannelManager
 
             Database.Instance.Categories.AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(
                 socketCategoryChannel.Id, interfaceCategory);
+        }
+
+        if (role == null)
+        {
+            Log.WriteLine(nameof(role) + " was null!", LogLevel.CRITICAL);
+            return;
         }
 
         // Handle channel checking/creation

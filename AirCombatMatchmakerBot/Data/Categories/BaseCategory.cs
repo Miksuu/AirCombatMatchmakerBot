@@ -254,7 +254,7 @@ public abstract class BaseCategory : InterfaceCategory
         return (InterfaceChannel)EnumExtensions.GetInstance(_channelType);
     }
 
-    private async static Task CreateTheMissingMatchChannels(
+    private static Task CreateTheMissingMatchChannels(
         DiscordSocketClient _client, ulong _socketCategoryChannelId)
     {
         Log.WriteLine("Checking for missing matches in: " + _socketCategoryChannelId, LogLevel.VERBOSE);
@@ -265,7 +265,7 @@ public abstract class BaseCategory : InterfaceCategory
         if (interfaceLeague == null) 
         {
             Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
-            return;
+            return Task.CompletedTask;
         }
 
         Log.WriteLine("Found InterfaceLeague: " + interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
@@ -290,6 +290,8 @@ public abstract class BaseCategory : InterfaceCategory
 
             matches.CreateAMatchChannel(match, interfaceLeague, _client);
         }
+
+        return Task.CompletedTask;
     }
 
     private static string GetChannelNameFromOverridenString(

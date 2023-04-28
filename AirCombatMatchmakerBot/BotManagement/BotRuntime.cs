@@ -114,7 +114,7 @@ public class BotRuntimeManager
         // Receiving the tacview files
         client.MessageReceived += async (_socketMessage) =>
         {
-            MessageReceiver.ReceiveMessage(_socketMessage);
+            await MessageReceiver.ReceiveMessage(_socketMessage);
         };
 
         // Block this task until the program is closed.
