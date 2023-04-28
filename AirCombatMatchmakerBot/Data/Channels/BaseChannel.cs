@@ -203,7 +203,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public async Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
-    string _input, FileManager.AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
+    string _input, AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
     SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
         Log.WriteLine("Creating a raw message with attachmentdata: " + _input +

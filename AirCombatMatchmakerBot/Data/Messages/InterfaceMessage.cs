@@ -28,7 +28,7 @@ public interface InterfaceMessage
         bool _ephemeral = true, params string[] _files);
 
     public Task<InterfaceMessage?> CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
-        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, FileManager.AttachmentData[] _attachmentDatas,
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, AttachmentData[] _attachmentDatas,
         bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
     public Task ModifyMessage(string _newContent);

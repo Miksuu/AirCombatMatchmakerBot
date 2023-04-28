@@ -222,7 +222,7 @@ public class LeagueMatch
             matchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
         }
 
-        FileManager.AttachmentData[] attachmentDatas = FileManager.FindTacviewAttachmentsForACertainMatch(
+        AttachmentData[] attachmentDatas = FileManager.FindTacviewAttachmentsForACertainMatch(
             matchId, _interfaceLeague).Result;
 
         /*

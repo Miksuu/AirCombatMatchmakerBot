@@ -130,7 +130,7 @@ public abstract class BaseLeague : InterfaceLeague
     }
 
     public async Task PostMatchReport(string _finalResultMessage, string _finalResultTitle,
-        FileManager.AttachmentData[] _attachmentDatas)
+        AttachmentData[] _attachmentDatas)
     {
         InterfaceCategory leagueCategory =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(

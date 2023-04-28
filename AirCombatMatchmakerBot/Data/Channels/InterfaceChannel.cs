@@ -25,7 +25,7 @@ public interface InterfaceChannel
         string _input, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true, params string[] _files);
     public Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
-        string _input, FileManager.AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
+        string _input, AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
 
     public Task PostChannelMessages(DiscordSocketClient _client);

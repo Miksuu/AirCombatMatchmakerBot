@@ -27,7 +27,7 @@ public class LINKBUTTON : BaseButton
         return Task.FromResult(("Not implemented yet!", false));
     }
 
-    public Discord.ButtonBuilder CreateALinkButton(FileManager.AttachmentData _attachmentData)
+    public Discord.ButtonBuilder CreateALinkButton(AttachmentData _attachmentData)
     {
         Log.WriteLine("Creating a link button: " + _attachmentData.attachmentName + " | " +
             _attachmentData.attachmentLink, LogLevel.VERBOSE);

@@ -19,7 +19,7 @@ public interface InterfaceLeague
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
     public InterfaceCategory FindLeaguesInterfaceCategory();
     public Task PostMatchReport(string _finalResultMessage, string _finalResultTitle,
-        FileManager.AttachmentData[] _attachmentDatas);
+        AttachmentData[] _attachmentDatas);
     public void UpdateLeagueLeaderboard();
 
     public Task<(string, bool)> RegisterUserToALeague(ulong _userId);
