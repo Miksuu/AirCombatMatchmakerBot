@@ -52,6 +52,11 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
+        if (messageDescription == null)
+        {
+            Log.WriteLine("messageDescription was null!", LogLevel.CRITICAL);
+            return "";
+        }
         return messageDescription;
     }
 }

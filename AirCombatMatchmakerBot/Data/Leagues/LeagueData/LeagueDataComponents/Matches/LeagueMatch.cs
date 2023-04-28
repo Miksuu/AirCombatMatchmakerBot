@@ -214,6 +214,11 @@ public class LeagueMatch
             }
 
             var matchFinalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
+            if (matchFinalResultMessage == null)
+            {
+                Log.WriteLine(nameof(matchFinalResultMessage) + " was null!", LogLevel.ERROR);
+                return;
+            }
 
             matchReporting.FinalResultForConfirmation = interfaceMessage.MessageDescription;
             matchReporting.FinalMessageForMatchReportingChannel = matchFinalResultMessage.AlternativeMessage;

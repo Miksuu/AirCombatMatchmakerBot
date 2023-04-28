@@ -2,6 +2,7 @@
 using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Runtime.ConstrainedExecution;
 
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
@@ -177,7 +178,7 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Done updating leaderboard on: " + leagueCategoryName, LogLevel.VERBOSE);
     }
 
-    public async Task<(string, bool)> RegisterUserToALeague(ulong _userId)
+    public Task<(string, bool)> RegisterUserToALeague(ulong _userId)
     {
         string responseMsg = string.Empty;
 
@@ -199,7 +200,7 @@ public abstract class BaseLeague : InterfaceLeague
             {
                 string errorMsg = "Player's: " + player.PlayerNickName + " id was 0!";
                 Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                return (errorMsg, false);
+                return Task.FromResult((errorMsg, false));
             }
 
             Log.WriteLine("Found player: " + player.PlayerNickName +
@@ -235,9 +236,10 @@ public abstract class BaseLeague : InterfaceLeague
                 else
                 {
                     // Not implemented yet
-                    Log.WriteLine("This league is team based with number of players per team: " +
-                        leaguePlayerCountPerTeam, LogLevel.ERROR);
-                    return ("", false);
+                    string errorMsg = 
+                        "This league is team based with number of players per team: " + leaguePlayerCountPerTeam;
+                    Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                    return Task.FromResult((errorMsg, false));
                 }
 
                 // Add the role for the player for the specific league and set him teamActive
@@ -267,7 +269,7 @@ public abstract class BaseLeague : InterfaceLeague
                     ", had a team already active", LogLevel.VERBOSE);
                 responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName) +
                     "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
-                return (responseMsg, false);
+                return Task.FromResult((responseMsg, false));
             }
         }
         else
@@ -276,11 +278,11 @@ public abstract class BaseLeague : InterfaceLeague
                 " (only admins should be able to see this)";
             Log.WriteLine("Player: " + _userId +
                 " tried to join a league before registering", LogLevel.WARNING);
-            return (responseMsg, false);
+            return Task.FromResult((responseMsg, false));
         }
 
         UpdateLeagueLeaderboard();
 
-        return (responseMsg, true);
+        return Task.FromResult((responseMsg, true));
     }
 }

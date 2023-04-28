@@ -22,7 +22,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    string InterfaceChannel.ChannelName
+    string? InterfaceChannel.ChannelName
     {
         get
         {
@@ -170,7 +170,7 @@ public abstract class BaseChannel : InterfaceChannel
         return newMessageTuple;
     }
 
-    public async Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageName(
+    public async Task<Discord.IUserMessage?> CreateARawMessageForTheChannelFromMessageName(
         string _input, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true, 
         params string[] _files)
@@ -193,13 +193,13 @@ public abstract class BaseChannel : InterfaceChannel
         if (client == null)
         {
             Exceptions.BotClientRefNull();
-            return interfaceMessage;
+            return new Discord.IUserMessage();
         }
 
         var newMessageTuple = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
             client, this, true, _displayMessage, _component, _ephemeral, _files);
 
-        return newMessageTuple;
+        return newMessageTuple.CachedUserMessage;
     }
 
     public async Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(

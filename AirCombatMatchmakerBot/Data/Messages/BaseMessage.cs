@@ -40,7 +40,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    string InterfaceMessage.MessageEmbedTitle
+    string? InterfaceMessage.MessageEmbedTitle
     {
         get
         {
@@ -56,7 +56,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    string InterfaceMessage.MessageDescription
+    string? InterfaceMessage.MessageDescription
     {
         get
         {
@@ -152,7 +152,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    Discord.IUserMessage InterfaceMessage.CachedUserMessage
+    Discord.IUserMessage? InterfaceMessage.CachedUserMessage
     {
         get
         {
@@ -172,22 +172,22 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected ConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount;
 
     // Embed properties
-    [DataMember] protected string messageEmbedTitle = "";
-    [DataMember] protected string messageDescription = ""; // Not necessary for embed
-    protected Discord.Color messageEmbedColor = Discord.Color.DarkGrey;
+    [DataMember] protected string? messageEmbedTitle { get; set; }
+    [DataMember] protected string? messageDescription { get; set; } // Not necessary for embed
+    protected Discord.Color messageEmbedColor { get; set; } //= Discord.Color.DarkGrey;
 
-    [DataMember] protected ulong messageId;
-    [DataMember] protected ulong messageChannelId;
-    [DataMember] protected ulong messageCategoryId;
-    [DataMember] protected ConcurrentBag<InterfaceButton> buttonsInTheMessage;
+    [DataMember] protected ulong messageId { get; set; }
+    [DataMember] protected ulong messageChannelId { get; set; }
+    [DataMember] protected ulong messageCategoryId { get; set; }
+    [DataMember] protected ConcurrentBag<InterfaceButton> buttonsInTheMessage { get; set; }
 
-    protected bool mentionMatchPlayers = false;
-
-    protected Discord.IUserMessage cachedUserMessage;
+    protected bool mentionMatchPlayers { get; set; }
+    protected Discord.IUserMessage? cachedUserMessage { get; set; }
     
 
     public BaseMessage()
     {
+        messageEmbedColor = Discord.Color.Default;
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
         buttonsInTheMessage = new ConcurrentBag<InterfaceButton>();
     }
@@ -258,7 +258,7 @@ public abstract class BaseMessage : InterfaceMessage
                     {
                         string errorMsg = nameof(matchChannel) + " was null!";
                         Log.WriteLine(errorMsg, LogLevel.ERROR);
-                        //return null;
+                        return null;
                     }
 
                     var leagueMatchTuple =
@@ -388,7 +388,12 @@ public abstract class BaseMessage : InterfaceMessage
 
             //Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
-            LINKBUTTON linkButton = interfaceButton as LINKBUTTON;
+            LINKBUTTON? linkButton = interfaceButton as LINKBUTTON;
+            if (linkButton == null)
+            {
+                Log.WriteLine(nameof(linkButton) + " was null!", LogLevel.CRITICAL);
+                return null;
+            }
 
             component.WithButton(linkButton.CreateALinkButton(_attachmentDatas[a]));
 

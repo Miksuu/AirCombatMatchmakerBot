@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 public interface InterfaceChannel
 {
     public ChannelType ChannelType { get; set; }
-    public string ChannelName { get; set; }
+    public string? ChannelName { get; set; }
     public ulong ChannelId { get; set; }
     public ulong ChannelsCategoryId { get; set; }
     public ConcurrentDictionary<MessageName, bool> ChannelMessages { get; set; }

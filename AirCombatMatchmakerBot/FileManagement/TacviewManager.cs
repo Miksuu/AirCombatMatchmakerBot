@@ -49,7 +49,7 @@ public class TacviewManager
                 CategoryType.BOTSTUFF).Value.FindInterfaceChannelWithNameInTheCategory(
                     ChannelType.TACVIEWSTORAGE).CreateARawMessageForTheChannelFromMessageName(
                         "", "Match " + _matchId + "'s tacviews", true, null, false, files.ToArray());
-        if (interfaceMessageWithAttachments == null)
+        if (interfaceMessageWithAttachments.CachedUserMessage == null)
         {
             Log.WriteLine(nameof(interfaceMessageWithAttachments) + " was null!", LogLevel.CRITICAL);
             return new AttachmentData[] { };
