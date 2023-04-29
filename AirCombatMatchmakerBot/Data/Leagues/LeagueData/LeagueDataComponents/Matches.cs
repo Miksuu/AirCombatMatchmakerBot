@@ -102,8 +102,6 @@ public class Matches
         _interfaceChannel.PostChannelMessages(_client);
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
-
-        return;
     }
 
     public LeagueMatch? FindLeagueMatchByTheChannelId(ulong _channelId)

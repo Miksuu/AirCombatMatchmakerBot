@@ -44,18 +44,18 @@ public class TacviewManager
 
         int index = 0;
 
-        InterfaceMessage? interfaceMessageWithAttachments =
+        var cachedUserMessage =
             await Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
                 CategoryType.BOTSTUFF).Value.FindInterfaceChannelWithNameInTheCategory(
                     ChannelType.TACVIEWSTORAGE).CreateARawMessageForTheChannelFromMessageName(
                         "", "Match " + _matchId + "'s tacviews", true, null, false, files.ToArray());
-        if (interfaceMessageWithAttachments.CachedUserMessage == null)
+        if (cachedUserMessage == null)
         {
-            Log.WriteLine(nameof(interfaceMessageWithAttachments) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(cachedUserMessage) + " was null!", LogLevel.CRITICAL);
             return new AttachmentData[] { };
         }
 
-        foreach (var file in interfaceMessageWithAttachments.CachedUserMessage.Attachments)
+        foreach (var file in cachedUserMessage.Attachments)
         {
             Log.WriteLine("Found file: " + file.Url + " on match: " + _matchId, LogLevel.VERBOSE);
 

@@ -170,10 +170,9 @@ public abstract class BaseChannel : InterfaceChannel
         return newMessageTuple;
     }
 
-    public async Task<Discord.IUserMessage?> CreateARawMessageForTheChannelFromMessageName(
-        string _input, string _embedTitle = "", bool _displayMessage = true,
-        SocketMessageComponent? _component = null, bool _ephemeral = true, 
-        params string[] _files)
+    public async Task<Discord.IUserMessage?>CreateARawMessageForTheChannelFromMessageName(
+        string _input, string _embedTitle, bool _displayMessage,
+        SocketMessageComponent? _component, bool _ephemeral, params string[] _files)
     {
         Log.WriteLine("Creating a raw message: " + _input, LogLevel.DEBUG);
 
@@ -184,7 +183,7 @@ public abstract class BaseChannel : InterfaceChannel
         if (rawMessageInput == null)
         {
             Log.WriteLine(nameof(rawMessageInput) + " was null!", LogLevel.CRITICAL);
-            return interfaceMessage;
+            return null;
         }
 
         rawMessageInput.GenerateRawMessage(_input, _embedTitle);
@@ -193,7 +192,7 @@ public abstract class BaseChannel : InterfaceChannel
         if (client == null)
         {
             Exceptions.BotClientRefNull();
-            return new Discord.IUserMessage();
+            return null;
         }
 
         var newMessageTuple = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(

@@ -21,7 +21,7 @@ public interface InterfaceChannel
     public Task<InterfaceMessage?> CreateAMessageForTheChannelFromMessageName(
         MessageName _MessageName, bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
-    public Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageName(
+    public Task<Discord.IUserMessage?> CreateARawMessageForTheChannelFromMessageName(
         string _input, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true, params string[] _files);
     public Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
