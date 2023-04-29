@@ -149,7 +149,7 @@ public abstract class BaseCategory : InterfaceCategory
     }
 
     public async Task<InterfaceChannel?> CreateSpecificChannelFromChannelType(
-        ChannelType _channelType, ulong _socketCategoryChannelId, SocketRole _role,
+        ChannelType _channelType, ulong _socketCategoryChannelId, SocketRole? _role,
         string _overrideChannelName = "",// Keeps the functionality, but overrides the channel name
                                          // It is used for creating matches with correct name ID right now.
         params ulong[] _allowedUsersIdsArray)
@@ -210,6 +210,11 @@ public abstract class BaseCategory : InterfaceCategory
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
                     categoryTypes).Key;
 
+            if (_role == null)
+            {
+                Log.WriteLine(nameof(_role) + " was null!", LogLevel.CRITICAL);
+                return null;
+            }
             await interfaceChannel.CreateAChannelForTheCategory(guild, _role, _allowedUsersIdsArray);
 
             interfaceChannel.InterfaceMessagesWithIds.Clear();
@@ -221,27 +226,6 @@ public abstract class BaseCategory : InterfaceCategory
                 " for the ConcurrentBag of category: " + categoryTypes.ToString() +
                 " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
         }
-        /*
-        else
-        {
-            var channel = guild.GetChannel(interfaceChannel.ChannelId);
-
-            // Get the existing permission overrides for the channel
-            OverwritePermissions existingPermissions = channel.GetPermissionOverwrite(guild, _allowedUsersIdsArray);
-
-            // Modify the permission overrides as desired
-            OverwritePermissions newPermissions = existingPermissions.Modify(viewChannel: PermValue.Deny);
-
-            // Apply the modified permission overrides to the channel
-            await channel.AddPermissionOverwriteAsync(guild.EveryoneRole, newPermissions);
-
-
-            , x =>
-            {
-                x.PermissionOverwrites = GetGuildPermissions(_guild, _allowedUsersIdsArray);
-                x.CategoryId = channelsCategoryId;
-            });
-        }*/
 
         Log.WriteLine("Done creating channel: " + interfaceChannel.ChannelId + " with name: " 
             + interfaceChannel.ChannelName, LogLevel.VERBOSE);

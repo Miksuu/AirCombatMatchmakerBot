@@ -122,6 +122,12 @@ public abstract class BaseChannel : InterfaceChannel
 
         string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(channelType);
 
+        if (channelName == null)
+        {
+            Log.WriteLine("channelName was null!", LogLevel.CRITICAL);
+            return;
+        }
+
         // Temp fix perhaps unnecessary after the name has been set more properly 
         // for non-match channels
         if (channelName.Contains("match-"))
@@ -195,10 +201,15 @@ public abstract class BaseChannel : InterfaceChannel
             return null;
         }
 
-        var newMessageTuple = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
+        var createdInterfaceMessage = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
             client, this, true, _displayMessage, _component, _ephemeral, _files);
+        if (createdInterfaceMessage == null)
+        {
+            Log.WriteLine(nameof(createdInterfaceMessage) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
 
-        return newMessageTuple.CachedUserMessage;
+        return createdInterfaceMessage.CachedUserMessage;
     }
 
     public async Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
@@ -311,10 +322,8 @@ public abstract class BaseChannel : InterfaceChannel
                 InterfaceMessage interfaceMessage =
                     (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
                 
-                var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+                await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
                         _client, this, true, true);
-
-                //Log.WriteLine("messagetuple:" + newInterfaceMessage.id + " | " + newInterfaceMessage.Item2, LogLevel.VERBOSE);
 
                 leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueRegistrationMessageId = interfaceMessage.MessageId;
 
@@ -369,10 +378,10 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     // Finds all messages with that messageName
-    public ConcurrentBag<InterfaceMessage>? FindAllInterfaceMessagesWithNameInTheChannel(
+    public List<InterfaceMessage>? FindAllInterfaceMessagesWithNameInTheChannel(
         MessageName _messageName)
     {
-        ConcurrentBag <InterfaceMessage> interfaceMessageValues = new();
+        List<InterfaceMessage> interfaceMessageValues = new();
 
         Log.WriteLine("Getting CategoryKvp with name: " + _messageName, LogLevel.VERBOSE);
 
@@ -420,7 +429,7 @@ public abstract class BaseChannel : InterfaceChannel
             return Exceptions.BotClientRefNull();
         }
 
-        ConcurrentBag<InterfaceMessage?> interfaceMessages =
+        List<InterfaceMessage>? interfaceMessages =
             FindAllInterfaceMessagesWithNameInTheChannel(_messageNameToDelete);
         if (interfaceMessages == null)
         {

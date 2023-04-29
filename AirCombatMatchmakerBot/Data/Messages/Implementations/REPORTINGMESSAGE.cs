@@ -28,6 +28,12 @@ public class REPORTINGMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
+        if (messageDescription == null)
+        {
+            Log.WriteLine("messageDescription was null!", LogLevel.CRITICAL);
+            return "messageDescription was null!";
+        }
+
         return messageDescription;
     }
 }

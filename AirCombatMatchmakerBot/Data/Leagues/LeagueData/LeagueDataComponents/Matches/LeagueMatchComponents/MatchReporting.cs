@@ -208,6 +208,12 @@ public class MatchReporting
                         {
                             if (item.Value.TacviewLink.CurrentStatus == EmojiName.REDSQUARE)
                             {
+                                if (item.Value.TacviewLink.ObjectValue == null)
+                                {
+                                    Log.WriteLine(nameof(item.Value.TacviewLink.ObjectValue) + " was null!", LogLevel.CRITICAL);
+                                    continue;
+                                }
+
                                 item.Value.TacviewLink.SetObjectValueAndFieldBool(
                                     item.Value.TacviewLink.ObjectValue, EmojiName.YELLOWSQUARE);
                             }
@@ -287,7 +293,7 @@ public class MatchReporting
     {
         string response = string.Empty;
 
-        var responseTuple = CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId).Result;
+        (string,bool,InterfaceChannel) responseTuple = CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId).Result;
         if (responseTuple.Item3 == null)
         {
             Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
@@ -313,6 +319,13 @@ public class MatchReporting
             }
 
             MATCHFINALRESULTMESSAGE? finalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
+            if (finalResultMessage == null)
+            {
+                string errorMsg = nameof(finalResultMessage) + " was null!";
+                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                return (errorMsg, false);
+            }
+
             finalResultForConfirmation = interfaceMessage.MessageDescription;
             finalMessageForMatchReportingChannel = finalResultMessage.AlternativeMessage;
 
@@ -321,9 +334,17 @@ public class MatchReporting
             await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMATIONMESSAGE);
 
+            var interfaceCategory = _interfaceLeague.FindLeaguesInterfaceCategory();
+            if (interfaceCategory == null)
+            {
+                string errorMsg = nameof(interfaceCategory) + " was null!";
+                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                return (errorMsg, false);
+            }
+
             // Copypasted to MODIFYMATCHBUTTON.CS, maybe replace to method
-            InterfaceChannel interfaceChannelToDeleteTheMessageIn = _interfaceLeague.FindLeaguesInterfaceCategory(
-                ).FindInterfaceChannelWithIdInTheCategory(
+            InterfaceChannel interfaceChannelToDeleteTheMessageIn =
+                interfaceCategory.FindInterfaceChannelWithIdInTheCategory(
                     _messageChannelId);
             if (interfaceChannelToDeleteTheMessageIn == null)
             {
@@ -344,7 +365,7 @@ public class MatchReporting
         return (response, true);
     }
 
-    private Task<(string, bool, InterfaceChannel?)> CheckIfMatchCanBeSentToConfirmation(
+    private Task<(string, bool, InterfaceChannel)>? CheckIfMatchCanBeSentToConfirmation(
         ulong _leagueCategoryId, ulong _messageChannelId)
     {
         bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
@@ -353,8 +374,8 @@ public class MatchReporting
             _leagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
         if (interfaceChannel == null)
         {
-            Log.WriteLine("channel was null!", LogLevel.CRITICAL);
-            return Task.FromResult(("Channel doesn't exist!", false, interfaceChannel));
+            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
+            return null;
         }
 
         Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +

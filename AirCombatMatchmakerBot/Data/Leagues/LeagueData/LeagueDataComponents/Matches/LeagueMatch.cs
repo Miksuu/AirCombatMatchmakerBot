@@ -236,6 +236,18 @@ public class LeagueMatch
             Log.WriteLine("attachmentData: " + item.attachmentName + " | " + item.attachmentLink, LogLevel.DEBUG);
         }*/
 
+        if (matchReporting.FinalMessageForMatchReportingChannel == null)
+        {
+            Log.WriteLine(nameof(matchReporting) + " FinalMessageForMatchReportingChannel was null!", LogLevel.ERROR);
+            return;
+        }
+
+        if (matchReporting.FinalResultTitleForConfirmation == null)
+        {
+            Log.WriteLine(nameof(matchReporting) + " matchReporting.FinalResultTitleForConfirmation was null!", LogLevel.ERROR);
+            return;
+        }
+
         await _interfaceLeague.PostMatchReport(
             matchReporting.FinalMessageForMatchReportingChannel, matchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 

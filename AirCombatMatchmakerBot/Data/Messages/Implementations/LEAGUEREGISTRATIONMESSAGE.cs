@@ -27,6 +27,12 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
+        if (messageDescription == null)
+        {
+            Log.WriteLine("messageDescription was null!", LogLevel.CRITICAL);
+            return "messageDescription was null!";
+        }
+
         return messageDescription;
     }
 
@@ -53,20 +59,6 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         return returned;
     }
-
-    /*
-    public async Task GenerateAndModifyTheMessageForLeagueRegistration(InterfaceLeague? _interfaceLeague)
-    {
-        if (_interfaceLeague == null)
-        {
-            Log.WriteLine(nameof(_interfaceLeague) + " was null!", LogLevel.CRITICAL);
-            return;
-        }
-
-        await ModifyMessage("\n" + EnumExtensions.GetEnumMemberAttrValue(_interfaceLeague.LeagueCategoryName) + "\n" +
-            GetAllowedUnitsAsString(_interfaceLeague) + "\n" +
-            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(_interfaceLeague));
-    }*/
 
     private string GetAllowedUnitsAsString(InterfaceLeague _interfaceLeague)
     {
