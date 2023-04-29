@@ -455,7 +455,7 @@ public class MatchReporting
             if (foundTeam == null)
             {
                 Log.WriteLine("Found team was null!", LogLevel.CRITICAL);
-                return new Team[0];
+                return Array.Empty<Team>();
             }
 
             teamsInTheMatch[t] = foundTeam;
