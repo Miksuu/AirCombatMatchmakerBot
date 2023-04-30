@@ -3,7 +3,9 @@ using Newtonsoft.Json;
 
 public static class SerializationManager
 {
-    static string dbPath = @"C:\AirCombatMatchmakerBot\Data\database.json";
+    static string dbPath = @"C:\AirCombatMatchmakerBot\Data";
+    static string dbFileName = "database.json";
+    static string dbPathWithFileName = dbPath + @"\" + dbFileName;
 
     public static async Task SerializeDB(bool _circularDependency = false)
     {
@@ -21,7 +23,7 @@ public static class SerializationManager
         serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
         serializer.ObjectCreationHandling = ObjectCreationHandling.Replace;
 
-        using (StreamWriter sw = new StreamWriter(dbPath))
+        using (StreamWriter sw = new StreamWriter(dbPathWithFileName))
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
             serializer.Serialize(writer, Database.Instance, typeof(Database));
@@ -77,16 +79,15 @@ public static class SerializationManager
         Log.WriteLine("Done looping through current users.", LogLevel.VERBOSE);
 
         return Task.CompletedTask;
-
-        //await SerializeDB(true);
-        //Log.WriteLine("User serialization done on the server", LogLevel.SERIALIZATION);
     }
 
     public static Task DeSerializeDB()
     {
-        Log.WriteLine("DESERIALIZATION DONE!", LogLevel.SERIALIZATION);
+        Log.WriteLine("DESERIALIZATION STARTING!", LogLevel.SERIALIZATION);
 
-        string json = File.ReadAllText(dbPath);
+        FileManager.CheckIfFileAndPathExistsAndCreateItIfNecessary(dbPath, dbFileName);
+
+        string json = File.ReadAllText(dbPathWithFileName);
         if (json == "0")
         {
             Database.Instance = new();

@@ -17,7 +17,7 @@ public static class FileManager
         return Task.CompletedTask;
     }
 
-    public async static void SaveFileAttachment(SocketMessage _message, string _finalPath)
+    public async static void SaveFileAttachment(SocketMessage _message, string _filePath, string _fileName)
     {
         foreach (var attachment in _message.Attachments)
         {
@@ -27,39 +27,46 @@ public static class FileManager
                 {
                     using (var stream = await response.Content.ReadAsStreamAsync())
                     {
-                        if (!File.Exists(_finalPath))
-                        {
-                            using (var fileStream = new FileStream(_finalPath, FileMode.CreateNew))
-                            {
-                                await stream.CopyToAsync(fileStream);
-                                fileStream.Dispose();
-                            }
-                        } 
-                        else
-                        {
-                            using (var fileStream = new FileStream(_finalPath, FileMode.Truncate))
-                            {
-                                await stream.CopyToAsync(fileStream);
-                                fileStream.Dispose();
-                            }
-                        }
+                        CheckIfFileAndPathExistsAndCreateItIfNecessary(_filePath, _fileName);
                     }
                 }
             }
         }
     }
 
-    public static void CheckIfPathExistsAndCreateItIfNecessary(string _path)
+    public async static void CheckIfFileAndPathExistsAndCreateItIfNecessary(string _filePath, string _fileName)
     {
-        Log.WriteLine("Starting to create: " + _path, LogLevel.VERBOSE);
-        if (!Directory.Exists(_path))
+        string _filePathWithFileName = _filePath + @"\" + _fileName;
+
+        Log.WriteLine("Starting to create: " + _filePathWithFileName, LogLevel.VERBOSE);
+        if (!Directory.Exists(_filePath))
         {
-            Directory.CreateDirectory(_path);
-            Log.WriteLine("Done creating: " + _path, LogLevel.VERBOSE);
+            Directory.CreateDirectory(_filePath);
+            Log.WriteLine("Done creating: " + _filePath, LogLevel.VERBOSE);
         }
         else
         {
-            Log.WriteLine("Already exists, did not create : " + _path, LogLevel.VERBOSE);
+            Log.WriteLine("Already exists, did not create : " + _filePath, LogLevel.VERBOSE);
+        }
+
+        Log.WriteLine("Starting to create: " + _filePathWithFileName, LogLevel.VERBOSE);
+        if (!File.Exists(_filePathWithFileName))
+        {
+            using (var fileStream = new FileStream(_filePathWithFileName, FileMode.CreateNew))
+            {
+                await fileStream.CopyToAsync(fileStream);
+                fileStream.Dispose();
+                Log.WriteLine("Done creating: " + _filePathWithFileName, LogLevel.VERBOSE);
+            }
+        }
+        else
+        {
+            using (var fileStream = new FileStream(_filePathWithFileName, FileMode.Truncate))
+            {
+                await fileStream.CopyToAsync(fileStream);
+                fileStream.Dispose();
+                Log.WriteLine("Already exists, truncated: " + _filePathWithFileName, LogLevel.VERBOSE);
+            }
         }
     }
 }

@@ -8,12 +8,10 @@ public class TacviewManager
         Log.WriteLine("Saving tacview from user upload on league: " + _leagueName + ", on matchId:" +
             _matchId + ", from user: " + _message.Author.Id, LogLevel.VERBOSE);
         string pathToCreate = @"C:\AirCombatMatchmakerBot\Data\Tacviews\" +
-            _leagueName.ToString() + @"\" + _matchId.ToString() + @"\";
+            _leagueName.ToString() + @"\" + _matchId.ToString();
 
-        FileManager.CheckIfPathExistsAndCreateItIfNecessary(pathToCreate);
-
-        string finalPath = pathToCreate + "Match-" + _matchId + "_" + _message.Author.Id.ToString() + ".acmi";
-        FileManager.SaveFileAttachment(_message, finalPath);
+        string fileName = "Match-" + _matchId + "_" + _message.Author.Id.ToString() + ".acmi";
+        FileManager.SaveFileAttachment(_message, pathToCreate, fileName);
 
         Log.WriteLine("Done saving tacview from user upload on league: " + _leagueName + ", on matchId:" +
             _matchId + ", from user: " + _message.Author.Id, LogLevel.VERBOSE);
@@ -32,7 +30,7 @@ public class TacviewManager
         if (!Directory.Exists(pathToLookFor))
         {
             Log.WriteLine("Path doesn't exists: " + pathToLookFor, LogLevel.CRITICAL);
-            return new AttachmentData[0];
+            return Array.Empty<AttachmentData>();
         }
 
         List<string> files = Directory.GetFiles(pathToLookFor).ToList();
@@ -52,7 +50,7 @@ public class TacviewManager
         if (cachedUserMessage == null)
         {
             Log.WriteLine(nameof(cachedUserMessage) + " was null!", LogLevel.CRITICAL);
-            return new AttachmentData[] { };
+            return Array.Empty<AttachmentData>();
         }
 
         foreach (var file in cachedUserMessage.Attachments)
