@@ -322,7 +322,7 @@ public abstract class BaseChannel : InterfaceChannel
                     (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
                 
                 var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                        _client, this, true, true);
+                        _client, this, true, true, leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId);
 
                 leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueRegistrationMessageId = interfaceMessage.MessageId;
 
