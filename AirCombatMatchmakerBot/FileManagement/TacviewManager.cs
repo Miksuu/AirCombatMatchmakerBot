@@ -22,8 +22,9 @@ public class TacviewManager
     public async static Task<AttachmentData[]> FindTacviewAttachmentsForACertainMatch(
         int _matchId, InterfaceLeague _interfaceLeague)
     {
-        Log.WriteLine("Getting tacview from user upload on league: " + _interfaceLeague.LeagueCategoryName + ", on matchId:" +
-            _matchId, LogLevel.VERBOSE);
+        Log.WriteLine("Getting tacview from user upload on league: " +
+            _interfaceLeague.LeagueCategoryName + ", on matchId:" + _matchId, LogLevel.VERBOSE);
+
         string pathToLookFor = @"C:\AirCombatMatchmakerBot\Data\Tacviews\" +
             _interfaceLeague.LeagueCategoryName.ToString() + @"\" + _matchId.ToString() + @"\";
 

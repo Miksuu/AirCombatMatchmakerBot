@@ -2,7 +2,6 @@
 using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
-using System.Threading.Channels;
 
 [DataContract]
 public abstract class BaseChannel : InterfaceChannel

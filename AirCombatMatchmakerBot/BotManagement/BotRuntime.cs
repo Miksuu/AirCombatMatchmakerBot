@@ -1,5 +1,4 @@
 ﻿using Discord;
-using System.IO;
 
 // The main class to what the bot's functions revolve around
 public class BotRuntimeManager
@@ -31,7 +30,7 @@ public class BotRuntimeManager
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
-                /*
+                
                 var guild = BotReference.GetGuildRef();
                 foreach (var ch in guild.Channels)
                 {
