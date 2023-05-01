@@ -1,4 +1,4 @@
-﻿using Discord.WebSocket;
+using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
@@ -170,7 +170,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, true, _displayMessage, _component, _ephemeral);
+            client, this, true, _displayMessage, 0, _component, _ephemeral);
 
         return newMessageTuple;
     }
@@ -201,7 +201,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var createdInterfaceMessage = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, true, _displayMessage, _component, _ephemeral, _files);
+            client, this, true, _displayMessage, 0, _component, _ephemeral, _files);
         if (createdInterfaceMessage == null)
         {
             Log.WriteLine(nameof(createdInterfaceMessage) + " was null!", LogLevel.CRITICAL);
@@ -321,7 +321,7 @@ public abstract class BaseChannel : InterfaceChannel
                 InterfaceMessage interfaceMessage =
                     (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
                 
-                await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+                var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
                         _client, this, true, true);
 
                 leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueRegistrationMessageId = interfaceMessage.MessageId;

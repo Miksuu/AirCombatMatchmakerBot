@@ -195,8 +195,9 @@ public abstract class BaseMessage : InterfaceMessage
     // If the component is not null, this is a reply
     public async Task<InterfaceMessage?> CreateTheMessageAndItsButtonsOnTheBaseClass(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, bool _embed, 
-        bool _displayMessage = true, SocketMessageComponent? _component = null,
-        bool _ephemeral = true, params string[] _files)
+        bool _displayMessage = true, ulong _leagueCategoryId = 0, 
+        SocketMessageComponent? _component = null, bool _ephemeral = true,
+        params string[] _files)
     {
         messageChannelId = _interfaceChannel.ChannelId;
         messageCategoryId = _interfaceChannel.ChannelsCategoryId;
@@ -234,7 +235,7 @@ public abstract class BaseMessage : InterfaceMessage
             }
 
             // Pass league id as parameter here
-            leagueRegistrationMessage.belongsToLeagueCategoryId = messageCategoryId;
+            leagueRegistrationMessage.belongsToLeagueCategoryId = _leagueCategoryId;
             
             messageForGenerating = leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague();
         }
