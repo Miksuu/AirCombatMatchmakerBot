@@ -1,4 +1,4 @@
-﻿using Discord.WebSocket;
+using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
@@ -165,7 +165,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, true, _displayMessage, _component, _ephemeral);
+            client, this, true, _displayMessage, 0, _component, _ephemeral);
 
         return newMessageTuple;
     }
@@ -196,8 +196,13 @@ public abstract class BaseChannel : InterfaceChannel
             return interfaceMessage;
         }
 
-        var newMessageTuple = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, true, _displayMessage, _component, _ephemeral, _files);
+        var createdInterfaceMessage = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
+            client, this, true, _displayMessage, 0, _component, _ephemeral, _files);
+        if (createdInterfaceMessage == null)
+        {
+            Log.WriteLine(nameof(createdInterfaceMessage) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
 
         return newMessageTuple;
     }
