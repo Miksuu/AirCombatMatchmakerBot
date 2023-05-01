@@ -59,7 +59,7 @@ public static class FileManager
                 Log.WriteLine("Done creating: " + _filePathWithFileName, LogLevel.VERBOSE);
             }
         }
-        else
+        else if (File.Exists(_filePathWithFileName) && File.ReadAllText(_filePathWithFileName) == "0")
         {
             using (var fileStream = new FileStream(_filePathWithFileName, FileMode.Truncate))
             {

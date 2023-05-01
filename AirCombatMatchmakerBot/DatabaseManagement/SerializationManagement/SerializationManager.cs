@@ -88,8 +88,12 @@ public static class SerializationManager
         FileManager.CheckIfFileAndPathExistsAndCreateItIfNecessary(dbPath, dbFileName);
 
         string json = File.ReadAllText(dbPathWithFileName);
+
+        //Log.WriteLine("json: " + json, LogLevel.VERBOSE);
+
         if (json == "0")
         {
+            //FileManager.CheckIfFileAndPathExistsAndCreateItIfNecessary(dbPath, dbFileName);
             Database.Instance = new();
             Log.WriteLine("json was " + json + ", creating a new db instance", LogLevel.DEBUG);
 
