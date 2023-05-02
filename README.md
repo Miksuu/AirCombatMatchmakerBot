@@ -5,4 +5,6 @@ https://github.com/Miksuu/AirCombatMatchmakerBot/wiki
 
 Join our discord community for more information:
 https://discord.gg/j867yHMHtj
+
+Trello (tasklist):
 https://trello.com/b/oxzCm3Ji/aircombatmatchmakerbot
