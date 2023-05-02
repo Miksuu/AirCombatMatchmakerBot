@@ -49,6 +49,9 @@ public class BotRuntimeManager
                 string pathToDelete = @"C:\AirCombatMatchmakerBot\Data\Tacviews";
                 if (Directory.Exists(pathToDelete)) Directory.Delete(pathToDelete, true);
 
+                // Delete db here
+                // Delete roles here
+
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
