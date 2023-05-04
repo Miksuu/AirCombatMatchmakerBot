@@ -42,36 +42,40 @@ public class TacviewManager
         }
 
         int index = 0;
-
-        var cachedUserMessage =
-            await Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
-                CategoryType.BOTSTUFF).Value.FindInterfaceChannelWithNameInTheCategory(
-                    ChannelType.TACVIEWSTORAGE).CreateARawMessageForTheChannelFromMessageName(
-                        "", "Match " + _matchId + "'s tacviews", true, null, false, files.ToArray());
-        if (cachedUserMessage == null)
+        foreach (string fileIndex in files)
         {
-            Log.WriteLine(nameof(cachedUserMessage) + " was null!", LogLevel.CRITICAL);
-            return Array.Empty<AttachmentData>();
+            string[] finalFiles = new string[1];
+
+            var cachedUserMessage =
+                await Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
+                    CategoryType.BOTSTUFF).Value.FindInterfaceChannelWithNameInTheCategory(
+                        ChannelType.TACVIEWSTORAGE).CreateARawMessageForTheChannelFromMessageName(
+                            "", "Match " + _matchId + "'s tacviews", true, null, false, finalFiles[0] = fileIndex);
+            if (cachedUserMessage == null)
+            {
+                Log.WriteLine(nameof(cachedUserMessage) + " was null!", LogLevel.CRITICAL);
+                return Array.Empty<AttachmentData>();
+            }
+
+            foreach (var file in cachedUserMessage.Attachments)
+            {
+                Log.WriteLine("Found file: " + file.Url + " on match: " + _matchId, LogLevel.VERBOSE);
+
+                string playerUlongString = file.Url.Split('/').Last().Split('_').Last().Split('.').First();
+                ulong playerId = ulong.Parse(playerUlongString);
+
+                var teams = _interfaceLeague.LeagueData.Teams;
+
+                var foundTeam = teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
+                    _interfaceLeague.LeaguePlayerCountPerTeam, playerId).TeamName;
+
+                tacviewResults[index] = new AttachmentData(foundTeam + "'s Tacview", file.Url);
+                index++;
+            }
+
+            Log.WriteLine("Done getting tacview from user upload on league: " + _interfaceLeague.LeagueCategoryName +
+                ", on matchId:" + _matchId + ", with count: " + finalFiles.Length, LogLevel.VERBOSE);
         }
-
-        foreach (var file in cachedUserMessage.Attachments)
-        {
-            Log.WriteLine("Found file: " + file.Url + " on match: " + _matchId, LogLevel.VERBOSE);
-
-            string playerUlongString = file.Url.Split('/').Last().Split('_').Last().Split('.').First();
-            ulong playerId = ulong.Parse(playerUlongString);
-
-            var teams = _interfaceLeague.LeagueData.Teams;
-
-            var foundTeam = teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
-                _interfaceLeague.LeaguePlayerCountPerTeam, playerId).TeamName;
-
-            tacviewResults[index] = new AttachmentData(foundTeam + "'s Tacview", file.Url);
-            index++;
-        }
-
-        Log.WriteLine("Done getting tacview from user upload on league: " + _interfaceLeague.LeagueCategoryName +
-            ", on matchId:" + _matchId + ", with count: " + files.Count, LogLevel.VERBOSE);
 
         return tacviewResults;
     }
