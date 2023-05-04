@@ -210,11 +210,6 @@ public abstract class BaseCategory : InterfaceCategory
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
                     categoryTypes).Key;
 
-            if (_role == null)
-            {
-                Log.WriteLine(nameof(_role) + " was null!", LogLevel.CRITICAL);
-                return null;
-            }
             await interfaceChannel.CreateAChannelForTheCategory(guild, _role, _allowedUsersIdsArray);
 
             interfaceChannel.InterfaceMessagesWithIds.Clear();
