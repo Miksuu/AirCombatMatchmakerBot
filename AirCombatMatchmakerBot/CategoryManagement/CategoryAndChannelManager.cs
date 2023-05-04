@@ -204,11 +204,12 @@ public static class CategoryAndChannelManager
                 socketCategoryChannel.Id, interfaceCategory);
         }
 
+        /*
         if (role == null)
         {
             Log.WriteLine(nameof(role) + " was null!", LogLevel.CRITICAL);
             return;
-        }
+        }*/
 
         // Handle channel checking/creation
         await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _client, role);
