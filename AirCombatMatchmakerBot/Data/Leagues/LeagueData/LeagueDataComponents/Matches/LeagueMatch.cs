@@ -282,9 +282,6 @@ public class LeagueMatch
         Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
             Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
 
-
-        //_interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Clear(m => m.matchId == tempMatch.matchId);
-
         foreach (var item in _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Where(
             m => m.matchId == tempMatch.MatchId))
         {
