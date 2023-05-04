@@ -27,14 +27,15 @@ public static class FileManager
                 {
                     using (var stream = await response.Content.ReadAsStreamAsync())
                     {
-                        CheckIfFileAndPathExistsAndCreateItIfNecessary(_filePath, _fileName);
+                        CheckIfFileAndPathExistsAndCreateItIfNecessary(_filePath, _fileName, stream);
                     }
                 }
             }
         }
     }
 
-    public async static void CheckIfFileAndPathExistsAndCreateItIfNecessary(string _filePath, string _fileName)
+    public async static void CheckIfFileAndPathExistsAndCreateItIfNecessary(
+        string _filePath, string _fileName, System.IO.Stream? _optionalFileContent = null)
     {
         string _filePathWithFileName = _filePath + @"\" + _fileName;
 
@@ -54,7 +55,13 @@ public static class FileManager
         {
             using (var fileStream = new FileStream(_filePathWithFileName, FileMode.CreateNew))
             {
-                await fileStream.CopyToAsync(fileStream);
+                if (_optionalFileContent != null)
+                {
+                    Log.WriteLine("File has content, setting stream", LogLevel.VERBOSE);
+                    await _optionalFileContent.CopyToAsync(fileStream);
+                }
+
+                //await fileStream.CopyToAsync(fileStream);
                 fileStream.Dispose();
                 Log.WriteLine("Done creating: " + _filePathWithFileName, LogLevel.VERBOSE);
             }
@@ -63,7 +70,13 @@ public static class FileManager
         {
             using (var fileStream = new FileStream(_filePathWithFileName, FileMode.Truncate))
             {
-                await fileStream.CopyToAsync(fileStream);
+                if (_optionalFileContent != null)
+                {
+                    Log.WriteLine("File has content, setting stream", LogLevel.VERBOSE);
+                    await _optionalFileContent.CopyToAsync(fileStream);
+                }
+
+                //await fileStream.CopyToAsync(fileStream);
                 fileStream.Dispose();
                 Log.WriteLine("Already exists, truncated: " + _filePathWithFileName, LogLevel.VERBOSE);
             }
