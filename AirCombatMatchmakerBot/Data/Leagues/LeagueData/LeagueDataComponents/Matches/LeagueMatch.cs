@@ -223,7 +223,6 @@ public class LeagueMatch
             matchReporting.FinalResultForConfirmation = interfaceMessage.MessageDescription;
             matchReporting.FinalMessageForMatchReportingChannel = matchFinalResultMessage.AlternativeMessage;
 
-
             matchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
         }
 
