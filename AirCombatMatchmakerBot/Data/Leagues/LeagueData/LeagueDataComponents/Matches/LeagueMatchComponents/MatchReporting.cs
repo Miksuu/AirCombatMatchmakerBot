@@ -208,11 +208,12 @@ public class MatchReporting
                         {
                             if (item.Value.TacviewLink.CurrentStatus == EmojiName.REDSQUARE)
                             {
-                                if (item.Value.TacviewLink.ObjectValue == null)
+                                /*
+                                if (item.Value == null)
                                 {
                                     Log.WriteLine(nameof(item.Value.TacviewLink.ObjectValue) + " was null!", LogLevel.CRITICAL);
                                     continue;
-                                }
+                                }*/
 
                                 item.Value.TacviewLink.SetObjectValueAndFieldBool(
                                     item.Value.TacviewLink.ObjectValue, EmojiName.YELLOWSQUARE);
