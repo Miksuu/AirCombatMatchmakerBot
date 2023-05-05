@@ -174,7 +174,7 @@ public class LeagueMatch
         return allowedUserIds;
     }
 
-    public async void FinishTheMatch(InterfaceLeague _interfaceLeague, bool _removingPlayerFromDatabase = false)
+    public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
     {
         matchReporting.MatchDone = true;
 
@@ -191,40 +191,39 @@ public class LeagueMatch
             return;
         }
 
-        if (matchReporting.FinalResultForConfirmation == null)
+        /*
+        if (!_removingPlayerFromDatabase)
         {
-            if (!_removingPlayerFromDatabase)
-            {
-                Log.WriteLine("Final result for the confirmation was null!", LogLevel.CRITICAL);
-                return;
-            }
+            Log.WriteLine("Final result for the confirmation was null!", LogLevel.CRITICAL);
+            return;
+        }*/
 
-            Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
+        Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 
-            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                    matchChannelId);
+        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                matchChannelId);
 
-            var interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                    MessageName.MATCHFINALRESULTMESSAGE, false);
-            if (interfaceMessage == null)
-            {
-                Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.ERROR);
-                return;
-            }
-
-            var matchFinalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
-            if (matchFinalResultMessage == null)
-            {
-                Log.WriteLine(nameof(matchFinalResultMessage) + " was null!", LogLevel.ERROR);
-                return;
-            }
-
-            matchReporting.FinalResultForConfirmation = interfaceMessage.MessageDescription;
-            matchReporting.FinalMessageForMatchReportingChannel = matchFinalResultMessage.AlternativeMessage;
-
-            matchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
+        var interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                MessageName.MATCHFINALRESULTMESSAGE, false);
+        if (interfaceMessage == null)
+        {
+            Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.ERROR);
+            return;
         }
+
+        var matchFinalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
+        if (matchFinalResultMessage == null)
+        {
+            Log.WriteLine(nameof(matchFinalResultMessage) + " was null!", LogLevel.ERROR);
+            return;
+        }
+
+        Log.WriteLine("altMsg: " + matchFinalResultMessage.AlternativeMessage, LogLevel.DEBUG);
+
+        matchReporting.FinalResultForConfirmation = interfaceMessage.MessageDescription;
+        matchReporting.FinalMessageForMatchReportingChannel = matchFinalResultMessage.AlternativeMessage;
+        matchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
         AttachmentData[] attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
             matchId, _interfaceLeague).Result;
@@ -246,6 +245,8 @@ public class LeagueMatch
             Log.WriteLine(nameof(matchReporting) + " matchReporting.FinalResultTitleForConfirmation was null!", LogLevel.ERROR);
             return;
         }
+
+        Log.WriteLine("finalMsg: " + matchReporting.FinalMessageForMatchReportingChannel, LogLevel.DEBUG);
 
         await _interfaceLeague.PostMatchReport(
             matchReporting.FinalMessageForMatchReportingChannel, matchReporting.FinalResultTitleForConfirmation, attachmentDatas);
@@ -290,10 +291,10 @@ public class LeagueMatch
         }
 
         // When removing the player from the database, no need for this because it's done after he is gone from the league
-        if (!_removingPlayerFromDatabase)
-        {
+        //if (!_removingPlayerFromDatabase)
+        //{
             _interfaceLeague.UpdateLeagueLeaderboard();
-        }
+        //}
 
         await SerializationManager.SerializeDB();
     }

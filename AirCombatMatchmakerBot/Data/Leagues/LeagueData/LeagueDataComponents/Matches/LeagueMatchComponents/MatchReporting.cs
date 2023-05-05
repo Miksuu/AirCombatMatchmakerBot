@@ -294,7 +294,7 @@ public class MatchReporting
     {
         string response = string.Empty;
 
-        (string,bool,InterfaceChannel) responseTuple = CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId).Result;
+        (string, bool, InterfaceChannel) responseTuple = CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId).Result;
         if (responseTuple.Item3 == null)
         {
             Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
@@ -329,7 +329,6 @@ public class MatchReporting
 
             finalResultForConfirmation = interfaceMessage.MessageDescription;
             finalMessageForMatchReportingChannel = finalResultMessage.AlternativeMessage;
-
             finalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
             await interfaceChannel.CreateAMessageForTheChannelFromMessageName(

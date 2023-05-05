@@ -97,7 +97,9 @@ public class Database
                         match.MatchReporting.EloSystem.CalculateAndSaveFinalEloDeltaForMatchForfeit(
                             match.MatchReporting.FindTeamsInTheMatch(interfaceLeague),
                             match.MatchReporting.TeamIdsWithReportData, teamId);
-                        match.FinishTheMatch(interfaceLeague, true);
+
+                        Log.WriteLine("Possibly deprecated, rework this", LogLevel.WARNING);
+                        match.FinishTheMatch(interfaceLeague);
                     }
                 }
 
