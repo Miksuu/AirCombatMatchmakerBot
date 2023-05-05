@@ -12,7 +12,7 @@ public class COMMENT : BaseCommand
         isAdminCommand = false;
     }
 
-    protected override async Task<string> ActivateCommandFunction(SocketSlashCommand _command, string _firstOptionString)
+    protected override async Task<(string, bool)> ActivateCommandFunction(SocketSlashCommand _command, string _firstOptionString)
     {
         ulong commandChannelId = _command.Channel.Id;
         ulong commandPlayerId = _command.User.Id;
@@ -23,7 +23,7 @@ public class COMMENT : BaseCommand
         if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
             commandChannelId))
         {
-            return "You are not commenting on the match channel!";
+            return ("You are not commenting on the match channel!", false);
         }
 
         var leagueInterfaceWithTheMatch =
@@ -32,7 +32,7 @@ public class COMMENT : BaseCommand
         if (leagueInterfaceWithTheMatch.Item1 == null || leagueInterfaceWithTheMatch.Item2 == null)
         {
             Log.WriteLine(nameof(leagueInterfaceWithTheMatch) + " was null!", LogLevel.ERROR);
-            return "Error while processing your command!";
+            return ("Error while processing your command!", false);
         }
 
         if (!leagueInterfaceWithTheMatch.Item2.GetIdsOfThePlayersInTheMatchAsArray(
@@ -40,7 +40,7 @@ public class COMMENT : BaseCommand
         {
             Log.WriteLine("User: " + commandPlayerId + " tried to comment on channel: " +
                 commandChannelId + "!", LogLevel.WARNING);
-            return "That's not your match to comment on!";
+            return ("That's not your match to comment on!", false);
         }
 
         /*
@@ -65,7 +65,7 @@ public class COMMENT : BaseCommand
 
         if (!finalResponseTuple.Item2)
         {
-            return finalResponseTuple.Item1;
+            return ("Comment posted: " + _firstOptionString, true);
         }
 
         /*
@@ -91,6 +91,6 @@ public class COMMENT : BaseCommand
             Log.WriteLine("MessageDescription to modify was null", LogLevel.WARNING);
         }*/
 
-        return "Comment posted: " +  _firstOptionString;
+        return ("", false);
     }
 }

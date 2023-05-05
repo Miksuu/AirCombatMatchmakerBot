@@ -12,7 +12,8 @@ public class REMOVEPLAYER : BaseCommand
         isAdminCommand = true;
     }
 
-    protected override async Task<string> ActivateCommandFunction(SocketSlashCommand _command, string _firstOptionString)
+    protected override async Task<(string, bool)> ActivateCommandFunction(
+        SocketSlashCommand _command, string _firstOptionString)
     {
         ulong commandUserId = _command.User.Id;
         ulong playerToBeRemoved = 0;
@@ -24,13 +25,13 @@ public class REMOVEPLAYER : BaseCommand
         else
         {
             Log.WriteLine("Command input was invalid " + _firstOptionString, LogLevel.CRITICAL);
-            return "Command input was invalid!";
+            return ("Command input was invalid!", false);
         }
 
         await Database.Instance.RemovePlayerFromTheDatabase(playerToBeRemoved);
 
         Log.WriteLine("playerToBeRemoved: " + playerToBeRemoved, LogLevel.DEBUG);
 
-        return "Player: " + playerToBeRemoved + " removed succesfully!";
+        return ("Player: " + playerToBeRemoved + " removed succesfully!", true);
     }
 }

@@ -58,7 +58,7 @@ public abstract class BaseCommand : InterfaceCommand
     protected CommandOption? commandOption;
     protected bool isAdminCommand = false;
 
-    public async Task<string> ReceiveCommandAndCheckForAdminRights(
+    public async Task<(string, bool)> ReceiveCommandAndCheckForAdminRights(
         SocketSlashCommand _command, string _firstOptionString)
     {
         ulong commandSenderId = _command.User.Id;
@@ -75,7 +75,7 @@ public abstract class BaseCommand : InterfaceCommand
         else if (isAdminCommand && !senderIsAdmin)
         {
             Log.WriteLine(commandSenderId + " tried to access an admin command", LogLevel.VERBOSE);
-            return "You are not allowed to use that command!";
+            return ("You are not allowed to use that command!", false);
         }
 
         Log.WriteLine("Command was a regular one", LogLevel.VERBOSE);
@@ -83,7 +83,7 @@ public abstract class BaseCommand : InterfaceCommand
         return await ActivateCommandFunction(_command, _firstOptionString);
     }
 
-    protected abstract Task<string> ActivateCommandFunction(
+    protected abstract Task<(string, bool)> ActivateCommandFunction(
         SocketSlashCommand _command, string _firstOptionString);
 
     public async Task AddNewCommandWithOption(Discord.WebSocket.DiscordSocketClient _client)

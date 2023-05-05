@@ -52,8 +52,6 @@ public static class CommandHandler
             Log.WriteLine("The command " + _command.Data.Name + " does not have any options in it.", LogLevel.DEBUG);
         }
 
-        string response = "";
-
         InterfaceCommand interfaceCommand = GetCommandInstance(_command.CommandName.ToUpper().ToString());
 
         if (firstOptionString == null)
@@ -62,12 +60,15 @@ public static class CommandHandler
             return;
         }
 
-        response = await interfaceCommand.ReceiveCommandAndCheckForAdminRights(_command, firstOptionString);
+        var responseTuple = await interfaceCommand.ReceiveCommandAndCheckForAdminRights(_command, firstOptionString);
 
-        await SerializationManager.SerializeDB();
-
+        if (responseTuple.Item2)
+        {
+            await SerializationManager.SerializeDB();
+        }
+        
         await _command.RespondAsync(BotMessaging.GetMessageResponse(
-            _command.Data.Name, response, _command.Channel.Name), ephemeral: true);
+            _command.Data.Name, responseTuple.Item1, _command.Channel.Name), ephemeral: true);
         
         Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
     }
