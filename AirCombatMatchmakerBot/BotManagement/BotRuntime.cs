@@ -34,13 +34,13 @@ public class BotRuntimeManager
                 var guild = BotReference.GetGuildRef();
                 foreach (var ch in guild.Channels)
                 {
-                    if (ch.Name == "info") continue;
-
                     Log.WriteLine("deleting " + ch.Name, LogLevel.DEBUG);
                     await ch.DeleteAsync();
                 }
                 foreach (var cat in guild.CategoryChannels)
                 {
+                    if (cat.Name.ToLower().Contains("main-category")) continue;
+
                     Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
                     await cat.DeleteAsync();
                 }

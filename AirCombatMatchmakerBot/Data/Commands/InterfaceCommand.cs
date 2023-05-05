@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using Newtonsoft.Json;
-using System.Runtime.Serialization;
 
 [JsonObjectAttribute]
 public interface InterfaceCommand

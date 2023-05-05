@@ -1,7 +1,5 @@
 ﻿using Discord.WebSocket;
 using Discord;
-using System.Runtime.Serialization;
-using System.Reflection.Emit;
 
 public abstract class BaseCommand : InterfaceCommand
 {
