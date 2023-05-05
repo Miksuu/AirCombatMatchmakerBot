@@ -22,7 +22,7 @@ public class CONFIRMSCOREBUTTON : BaseMatchButton
         return "";
     }
 
-    public override Task<(string, bool)> ActivateButtonFunction(
+    public override Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         string[] splitStrings = buttonCustomId.Split('_');
@@ -40,7 +40,7 @@ public class CONFIRMSCOREBUTTON : BaseMatchButton
             string errorMsg = nameof(interfaceLeagueCached) + " or " +
                 nameof(leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return Task.FromResult((errorMsg, false));
+            return Task.FromResult(new Response(errorMsg, false));
         }
 
         Log.WriteLine("Setting ConfirmedMatch false", LogLevel.VERBOSE);
@@ -52,14 +52,14 @@ public class CONFIRMSCOREBUTTON : BaseMatchButton
 
         Log.WriteLine("Done setting ConfirmedMatch false", LogLevel.VERBOSE);
 
-        var finalResponseTuple = leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
+        var response = leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
             interfaceLeagueCached, playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE,
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 
         Log.WriteLine("Reached end before the return with player id: " +
-            playerId + " with response:" + finalResponseTuple.Item1, LogLevel.DEBUG);
+            playerId + " with response:" + response.responseString, LogLevel.DEBUG);
 
-        return Task.FromResult((finalResponseTuple.Item1, true));
+        return Task.FromResult(response);
     }
 }

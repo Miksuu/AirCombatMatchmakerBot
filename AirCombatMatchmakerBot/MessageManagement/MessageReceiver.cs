@@ -117,7 +117,7 @@ public static class MessageReceiver
                     interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId,
                     _socketMessage.Channel.Id).Result;
 
-            if (!finalResponseTuple.Item2)
+            if (!finalResponseTuple.serialize)
             {
                 return;
             }
@@ -128,7 +128,7 @@ public static class MessageReceiver
                     interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
                     interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, _socketMessage.Channel.Id);
 
-                if (!finalResponseTuple.Item2)
+                if (!finalResponseTuple.serialize)
                 {
                     return;
                 }

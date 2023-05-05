@@ -36,18 +36,18 @@ public static class ButtonHandler
             return;
         }
 
-        var responseTuple = databaseButton.ActivateButtonFunction(
+        var response = databaseButton.ActivateButtonFunction(
             _component, interfaceMessage).Result;
 
         // Only serialize when the interaction was something that needs to be serialized (defined in ActivateButtonFunction())
-        if (responseTuple.Item2)
+        if (response.serialize)
         {
             await SerializationManager.SerializeDB();
         }
 
-        Log.WriteLine(responseTuple.Item1 + " | " +responseTuple.Item2, LogLevel.DEBUG);
+        Log.WriteLine(response.responseString + " | " +response.serialize, LogLevel.DEBUG);
 
-        await _component.RespondAsync(responseTuple.Item1, ephemeral: databaseButton.EphemeralResponse);
+        await _component.RespondAsync(response.responseString, ephemeral: databaseButton.EphemeralResponse);
         //else { Log.WriteLine("the response was: " + responseTuple.Item1, LogLevel.CRITICAL); }
     }
 

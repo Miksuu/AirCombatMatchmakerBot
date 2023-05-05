@@ -178,7 +178,7 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Done updating leaderboard on: " + leagueCategoryName, LogLevel.VERBOSE);
     }
 
-    public Task<(string, bool)> RegisterUserToALeague(ulong _userId)
+    public Task<Response> RegisterUserToALeague(ulong _userId)
     {
         string responseMsg = string.Empty;
 
@@ -200,7 +200,7 @@ public abstract class BaseLeague : InterfaceLeague
             {
                 string errorMsg = "Player's: " + player.PlayerNickName + " id was 0!";
                 Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                return Task.FromResult((errorMsg, false));
+                return Task.FromResult(new Response(errorMsg, false));
             }
 
             Log.WriteLine("Found player: " + player.PlayerNickName +
@@ -239,7 +239,7 @@ public abstract class BaseLeague : InterfaceLeague
                     string errorMsg = 
                         "This league is team based with number of players per team: " + leaguePlayerCountPerTeam;
                     Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                    return Task.FromResult((errorMsg, false));
+                    return Task.FromResult(new Response(errorMsg, false));
                 }
 
                 // Add the role for the player for the specific league and set him teamActive
@@ -269,7 +269,7 @@ public abstract class BaseLeague : InterfaceLeague
                     ", had a team already active", LogLevel.VERBOSE);
                 responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName) +
                     "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
-                return Task.FromResult((responseMsg, false));
+                return Task.FromResult(new Response(responseMsg, false));
             }
         }
         else
@@ -278,11 +278,11 @@ public abstract class BaseLeague : InterfaceLeague
                 " (only admins should be able to see this)";
             Log.WriteLine("Player: " + _userId +
                 " tried to join a league before registering", LogLevel.WARNING);
-            return Task.FromResult((responseMsg, false));
+            return Task.FromResult(new Response(responseMsg, false));
         }
 
         UpdateLeagueLeaderboard();
 
-        return Task.FromResult((responseMsg, true));
+        return Task.FromResult(new Response(responseMsg, true));
     }
 }

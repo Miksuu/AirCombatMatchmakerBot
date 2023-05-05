@@ -148,6 +148,6 @@ public abstract class BaseButton : InterfaceButton
 
     protected abstract string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId);
 
-    public abstract Task<(string, bool)> ActivateButtonFunction(
+    public abstract Task<Response> ActivateButtonFunction(
          SocketMessageComponent _component, InterfaceMessage _interfaceMessage);
 }

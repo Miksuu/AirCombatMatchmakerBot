@@ -20,7 +20,7 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseChallengeChannelButton
         return "";
     }
 
-    public override async Task<(string, bool)> ActivateButtonFunction(
+    public override async Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         Log.WriteLine("Starting processing a challenge canel request by: " +
@@ -31,7 +31,7 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseChallengeChannelButton
         {
             string errorMsg = nameof(interfaceLeagueCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
+            return new Response(errorMsg, false);
         }
 
         string response = interfaceLeagueCached.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(
@@ -39,13 +39,13 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseChallengeChannelButton
 
         if (response == "notInTheQueue")
         {
-            return ("You are not in the queue!!", false);
+            return new Response("You are not in the queue!!", false);
         }
 
         await _interfaceMessage.GenerateAndModifyTheMessage();
 
         Log.WriteLine("After modifying message", LogLevel.VERBOSE);
 
-        return ("", true);
+        return new Response("", true);
     }
 }

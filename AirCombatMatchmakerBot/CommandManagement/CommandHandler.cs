@@ -62,13 +62,13 @@ public static class CommandHandler
 
         var responseTuple = await interfaceCommand.ReceiveCommandAndCheckForAdminRights(_command, firstOptionString);
 
-        if (responseTuple.Item2)
+        if (responseTuple.serialize)
         {
             await SerializationManager.SerializeDB();
         }
         
         await _command.RespondAsync(BotMessaging.GetMessageResponse(
-            _command.Data.Name, responseTuple.Item1, _command.Channel.Name), ephemeral: true);
+            _command.Data.Name, responseTuple.responseString, _command.Channel.Name), ephemeral: true);
         
         Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
     }

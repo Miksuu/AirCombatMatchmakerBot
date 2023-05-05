@@ -31,7 +31,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         return customId;
     }
 
-    public override Task<(string, bool)> ActivateButtonFunction(
+    public override Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
@@ -49,12 +49,12 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         {
             string errorMsg = nameof(interfaceLeague) + " was null! Could not find the league.";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return Task.FromResult((errorMsg, false));
+            return Task.FromResult(new Response(errorMsg, false));
         }
 
         var responseTuple = interfaceLeague.RegisterUserToALeague(_component.User.Id).Result;
 
-        if (responseTuple.Item2)
+        if (responseTuple.serialize)
         {
             // Improved response time
             new Thread(() => InitMessageModifyOnSecondThread(_interfaceMessage)).Start();

@@ -21,10 +21,10 @@ public class LINKBUTTON : BaseButton
         return "";
     }
 
-    public override Task<(string, bool)> ActivateButtonFunction(
+    public override Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        return Task.FromResult(("Not implemented yet!", false));
+        return Task.FromResult(new Response("Not implemented yet!", false));
     }
 
     public Discord.ButtonBuilder CreateALinkButton(AttachmentData _attachmentData)

@@ -144,7 +144,7 @@ public class MatchReporting
         }
     }
 
-    public async Task<(string, bool)> ProcessPlayersSentReportObject(
+    public async Task<Response> ProcessPlayersSentReportObject(
         InterfaceLeague _interfaceLeague, ulong _playerId, string _reportedObjectByThePlayer,
         TypeOfTheReportingObject _typeOfTheReportingObject, ulong _leagueCategoryId, ulong _messageChannelId)
     {
@@ -158,7 +158,7 @@ public class MatchReporting
         {
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already over.", LogLevel.VERBOSE);
-            return Task.FromResult(("Match is already done!", false)).Result;
+            return Task.FromResult(new Response("Match is already done!", false)).Result;
         }
 
         // Can receive comments still even though the the confirmation is under way
@@ -166,8 +166,7 @@ public class MatchReporting
         {
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already in confirmation.", LogLevel.VERBOSE);
-            return Task.FromResult(("Match is in confirmation already! Finish that first, " +
-                "or hit the MODIFY button if you need to change reporting result!", false)).Result;
+            return Task.FromResult(new Response("Match is in confirmation already! Finish that first, ", false)).Result;
         }
 
         Team? reportingTeam =
@@ -176,14 +175,14 @@ public class MatchReporting
         if (reportingTeam == null)
         {
             Log.WriteLine(nameof(reportingTeam) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
-            return Task.FromResult((response, false)).Result;
+            return Task.FromResult(new Response(response, false)).Result;
         }
 
         // First time pressing the report button for the team
         if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
         {
             Log.WriteLine("Key wasn't found! by player:" + _playerId, LogLevel.WARNING);
-            return ("", false);
+            return new Response("", false);
         }
         // Replacing the result
         else
@@ -250,7 +249,7 @@ public class MatchReporting
             if (interfaceMessage == null)
             {
                 Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.CRITICAL);
-                return (nameof(interfaceMessage) + " was null!", false);
+                return new Response(nameof(interfaceMessage) + " was null!", false);
             }
             finalResultForConfirmation = interfaceMessage.GenerateMessage();
             // Must be called after GenerateMessage() since it's defined there
@@ -263,7 +262,7 @@ public class MatchReporting
         {
             string errorMsg = nameof(messageToEdit) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
+            return new Response(errorMsg, false);
         }
         await messageToEdit.GenerateAndModifyTheMessage();
 
@@ -282,13 +281,13 @@ public class MatchReporting
             Log.WriteLine("Count was: " + reportedTeamsCount + ", Error!", LogLevel.ERROR);
 
             // Maybe handle the error
-            return Task.FromResult((response, false)).Result;
+            return Task.FromResult(new Response("Couldn't post comment", false)).Result;
         }
 
-        return Task.FromResult((response, true)).Result;
+        return Task.FromResult(new Response(response, true)).Result;
     }
 
-    public async Task<(string, bool)> PrepareFinalMatchResult(
+    public async Task<Response> PrepareFinalMatchResult(
         InterfaceLeague _interfaceLeague, ulong _playerId,
          ulong _leagueCategoryId, ulong _messageChannelId)
     {
@@ -298,7 +297,7 @@ public class MatchReporting
         if (responseTuple.Item3 == null)
         {
             Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
-            return (response, false);
+            return new Response(response, false);
         }
 
         response = responseTuple.Item1;
@@ -316,7 +315,7 @@ public class MatchReporting
             {
                 string errorMsg = nameof(interfaceMessage) + " was null!";
                 Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                return (errorMsg, false);
+                return new Response(errorMsg, false);
             }
 
             MATCHFINALRESULTMESSAGE? finalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
@@ -324,7 +323,7 @@ public class MatchReporting
             {
                 string errorMsg = nameof(finalResultMessage) + " was null!";
                 Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                return (errorMsg, false);
+                return new Response(errorMsg, false);
             }
 
             finalResultForConfirmation = interfaceMessage.MessageDescription;
@@ -339,7 +338,7 @@ public class MatchReporting
             {
                 string errorMsg = nameof(interfaceCategory) + " was null!";
                 Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                return (errorMsg, false);
+                return new Response(errorMsg, false);
             }
 
             // Copypasted to MODIFYMATCHBUTTON.CS, maybe replace to method
@@ -350,7 +349,7 @@ public class MatchReporting
             {
                 Log.WriteLine(nameof(interfaceChannelToDeleteTheMessageIn) + " was null, with: " +
                     _messageChannelId, LogLevel.CRITICAL);
-                return (nameof(interfaceChannelToDeleteTheMessageIn) + " was null", false);
+                return new Response(nameof(interfaceChannelToDeleteTheMessageIn) + " was null", false);
             }
 
             // Delete the messages which aren't useful for confirmation phase anymore
@@ -362,7 +361,7 @@ public class MatchReporting
 
         Log.WriteLine("returning response: " + response, LogLevel.VERBOSE);
 
-        return (response, true);
+        return new Response(response, true);
     }
 
     private Task<(string, bool, InterfaceChannel)>? CheckIfMatchCanBeSentToConfirmation(

@@ -12,7 +12,7 @@ public class COMMENT : BaseCommand
         isAdminCommand = false;
     }
 
-    protected override async Task<(string, bool)> ActivateCommandFunction(SocketSlashCommand _command, string _firstOptionString)
+    protected override async Task<Response> ActivateCommandFunction(SocketSlashCommand _command, string _firstOptionString)
     {
         ulong commandChannelId = _command.Channel.Id;
         ulong commandPlayerId = _command.User.Id;
@@ -23,7 +23,7 @@ public class COMMENT : BaseCommand
         if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
             commandChannelId))
         {
-            return ("You are not commenting on the match channel!", false);
+            return new Response("You are not commenting on the match channel!", false);
         }
 
         var leagueInterfaceWithTheMatch =
@@ -32,7 +32,7 @@ public class COMMENT : BaseCommand
         if (leagueInterfaceWithTheMatch.Item1 == null || leagueInterfaceWithTheMatch.Item2 == null)
         {
             Log.WriteLine(nameof(leagueInterfaceWithTheMatch) + " was null!", LogLevel.ERROR);
-            return ("Error while processing your command!", false);
+            return new Response("Error while processing your command!", false);
         }
 
         if (!leagueInterfaceWithTheMatch.Item2.GetIdsOfThePlayersInTheMatchAsArray(
@@ -40,7 +40,7 @@ public class COMMENT : BaseCommand
         {
             Log.WriteLine("User: " + commandPlayerId + " tried to comment on channel: " +
                 commandChannelId + "!", LogLevel.WARNING);
-            return ("That's not your match to comment on!", false);
+            return new Response("That's not your match to comment on!", false);
         }
 
         /*
@@ -63,9 +63,9 @@ public class COMMENT : BaseCommand
                     _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER,
                     leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, commandChannelId);
 
-        if (finalResponseTuple.Item2)
+        if (finalResponseTuple.serialize)
         {
-            return ("Comment posted: " + _firstOptionString, true);
+            return new Response("Comment posted: " + _firstOptionString, true);
         }
 
         /*
@@ -91,6 +91,6 @@ public class COMMENT : BaseCommand
             Log.WriteLine("MessageDescription to modify was null", LogLevel.WARNING);
         }*/
 
-        return ("", false);
+        return new Response("Couldn't post comment", false);
     }
 }

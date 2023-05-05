@@ -18,7 +18,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
         return "";
     }
 
-    public override async Task<(string, bool)> ActivateButtonFunction(
+    public override async Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         FindMatchTupleAndInsertItToTheCache(_interfaceMessage);
@@ -27,7 +27,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
             string errorMsg = nameof(interfaceLeagueCached) + " or " +
                 nameof(leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
+            return new Response(errorMsg, false);
         }
 
         string finalResponse = string.Empty;
@@ -43,18 +43,18 @@ public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
         if (reportDataTupleWithString.Item1 == null)
         {
             Log.WriteLine(nameof(reportDataTupleWithString) + " was null!", LogLevel.CRITICAL);
-            return (reportDataTupleWithString.Item2, false);
+            return new Response(reportDataTupleWithString.Item2, false);
         }
         if (reportDataTupleWithString.Item2 != "")
         {
             Log.WriteLine("User: " + componentPlayerId + " confirm a match on channel: " +
                 _component.Channel.Id + "!", LogLevel.WARNING);
-            return (reportDataTupleWithString.Item2, false);
+            return new Response(reportDataTupleWithString.Item2, false);
         }
 
         if (reportDataTupleWithString.Item1.ElementAt(0).ConfirmedMatch)
         {
-            return ("You have already confirmed the match!", false);
+            return new Response("You have already confirmed the match!", false);
         }
 
         reportDataTupleWithString.Item1.ElementAt(0).ConfirmedMatch = true;
@@ -76,7 +76,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
         {
             string errorMsg = nameof(confirmationMessage) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
+            return new Response(errorMsg, false);
         }
 
         Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " + confirmationMessage.MessageDescription, LogLevel.DEBUG);
@@ -86,6 +86,6 @@ public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
         Log.WriteLine("Reached end before the return with player id: " + componentPlayerId +
             " with finalResposne: " + finalResponse, LogLevel.DEBUG);
 
-        return (finalResponse, true);
+        return new Response(finalResponse, true);
     }
 }

@@ -21,7 +21,7 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
         return "";
     }
 
-    public override async Task<(string, bool)> ActivateButtonFunction(
+    public override async Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         ulong playerId = _component.User.Id;
@@ -35,7 +35,7 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
         {
             string errorMsg = nameof(interfaceLeagueCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
+            return new Response(errorMsg, false);
         }
 
         var challengeStatusOfTheCurrentLeague = interfaceLeagueCached.LeagueData.ChallengeStatus;
@@ -46,7 +46,7 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
         {
             Log.WriteLine(nameof(playerTeam) +
                 " was null! Could not find the team.", LogLevel.CRITICAL);
-            return ("Error! Team not found", false);
+            return new Response("Error! Team not found", false);
         }
 
         Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueCached.LeaguePlayerCountPerTeam) +
@@ -81,14 +81,14 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
             {
                 Log.WriteLine(nameof(teamToSearchFor) +
                     " was null! Could not find the team.", LogLevel.CRITICAL);
-                return ("Error! Team null!", false);
+                return new Response("Error! Team null!", false);
             }
 
             if (challengeStatusOfTheTempLeague.CheckIfPlayerTeamIsAlreadyInQueue(teamToSearchFor))
             {
                 Log.WriteLine(playerId + " already at queue at: " + channelId, LogLevel.VERBOSE);
                 // Add link to the channel
-                return ("You are already in the queue at another league: " + league.LeagueCategoryName, false);
+                return new Response("You are already in the queue at another league: " + league.LeagueCategoryName, false);
             }
 
             Log.WriteLine(playerId + " not in the queue at: " + channelId + "name: " + league.LeagueCategoryName, LogLevel.VERBOSE);
@@ -99,7 +99,7 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
         if (response == "alreadyInQueue")
         {
             Log.WriteLine(playerId + " was already in the queue!", LogLevel.VERBOSE);
-            return ("You are already in the queue!", false);
+            return new Response("You are already in the queue!", false);
         }
         Log.WriteLine("response was: " + response, LogLevel.VERBOSE);
 
@@ -107,6 +107,6 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
 
         Log.WriteLine("After modifying message", LogLevel.VERBOSE);
 
-        return ("", true);
+        return new Response("", true);
     }
 }

@@ -26,7 +26,7 @@ public class REPORTSCOREBUTTON : BaseMatchButton
         return "";
     }
 
-    public async override Task<(string, bool)> ActivateButtonFunction(
+    public async override Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         InterfaceMessage? reportingStatusMessage =
@@ -38,7 +38,7 @@ public class REPORTSCOREBUTTON : BaseMatchButton
         {
             string errorMsg = nameof(reportingStatusMessage) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
+            return new Response (errorMsg, false);
         }
 
         string[] splitStrings = buttonCustomId.Split('_');
@@ -55,31 +55,31 @@ public class REPORTSCOREBUTTON : BaseMatchButton
             string errorMsg = nameof(interfaceLeagueCached) + " or " +
                 nameof(leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return (errorMsg, false);
+            return new Response(errorMsg, false);
         }
 
-        var finalResponseTuple = leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
+        Response response = leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
             interfaceLeagueCached, playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE, 
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 
-        if (!finalResponseTuple.Item2)
+        if (!response.serialize)
         {
-            return (finalResponseTuple.Item1, false);
+            return response;
         }
 
-        finalResponseTuple = await leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
+        response = await leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
             interfaceLeagueCached, playerId,
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId);
 
-        if (!finalResponseTuple.Item2)
+        if (!response.serialize)
         {
-            return (finalResponseTuple.Item1, false);
+            return response;
         }
 
         Log.WriteLine("Reached end before the return with player id: " +
-            playerId + " with response:" + finalResponseTuple.Item1, LogLevel.DEBUG);
+            playerId + " with response:" + response.responseString, LogLevel.DEBUG);
 
-        return (finalResponseTuple.Item1, true);
+        return response;
     }
 }

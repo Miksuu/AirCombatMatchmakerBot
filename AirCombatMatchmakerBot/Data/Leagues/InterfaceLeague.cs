@@ -22,5 +22,5 @@ public interface InterfaceLeague
         AttachmentData[] _attachmentDatas);
     public void UpdateLeagueLeaderboard();
 
-    public Task<(string, bool)> RegisterUserToALeague(ulong _userId);
+    public Task<Response> RegisterUserToALeague(ulong _userId);
 }

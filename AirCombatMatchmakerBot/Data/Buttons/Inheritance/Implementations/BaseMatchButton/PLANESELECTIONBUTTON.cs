@@ -22,9 +22,9 @@ public class PLANESELECTIONBUTTON : BaseButton
         return "";
     }
 
-    public override Task<(string, bool)> ActivateButtonFunction(
+    public override Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        return Task.FromResult(("", true));
+        return Task.FromResult(new Response("", true));
     }
 }
