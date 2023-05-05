@@ -63,7 +63,7 @@ public class COMMENT : BaseCommand
                     _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER,
                     leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, commandChannelId);
 
-        if (!finalResponseTuple.Item2)
+        if (finalResponseTuple.Item2)
         {
             return ("Comment posted: " + _firstOptionString, true);
         }
