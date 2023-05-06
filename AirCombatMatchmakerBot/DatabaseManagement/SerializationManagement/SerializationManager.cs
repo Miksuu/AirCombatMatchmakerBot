@@ -89,13 +89,21 @@ public static class SerializationManager
 
         string json = File.ReadAllText(dbPathWithFileName);
 
-        //Log.WriteLine("json: " + json, LogLevel.VERBOSE);
+        HandleDatabaseCreationOrLoading(json);
 
-        if (json == "0")
+        Log.WriteLine("DB DESERIALIZATION DONE!", LogLevel.SERIALIZATION);
+
+        return Task.CompletedTask;
+    }
+
+    // _json param to 0 to force creation of the new db
+    public static Task HandleDatabaseCreationOrLoading(string _json)
+    {
+        if (_json == "0")
         {
             //FileManager.CheckIfFileAndPathExistsAndCreateItIfNecessary(dbPath, dbFileName);
             Database.Instance = new();
-            Log.WriteLine("json was " + json + ", creating a new db instance", LogLevel.DEBUG);
+            Log.WriteLine("json was " + _json + ", creating a new db instance", LogLevel.DEBUG);
 
             return Task.CompletedTask;
         }
@@ -105,7 +113,7 @@ public static class SerializationManager
         settings.NullValueHandling = NullValueHandling.Include;
         settings.ObjectCreationHandling = ObjectCreationHandling.Replace;
 
-        var newDeserializedObject = JsonConvert.DeserializeObject<Database>(json, settings);
+        var newDeserializedObject = JsonConvert.DeserializeObject<Database>(_json, settings);
 
         if (newDeserializedObject == null)
         {
@@ -113,8 +121,6 @@ public static class SerializationManager
         }
 
         Database.Instance = newDeserializedObject;
-
-        Log.WriteLine("DB DESERIALIZATION DONE!", LogLevel.SERIALIZATION);
 
         return Task.CompletedTask;
     }

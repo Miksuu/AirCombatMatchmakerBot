@@ -57,7 +57,24 @@ public class BotRuntimeManager
                 if (Directory.Exists(pathToDelete)) Directory.Delete(pathToDelete, true);
 
                 // Delete db here
+                await SerializationManager.HandleDatabaseCreationOrLoading("0");
+
                 // Delete roles here
+                foreach (var item in guild.Roles)
+                {
+                    Log.WriteLine("on role: " + item.Name, LogLevel.VERBOSE);
+
+                    if (item.Name == "Developer" || item.Name == "Server Booster" || 
+                        item.Name == "AirCombatMatchmakerBotDev" || item.Name == "Discord Me" ||
+                        item.Name == "@everyone" || item.Name == "@here")
+                    {
+                        continue;
+                    }
+
+                    Log.WriteLine("Deleting role: " + item.Name, LogLevel.DEBUG);
+
+                    await item.DeleteAsync();
+                }
 
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
