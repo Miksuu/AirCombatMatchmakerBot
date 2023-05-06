@@ -45,6 +45,7 @@ public class MATCHCHANNEL : BaseChannel
         return listOfOverwrites;
     }
 
+    /*
     public (InterfaceLeague?, LeagueMatch?, string) FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
         ulong _buttonCategoryId, ulong _messageChannelId)
     {
@@ -69,5 +70,5 @@ public class MATCHCHANNEL : BaseChannel
         }
 
         return (interfaceLeague, foundMatch, "");
-    }
+    }*/
 }

@@ -6,8 +6,9 @@ using Discord.WebSocket;
 using System.ComponentModel;
 
 [DataContract]
-public class CHALLENGEBUTTON : BaseChallengeChannelButton
+public class CHALLENGEBUTTON : BaseButton
 {
+    LeagueCategoryComponents lc = new LeagueCategoryComponents();
     public CHALLENGEBUTTON()
     {
         buttonName = ButtonName.CHALLENGEBUTTON;
@@ -29,19 +30,22 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
         
         Log.WriteLine("Starting processing a challenge by: " +
             playerId + " in channel: " + channelId, LogLevel.VERBOSE);
-        
-        FindInterfaceLeagueAndCacheIt(channelId);
-        if (interfaceLeagueCached == null)
+
+        lc.FindCategorysLeagueAndInsertItToTheCache(_interfaceMessage.MessageCategoryId);
+        if (lc.interfaceLeagueCached == null)
         {
-            string errorMsg = nameof(interfaceLeagueCached) + " was null!";
+            string errorMsg = nameof(lc.interfaceLeagueCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return new Response(errorMsg, false);
         }
 
-        var challengeStatusOfTheCurrentLeague = interfaceLeagueCached.LeagueData.ChallengeStatus;
+        //Log.WriteLine("Found: " + nameof(mc), LogLevel.DEBUG);
+
+        var challengeStatusOfTheCurrentLeague = lc.interfaceLeagueCached.LeagueData.ChallengeStatus;
+        Log.WriteLine(nameof(challengeStatusOfTheCurrentLeague) + challengeStatusOfTheCurrentLeague, LogLevel.DEBUG);
 
         Team? playerTeam =
-            interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
+            lc.interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
         if (playerTeam == null)
         {
             Log.WriteLine(nameof(playerTeam) +
@@ -49,7 +53,7 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
             return new Response("Error! Team not found", false);
         }
 
-        Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueCached.LeaguePlayerCountPerTeam) +
+        Log.WriteLine("Team found: " + playerTeam.GetTeamName(lc.interfaceLeagueCached.LeaguePlayerCountPerTeam) +
             " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.", LogLevel.VERBOSE);
 
         // Add to method
@@ -58,8 +62,8 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
             var challengeStatusOfTheTempLeague = league.LeagueData.ChallengeStatus;
 
             Log.WriteLine("Loop on " + nameof(league) + ": " + league.LeagueCategoryName +
-                " with cache: " + interfaceLeagueCached.LeagueCategoryName, LogLevel.VERBOSE);
-            if (league.LeagueCategoryName == interfaceLeagueCached.LeagueCategoryName)
+                " with cache: " + lc.interfaceLeagueCached.LeagueCategoryName, LogLevel.VERBOSE);
+            if (league.LeagueCategoryName == lc.interfaceLeagueCached.LeagueCategoryName)
             {
                 Log.WriteLine("on " + league.LeagueCategoryName + ", skipping", LogLevel.VERBOSE);
                 continue;
@@ -70,7 +74,7 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
             if (!league.LeagueData.CheckIfPlayerIsParcipiatingInTheLeague(playerId))
             {
                 Log.WriteLine(playerId + " is not parcipiating in this league: " +
-                    interfaceLeagueCached.LeagueCategoryName + ", disregarding", LogLevel.VERBOSE);
+                    lc.interfaceLeagueCached.LeagueCategoryName + ", disregarding", LogLevel.VERBOSE);
                 continue;
             }
 
@@ -95,7 +99,7 @@ public class CHALLENGEBUTTON : BaseChallengeChannelButton
         }
 
         string response = challengeStatusOfTheCurrentLeague.PostChallengeToThisLeague(
-            interfaceLeagueCached.LeaguePlayerCountPerTeam, interfaceLeagueCached, playerTeam);
+            lc.interfaceLeagueCached.LeaguePlayerCountPerTeam, lc.interfaceLeagueCached, playerTeam);
         if (response == "alreadyInQueue")
         {
             Log.WriteLine(playerId + " was already in the queue!", LogLevel.VERBOSE);

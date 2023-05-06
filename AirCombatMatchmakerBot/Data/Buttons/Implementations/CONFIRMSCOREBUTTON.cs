@@ -7,8 +7,9 @@ using Discord.WebSocket;
 using System.Runtime.CompilerServices;
 
 [DataContract]
-public class CONFIRMSCOREBUTTON : BaseMatchButton
+public class CONFIRMSCOREBUTTON : BaseButton
 {
+    MatchChannelComponents mc = new MatchChannelComponents();
     public CONFIRMSCOREBUTTON()
     {
         buttonName = ButtonName.CONFIRMSCOREBUTTON;
@@ -34,26 +35,27 @@ public class CONFIRMSCOREBUTTON : BaseMatchButton
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
-        FindMatchTupleAndInsertItToTheCache(_interfaceMessage);
-        if (interfaceLeagueCached == null || leagueMatchCached == null)
+        mc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
+
+        if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
         {
-            string errorMsg = nameof(interfaceLeagueCached) + " or " +
-                nameof(leagueMatchCached) + " was null!";
+            string errorMsg = nameof(mc.interfaceLeagueCached) + " or " +
+                nameof(mc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return Task.FromResult(new Response(errorMsg, false));
         }
 
         Log.WriteLine("Setting ConfirmedMatch false", LogLevel.VERBOSE);
 
-        foreach (var item in leagueMatchCached.MatchReporting.TeamIdsWithReportData)
+        foreach (var item in mc.leagueMatchCached.MatchReporting.TeamIdsWithReportData)
         {
             item.Value.ConfirmedMatch = false;
         }
 
         Log.WriteLine("Done setting ConfirmedMatch false", LogLevel.VERBOSE);
 
-        var response = leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
-            interfaceLeagueCached, playerId, playerReportedResult.ToString(),
+        var response = mc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
+            mc.interfaceLeagueCached, playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE,
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 

@@ -254,26 +254,24 @@ public abstract class BaseMessage : InterfaceMessage
                 string finalMentionMessage = "";
                 if (mentionMatchPlayers)
                 {
-                    MATCHCHANNEL? matchChannel = (MATCHCHANNEL)_interfaceChannel;
-                    if (matchChannel == null)
+                    MatchChannelComponents mc = new MatchChannelComponents();
+                    mc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+                    if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
                     {
-                        string errorMsg = nameof(matchChannel) + " was null!";
-                        Log.WriteLine(errorMsg, LogLevel.ERROR);
+                        Log.WriteLine(nameof(mc) + " was null!", LogLevel.CRITICAL);
                         return null;
                     }
 
-                    var leagueMatchTuple =
-                        matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
-                            messageCategoryId, messageChannelId);
-                    if (leagueMatchTuple.Item1 == null || leagueMatchTuple.Item2 == null)
+                    if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
                     {
-                        string errorMsg = nameof(leagueMatchTuple) + " was null!";
+                        string errorMsg = nameof(mc) + " was null!";
                         Log.WriteLine(errorMsg, LogLevel.ERROR);
                         //return null;
                     }
                     else
                     {
-                        ulong[] playerIdsInTheMatch = leagueMatchTuple.Item2.GetIdsOfThePlayersInTheMatchAsArray(leagueMatchTuple.Item1);
+                        ulong[] playerIdsInTheMatch =
+                            mc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray(mc.interfaceLeagueCached);
                         foreach (ulong id in playerIdsInTheMatch)
                         {
                             finalMentionMessage += "<@" + id.ToString() + "> ";

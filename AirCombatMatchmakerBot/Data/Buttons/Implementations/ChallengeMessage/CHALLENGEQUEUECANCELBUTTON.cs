@@ -5,8 +5,9 @@ using System.Runtime.Serialization;
 using Discord.WebSocket;
 
 [DataContract]
-public class CHALLENGEQUEUECANCELBUTTON : BaseChallengeChannelButton
+public class CHALLENGEQUEUECANCELBUTTON : BaseButton
 {
+    MatchChannelComponents mc = new MatchChannelComponents();
     public CHALLENGEQUEUECANCELBUTTON()
     {
         buttonName = ButtonName.CHALLENGEQUEUECANCELBUTTON;
@@ -26,16 +27,18 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseChallengeChannelButton
         Log.WriteLine("Starting processing a challenge canel request by: " +
             _component.User.Id , LogLevel.VERBOSE);
 
-        FindInterfaceLeagueAndCacheIt(_component.Channel.Id);
-        if (interfaceLeagueCached == null)
+        mc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
+
+        if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
         {
-            string errorMsg = nameof(interfaceLeagueCached) + " was null!";
+            string errorMsg = nameof(mc.interfaceLeagueCached) + " or " +
+                nameof(mc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return new Response(errorMsg, false);
         }
 
-        string response = interfaceLeagueCached.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(
-            _component.User.Id, interfaceLeagueCached.LeaguePlayerCountPerTeam, interfaceLeagueCached);
+        string response = mc.interfaceLeagueCached.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(
+            _component.User.Id, mc.interfaceLeagueCached.LeaguePlayerCountPerTeam, mc.interfaceLeagueCached);
 
         if (response == "notInTheQueue")
         {

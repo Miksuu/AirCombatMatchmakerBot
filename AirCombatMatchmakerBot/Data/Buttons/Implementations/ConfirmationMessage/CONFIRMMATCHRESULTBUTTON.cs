@@ -3,8 +3,9 @@ using System.Runtime.Serialization;
 using Discord.WebSocket;
 
 [DataContract]
-public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
+public class CONFIRMMATCHRESULTBUTTON : BaseButton
 {
+    MatchChannelComponents mc = new MatchChannelComponents();
     public CONFIRMMATCHRESULTBUTTON()
     {
         buttonName = ButtonName.CONFIRMMATCHRESULTBUTTON;
@@ -21,11 +22,12 @@ public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
     public override async Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        FindMatchTupleAndInsertItToTheCache(_interfaceMessage);
-        if (interfaceLeagueCached == null || leagueMatchCached == null)
+        mc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
+        
+        if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
         {
-            string errorMsg = nameof(interfaceLeagueCached) + " or " +
-                nameof(leagueMatchCached) + " was null!";
+            string errorMsg = nameof(mc.interfaceLeagueCached) + " or " +
+                nameof(mc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return new Response(errorMsg, false);
         }
@@ -38,8 +40,8 @@ public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
             componentPlayerId + " in msg: " + _interfaceMessage.MessageId, LogLevel.VERBOSE);
 
         var reportDataTupleWithString =
-            leagueMatchCached.MatchReporting.GetTeamReportDatasOfTheMatchWithPlayerId(
-            interfaceLeagueCached, leagueMatchCached, componentPlayerId);
+            mc.leagueMatchCached.MatchReporting.GetTeamReportDatasOfTheMatchWithPlayerId(
+            mc.interfaceLeagueCached, mc.leagueMatchCached, componentPlayerId);
         if (reportDataTupleWithString.Item1 == null)
         {
             Log.WriteLine(nameof(reportDataTupleWithString) + " was null!", LogLevel.CRITICAL);
@@ -61,9 +63,9 @@ public class CONFIRMMATCHRESULTBUTTON : BaseMatchButton
 
         if (reportDataTupleWithString.Item1.ElementAt(1).ConfirmedMatch == true)
         {
-            leagueMatchCached.MatchReporting.MatchDone = true;
+            mc.leagueMatchCached.MatchReporting.MatchDone = true;
             Log.WriteLine("Both teams are done with the reporting on match: " +
-                leagueMatchCached.MatchId, LogLevel.DEBUG);
+                mc.leagueMatchCached.MatchId, LogLevel.DEBUG);
         }
 
         InterfaceMessage? confirmationMessage =

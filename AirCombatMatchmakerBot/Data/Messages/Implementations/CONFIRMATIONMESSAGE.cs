@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 [DataContract]
 public class CONFIRMATIONMESSAGE : BaseMessage
 {
+    MatchChannelComponents mc = new MatchChannelComponents();
     public CONFIRMATIONMESSAGE()
     {
         messageName = MessageName.CONFIRMATIONMESSAGE;
@@ -34,6 +35,13 @@ public class CONFIRMATIONMESSAGE : BaseMessage
     {
         Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
 
+        mc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+        if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
+        {
+            Log.WriteLine(nameof(mc) + " was null!", LogLevel.CRITICAL);
+            return nameof(mc) + " was null!";
+        }
+
         string finalMessage = "Confirmed:\n";
 
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
@@ -47,29 +55,9 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         Log.WriteLine("Found interfaceChannel:" + interfaceChannel.ChannelId, LogLevel.VERBOSE);
 
-        //Find the channel of the messageDescription and cast the interface to to the MATCHCHANNEL class       
-        MATCHCHANNEL? matchChannel = (MATCHCHANNEL)interfaceChannel;
-        if (matchChannel == null)
-        {
-            Log.WriteLine(nameof(matchChannel) + " was null!", LogLevel.CRITICAL);
-            return nameof(matchChannel) + " was null!";
-        }
+        Log.WriteLine("Found match tuple: " + mc.leagueMatchCached.MatchChannelId, LogLevel.VERBOSE);
 
-        Log.WriteLine(nameof(matchChannel) + ": " + matchChannel, LogLevel.VERBOSE);
-
-        var matchTuple =
-            matchChannel.FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
-                messageCategoryId, messageChannelId);
-
-        if (matchTuple.Item1 == null || matchTuple.Item2 == null)
-        {
-            Log.WriteLine(nameof(matchTuple) + " was null!", LogLevel.CRITICAL);
-            return matchTuple.Item3;
-        }
-
-        Log.WriteLine("Found match tuple: " + matchTuple.Item2.MatchChannelId, LogLevel.VERBOSE);
-
-        var matchReportData = matchTuple.Item2.MatchReporting.TeamIdsWithReportData;
+        var matchReportData = mc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
 
         int confirmedTeamsCounter = 0;
         foreach (var teamKvp in matchReportData)
@@ -94,7 +82,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
                 return nameof(interfaceLeague) + " was null!";
             }
 
-            matchTuple.Item2.FinishTheMatch(interfaceLeague);
+            mc.leagueMatchCached.FinishTheMatch(interfaceLeague);
         }
 
         finalMessage += "You can either Confirm/Dispute the result below.";

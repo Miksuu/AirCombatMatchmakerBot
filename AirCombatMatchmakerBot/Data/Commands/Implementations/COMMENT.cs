@@ -43,20 +43,6 @@ public class COMMENT : BaseCommand
             return new Response("That's not your match to comment on!", false);
         }
 
-        /*
-        InterfaceMessage? reportingStatusMessage =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).
-                    Value.FindInterfaceChannelWithIdInTheCategory(
-                        commandChannelId).FindInterfaceMessageWithNameInTheChannel(
-                            MessageName.REPORTINGSTATUSMESSAGE);
-
-        if (reportingStatusMessage == null)
-        {
-            Log.WriteLine(nameof(reportingStatusMessage) + " was null!", LogLevel.CRITICAL);
-            return nameof(reportingStatusMessage) + " was null!";
-        }*/
-
         var finalResponseTuple =
             await leagueInterfaceWithTheMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
                  leagueInterfaceWithTheMatch.Item1, commandPlayerId,
@@ -67,29 +53,6 @@ public class COMMENT : BaseCommand
         {
             return new Response("Comment posted: " + _firstOptionString, true);
         }
-
-        /*
-        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId).
-                Value.FindInterfaceChannelWithIdInTheCategory(commandChannelId);
-
-        var messageToModifyCommentOn =
-            interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHFINALRESULTMESSAGE);
-
-        if (messageToModifyCommentOn != null)
-        {
-            await messageToModifyCommentOn.GenerateAndModifyTheMessage();
-
-            Log.WriteLine("Done modifying the comment", LogLevel.VERBOSE);
-
-            leagueInterfaceWithTheMatch.Item2.MatchReporting.FinalResultForConfirmation =
-                messageToModifyCommentOn.MessageDescription;
-        }
-        // Probably dont need to do anything here
-        else
-        {
-            Log.WriteLine("MessageDescription to modify was null", LogLevel.WARNING);
-        }*/
 
         return new Response("Couldn't post comment", false);
     }
