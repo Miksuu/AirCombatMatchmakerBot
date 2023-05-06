@@ -39,7 +39,7 @@ public class CHALLENGEBUTTON : BaseButton
             return new Response(errorMsg, false);
         }
 
-        //Log.WriteLine("Found: " + nameof(mmc), LogLevel.DEBUG);
+        //Log.WriteLine("Found: " + nameof(mcc), LogLevel.DEBUG);
 
         var challengeStatusOfTheCurrentLeague = lcc.interfaceLeagueCached.LeagueData.ChallengeStatus;
         Log.WriteLine(nameof(challengeStatusOfTheCurrentLeague) + challengeStatusOfTheCurrentLeague, LogLevel.DEBUG);

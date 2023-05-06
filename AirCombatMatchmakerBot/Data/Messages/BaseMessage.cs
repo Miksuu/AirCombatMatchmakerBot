@@ -254,24 +254,24 @@ public abstract class BaseMessage : InterfaceMessage
                 string finalMentionMessage = "";
                 if (mentionMatchPlayers)
                 {
-                    MatchChannelComponents mmc = new MatchChannelComponents();
-                    mmc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
-                    if (mmc.interfaceLeagueCached == null || mmc.leagueMatchCached == null)
+                    MatchChannelComponents mcc = new MatchChannelComponents();
+                    mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+                    if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
                     {
-                        Log.WriteLine(nameof(mmc) + " was null!", LogLevel.CRITICAL);
+                        Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
                         return null;
                     }
 
-                    if (mmc.interfaceLeagueCached == null || mmc.leagueMatchCached == null)
+                    if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
                     {
-                        string errorMsg = nameof(mmc) + " was null!";
+                        string errorMsg = nameof(mcc) + " was null!";
                         Log.WriteLine(errorMsg, LogLevel.ERROR);
                         //return null;
                     }
                     else
                     {
                         ulong[] playerIdsInTheMatch =
-                            mmc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray(mmc.interfaceLeagueCached);
+                            mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray(mcc.interfaceLeagueCached);
                         foreach (ulong id in playerIdsInTheMatch)
                         {
                             finalMentionMessage += "<@" + id.ToString() + "> ";

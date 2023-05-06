@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 [DataContract]
 public class REPORTSCOREBUTTON : BaseButton
 {
-    MatchChannelComponents mmc = new MatchChannelComponents();
+    MatchChannelComponents mcc = new MatchChannelComponents();
     public REPORTSCOREBUTTON()
     {
         buttonName = ButtonName.REPORTSCOREBUTTON;
@@ -50,18 +50,18 @@ public class REPORTSCOREBUTTON : BaseButton
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
-        mmc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
+        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
 
-        if (mmc.interfaceLeagueCached == null || mmc.leagueMatchCached == null)
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            string errorMsg = nameof(mmc.interfaceLeagueCached) + " or " +
-                nameof(mmc.leagueMatchCached) + " was null!";
+            string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
+                nameof(mcc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return new Response(errorMsg, false);
         }
 
-        Response response = mmc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
-            mmc.interfaceLeagueCached, playerId, playerReportedResult.ToString(),
+        Response response = mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
+            mcc.interfaceLeagueCached, playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE, 
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 
@@ -70,8 +70,8 @@ public class REPORTSCOREBUTTON : BaseButton
             return response;
         }
 
-        response = await mmc.leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
-            mmc.interfaceLeagueCached, playerId,
+        response = await mcc.leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
+            mcc.interfaceLeagueCached, playerId,
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId);
 
         if (!response.serialize)
