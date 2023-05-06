@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.WebSocket;
 
 // The main class to what the bot's functions revolve around
 public class BotRuntimeManager
@@ -32,17 +33,23 @@ public class BotRuntimeManager
 
                 /*
                 var guild = BotReference.GetGuildRef();
-                foreach (var ch in guild.Channels)
-                {
-                    Log.WriteLine("deleting " + ch.Name, LogLevel.DEBUG);
-                    await ch.DeleteAsync();
-                }
                 foreach (var cat in guild.CategoryChannels)
                 {
                     if (cat.Name.ToLower().Contains("main-category")) continue;
 
                     Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
                     await cat.DeleteAsync();
+                }
+
+                foreach (SocketGuildChannel item in guild.Channels)
+                {
+                    Log.WriteLine(item.Name, LogLevel.DEBUG);
+
+                    if (item.Name == "info" || item.Name == "test" || item.Name == "main-category")
+                    {
+                        continue;
+                    }
+                    await item.DeleteAsync();
                 }
 
                 // Delete the old tacviews so it doesn't throw error from old files
