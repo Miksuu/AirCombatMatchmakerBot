@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 [DataContract]
 public class CONFIRMSCOREBUTTON : BaseButton
 {
-    MatchChannelComponents mc = new MatchChannelComponents();
+    MatchChannelComponents mmc = new MatchChannelComponents();
     public CONFIRMSCOREBUTTON()
     {
         buttonName = ButtonName.CONFIRMSCOREBUTTON;
@@ -35,27 +35,27 @@ public class CONFIRMSCOREBUTTON : BaseButton
             " with label int: " + playerReportedResult + " in category: " +
             buttonCategoryId, LogLevel.DEBUG);
 
-        mc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
+        mmc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
 
-        if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
+        if (mmc.interfaceLeagueCached == null || mmc.leagueMatchCached == null)
         {
-            string errorMsg = nameof(mc.interfaceLeagueCached) + " or " +
-                nameof(mc.leagueMatchCached) + " was null!";
+            string errorMsg = nameof(mmc.interfaceLeagueCached) + " or " +
+                nameof(mmc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return Task.FromResult(new Response(errorMsg, false));
         }
 
         Log.WriteLine("Setting ConfirmedMatch false", LogLevel.VERBOSE);
 
-        foreach (var item in mc.leagueMatchCached.MatchReporting.TeamIdsWithReportData)
+        foreach (var item in mmc.leagueMatchCached.MatchReporting.TeamIdsWithReportData)
         {
             item.Value.ConfirmedMatch = false;
         }
 
         Log.WriteLine("Done setting ConfirmedMatch false", LogLevel.VERBOSE);
 
-        var response = mc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
-            mc.interfaceLeagueCached, playerId, playerReportedResult.ToString(),
+        var response = mmc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
+            mmc.interfaceLeagueCached, playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE,
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 

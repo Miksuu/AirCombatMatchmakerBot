@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 [DataContract]
 public class CONFIRMATIONMESSAGE : BaseMessage
 {
-    MatchChannelComponents mc = new MatchChannelComponents();
+    MatchChannelComponents mmc = new MatchChannelComponents();
     public CONFIRMATIONMESSAGE()
     {
         messageName = MessageName.CONFIRMATIONMESSAGE;
@@ -35,11 +35,11 @@ public class CONFIRMATIONMESSAGE : BaseMessage
     {
         Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
 
-        mc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
-        if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
+        mmc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+        if (mmc.interfaceLeagueCached == null || mmc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(mc) + " was null!", LogLevel.CRITICAL);
-            return nameof(mc) + " was null!";
+            Log.WriteLine(nameof(mmc) + " was null!", LogLevel.CRITICAL);
+            return nameof(mmc) + " was null!";
         }
 
         string finalMessage = "Confirmed:\n";
@@ -55,9 +55,9 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         Log.WriteLine("Found interfaceChannel:" + interfaceChannel.ChannelId, LogLevel.VERBOSE);
 
-        Log.WriteLine("Found match tuple: " + mc.leagueMatchCached.MatchChannelId, LogLevel.VERBOSE);
+        Log.WriteLine("Found match tuple: " + mmc.leagueMatchCached.MatchChannelId, LogLevel.VERBOSE);
 
-        var matchReportData = mc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
+        var matchReportData = mmc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
 
         int confirmedTeamsCounter = 0;
         foreach (var teamKvp in matchReportData)
@@ -82,7 +82,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
                 return nameof(interfaceLeague) + " was null!";
             }
 
-            mc.leagueMatchCached.FinishTheMatch(interfaceLeague);
+            mmc.leagueMatchCached.FinishTheMatch(interfaceLeague);
         }
 
         finalMessage += "You can either Confirm/Dispute the result below.";
