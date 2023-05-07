@@ -76,7 +76,7 @@ public static class ButtonHandler
 
         Log.WriteLine("Found channel: " + databaseChannel.Value.ChannelType, LogLevel.VERBOSE);
 
-        // Find the database messageDescription
+        // Find the database MessageDescription
         var databaseMessage = databaseChannel.Value.InterfaceMessagesWithIds.FirstOrDefault(
             m => m.Value.MessageId == _component.Message.Id);
         if (databaseMessage.Value == null)

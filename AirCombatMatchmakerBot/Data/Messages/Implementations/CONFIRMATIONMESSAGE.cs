@@ -22,8 +22,8 @@ public class CONFIRMATIONMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.DISPUTEMATCHRESULTBUTTON, 1),
             });
 
-        messageEmbedTitle = "Match confirmation";
-        messageDescription = "";
+        thisInterfaceMessage.MessageEmbedTitle = "Match confirmation";
+        thisInterfaceMessage.MessageDescription = "";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)

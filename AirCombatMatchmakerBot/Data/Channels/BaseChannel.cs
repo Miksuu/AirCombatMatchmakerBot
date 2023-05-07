@@ -21,43 +21,22 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    string? InterfaceChannel.ChannelName
+    string InterfaceChannel.ChannelName
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(channelName) + ": " + channelName, LogLevel.VERBOSE);
-            return channelName;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(channelName) + channelName
-                + " to: " + value, LogLevel.VERBOSE);
-            channelName = value;
-        }
+        get => channelName.GetValue();
+        set => channelName.SetValue(value);
     }
 
     ulong InterfaceChannel.ChannelId
     {
-        get
-        {
-            return channelId.GetValue();
-        }
-        set
-        {
-            channelId.SetValue(value);
-        }
+        get => channelId.GetValue();
+        set => channelId.SetValue(value);
     }
 
     ulong InterfaceChannel.ChannelsCategoryId
     {
-        get
-        {
-            return channelsCategoryId.GetValue();
-        }
-        set
-        {
-            channelsCategoryId.SetValue(value);
-        }
+        get => channelsCategoryId.GetValue();
+        set => channelsCategoryId.SetValue(value);
     }
 
     ConcurrentDictionary<MessageName, bool> InterfaceChannel.ChannelMessages
@@ -93,7 +72,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     [DataMember] protected ChannelType channelType { get; set; }
-    [DataMember] protected string? channelName { get; set; }
+    [DataMember] protected logString channelName = new logString();
     [DataMember] protected logUlong channelId = new logUlong();
     [DataMember] protected logUlong channelsCategoryId = new logUlong();
     [DataMember] protected ConcurrentDictionary<MessageName, bool> channelMessages { get; set; }
@@ -119,17 +98,17 @@ public abstract class BaseChannel : InterfaceChannel
 
         string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(channelType);
 
-        if (channelName == null)
+        if (thisInterfaceChannel.ChannelName == null)
         {
-            Log.WriteLine("channelName was null!", LogLevel.CRITICAL);
+            Log.WriteLine("thisInterfaceChannel.ChannelName was null!", LogLevel.CRITICAL);
             return;
         }
 
         // Temp fix perhaps unnecessary after the name has been set more properly 
         // for non-match channels
-        if (channelName.Contains("match-"))
+        if (thisInterfaceChannel.ChannelName.Contains("match-"))
         {
-            channelTypeString = channelName;
+            channelTypeString = thisInterfaceChannel.ChannelName;
         }
 
         var client = BotReference.GetClientRef();
@@ -251,7 +230,7 @@ public abstract class BaseChannel : InterfaceChannel
         Log.WriteLine("Finding channel: " + channelType + " (" + thisInterfaceChannel.ChannelId +
             ") parent category with id: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
 
-        // If the messageDescription doesn't exist, set it ID to 0 to regenerate it
+        // If the MessageDescription doesn't exist, set it ID to 0 to regenerate it
 
         var channel = _client.GetChannelAsync(thisInterfaceChannel.ChannelId).Result as ITextChannel;
 
@@ -356,7 +335,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    // Finds ANY messageDescription with that messageDescription name (there can be multiple of same messages now)
+    // Finds ANY MessageDescription with that MessageDescription name (there can be multiple of same messages now)
     public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName)
     {

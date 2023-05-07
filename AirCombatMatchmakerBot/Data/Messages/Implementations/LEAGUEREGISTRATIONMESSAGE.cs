@@ -15,7 +15,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.LEAGUEREGISTRATIONBUTTON, 1),
             });
 
-        messageDescription = "Insert league registration message here";
+        thisInterfaceMessage.MessageDescription = "Insert league registration message here";
     }
 
     [DataMember] public ulong belongsToLeagueCategoryId;
@@ -27,13 +27,13 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
-        if (messageDescription == null)
+        if (thisInterfaceMessage.MessageDescription == null)
         {
-            Log.WriteLine("messageDescription was null!", LogLevel.CRITICAL);
-            return "messageDescription was null!";
+            Log.WriteLine("MessageDescription was null!", LogLevel.CRITICAL);
+            return "MessageDescription was null!";
         }
 
-        return messageDescription;
+        return thisInterfaceMessage.MessageDescription;
     }
 
     public string GenerateMessageForSpecificCategoryLeague()
@@ -49,7 +49,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
             return nameof(interfaceLeague) + " was null!";
         }
 
-        messageEmbedTitle = EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName);
+        thisInterfaceMessage.MessageEmbedTitle = EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName);
 
         string returned =
             GetAllowedUnitsAsString(interfaceLeague) + "\n" +
@@ -87,17 +87,17 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         foreach (Team team in _interfaceLeague.LeagueData.Teams.TeamsConcurrentBag)
         {
-            string teamName = team.GetTeamName(_interfaceLeague.LeaguePlayerCountPerTeam);
+            string TeamName = team.GetTeamName(_interfaceLeague.LeaguePlayerCountPerTeam);
 
             if (team.TeamActive)
             {
                 count++;
-                Log.WriteLine("team: " + teamName +
+                Log.WriteLine("team: " + TeamName +
                     " is active, increased count to: " + count, LogLevel.VERBOSE);
             }
             else
             {
-                Log.WriteLine("team: " + teamName + " is not active", LogLevel.VERBOSE);
+                Log.WriteLine("team: " + TeamName + " is not active", LogLevel.VERBOSE);
             }
         }
 

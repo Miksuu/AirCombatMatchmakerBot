@@ -12,7 +12,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
     public MATCHSTARTMESSAGE()
     {
         messageName = MessageName.MATCHSTARTMESSAGE;
-        messageDescription = "Insert the match start message here";
+        thisInterfaceMessage.MessageDescription = "Insert the match start message here";
         mentionMatchPlayers = true;
     }
 

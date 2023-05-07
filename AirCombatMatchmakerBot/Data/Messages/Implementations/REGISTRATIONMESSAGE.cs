@@ -20,7 +20,7 @@ public class REGISTRATIONMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.REGISTRATIONBUTTON, 1),
             });
 
-        messageEmbedTitle = "Click this button to register!";
+        thisInterfaceMessage.MessageEmbedTitle = "Click this button to register!";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
@@ -31,12 +31,12 @@ public class REGISTRATIONMESSAGE : BaseMessage
     public override string GenerateMessage()
     {
         /*
-        if (messageDescription == null)
+        if (MessageDescription == null)
         {
-            Log.WriteLine("messageDescription was null!", LogLevel.DEBUG);
+            Log.WriteLine("MessageDescription was null!", LogLevel.DEBUG);
             return "";
         }*/
 
-        return messageDescription;
+        return thisInterfaceMessage.MessageDescription;
     }
 }

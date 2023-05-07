@@ -1,6 +1,6 @@
 ﻿public static class BotMessaging
 {
-    // Send messageDescription to a user with a mention
+    // Send MessageDescription to a user with a mention
     public static string GetMessageResponse(
         string _commandDataName,
         string _messageString,

@@ -22,17 +22,8 @@ public class Team
 
     public string TeamName
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teamName), LogLevel.VERBOSE);
-            return teamName;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teamName)
-                + " to: " + value, LogLevel.VERBOSE);
-            teamName = value;
-        }
+        get => teamName.GetValue();
+        set => teamName.SetValue(value);
     }
 
     public ConcurrentBag<Player> Players
@@ -82,7 +73,7 @@ public class Team
     }
 
     [DataMember] private float skillRating { get; set; }
-    [DataMember] private string teamName { get; set; }
+    [DataMember] private logString teamName = new logString();
     [DataMember] private ConcurrentBag<Player> players { get; set; }
     [DataMember] private bool teamActive { get; set; }
     [DataMember] private int teamId { get; set; }
@@ -90,15 +81,15 @@ public class Team
     public Team()
     {
         skillRating = 1600;
-        teamName = string.Empty;
+        TeamName = string.Empty;
         players = new ConcurrentBag<Player>();
         teamActive = false;
     }
 
-    public Team(ConcurrentBag<Player> _players, string _teamName, int _teamId)
+    public Team(ConcurrentBag<Player> _players, string _TeamName, int _teamId)
     {
         skillRating = 1600;
-        teamName = _teamName;
+        TeamName = _TeamName;
         players = _players;
         teamId = _teamId;
     }
@@ -119,7 +110,7 @@ public class Team
 
     public string GetTeamName(int _leagueTeamSize, bool _getAsMention = false)
     {
-        Log.WriteLine("Getting team name: " + teamName +
+        Log.WriteLine("Getting team name: " + TeamName +
             " with mention: " + _getAsMention, LogLevel.VERBOSE);
 
         if (_leagueTeamSize < 2 && _getAsMention)
@@ -137,7 +128,7 @@ public class Team
             return player.GetPlayerIdAsMention();
         }
 
-        return teamName;
+        return TeamName;
     }
 
     public string GetTeamInAString(

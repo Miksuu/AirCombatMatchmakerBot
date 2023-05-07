@@ -16,7 +16,7 @@ public class CHALLENGEMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.CHALLENGEQUEUECANCELBUTTON, 1),
             });
 
-        messageDescription = "Insert the challenge message here";
+        thisInterfaceMessage.MessageDescription = "Insert the challenge message here";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
@@ -56,7 +56,7 @@ public class CHALLENGEMESSAGE : BaseMessage
                         " is league: " + leagueName, LogLevel.DEBUG);
 
 
-                    messageEmbedTitle = leagueName + " challenge.";
+                    thisInterfaceMessage.MessageEmbedTitle = leagueName + " challenge.";
                     string challengeMessage = "Players In The Queue: \n";
 
                     var leagueCategory =

@@ -12,8 +12,8 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
         {
         };
-        messageEmbedTitle = "Leaderboard:\n"; ;
-        messageDescription = "";
+        thisInterfaceMessage.MessageEmbedTitle = "Leaderboard:\n"; ;
+        thisInterfaceMessage.MessageDescription = "";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)

@@ -11,7 +11,7 @@ public class DISPUTEMATCHRESULTBUTTON : BaseButton
     public DISPUTEMATCHRESULTBUTTON()
     {
         buttonName = ButtonName.DISPUTEMATCHRESULTBUTTON;
-        buttonLabel = "DISPUTE";
+        thisInterfaceButton.ButtonLabel = "DISPUTE";
         buttonStyle = ButtonStyle.Danger;
         ephemeralResponse = true;
     }

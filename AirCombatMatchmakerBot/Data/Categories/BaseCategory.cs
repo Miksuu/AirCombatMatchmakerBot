@@ -57,20 +57,15 @@ public abstract class BaseCategory : InterfaceCategory
 
     ulong InterfaceCategory.SocketCategoryChannelId
     {
-        get
-        {
-            return socketCategoryChannelId.GetValue();
-        }
-        set
-        {
-            socketCategoryChannelId.SetValue(value);
-        }
+        get => socketCategoryChannelId.GetValue();
+        set => socketCategoryChannelId.SetValue(value);
     }
 
     [DataMember] protected CategoryType categoryTypes;
     protected ConcurrentBag<ChannelType> channelTypes;
     [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels { get; set; } 
     [DataMember] protected logUlong socketCategoryChannelId = new logUlong();
+
     private InterfaceCategory thisInterfaceCategory;
 
     public BaseCategory()

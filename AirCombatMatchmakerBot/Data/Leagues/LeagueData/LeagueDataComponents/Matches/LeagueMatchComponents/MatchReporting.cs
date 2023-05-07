@@ -66,58 +66,31 @@ public class MatchReporting
         }
     }
 
-    public string? FinalResultForConfirmation
+    public string FinalResultForConfirmation
     {
-        get
-        {
-            Log.WriteLine("Getting finalResultForConfirmation", LogLevel.VERBOSE);
-            return finalResultForConfirmation;
-        }
-        set
-        {
-            Log.WriteLine("Setting finalResultForConfirmation"
-                + " to: " + value, LogLevel.VERBOSE);
-            finalResultForConfirmation = value;
-        }
+        get => finalResultForConfirmation.GetValue();
+        set => finalResultForConfirmation.SetValue(value);
     }
 
-    public string? FinalMessageForMatchReportingChannel
+    public string FinalMessageForMatchReportingChannel
     {
-        get
-        {
-            Log.WriteLine("Getting finalMessageForMatchReportingChannel", LogLevel.VERBOSE);
-            return finalMessageForMatchReportingChannel;
-        }
-        set
-        {
-            Log.WriteLine("Setting finalMessageForMatchReportingChannel"
-                + " to: " + value, LogLevel.VERBOSE);
-            finalMessageForMatchReportingChannel = value;
-        }
+        get => finalMessageForMatchReportingChannel.GetValue();
+        set => finalMessageForMatchReportingChannel.SetValue(value);
     }
 
-    public string? FinalResultTitleForConfirmation
+    public string FinalResultTitleForConfirmation
     {
-        get
-        {
-            Log.WriteLine("Getting finalResultTitleForConfirmation", LogLevel.VERBOSE);
-            return finalResultTitleForConfirmation;
-        }
-        set
-        {
-            Log.WriteLine("Setting finalResultTitleForConfirmation"
-                + " to: " + value, LogLevel.VERBOSE);
-            finalResultTitleForConfirmation = value;
-        }
+        get => finalResultTitleForConfirmation.GetValue();
+        set => finalResultTitleForConfirmation.SetValue(value);
     }
 
     private EloSystem eloSystem { get; set; }
     [DataMember] private ConcurrentDictionary<int, ReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
-    [DataMember] private string? finalResultForConfirmation { get; set; }
-    [DataMember] private string? finalMessageForMatchReportingChannel { get; set; }
-    [DataMember] private string? finalResultTitleForConfirmation { get; set; }
+    [DataMember] private logString finalResultForConfirmation = new logString();
+    [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
+    [DataMember] private logString finalResultTitleForConfirmation = new logString();
 
     public MatchReporting()
     {
@@ -238,7 +211,7 @@ public class MatchReporting
                     _messageChannelId);
 
         // If the match is on the confirmation phase,
-        // edit that messageDescription instead of the reporting status messageDescription which would be null
+        // edit that MessageDescription instead of the reporting status MessageDescription which would be null
         MessageName messageNameToEdit = MessageName.REPORTINGSTATUSMESSAGE;
         if (showingConfirmationMessage)
         {
@@ -251,9 +224,9 @@ public class MatchReporting
                 Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.CRITICAL);
                 return new Response(nameof(interfaceMessage) + " was null!", false);
             }
-            finalResultForConfirmation = interfaceMessage.GenerateMessage();
+            FinalResultForConfirmation = interfaceMessage.GenerateMessage();
             // Must be called after GenerateMessage() since it's defined there
-            finalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
+            FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
         }
 
         InterfaceMessage? messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
@@ -326,9 +299,9 @@ public class MatchReporting
                 return new Response(errorMsg, false);
             }
 
-            finalResultForConfirmation = interfaceMessage.MessageDescription;
-            finalMessageForMatchReportingChannel = finalResultMessage.AlternativeMessage;
-            finalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
+            FinalResultForConfirmation = interfaceMessage.MessageDescription;
+            FinalMessageForMatchReportingChannel = finalResultMessage.AlternativeMessage;
+            FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
             await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMATIONMESSAGE);
@@ -404,7 +377,7 @@ public class MatchReporting
             {
                 Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
 
-                // Only process the ReportObject fields (ignore teamName)
+                // Only process the ReportObject fields (ignore TeamName)
                 if (field.FieldType != typeof(ReportObject)) continue;
 
                 Log.WriteLine("This is " + nameof(ReportObject) + " field: " +

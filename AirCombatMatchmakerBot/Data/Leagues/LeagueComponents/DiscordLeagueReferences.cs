@@ -6,14 +6,8 @@ public class DiscordLeagueReferences
 {
     public ulong LeagueCategoryId
     {
-        get
-        {
-            return leagueCategoryId.GetValue();
-        }
-        set
-        {
-            leagueCategoryId.SetValue(value);
-        }
+        get => leagueCategoryId.GetValue();
+        set => leagueCategoryId.SetValue(value);
     }
 
     public ConcurrentDictionary<ChannelType, ulong> LeagueChannels
@@ -34,26 +28,14 @@ public class DiscordLeagueReferences
 
     public ulong LeagueRoleId
     {
-        get
-        {
-            return leagueRoleId.GetValue();
-        }
-        set
-        {
-            leagueRoleId.SetValue(value);
-        }
+        get => leagueRoleId.GetValue();
+        set => leagueRoleId.SetValue(value);
     }
 
     public ulong LeagueRegistrationMessageId
     {
-        get
-        {
-            return leagueRegistrationMessageId.GetValue();
-        }
-        set
-        {
-            leagueRegistrationMessageId.SetValue(value);
-        }
+        get => leagueRegistrationMessageId.GetValue();
+        set => leagueRegistrationMessageId.SetValue(value);
     }
 
     // The reference to the category created by the system
@@ -65,7 +47,7 @@ public class DiscordLeagueReferences
     // Id of the role which gives access to the league channelTypes
     [DataMember] private logUlong leagueRoleId = new logUlong();
 
-    // Reference to the messageDescription related to this league on the #league-registration channel
+    // Reference to the MessageDescription related to this league on the #league-registration channel
     [DataMember] private logUlong leagueRegistrationMessageId = new logUlong();
 
     public DiscordLeagueReferences()

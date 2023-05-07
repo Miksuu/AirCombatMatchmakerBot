@@ -15,8 +15,8 @@ public class REPORTINGMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.REPORTSCOREBUTTON, 4),
             });
 
-        messageEmbedTitle = "Report match score";
-        messageDescription = "After the match has been completed, click on the buttons below to report your score.\n" +
+        thisInterfaceMessage.MessageEmbedTitle = "Report match score";
+        thisInterfaceMessage.MessageDescription = "After the match has been completed, click on the buttons below to report your score.\n" +
             "Upload your Tacview by dragging it to the window and post it.\n" +
             "Optionally, you can use the /comment command to post a comment on the match.";
     }
@@ -28,12 +28,12 @@ public class REPORTINGMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
-        if (messageDescription == null)
+        if (thisInterfaceMessage.MessageDescription == null)
         {
-            Log.WriteLine("messageDescription was null!", LogLevel.CRITICAL);
-            return "messageDescription was null!";
+            Log.WriteLine("MessageDescription was null!", LogLevel.CRITICAL);
+            return "MessageDescription was null!";
         }
 
-        return messageDescription;
+        return thisInterfaceMessage.MessageDescription;
     }
 }

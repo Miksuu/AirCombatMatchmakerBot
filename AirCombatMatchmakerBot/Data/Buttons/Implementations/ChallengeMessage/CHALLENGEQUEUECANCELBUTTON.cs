@@ -11,7 +11,7 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseButton
     public CHALLENGEQUEUECANCELBUTTON()
     {
         buttonName = ButtonName.CHALLENGEQUEUECANCELBUTTON;
-        buttonLabel = "Leave Queue";
+        thisInterfaceButton.ButtonLabel = "Leave Queue";
         buttonStyle = ButtonStyle.Danger;
         ephemeralResponse = true;
     }

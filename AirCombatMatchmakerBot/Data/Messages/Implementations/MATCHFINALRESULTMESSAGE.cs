@@ -11,25 +11,16 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
         {
         };
-        messageDescription = "Insert the confirmation message here";
+        thisInterfaceMessage.MessageDescription = "Insert the confirmation message here";
     }
 
     public string AlternativeMessage
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(alternativeMessage) + ": " + alternativeMessage, LogLevel.VERBOSE);
-            return alternativeMessage;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(alternativeMessage) + alternativeMessage
-                + " to: " + value, LogLevel.VERBOSE);
-            alternativeMessage = value;
-        }
+        get => alternativeMessage.GetValue();
+        set => alternativeMessage.SetValue(value);
     }
 
-    [DataMember] protected string alternativeMessage = "";
+    [DataMember] protected logString alternativeMessage = new logString();
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
     {
@@ -52,7 +43,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
             return "Error, could not find the league or match";
         }
 
-        messageEmbedTitle = "Match " + interfaceLeagueMatchTuple.Item2.MatchId + " has finished\n";
+        thisInterfaceMessage.MessageEmbedTitle = "Match " + interfaceLeagueMatchTuple.Item2.MatchId + " has finished\n";
 
         ConcurrentDictionary<int, ReportData>? matchReportingTeamIdsWithReportData =
             interfaceLeagueMatchTuple.Item2.MatchReporting.TeamIdsWithReportData;
@@ -122,7 +113,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         }
 
         // Cache the finalMessage on to the alternativeMessage form for match results page where tacviews have link buttons
-        alternativeMessage = finalMessage;
+        AlternativeMessage = finalMessage;
 
         finalMessage += "\nTacviews: ";
 
