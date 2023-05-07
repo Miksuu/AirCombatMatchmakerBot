@@ -7,17 +7,8 @@ public class Team
 {
     public float SkillRating
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(skillRating), LogLevel.VERBOSE);
-            return skillRating;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(skillRating)
-                + " to: " + value, LogLevel.VERBOSE);
-            skillRating = value;
-        }
+        get => skillRating.GetValue();
+        set => skillRating.SetValue(value);
     }
 
     public string TeamName
@@ -44,54 +35,36 @@ public class Team
 
     public bool TeamActive
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teamActive), LogLevel.VERBOSE);
-            return teamActive;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teamActive)
-                + " to: " + value, LogLevel.VERBOSE);
-            teamActive = value;
-        }
+        get => teamActive.GetValue();
+        set => teamActive.SetValue(value);
     }
 
     public int TeamId
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teamId), LogLevel.VERBOSE);
-            return teamId;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teamId)
-                + " to: " + value, LogLevel.VERBOSE);
-            teamId = value;
-        }
+        get => teamId.GetValue();
+        set => teamId.SetValue(value);
     }
 
-    [DataMember] private float skillRating { get; set; }
+    [DataMember] private logFloat skillRating = new logFloat();
     [DataMember] private logString teamName = new logString();
     [DataMember] private ConcurrentBag<Player> players { get; set; }
-    [DataMember] private bool teamActive { get; set; }
-    [DataMember] private int teamId { get; set; }
+    [DataMember] private logBool teamActive = new logBool();
+    [DataMember] private logInt teamId = new logInt();
 
     public Team()
     {
-        skillRating = 1600;
+        SkillRating = 1600f;
         TeamName = string.Empty;
         players = new ConcurrentBag<Player>();
-        teamActive = false;
+        TeamActive = false;
     }
 
     public Team(ConcurrentBag<Player> _players, string _TeamName, int _teamId)
     {
-        skillRating = 1600;
+        SkillRating = 1600f;
         TeamName = _TeamName;
         players = _players;
-        teamId = _teamId;
+        TeamId = _teamId;
     }
 
     public string GetTeamMembersInAString()

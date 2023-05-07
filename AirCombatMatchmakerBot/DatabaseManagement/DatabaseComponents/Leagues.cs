@@ -22,27 +22,17 @@ public class Leagues
 
     public int LeaguesMatchCounter
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(leaguesMatchCounter)
-                + ": " + leaguesMatchCounter, LogLevel.VERBOSE);
-            return leaguesMatchCounter;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(leaguesMatchCounter) +
-                leaguesMatchCounter + " to: " + value, LogLevel.VERBOSE);
-            leaguesMatchCounter = value;
-        }
+        get => leaguesMatchCounter.GetValue();
+        set => leaguesMatchCounter.SetValue(value);
     }
 
     [DataMember] private ConcurrentBag<InterfaceLeague> storedLeagues { get; set; }
-    [DataMember] private int leaguesMatchCounter { get; set; }
+    [DataMember] private logInt leaguesMatchCounter = new logInt();
 
     public Leagues()
     {
         storedLeagues = new ConcurrentBag<InterfaceLeague>();
-        leaguesMatchCounter = 1;
+        LeaguesMatchCounter = 1;
     }
 
     public bool CheckIfILeagueExistsByCategoryName(CategoryType _leagueCategoryName)

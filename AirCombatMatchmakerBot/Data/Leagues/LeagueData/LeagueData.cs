@@ -51,7 +51,7 @@ public class LeagueData
     [DataMember] private Teams teams { get; set; }
     [DataMember] private ChallengeStatus challengeStatus { get; set; }
     [DataMember] private Matches matches { get; set; }
-    [DataMember] private bool matchmakerActive { get; set; }
+    [DataMember] private logBool matchmakerActive { get; set; }
     public LeagueData()
     {
         teams = new();

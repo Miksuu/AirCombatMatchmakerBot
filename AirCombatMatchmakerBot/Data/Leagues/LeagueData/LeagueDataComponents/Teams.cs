@@ -22,26 +22,17 @@ public class Teams
 
     public int CurrentTeamInt
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(currentTeamInt) + currentTeamInt, LogLevel.VERBOSE);
-            return currentTeamInt;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(currentTeamInt) + currentTeamInt
-                + " to: " + value, LogLevel.VERBOSE);
-            currentTeamInt = value;
-        }
+        get => currentTeamInt.GetValue();
+        set => currentTeamInt.SetValue(value);
     }
 
     [DataMember] private ConcurrentBag<Team> teamsConcurrentBag { get; set; }
-    [DataMember] private int currentTeamInt { get; set; }
+    [DataMember] private logInt currentTeamInt = new logInt();
 
     public Teams() 
     {
         teamsConcurrentBag = new ConcurrentBag<Team>();
-        currentTeamInt = 1;
+        CurrentTeamInt = 1;
     }
 
     public void AddToConcurrentBagOfTeams(Team _Team)
@@ -68,8 +59,8 @@ public class Teams
     public void IncrementCurrentTeamInt()
     {
         Log.WriteLine("Incrementing current team int that has count of: " +
-            currentTeamInt, LogLevel.VERBOSE);
-        currentTeamInt++;
+            CurrentTeamInt, LogLevel.VERBOSE);
+        CurrentTeamInt++;
     }
 
     public bool CheckIfPlayerIsAlreadyInATeamById(

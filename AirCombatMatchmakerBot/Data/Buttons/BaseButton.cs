@@ -79,7 +79,7 @@ public abstract class BaseButton : InterfaceButton
     [DataMember] protected logUlong buttonCategoryId = new logUlong();
     [DataMember] protected logString buttonCustomId = new logString();
     protected bool ephemeralResponse = false;
-    //[DataMember] protected int buttonIndex = 0;
+    //[DataMember] protected logInt buttonIndex = 0;
     protected InterfaceButton thisInterfaceButton;
 
     public BaseButton()
