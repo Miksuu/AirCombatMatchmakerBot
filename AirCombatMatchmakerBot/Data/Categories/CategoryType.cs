@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
 // REMEMBER TO SET THE VALUES CORRECTLY HERE !!!
-
 [JsonConverter(typeof(StringEnumConverter))]
 public enum CategoryType
 {

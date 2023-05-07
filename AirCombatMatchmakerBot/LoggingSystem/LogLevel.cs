@@ -6,7 +6,8 @@
     IMPORTANT = 3,
     SERIALIZATION = 4,
     DEBUG = 5,
-    SET_VERBOSE = 6,
-    GET_VERBOSE = 7,
-    VERBOSE = 8,
+    ADD_VERBOSE = 6,
+    SET_VERBOSE = 7,
+    GET_VERBOSE = 8,
+    VERBOSE = 9,
 }

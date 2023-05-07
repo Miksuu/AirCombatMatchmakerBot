@@ -27,7 +27,6 @@ public class Player
 
     public Player(ulong _playerDiscordID, string _playerNickName)
     {
-
         PlayerDiscordId = _playerDiscordID;
         PlayerNickName = _playerNickName;
     }

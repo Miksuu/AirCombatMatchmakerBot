@@ -48,6 +48,7 @@ public static class Log
             case (LogLevel.IMPORTANT): return Color.Gold;
             case (LogLevel.SERIALIZATION): return Color.Blue;
             case (LogLevel.DEBUG): return Color.Green;
+            case (LogLevel.ADD_VERBOSE): return Color.DarkBlue;
             case (LogLevel.SET_VERBOSE): return Color.DarkTeal;
             case (LogLevel.GET_VERBOSE): return Color.Teal;
             case (LogLevel.VERBOSE): return Color.Purple;
