@@ -15,7 +15,7 @@ public class RAWMESSAGEINPUT : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.REPORTSCOREBUTTON, 4),
             });*/
 
-        messageDescription = "Empty message"; 
+        thisInterfaceMessage.MessageDescription = "Empty message"; 
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
@@ -25,21 +25,21 @@ public class RAWMESSAGEINPUT : BaseMessage
 
     public override string GenerateMessage()
     {
-        if (messageDescription == null)
+        if (thisInterfaceMessage.MessageDescription == null)
         {
-            Log.WriteLine("messageDescription was null!", LogLevel.CRITICAL);
-            return "messageDescription was null!";
+            Log.WriteLine("MessageDescription was null!", LogLevel.CRITICAL);
+            return "MessageDescription was null!";
         }
 
-        return messageDescription;
+        return thisInterfaceMessage.MessageDescription;
     }
 
     public string GenerateRawMessage(string _input, string _embedTitle = "")
     {
         Log.WriteLine("Generating a raw message with input: " + _input +
             " and title: " + _embedTitle, LogLevel.VERBOSE);
-        messageEmbedTitle = _embedTitle;
-        messageDescription = _input;
-        return messageDescription;
+        thisInterfaceMessage.MessageEmbedTitle = _embedTitle;
+        thisInterfaceMessage.MessageDescription = _input;
+        return thisInterfaceMessage.MessageDescription;
     }
 }

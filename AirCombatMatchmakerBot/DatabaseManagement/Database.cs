@@ -172,9 +172,9 @@ public class Database
                 Log.WriteLine("after if", LogLevel.VERBOSE);
 
                 /*
-                var messageDescription = messageKvp.Value;
+                var MessageDescription = messageKvp.Value;
 
-                var leagueRegistrationMessage = messageDescription as LEAGUEREGISTRATIONMESSAGE;
+                var leagueRegistrationMessage = MessageDescription as LEAGUEREGISTRATIONMESSAGE;
                 if (leagueRegistrationMessage == null)
                 {
                     Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.ERROR);

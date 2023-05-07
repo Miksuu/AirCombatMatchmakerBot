@@ -15,8 +15,8 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
     {
         messageName = MessageName.REPORTINGSTATUSMESSAGE;
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
-        messageEmbedTitle = "Current reporting status";
-        messageDescription = "Insert the reporting status message here";
+        thisInterfaceMessage.MessageEmbedTitle = "Current reporting status";
+        thisInterfaceMessage.MessageDescription = "Insert the reporting status message here";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
@@ -73,7 +73,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
                 Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
 
-                // Only process the ReportObject fields (ignore teamName)
+                // Only process the ReportObject fields (ignore TeamName)
                 if (field.FieldType != typeof(ReportObject)) continue;
 
                 Log.WriteLine("This is " + nameof(ReportObject) + " field: " +

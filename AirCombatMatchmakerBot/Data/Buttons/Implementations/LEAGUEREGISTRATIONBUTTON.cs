@@ -9,7 +9,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
     public LEAGUEREGISTRATIONBUTTON()
     {
         buttonName = ButtonName.LEAGUEREGISTRATIONBUTTON;
-        buttonLabel = "Join";
+        thisInterfaceButton.ButtonLabel = "Join";
         buttonStyle = ButtonStyle.Primary;
         ephemeralResponse = true;
     }

@@ -12,34 +12,24 @@ public class Player
 
     public string PlayerNickName
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(playerNickName), LogLevel.VERBOSE);
-            return playerNickName;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(playerNickName)
-                + " to: " + value, LogLevel.VERBOSE);
-            playerNickName = value;
-        }
+        get => playerNickName.GetValue();
+        set => playerNickName.SetValue(value);
     }
 
     [DataMember] private logUlong playerDiscordId = new logUlong();
-    [DataMember] private logString playerNickName { get; set; }
+    [DataMember] private logString playerNickName = new logString();
 
     public Player()
     {
-
         PlayerDiscordId = 0;
-        playerNickName = string.Empty;
+        PlayerNickName = string.Empty;
     }
 
     public Player(ulong _playerDiscordID, string _playerNickName)
     {
 
         PlayerDiscordId = _playerDiscordID;
-        playerNickName = _playerNickName;
+        PlayerNickName = _playerNickName;
     }
 
     public string GetPlayerIdAsMention()

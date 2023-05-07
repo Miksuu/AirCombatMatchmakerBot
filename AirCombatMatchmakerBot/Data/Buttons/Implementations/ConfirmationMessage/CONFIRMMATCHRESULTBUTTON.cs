@@ -9,7 +9,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
     public CONFIRMMATCHRESULTBUTTON()
     {
         buttonName = ButtonName.CONFIRMMATCHRESULTBUTTON;
-        buttonLabel = "CONFIRM";
+        thisInterfaceButton.ButtonLabel = "CONFIRM";
         buttonStyle = ButtonStyle.Success;
         ephemeralResponse = true;
     }

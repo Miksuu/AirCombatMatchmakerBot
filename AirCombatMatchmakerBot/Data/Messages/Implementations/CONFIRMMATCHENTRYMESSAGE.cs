@@ -16,7 +16,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.PLANESELECTIONBUTTON, 0),
             });
         */
-        messageEmbedTitle = "This message confirms the match entry [add more detailed message here]";
+        thisInterfaceMessage.MessageEmbedTitle = "This message confirms the match entry [add more detailed message here]";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
@@ -52,11 +52,11 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
-        if (messageDescription == null)
+        if (thisInterfaceMessage.MessageDescription == null)
         {
-            Log.WriteLine("messageDescription was null!", LogLevel.CRITICAL);
+            Log.WriteLine("MessageDescription was null!", LogLevel.CRITICAL);
             return "";
         }
-        return messageDescription;
+        return thisInterfaceMessage.MessageDescription;
     }
 }

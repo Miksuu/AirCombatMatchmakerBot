@@ -10,7 +10,7 @@ public class REGISTRATIONBUTTON : BaseButton
     public REGISTRATIONBUTTON()
     {
         buttonName = ButtonName.REGISTRATIONBUTTON;
-        buttonLabel = "REGISTER";
+        thisInterfaceButton.ButtonLabel = "REGISTER";
         buttonStyle = ButtonStyle.Primary;
         ephemeralResponse = true;
     }

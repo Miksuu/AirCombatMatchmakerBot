@@ -12,7 +12,7 @@ public class PLANESELECTIONBUTTON : BaseButton
     public PLANESELECTIONBUTTON()
     {
         buttonName = ButtonName.PLANESELECTIONBUTTON;
-        buttonLabel = "Plane";
+        thisInterfaceButton.ButtonLabel = "Plane";
         buttonStyle = ButtonStyle.Primary;
         ephemeralResponse = false;
     }

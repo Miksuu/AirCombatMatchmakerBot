@@ -24,18 +24,8 @@ public abstract class BaseButton : InterfaceButton
 
     string InterfaceButton.ButtonLabel
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(buttonLabel) + ": " +
-                buttonLabel, LogLevel.GET_VERBOSE);
-            return buttonLabel;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(buttonLabel) + buttonLabel
-                + " to: " + value, LogLevel.SET_VERBOSE);
-            buttonLabel = value;
-        }
+        get => buttonLabel.GetValue();
+        set => buttonLabel.SetValue(value);
     }
 
     ButtonStyle InterfaceButton.ButtonStyle
@@ -62,19 +52,10 @@ public abstract class BaseButton : InterfaceButton
 
     string InterfaceButton.ButtonCustomId
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(buttonCustomId) + ": " +
-                buttonCustomId, LogLevel.GET_VERBOSE);
-            return buttonCustomId;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(buttonCustomId) + buttonCustomId
-                + " to: " + value, LogLevel.SET_VERBOSE);
-            buttonCustomId = value;
-        }
+        get => buttonCustomId.GetValue();
+        set => buttonCustomId.SetValue(value);
     }
+
 
     bool InterfaceButton.EphemeralResponse
     {
@@ -93,10 +74,10 @@ public abstract class BaseButton : InterfaceButton
     }
 
     [DataMember] protected ButtonName buttonName;
-    [DataMember] protected logString buttonLabel = "";
+    [DataMember] protected logString buttonLabel = new logString();
     [DataMember] protected ButtonStyle buttonStyle;
     [DataMember] protected logUlong buttonCategoryId = new logUlong();
-    [DataMember] protected logString buttonCustomId = "";
+    [DataMember] protected logString buttonCustomId = new logString();
     protected bool ephemeralResponse = false;
     //[DataMember] protected int buttonIndex = 0;
     protected InterfaceButton thisInterfaceButton;
@@ -111,7 +92,7 @@ public abstract class BaseButton : InterfaceButton
         ulong _leagueCategoryId = 0)
     {
         Log.WriteLine("Creating a button: " + buttonName + " | label: " +
-            buttonLabel + " | custom-id:" + _customId + " with style: " +
+            thisInterfaceButton.ButtonLabel + " | custom-id:" + _customId + " with style: " +
             buttonStyle + " | category-id: " + _buttonCategoryId + " with buttonIndex:" +
             _buttonIndex, LogLevel.VERBOSE);
 
@@ -130,11 +111,11 @@ public abstract class BaseButton : InterfaceButton
 
         // Insert the button category id for faster reference later
         thisInterfaceButton.ButtonCategoryId = _buttonCategoryId;
-        buttonCustomId = _customId;
+        thisInterfaceButton.ButtonCustomId = _customId;
 
         var button = new Discord.ButtonBuilder()
         {
-            Label = buttonLabel,
+            Label = thisInterfaceButton.ButtonLabel,
             CustomId = _customId,
             Style = buttonStyle,
         };

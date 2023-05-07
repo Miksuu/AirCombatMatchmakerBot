@@ -40,36 +40,16 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    string? InterfaceMessage.MessageEmbedTitle
+    string InterfaceMessage.MessageEmbedTitle
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(messageEmbedTitle)
-                + ": " + messageEmbedTitle, LogLevel.VERBOSE);
-            return messageEmbedTitle;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(messageEmbedTitle) +
-                messageEmbedTitle + " to: " + value, LogLevel.VERBOSE);
-            messageEmbedTitle = value;
-        }
+        get => messageEmbedTitle.GetValue();
+        set => messageEmbedTitle.SetValue(value);
     }
 
-    string? InterfaceMessage.MessageDescription
+    string InterfaceMessage.MessageDescription
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(messageDescription)
-                + ": " + messageDescription, LogLevel.VERBOSE);
-            return messageDescription;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(messageDescription) +
-                messageDescription + " to: " + value, LogLevel.VERBOSE);
-            messageDescription = value;
-        }
+        get => messageDescription.GetValue();
+        set => messageDescription.SetValue(value);
     }
 
     Discord.Color InterfaceMessage.MessageEmbedColor
@@ -142,8 +122,8 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected ConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount;
 
     // Embed properties
-    [DataMember] protected logString messageEmbedTitle { get; set; }
-    [DataMember] protected logString messageDescription { get; set; } // Not necessary for embed
+    [DataMember] protected logString messageEmbedTitle = new logString();
+    [DataMember] protected logString messageDescription = new logString(); // Not necessary for embed
     protected Discord.Color messageEmbedColor { get; set; } //= Discord.Color.DarkGrey;
 
     [DataMember] protected logUlong messageId = new logUlong();
@@ -220,7 +200,7 @@ public abstract class BaseMessage : InterfaceMessage
         {
             var componentsBuilt = component.Build();
 
-            // Send a regular messageDescription
+            // Send a regular MessageDescription
             if (_component == null)
             {
                 string finalMentionMessage = "";
@@ -255,15 +235,15 @@ public abstract class BaseMessage : InterfaceMessage
                 {
                     var embed = new EmbedBuilder();
 
-                    // set the title, description, and color of the embedded messageDescription
-                    embed.WithTitle(messageEmbedTitle)
+                    // set the title, description, and color of the embedded MessageDescription
+                    embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
                          .WithDescription(messageForGenerating)
                          .WithColor(messageEmbedColor);
 
-                    // add a field to the embedded messageDescription
+                    // add a field to the embedded MessageDescription
                     //embed.AddField("Field Name", "Field Value");
 
-                    // add a thumbnail image to the embedded messageDescription
+                    // add a thumbnail image to the embedded MessageDescription
                     //embed.WithThumbnailUrl("");
 
                     if (_files.Length == 0)
@@ -293,7 +273,7 @@ public abstract class BaseMessage : InterfaceMessage
                         cachedUserMessage = await iMessageChannel.SendFilesAsync(attachments);
                     }
 
-                    messageDescription = messageForGenerating;
+                    thisInterfaceMessage.MessageDescription = messageForGenerating;
 
                     _interfaceChannel.InterfaceMessagesWithIds.TryAdd(thisInterfaceMessage.MessageId, this);
                 }
@@ -301,10 +281,10 @@ public abstract class BaseMessage : InterfaceMessage
                 else
                 {
                     cachedUserMessage = await textChannel.SendMessageAsync(
-                        messageDescription, false, components: componentsBuilt);
+                        thisInterfaceMessage.MessageDescription, false, components: componentsBuilt);
                 }
             }
-            // Reply to a messageDescription
+            // Reply to a MessageDescription
             else
             {
                 await _component.RespondAsync(
@@ -377,20 +357,20 @@ public abstract class BaseMessage : InterfaceMessage
         {
             var componentsBuilt = component.Build();
 
-            // Send a regular messageDescription
+            // Send a regular MessageDescription
             if (_component == null)
             {
                 var embed = new EmbedBuilder();
 
-                // set the title, description, and color of the embedded messageDescription
-                embed.WithTitle(messageEmbedTitle)
+                // set the title, description, and color of the embedded MessageDescription
+                embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
                      .WithDescription(messageForGenerating)
                      .WithColor(messageEmbedColor);
 
-                // add a field to the embedded messageDescription
+                // add a field to the embedded MessageDescription
                 //embed.AddField("Field Name", "Field Value");
 
-                // add a thumbnail image to the embedded messageDescription
+                // add a thumbnail image to the embedded MessageDescription
                 //embed.WithThumbnailUrl("https://example.com/thumbnail.png");
 
                 var userMessage = await textChannel.SendMessageAsync(
@@ -398,11 +378,11 @@ public abstract class BaseMessage : InterfaceMessage
 
                 thisInterfaceMessage.MessageId = userMessage.Id;
 
-                messageDescription = messageForGenerating;
+                thisInterfaceMessage.MessageDescription = messageForGenerating;
 
                 _interfaceChannel.InterfaceMessagesWithIds.TryAdd(thisInterfaceMessage.MessageId, this);
             }
-            // Reply to a messageDescription
+            // Reply to a MessageDescription
             else
             {
                 await _component.RespondAsync(
@@ -417,10 +397,10 @@ public abstract class BaseMessage : InterfaceMessage
 
     public async Task ModifyMessage(string _newContent)
     {
-        messageDescription = _newContent;
+        thisInterfaceMessage.MessageDescription = _newContent;
 
         Log.WriteLine("Modifying a message on channel id: " + thisInterfaceMessage.MessageChannelId +
-            " that has msg id: " + thisInterfaceMessage.MessageId + " with content: " + messageDescription +
+            " that has msg id: " + thisInterfaceMessage.MessageId + " with content: " + thisInterfaceMessage.MessageDescription +
             " with new content:" + _newContent, LogLevel.DEBUG);
 
         var client = BotReference.GetClientRef();
@@ -441,9 +421,9 @@ public abstract class BaseMessage : InterfaceMessage
 
         var embed = new EmbedBuilder();
 
-        // set the title, description, and color of the embedded messageDescription
-        embed.WithTitle(messageEmbedTitle)
-             .WithDescription(messageDescription)
+        // set the title, description, and color of the embedded MessageDescription
+        embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
+             .WithDescription(thisInterfaceMessage.MessageDescription)
              .WithColor(messageEmbedColor);
 
         await channel.ModifyMessageAsync(thisInterfaceMessage.MessageId, m => m.Embed = embed.Build());

@@ -13,16 +13,16 @@ public class REPORTSCOREBUTTON : BaseButton
     public REPORTSCOREBUTTON()
     {
         buttonName = ButtonName.REPORTSCOREBUTTON;
-        buttonLabel = "0";
+        thisInterfaceButton.ButtonLabel = "0";
         buttonStyle = ButtonStyle.Primary;
         ephemeralResponse = true;
     }
 
     protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId)
     {
-        buttonLabel = _buttonIndex.ToString();
+        thisInterfaceButton.ButtonLabel = _buttonIndex.ToString();
         Log.WriteLine("is: " + nameof(buttonName) +
-            " set label to: " + buttonLabel, LogLevel.VERBOSE);
+            " set label to: " + thisInterfaceButton.ButtonLabel, LogLevel.VERBOSE);
 
         return "";
     }
@@ -42,7 +42,7 @@ public class REPORTSCOREBUTTON : BaseButton
             return new Response (errorMsg, false);
         }
 
-        string[] splitStrings = buttonCustomId.Split('_');
+        string[] splitStrings = thisInterfaceButton.ButtonCustomId.Split('_');
         ulong playerId = _component.User.Id;
         int playerReportedResult = int.Parse(splitStrings[1]);
 

@@ -12,7 +12,7 @@ public class CHALLENGEBUTTON : BaseButton
     public CHALLENGEBUTTON()
     {
         buttonName = ButtonName.CHALLENGEBUTTON;
-        buttonLabel = "Enter Queue";
+        thisInterfaceButton.ButtonLabel = "Enter Queue";
         buttonStyle = ButtonStyle.Success;
         ephemeralResponse = true;
     }

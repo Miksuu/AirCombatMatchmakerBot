@@ -47,7 +47,7 @@ public class DiscordLeagueReferences
     // Id of the role which gives access to the league channelTypes
     [DataMember] private logUlong leagueRoleId = new logUlong();
 
-    // Reference to the messageDescription related to this league on the #league-registration channel
+    // Reference to the MessageDescription related to this league on the #league-registration channel
     [DataMember] private logUlong leagueRegistrationMessageId = new logUlong();
 
     public DiscordLeagueReferences()

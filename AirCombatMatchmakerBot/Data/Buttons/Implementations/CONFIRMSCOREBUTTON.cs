@@ -13,7 +13,7 @@ public class CONFIRMSCOREBUTTON : BaseButton
     public CONFIRMSCOREBUTTON()
     {
         buttonName = ButtonName.CONFIRMSCOREBUTTON;
-        buttonLabel = "CONFIRM";
+        thisInterfaceButton.ButtonLabel = "CONFIRM";
         buttonStyle = ButtonStyle.Primary;
         ephemeralResponse = false;
     }
@@ -26,7 +26,7 @@ public class CONFIRMSCOREBUTTON : BaseButton
     public override Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        string[] splitStrings = buttonCustomId.Split('_');
+        string[] splitStrings = thisInterfaceButton.ButtonCustomId.Split('_');
 
         ulong playerId = _component.User.Id;
         int playerReportedResult = int.Parse(splitStrings[1]);

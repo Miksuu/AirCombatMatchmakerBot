@@ -11,7 +11,7 @@ public class LINKBUTTON : BaseButton
     public LINKBUTTON()
     {
         buttonName = ButtonName.LINKBUTTON;
-        buttonLabel = "Link";
+        thisInterfaceButton.ButtonLabel = "Link";
         buttonStyle = ButtonStyle.Link;
         ephemeralResponse = true;
     }

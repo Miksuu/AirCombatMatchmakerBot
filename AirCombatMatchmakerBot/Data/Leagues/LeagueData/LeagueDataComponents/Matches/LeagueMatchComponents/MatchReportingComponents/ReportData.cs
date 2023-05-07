@@ -5,17 +5,8 @@ public class ReportData
 {
     public string TeamName
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teamName), LogLevel.VERBOSE);
-            return teamName;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teamName)
-                + " to: " + value, LogLevel.VERBOSE);
-            teamName = value;
-        }
+        get => teamName.GetValue();
+        set => teamName.SetValue(value);
     }
 
     public ReportObject ReportedScore
@@ -63,22 +54,6 @@ public class ReportData
         }
     }
 
-    /*
-    public float CachedSkillRating
-    {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(cachedSkillRating) + ": " + cachedSkillRating, LogLevel.VERBOSE);
-            return cachedSkillRating;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(cachedSkillRating)
-                + " to: " + value, LogLevel.VERBOSE);
-            cachedSkillRating = value;
-        }
-    }*/
-
     public float FinalEloDelta
     {
         get
@@ -109,7 +84,7 @@ public class ReportData
         }
     }
 
-    [DataMember] private logString teamName { get; set; }
+    [DataMember] private logString teamName = new logString();
     [DataMember] private ReportObject reportedScore { get; set; }
     [DataMember] private ReportObject tacviewLink { get; set; }
     [DataMember] private ReportObject commentByTheUser { get; set; }
@@ -119,7 +94,7 @@ public class ReportData
 
     public ReportData(string _reportingTeamName)
     {
-        teamName = _reportingTeamName;      
+        TeamName = _reportingTeamName;      
         reportedScore = new ReportObject("Reported score", EmojiName.REDSQUARE);
         tacviewLink = new ReportObject("Tacview link", EmojiName.REDSQUARE);
         commentByTheUser = new ReportObject("Comment", EmojiName.YELLOWSQUARE);

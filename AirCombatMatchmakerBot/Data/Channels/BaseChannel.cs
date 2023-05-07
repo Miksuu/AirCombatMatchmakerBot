@@ -72,7 +72,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     [DataMember] protected ChannelType channelType { get; set; }
-    [DataMember] protected logString channelName { get; set; }
+    [DataMember] protected logString channelName = new logString();
     [DataMember] protected logUlong channelId = new logUlong();
     [DataMember] protected logUlong channelsCategoryId = new logUlong();
     [DataMember] protected ConcurrentDictionary<MessageName, bool> channelMessages { get; set; }
@@ -230,7 +230,7 @@ public abstract class BaseChannel : InterfaceChannel
         Log.WriteLine("Finding channel: " + channelType + " (" + thisInterfaceChannel.ChannelId +
             ") parent category with id: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
 
-        // If the messageDescription doesn't exist, set it ID to 0 to regenerate it
+        // If the MessageDescription doesn't exist, set it ID to 0 to regenerate it
 
         var channel = _client.GetChannelAsync(thisInterfaceChannel.ChannelId).Result as ITextChannel;
 
@@ -335,7 +335,7 @@ public abstract class BaseChannel : InterfaceChannel
         }
     }
 
-    // Finds ANY messageDescription with that messageDescription name (there can be multiple of same messages now)
+    // Finds ANY MessageDescription with that MessageDescription name (there can be multiple of same messages now)
     public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName)
     {
