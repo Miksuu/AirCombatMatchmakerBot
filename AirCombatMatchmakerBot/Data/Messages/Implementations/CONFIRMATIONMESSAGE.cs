@@ -55,7 +55,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         Log.WriteLine("Found interfaceChannel:" + interfaceChannel.ChannelId, LogLevel.VERBOSE);
 
-        Log.WriteLine("Found match tuple: " + mcc.leagueMatchCached.MatchChannelId, LogLevel.VERBOSE);
+        //Log.WriteLine("Found match tuple: " + mcc.leagueMatchCached.MatchChannelId, LogLevel.VERBOSE);
 
         var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
 

@@ -17,9 +17,12 @@ public static class Log
         string date = DateTime.Now.Date.ToString("dd.MM.yyyy", culture);
         string time = DateTime.Now.ToString("hh:mm:ss.fff", culture);
 
+        string callerMethod = ": " + _memberName + "()";
+        if (_memberName == "") callerMethod = string.Empty;
+
         string logMessageRaw = (date + " " + time + " {Thread: " + System.Environment.CurrentManagedThreadId + "} - [LOG | " + _logLevel + "] " +
             LogLevelNormalization.logLevelNormalizationStrings[_logLevel] + " " +
-            Path.GetFileName(_filePath) + ": " + _memberName + "()" +
+            Path.GetFileName(_filePath) +callerMethod +
             ", line " + _lineNumber + ": " + _message);
 
         string logMessageColor = logMessageRaw.Pastel(GetColorCode(_logLevel));
@@ -44,9 +47,9 @@ public static class Log
             case (LogLevel.WARNING): return Color.Orange;
             case (LogLevel.IMPORTANT): return Color.Gold;
             case (LogLevel.SERIALIZATION): return Color.Blue;
-            case (LogLevel.DEBUG): return Color.Teal;
-            case (LogLevel.SET_VERBOSE): return Color.Magenta;
-            case (LogLevel.GET_VERBOSE): return Color.Green;
+            case (LogLevel.DEBUG): return Color.Green;
+            case (LogLevel.SET_VERBOSE): return Color.DarkTeal;
+            case (LogLevel.GET_VERBOSE): return Color.Teal;
             case (LogLevel.VERBOSE): return Color.Purple;
         }
 

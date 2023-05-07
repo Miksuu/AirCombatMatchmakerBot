@@ -40,11 +40,11 @@ public abstract class BaseChannel : InterfaceChannel
     {
         get
         {
-            return channelId.Value;
+            return channelId.GetValue();
         }
         set
         {
-            channelId.Value = value;
+            channelId.SetValue(value);
         }
     }
 
@@ -97,7 +97,7 @@ public abstract class BaseChannel : InterfaceChannel
 
     [DataMember] protected ChannelType channelType { get; set; }
     [DataMember] protected string? channelName { get; set; }
-    [DataMember] protected CustomUlong channelId { get; set; }
+    [DataMember] protected logUlong channelId = new logUlong();
     [DataMember] protected ulong channelsCategoryId { get; set; }
     [DataMember] protected ConcurrentDictionary<MessageName, bool> channelMessages { get; set; }
     [DataMember] protected ConcurrentDictionary<ulong, InterfaceMessage> interfaceMessagesWithIds { get; set; }
@@ -258,7 +258,7 @@ public abstract class BaseChannel : InterfaceChannel
 
         // If the messageDescription doesn't exist, set it ID to 0 to regenerate it
 
-        var channel = _client.GetChannelAsync(channelId).Result as ITextChannel;
+        var channel = _client.GetChannelAsync(thisInterfaceChannel.ChannelId).Result as ITextChannel;
 
         if (channel == null)
         {
@@ -356,7 +356,7 @@ public abstract class BaseChannel : InterfaceChannel
 
             if (channelType == ChannelType.BOTLOG)
             {
-                BotMessageLogging.loggingChannelId = channelId;
+                BotMessageLogging.loggingChannelId = thisInterfaceChannel.ChannelId;
             }
         }
     }
@@ -410,7 +410,7 @@ public abstract class BaseChannel : InterfaceChannel
     {
         Log.WriteLine("Getting IMessageChannel with id: " + channelId, LogLevel.VERBOSE);
 
-        var channel = await _client.GetChannelAsync(channelId) as IMessageChannel;
+        var channel = await _client.GetChannelAsync(thisInterfaceChannel.ChannelId) as IMessageChannel;
         if (channel == null)
         {
             Log.WriteLine(nameof(channel) + " was null!", LogLevel.ERROR);
