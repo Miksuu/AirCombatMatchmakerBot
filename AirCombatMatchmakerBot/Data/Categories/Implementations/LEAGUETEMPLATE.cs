@@ -9,7 +9,7 @@ public class LEAGUETEMPLATE : BaseCategory
     public LEAGUETEMPLATE()
     {
         categoryTypes = CategoryType.LEAGUETEMPLATE;
-        channelTypes = new logConcurrentBag<ChannelType>()
+        thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>()
         {
             ChannelType.LEAGUESTATUS,
             ChannelType.CHALLENGE,

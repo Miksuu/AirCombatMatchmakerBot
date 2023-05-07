@@ -9,7 +9,7 @@ public class REGISTRATIONCATEGORY : BaseCategory
     public REGISTRATIONCATEGORY()
     {
         categoryTypes = CategoryType.REGISTRATIONCATEGORY;
-        channelTypes = new logConcurrentBag<ChannelType>()
+        thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>()
         {
             ChannelType.REGISTRATIONCHANNEL,
             ChannelType.LEAGUEREGISTRATION,

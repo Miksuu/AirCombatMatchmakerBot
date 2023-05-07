@@ -60,9 +60,10 @@ public abstract class BaseCategory : InterfaceCategory
 
     public BaseCategory()
     {
-        channelTypes = new logConcurrentBag<ChannelType>();
-        interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
         thisInterfaceCategory = this;
+
+        thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>();
+        interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
@@ -109,7 +110,7 @@ public abstract class BaseCategory : InterfaceCategory
 
         thisInterfaceCategory.SocketCategoryChannelId = _socketCategoryChannelId;
 
-        foreach (ChannelType channelType in channelTypes)
+        foreach (ChannelType channelType in thisInterfaceCategory.ChannelTypes)
         {
             // Checks for missing match channels from the league category
             if (channelType == ChannelType.MATCHCHANNEL)
