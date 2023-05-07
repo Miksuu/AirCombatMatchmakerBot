@@ -22,37 +22,35 @@ public class Player
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(playerDiscordId), LogLevel.VERBOSE);
-            return playerDiscordId;
+            return playerDiscordId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(playerDiscordId)
-                + " to: " + value, LogLevel.VERBOSE);
-            playerDiscordId = value;
+            playerDiscordId.SetValue(value);
         }
     }
 
     [DataMember] private string playerNickName { get; set; }
-    [DataMember] private ulong playerDiscordId { get; set; }
+    [DataMember] private logUlong playerDiscordId = new logUlong();
 
     public Player()
     {
         playerNickName = string.Empty;
-        playerDiscordId = 0;
+        PlayerDiscordId = 0;
     }
 
-    public Player(ulong _playerID, string _playerNickName)
+    public Player(ulong _playerDiscordID, string _playerNickName)
     {
+
+        PlayerDiscordId = _playerDiscordID;
         playerNickName = _playerNickName;
-        playerDiscordId = _playerID;
     }
 
     public string GetPlayerIdAsMention()
     {
         Log.WriteLine("Getting player: " + playerNickName + " (" +
-            playerDiscordId + ") as a mention", LogLevel.VERBOSE);
+            PlayerDiscordId + ") as a mention", LogLevel.VERBOSE);
 
-        return "<@" + playerDiscordId.ToString() + ">";
+        return "<@" + PlayerDiscordId.ToString() + ">";
     }
 }

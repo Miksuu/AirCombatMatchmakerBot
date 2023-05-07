@@ -48,7 +48,7 @@ public class REPORTSCOREBUTTON : BaseButton
 
         Log.WriteLine("Pressed by: " + playerId + " in: " + reportingStatusMessage.MessageChannelId + 
             " with label int: " + playerReportedResult + " in category: " +
-            buttonCategoryId, LogLevel.DEBUG);
+            thisInterfaceButton.ButtonCategoryId, LogLevel.DEBUG);
 
         mcc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
 

@@ -8,14 +8,11 @@ public class DiscordLeagueReferences
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(leagueCategoryId) + leagueCategoryId, LogLevel.VERBOSE);
-            return leagueCategoryId;
+            return leagueCategoryId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(leagueCategoryId) + leagueCategoryId
-                + " to: " + value, LogLevel.VERBOSE);
-            leagueCategoryId = value;
+            leagueCategoryId.SetValue(value);
         }
     }
 
@@ -39,14 +36,11 @@ public class DiscordLeagueReferences
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(leagueRoleId) + leagueRoleId, LogLevel.VERBOSE);
-            return leagueRoleId;
+            return leagueRoleId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(leagueRoleId) + leagueRoleId
-                + " to: " + value, LogLevel.VERBOSE);
-            leagueRoleId = value;
+            leagueRoleId.SetValue(value);
         }
     }
 
@@ -54,28 +48,25 @@ public class DiscordLeagueReferences
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(leagueRegistrationMessageId) + leagueRegistrationMessageId, LogLevel.VERBOSE);
-            return leagueRegistrationMessageId;
+            return leagueRegistrationMessageId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(leagueRegistrationMessageId) + leagueRegistrationMessageId
-                + " to: " + value, LogLevel.VERBOSE);
-            leagueRegistrationMessageId = value;
+            leagueRegistrationMessageId.SetValue(value);
         }
     }
 
     // The reference to the category created by the system
-    [DataMember] private ulong leagueCategoryId { get; set; }
+    [DataMember] private logUlong leagueCategoryId = new logUlong();
 
     // The references for the channelTypes inside the category
     [DataMember] private ConcurrentDictionary<ChannelType, ulong> leagueChannels { get; set; }
 
     // Id of the role which gives access to the league channelTypes
-    [DataMember] private ulong leagueRoleId { get; set; }
+    [DataMember] private logUlong leagueRoleId = new logUlong();
 
     // Reference to the messageDescription related to this league on the #league-registration channel
-    [DataMember] private ulong leagueRegistrationMessageId { get; set; }
+    [DataMember] private logUlong leagueRegistrationMessageId = new logUlong();
 
     public DiscordLeagueReferences()
     {

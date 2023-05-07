@@ -92,15 +92,11 @@ public abstract class BaseMessage : InterfaceMessage
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(messageId)
-                + ": " + messageId, LogLevel.VERBOSE);
-            return messageId;
+            return messageId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(messageId) +
-                messageId + " to: " + value, LogLevel.VERBOSE);
-            messageId = value;
+            messageId.SetValue(value);
         }
     }
 
@@ -108,15 +104,11 @@ public abstract class BaseMessage : InterfaceMessage
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(messageChannelId)
-                + ": " + messageChannelId, LogLevel.VERBOSE);
-            return messageChannelId;
+            return messageChannelId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(messageChannelId) +
-                messageChannelId + " to: " + value, LogLevel.VERBOSE);
-            messageChannelId = value;
+            messageChannelId.SetValue(value);
         }
     }
 
@@ -124,15 +116,11 @@ public abstract class BaseMessage : InterfaceMessage
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(messageCategoryId)
-                + ": " + messageCategoryId, LogLevel.VERBOSE);
-            return messageCategoryId;
+            return messageCategoryId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(messageCategoryId) +
-                messageCategoryId + " to: " + value, LogLevel.VERBOSE);
-            messageCategoryId = value;
+            messageCategoryId.SetValue(value);
         }
     }
 
@@ -176,20 +164,22 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected string? messageDescription { get; set; } // Not necessary for embed
     protected Discord.Color messageEmbedColor { get; set; } //= Discord.Color.DarkGrey;
 
-    [DataMember] protected ulong messageId { get; set; }
-    [DataMember] protected ulong messageChannelId { get; set; }
-    [DataMember] protected ulong messageCategoryId { get; set; }
+    [DataMember] protected logUlong messageId = new logUlong();
+    [DataMember] protected logUlong messageChannelId = new logUlong();
+    [DataMember] protected logUlong messageCategoryId = new logUlong();
     [DataMember] protected ConcurrentBag<InterfaceButton> buttonsInTheMessage { get; set; }
 
     protected bool mentionMatchPlayers { get; set; }
     protected Discord.IUserMessage? cachedUserMessage { get; set; }
-    
+
+    protected InterfaceMessage thisInterfaceMessage;
 
     public BaseMessage()
     {
         messageEmbedColor = Discord.Color.Default;
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
         buttonsInTheMessage = new ConcurrentBag<InterfaceButton>();
+        thisInterfaceMessage = this;
     }
 
     // If the component is not null, this is a reply
@@ -199,16 +189,16 @@ public abstract class BaseMessage : InterfaceMessage
         SocketMessageComponent? _component = null, bool _ephemeral = true,
         params string[] _files)
     {
-        messageChannelId = _interfaceChannel.ChannelId;
-        messageCategoryId = _interfaceChannel.ChannelsCategoryId;
+        thisInterfaceMessage.MessageChannelId = _interfaceChannel.ChannelId;
+        thisInterfaceMessage.MessageCategoryId = _interfaceChannel.ChannelsCategoryId;
 
         string messageForGenerating = string.Empty;
         var component = new ComponentBuilder();
 
         Log.WriteLine("Creating the channel message with id: "
-            + messageChannelId + " with categoryID: " + messageCategoryId, LogLevel.VERBOSE);
+            + thisInterfaceMessage.MessageChannelId + " with categoryID: " + thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
 
-        var textChannel = await _client.GetChannelAsync(messageChannelId) as ITextChannel;
+        var textChannel = await _client.GetChannelAsync(thisInterfaceMessage.MessageChannelId) as ITextChannel;
         if (textChannel == null)
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
@@ -299,7 +289,7 @@ public abstract class BaseMessage : InterfaceMessage
                         cachedUserMessage = await textChannel.SendMessageAsync(
                             finalMentionMessage, false, embed.Build(), components: componentsBuilt);
 
-                        messageId = cachedUserMessage.Id;
+                        thisInterfaceMessage.MessageId = cachedUserMessage.Id;
                     }
                     else
                     {
@@ -323,7 +313,7 @@ public abstract class BaseMessage : InterfaceMessage
 
                     messageDescription = messageForGenerating;
 
-                    _interfaceChannel.InterfaceMessagesWithIds.TryAdd(messageId, this);
+                    _interfaceChannel.InterfaceMessagesWithIds.TryAdd(thisInterfaceMessage.MessageId, this);
                 }
                 // NON EMBED MESSAGES ARE NOT ADDED TO THE InterfaceMessagesWithIds list!!!
                 else
@@ -340,7 +330,7 @@ public abstract class BaseMessage : InterfaceMessage
             }
         }
 
-        Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);
+        Log.WriteLine("Created a new message with id: " + thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
 
         return this;
     }
@@ -350,16 +340,16 @@ public abstract class BaseMessage : InterfaceMessage
         bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
-        messageChannelId = _interfaceChannel.ChannelId;
-        messageCategoryId = _interfaceChannel.ChannelsCategoryId;
+        thisInterfaceMessage.MessageChannelId = _interfaceChannel.ChannelId;
+        thisInterfaceMessage.MessageCategoryId = _interfaceChannel.ChannelsCategoryId;
 
         string messageForGenerating = string.Empty;
         var component = new ComponentBuilder();
 
         Log.WriteLine("Creating the channel message with id: "
-            + messageChannelId + " with categoryID: " + messageCategoryId, LogLevel.VERBOSE);
+            + thisInterfaceMessage.MessageChannelId + " with categoryID: " + thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
 
-        var textChannel = await _client.GetChannelAsync(messageChannelId) as ITextChannel;
+        var textChannel = await _client.GetChannelAsync(thisInterfaceMessage.MessageChannelId) as ITextChannel;
         if (textChannel == null)
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
@@ -424,11 +414,11 @@ public abstract class BaseMessage : InterfaceMessage
                 var userMessage = await textChannel.SendMessageAsync(
                     "", false, embed.Build(), components: componentsBuilt);
 
-                messageId = userMessage.Id;
+                thisInterfaceMessage.MessageId = userMessage.Id;
 
                 messageDescription = messageForGenerating;
 
-                _interfaceChannel.InterfaceMessagesWithIds.TryAdd(messageId, this);
+                _interfaceChannel.InterfaceMessagesWithIds.TryAdd(thisInterfaceMessage.MessageId, this);
             }
             // Reply to a messageDescription
             else
@@ -438,7 +428,7 @@ public abstract class BaseMessage : InterfaceMessage
             }
         }
 
-        Log.WriteLine("Created a new message with id: " + messageId, LogLevel.VERBOSE);
+        Log.WriteLine("Created a new message with id: " + thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
 
         return this;
     }
@@ -447,8 +437,8 @@ public abstract class BaseMessage : InterfaceMessage
     {
         messageDescription = _newContent;
 
-        Log.WriteLine("Modifying a message on channel id: " + messageChannelId +
-            " that has msg id: " + messageId + " with content: " + messageDescription +
+        Log.WriteLine("Modifying a message on channel id: " + thisInterfaceMessage.MessageChannelId +
+            " that has msg id: " + thisInterfaceMessage.MessageId + " with content: " + messageDescription +
             " with new content:" + _newContent, LogLevel.DEBUG);
 
         var client = BotReference.GetClientRef();
@@ -458,7 +448,7 @@ public abstract class BaseMessage : InterfaceMessage
             return;
         }
 
-        var channel = await client.GetChannelAsync(messageChannelId) as ITextChannel;
+        var channel = await client.GetChannelAsync(thisInterfaceMessage.MessageChannelId) as ITextChannel;
         if (channel == null)
         {
             Log.WriteLine(nameof(channel) + " was null!", LogLevel.CRITICAL);
@@ -474,9 +464,9 @@ public abstract class BaseMessage : InterfaceMessage
              .WithDescription(messageDescription)
              .WithColor(messageEmbedColor);
 
-        await channel.ModifyMessageAsync(messageId, m => m.Embed = embed.Build());
+        await channel.ModifyMessageAsync(thisInterfaceMessage.MessageId, m => m.Embed = embed.Build());
 
-        Log.WriteLine("Modifying the message: " + messageId + " done.", LogLevel.VERBOSE);
+        Log.WriteLine("Modifying the message: " + thisInterfaceMessage.MessageId + " done.", LogLevel.VERBOSE);
     }
 
     public async Task GenerateAndModifyTheMessage()
@@ -508,7 +498,7 @@ public abstract class BaseMessage : InterfaceMessage
                 Log.WriteLine(nameof(finalCustomId) + ": " + finalCustomId, LogLevel.DEBUG);
 
                 _component.WithButton(interfaceButton.CreateTheButton(
-                    finalCustomId, b, messageCategoryId, _leagueCategoryId));
+                    finalCustomId, b, thisInterfaceMessage.MessageCategoryId, _leagueCategoryId));
 
                 buttonsInTheMessage.Add(interfaceButton);
             }
@@ -536,7 +526,7 @@ public abstract class BaseMessage : InterfaceMessage
                 buttonToGenerateKvp.Key, LogLevel.DEBUG);
 
             _component.WithButton(interfaceButton.CreateTheButton(
-                buttonToGenerateKvp.Key, ++buttonId, messageCategoryId, _leagueCategoryId));
+                buttonToGenerateKvp.Key, ++buttonId, thisInterfaceMessage.MessageCategoryId, _leagueCategoryId));
 
             buttonsInTheMessage.Add(interfaceButton);
         }
@@ -548,9 +538,9 @@ public abstract class BaseMessage : InterfaceMessage
 
     public async Task<Discord.IMessage?> GetMessageById(IMessageChannel _channel)
     {
-        Log.WriteLine("Getting IMessageChannel with id: " + messageId, LogLevel.VERBOSE);
+        Log.WriteLine("Getting IMessageChannel with id: " + thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
 
-        var message = await _channel.GetMessageAsync(messageId);
+        var message = await _channel.GetMessageAsync(thisInterfaceMessage.MessageId);
         if (message == null)
         {
             Log.WriteLine(nameof(message) + " was null!", LogLevel.ERROR);

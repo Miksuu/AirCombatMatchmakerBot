@@ -43,7 +43,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         string finalMessage = string.Empty;
 
         var interfaceLeagueMatchTuple = Database.Instance.Leagues.FindMatchAndItsInterfaceLeagueByCategoryAndChannelId(
-            messageCategoryId, messageChannelId);
+            thisInterfaceMessage.MessageCategoryId, thisInterfaceMessage.MessageChannelId);
 
         if (interfaceLeagueMatchTuple.Item1 == null || interfaceLeagueMatchTuple.Item2 == null)
         {

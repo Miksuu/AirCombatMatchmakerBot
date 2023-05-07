@@ -45,8 +45,8 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         string finalMessage = "Confirmed:\n";
 
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            messageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-            messageChannelId);
+            thisInterfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                thisInterfaceMessage.MessageChannelId);
         if (interfaceChannel == null)
         {
             Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
@@ -75,7 +75,8 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         if (confirmedTeamsCounter > 1) 
         {
-            InterfaceLeague? interfaceLeague = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
+            InterfaceLeague? interfaceLeague =
+                Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(thisInterfaceMessage.MessageCategoryId);
             if (interfaceLeague == null)
             {
                 Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);

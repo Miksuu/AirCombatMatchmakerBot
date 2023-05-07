@@ -29,7 +29,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         string reportingStatusMessage = string.Empty;
 
         InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.GetILeagueByCategoryId(messageCategoryId);
+            Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
         if (interfaceLeague == null)
         {
             Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.ERROR);
@@ -37,7 +37,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         }
 
         LeagueMatch? foundMatch =
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(messageChannelId);
+            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(thisInterfaceMessage.MessageChannelId);
         if (foundMatch == null)
         {
             Log.WriteLine(nameof(foundMatch) + " was null!", LogLevel.ERROR);

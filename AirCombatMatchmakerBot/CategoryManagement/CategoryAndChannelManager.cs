@@ -129,7 +129,8 @@ public static class CategoryAndChannelManager
             }
         }
 
-        SocketRole? role = null;
+        SocketRole? role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
+                    guild, finalCategoryName).Result;
 
         // The category exists,
         // just find it from the database and then get the id of the socketchannel
@@ -165,9 +166,6 @@ public static class CategoryAndChannelManager
         // If the category doesn't exist at all, create it and add it to the database
         else
         {
-            role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
-                    guild, finalCategoryName).Result;
-
             socketCategoryChannel =
                 await interfaceCategory.CreateANewSocketCategoryChannelAndReturnIt(
                     guild, finalCategoryName, role);

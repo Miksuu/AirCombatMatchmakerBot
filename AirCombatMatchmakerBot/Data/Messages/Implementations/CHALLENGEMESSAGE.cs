@@ -27,7 +27,7 @@ public class CHALLENGEMESSAGE : BaseMessage
     public override string GenerateMessage()
     {
         Log.WriteLine("Generating a challenge queue message with _channelId: " +
-            messageChannelId + " on category: " + messageCategoryId, LogLevel.VERBOSE);
+            thisInterfaceMessage.MessageChannelId + " on category: " + thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
 
         foreach (var createdCategoriesKvp in
             Database.Instance.Categories.CreatedCategoriesWithChannels)
@@ -41,16 +41,16 @@ public class CHALLENGEMESSAGE : BaseMessage
             Log.WriteLine("Full league name: " + leagueName, LogLevel.VERBOSE);
 
             if (createdCategoriesKvp.Value.InterfaceChannels.Any(
-                    x => x.Value.ChannelId == messageChannelId))
+                    x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId))
             {
                 ulong channelIdToLookFor =
                     createdCategoriesKvp.Value.InterfaceChannels.FirstOrDefault(
-                        x => x.Value.ChannelId == messageChannelId).Value.ChannelId;
+                        x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId).Value.ChannelId;
 
                 Log.WriteLine("Looping on league: " + leagueName +
                     " looking for id: " + channelIdToLookFor, LogLevel.VERBOSE);
 
-                if (messageChannelId == channelIdToLookFor)
+                if (thisInterfaceMessage.MessageChannelId == channelIdToLookFor)
                 {
                     Log.WriteLine("Found: " + channelIdToLookFor +
                         " is league: " + leagueName, LogLevel.DEBUG);
@@ -59,7 +59,8 @@ public class CHALLENGEMESSAGE : BaseMessage
                     messageEmbedTitle = leagueName + " challenge.";
                     string challengeMessage = "Players In The Queue: \n";
 
-                    var leagueCategory = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
+                    var leagueCategory =
+                        Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(thisInterfaceMessage.MessageCategoryId);
                     if (leagueCategory == null)
                     {
                         Log.WriteLine(nameof(leagueCategory) + " was null!", LogLevel.ERROR);
