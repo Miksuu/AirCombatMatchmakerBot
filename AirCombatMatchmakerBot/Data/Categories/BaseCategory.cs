@@ -71,6 +71,7 @@ public abstract class BaseCategory : InterfaceCategory
     protected ConcurrentBag<ChannelType> channelTypes;
     [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels { get; set; } 
     [DataMember] protected logUlong socketCategoryChannelId = new logUlong();
+
     private InterfaceCategory thisInterfaceCategory;
 
     public BaseCategory()
