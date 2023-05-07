@@ -19,20 +19,6 @@ public class MatchChannelComponents
             Log.WriteLine("Already cached, returning", LogLevel.VERBOSE);
             return "";
         }
-        /*
-
-        InterfaceChannel interfaceChannel =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                    _interfaceMessage.MessageChannelId);
-        if (interfaceChannel == null)
-        {
-            string errorMsg = nameof(interfaceChannel) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return errorMsg;
-        }
-        Log.WriteLine("Found: " + nameof(interfaceChannel) +
-            interfaceChannel.ChannelId, LogLevel.VERBOSE);*/
 
         interfaceLeagueCached =
             Database.Instance.Leagues.GetILeagueByCategoryId(_interfaceMessage.MessageCategoryId);
