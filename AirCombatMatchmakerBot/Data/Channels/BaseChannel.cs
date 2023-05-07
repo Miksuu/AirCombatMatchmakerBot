@@ -40,14 +40,11 @@ public abstract class BaseChannel : InterfaceChannel
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(channelId) + ": " + channelId, LogLevel.VERBOSE);
-            return channelId;
+            return channelId.Value;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(channelId) + channelId
-                + " to: " + value, LogLevel.VERBOSE);
-            channelId = value;
+            channelId.Value = value;
         }
     }
 
@@ -100,14 +97,18 @@ public abstract class BaseChannel : InterfaceChannel
 
     [DataMember] protected ChannelType channelType { get; set; }
     [DataMember] protected string? channelName { get; set; }
-    [DataMember] protected ulong channelId { get; set; }
+    [DataMember] protected CustomUlong channelId { get; set; }
     [DataMember] protected ulong channelsCategoryId { get; set; }
     [DataMember] protected ConcurrentDictionary<MessageName, bool> channelMessages { get; set; }
     [DataMember] protected ConcurrentDictionary<ulong, InterfaceMessage> interfaceMessagesWithIds { get; set; }
+    private InterfaceChannel thisInterfaceChannel { get; set; }
+
+
     public BaseChannel()
     {
         channelMessages = new ConcurrentDictionary<MessageName, bool>();
         interfaceMessagesWithIds = new ConcurrentDictionary<ulong, InterfaceMessage>();
+        thisInterfaceChannel = this;
     }
 
     public abstract List<Overwrite> GetGuildPermissions(
@@ -147,7 +148,9 @@ public abstract class BaseChannel : InterfaceChannel
             x.CategoryId = channelsCategoryId;
         });
 
-        channelId = channel.Id;
+        
+
+        thisInterfaceChannel.ChannelId = channel.Id;
 
         Log.WriteLine("Done creating a channel named: " + channelType + " with ID: " + channel.Id +
             " for category: " + channelsCategoryId, LogLevel.DEBUG);
