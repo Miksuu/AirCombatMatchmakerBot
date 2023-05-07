@@ -333,7 +333,7 @@ public class MatchReporting
         }
 
         Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
-            " showing: " + showingConfirmationMessage, LogLevel.DEBUG);
+            " showing: " + ShowingConfirmationMessage, LogLevel.DEBUG);
 
         if (confirmationMessageCanBeShown) //&& !showingConfirmationMessage)
         {

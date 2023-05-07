@@ -25,7 +25,7 @@ public class MATCHCHANNEL : BaseChannel
     {
         List<Overwrite> listOfOverwrites = new List<Overwrite>();
 
-        Log.WriteLine("Overwriting permissions for: " + channelName +
+        Log.WriteLine("Overwriting permissions for: " + thisInterfaceChannel.ChannelName +
             " users that will be allowed access count: " +
             _allowedUsersIdsArray.Length, LogLevel.VERBOSE);
 
@@ -35,7 +35,7 @@ public class MATCHCHANNEL : BaseChannel
         foreach (ulong userId in _allowedUsersIdsArray)
         {
             Log.WriteLine("Adding " + userId + " to the permission allowed ConcurrentBag on: " +
-                channelName, LogLevel.VERBOSE);
+                thisInterfaceChannel.ChannelName, LogLevel.VERBOSE);
 
             listOfOverwrites.Add(
                 new Overwrite(userId, PermissionTarget.User,

@@ -77,7 +77,7 @@ public abstract class BaseChannel : InterfaceChannel
     [DataMember] protected logUlong channelsCategoryId = new logUlong();
     [DataMember] protected ConcurrentDictionary<MessageName, bool> channelMessages { get; set; }
     [DataMember] protected ConcurrentDictionary<ulong, InterfaceMessage> interfaceMessagesWithIds { get; set; }
-    private InterfaceChannel thisInterfaceChannel;
+    protected InterfaceChannel thisInterfaceChannel;
 
 
     public BaseChannel()

@@ -11,7 +11,7 @@ public class logInt
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Getting bool " + _memberName + ": " + _value, LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
+        Log.WriteLine("Getting int " + _memberName + ": " + _value, LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
         return _value;
     }
 
@@ -20,7 +20,7 @@ public class logInt
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Setting bool " + _memberName + ": " + _value + " TO: " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
+        Log.WriteLine("Setting int " + _memberName + ": " + _value + " TO: " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
         _value = value;
     }
 }

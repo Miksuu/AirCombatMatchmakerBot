@@ -113,8 +113,8 @@ public class LeagueMatch
 
         matchReporting = new MatchReporting(teamsInTheMatch);
 
-        Log.WriteLine("Constructed a new match with teams ids: " + teamsInTheMatch.ElementAt(0) +
-            teamsInTheMatch.ElementAt(1) + " with matchId of: " + matchId, LogLevel.DEBUG);
+        Log.WriteLine("Constructed a new match with teams ids: " + TeamsInTheMatch.ElementAt(0) +
+            TeamsInTheMatch.ElementAt(1) + " with matchId of: " + MatchId, LogLevel.DEBUG);
     }
 
     public ulong[] GetIdsOfThePlayersInTheMatchAsArray(InterfaceLeague _interfaceLeague)
@@ -158,7 +158,7 @@ public class LeagueMatch
     {
         matchReporting.MatchDone = true;
 
-        Log.WriteLine("Finishing match: " + matchId, LogLevel.DEBUG);
+        Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
         matchReporting.EloSystem.CalculateFinalEloForBothTeams(
             _interfaceLeague, matchReporting.FindTeamsInTheMatch(_interfaceLeague),
             matchReporting.TeamIdsWithReportData);

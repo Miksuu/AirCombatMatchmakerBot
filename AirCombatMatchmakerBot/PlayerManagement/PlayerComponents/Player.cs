@@ -34,7 +34,7 @@ public class Player
 
     public string GetPlayerIdAsMention()
     {
-        Log.WriteLine("Getting player: " + playerNickName + " (" +
+        Log.WriteLine("Getting player: " + PlayerNickName + " (" +
             PlayerDiscordId + ") as a mention", LogLevel.VERBOSE);
 
         return "<@" + PlayerDiscordId.ToString() + ">";
