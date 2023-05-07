@@ -8,7 +8,7 @@ using System.ComponentModel;
 [DataContract]
 public class CHALLENGEBUTTON : BaseButton
 {
-    LeagueCategoryComponents lc = new LeagueCategoryComponents();
+    LeagueCategoryComponents lcc = new LeagueCategoryComponents();
     public CHALLENGEBUTTON()
     {
         buttonName = ButtonName.CHALLENGEBUTTON;
@@ -31,21 +31,21 @@ public class CHALLENGEBUTTON : BaseButton
         Log.WriteLine("Starting processing a challenge by: " +
             playerId + " in channel: " + channelId, LogLevel.VERBOSE);
 
-        lc.FindCategorysLeagueAndInsertItToTheCache(_interfaceMessage.MessageCategoryId);
-        if (lc.interfaceLeagueCached == null)
+        lcc.FindCategorysLeagueAndInsertItToTheCache(_interfaceMessage.MessageCategoryId);
+        if (lcc.interfaceLeagueCached == null)
         {
-            string errorMsg = nameof(lc.interfaceLeagueCached) + " was null!";
+            string errorMsg = nameof(lcc.interfaceLeagueCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return new Response(errorMsg, false);
         }
 
-        //Log.WriteLine("Found: " + nameof(mc), LogLevel.DEBUG);
+        //Log.WriteLine("Found: " + nameof(mcc), LogLevel.DEBUG);
 
-        var challengeStatusOfTheCurrentLeague = lc.interfaceLeagueCached.LeagueData.ChallengeStatus;
+        var challengeStatusOfTheCurrentLeague = lcc.interfaceLeagueCached.LeagueData.ChallengeStatus;
         Log.WriteLine(nameof(challengeStatusOfTheCurrentLeague) + challengeStatusOfTheCurrentLeague, LogLevel.DEBUG);
 
         Team? playerTeam =
-            lc.interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
+            lcc.interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
         if (playerTeam == null)
         {
             Log.WriteLine(nameof(playerTeam) +
@@ -53,7 +53,7 @@ public class CHALLENGEBUTTON : BaseButton
             return new Response("Error! Team not found", false);
         }
 
-        Log.WriteLine("Team found: " + playerTeam.GetTeamName(lc.interfaceLeagueCached.LeaguePlayerCountPerTeam) +
+        Log.WriteLine("Team found: " + playerTeam.GetTeamName(lcc.interfaceLeagueCached.LeaguePlayerCountPerTeam) +
             " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.", LogLevel.VERBOSE);
 
         // Add to method
@@ -62,8 +62,8 @@ public class CHALLENGEBUTTON : BaseButton
             var challengeStatusOfTheTempLeague = league.LeagueData.ChallengeStatus;
 
             Log.WriteLine("Loop on " + nameof(league) + ": " + league.LeagueCategoryName +
-                " with cache: " + lc.interfaceLeagueCached.LeagueCategoryName, LogLevel.VERBOSE);
-            if (league.LeagueCategoryName == lc.interfaceLeagueCached.LeagueCategoryName)
+                " with cache: " + lcc.interfaceLeagueCached.LeagueCategoryName, LogLevel.VERBOSE);
+            if (league.LeagueCategoryName == lcc.interfaceLeagueCached.LeagueCategoryName)
             {
                 Log.WriteLine("on " + league.LeagueCategoryName + ", skipping", LogLevel.VERBOSE);
                 continue;
@@ -74,7 +74,7 @@ public class CHALLENGEBUTTON : BaseButton
             if (!league.LeagueData.CheckIfPlayerIsParcipiatingInTheLeague(playerId))
             {
                 Log.WriteLine(playerId + " is not parcipiating in this league: " +
-                    lc.interfaceLeagueCached.LeagueCategoryName + ", disregarding", LogLevel.VERBOSE);
+                    lcc.interfaceLeagueCached.LeagueCategoryName + ", disregarding", LogLevel.VERBOSE);
                 continue;
             }
 
@@ -99,7 +99,7 @@ public class CHALLENGEBUTTON : BaseButton
         }
 
         string response = challengeStatusOfTheCurrentLeague.PostChallengeToThisLeague(
-            lc.interfaceLeagueCached.LeaguePlayerCountPerTeam, lc.interfaceLeagueCached, playerTeam);
+            lcc.interfaceLeagueCached.LeaguePlayerCountPerTeam, lcc.interfaceLeagueCached, playerTeam);
         if (response == "alreadyInQueue")
         {
             Log.WriteLine(playerId + " was already in the queue!", LogLevel.VERBOSE);

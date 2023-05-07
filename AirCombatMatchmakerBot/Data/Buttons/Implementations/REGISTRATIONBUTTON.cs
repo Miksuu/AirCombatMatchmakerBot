@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using System.Data;
 using System;
 using System.Runtime.Serialization;

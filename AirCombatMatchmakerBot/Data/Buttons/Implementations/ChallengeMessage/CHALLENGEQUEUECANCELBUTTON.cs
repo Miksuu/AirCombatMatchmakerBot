@@ -7,7 +7,7 @@ using Discord.WebSocket;
 [DataContract]
 public class CHALLENGEQUEUECANCELBUTTON : BaseButton
 {
-    MatchChannelComponents mc = new MatchChannelComponents();
+    MatchChannelComponents mcc = new MatchChannelComponents();
     public CHALLENGEQUEUECANCELBUTTON()
     {
         buttonName = ButtonName.CHALLENGEQUEUECANCELBUTTON;
@@ -27,18 +27,18 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseButton
         Log.WriteLine("Starting processing a challenge canel request by: " +
             _component.User.Id , LogLevel.VERBOSE);
 
-        mc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
+        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
 
-        if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            string errorMsg = nameof(mc.interfaceLeagueCached) + " or " +
-                nameof(mc.leagueMatchCached) + " was null!";
+            string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
+                nameof(mcc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             return new Response(errorMsg, false);
         }
 
-        string response = mc.interfaceLeagueCached.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(
-            _component.User.Id, mc.interfaceLeagueCached.LeaguePlayerCountPerTeam, mc.interfaceLeagueCached);
+        string response = mcc.interfaceLeagueCached.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(
+            _component.User.Id, mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam, mcc.interfaceLeagueCached);
 
         if (response == "notInTheQueue")
         {

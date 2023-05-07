@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
@@ -254,24 +254,24 @@ public abstract class BaseMessage : InterfaceMessage
                 string finalMentionMessage = "";
                 if (mentionMatchPlayers)
                 {
-                    MatchChannelComponents mc = new MatchChannelComponents();
-                    mc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
-                    if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
+                    MatchChannelComponents mcc = new MatchChannelComponents();
+                    mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+                    if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
                     {
-                        Log.WriteLine(nameof(mc) + " was null!", LogLevel.CRITICAL);
+                        Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
                         return null;
                     }
 
-                    if (mc.interfaceLeagueCached == null || mc.leagueMatchCached == null)
+                    if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
                     {
-                        string errorMsg = nameof(mc) + " was null!";
+                        string errorMsg = nameof(mcc) + " was null!";
                         Log.WriteLine(errorMsg, LogLevel.ERROR);
                         //return null;
                     }
                     else
                     {
                         ulong[] playerIdsInTheMatch =
-                            mc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray(mc.interfaceLeagueCached);
+                            mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray(mcc.interfaceLeagueCached);
                         foreach (ulong id in playerIdsInTheMatch)
                         {
                             finalMentionMessage += "<@" + id.ToString() + "> ";
