@@ -11,7 +11,7 @@ public class BOTSTUFF : BaseCategory
     public BOTSTUFF()
     {
         categoryTypes = CategoryType.BOTSTUFF;
-        channelTypes = new ConcurrentBag<ChannelType>()
+        channelTypes = new logConcurrentBag<ChannelType>()
         {
             ChannelType.BOTLOG,
             ChannelType.BOTCOMMANDS,

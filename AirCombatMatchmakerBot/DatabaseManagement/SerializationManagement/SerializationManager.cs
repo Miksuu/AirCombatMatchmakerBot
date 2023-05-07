@@ -114,10 +114,8 @@ public static class SerializationManager
         settings.TypeNameHandling = TypeNameHandling.Auto;
         settings.NullValueHandling = NullValueHandling.Include;
         settings.ObjectCreationHandling = ObjectCreationHandling.Replace;
-        //settings.Converters.Add(new logConcurrentBagConverter<UnitName>());
 
         var newDeserializedObject = JsonConvert.DeserializeObject<Database>(_json, settings);
-
 
         if (newDeserializedObject == null)
         {

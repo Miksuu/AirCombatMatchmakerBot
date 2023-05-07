@@ -68,6 +68,10 @@ public class logConcurrentBag<T> : IEnumerable<T>
             {
                 members += EnumExtensions.GetEnumMemberAttrValue(unitName) + ", ";
             }
+            else if (item is ChannelType channelType)
+            {
+                members += EnumExtensions.GetEnumMemberAttrValue(channelType) + ", ";
+            }
             else
             {
                 Log.WriteLine("Tried to get type: " + type + " unknown, undefined type?", LogLevel.CRITICAL);
