@@ -115,9 +115,9 @@ public class MatchReporting
     [DataMember] private ConcurrentDictionary<int, ReportData> teamIdsWithReportData { get; set; }
     [DataMember] private bool showingConfirmationMessage { get; set; }
     [DataMember] private bool matchDone { get; set; }
-    [DataMember] private string? finalResultForConfirmation { get; set; }
-    [DataMember] private string? finalMessageForMatchReportingChannel { get; set; }
-    [DataMember] private string? finalResultTitleForConfirmation { get; set; }
+    [DataMember] private logString finalResultForConfirmation { get; set; }
+    [DataMember] private logString finalMessageForMatchReportingChannel { get; set; }
+    [DataMember] private logString finalResultTitleForConfirmation { get; set; }
 
     public MatchReporting()
     {

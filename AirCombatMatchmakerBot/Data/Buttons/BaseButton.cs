@@ -56,14 +56,8 @@ public abstract class BaseButton : InterfaceButton
 
     ulong InterfaceButton.ButtonCategoryId
     {
-        get
-        {
-            return buttonCategoryId.GetValue();
-        }
-        set
-        {
-            buttonCategoryId.SetValue(value);
-        }
+        get => buttonCategoryId.GetValue();
+        set => buttonCategoryId.SetValue(value);
     }
 
     string InterfaceButton.ButtonCustomId
@@ -99,10 +93,10 @@ public abstract class BaseButton : InterfaceButton
     }
 
     [DataMember] protected ButtonName buttonName;
-    [DataMember] protected string buttonLabel = "";
+    [DataMember] protected logString buttonLabel = "";
     [DataMember] protected ButtonStyle buttonStyle;
     [DataMember] protected logUlong buttonCategoryId = new logUlong();
-    [DataMember] protected string buttonCustomId = "";
+    [DataMember] protected logString buttonCustomId = "";
     protected bool ephemeralResponse = false;
     //[DataMember] protected int buttonIndex = 0;
     protected InterfaceButton thisInterfaceButton;

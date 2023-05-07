@@ -82,7 +82,7 @@ public class Team
     }
 
     [DataMember] private float skillRating { get; set; }
-    [DataMember] private string teamName { get; set; }
+    [DataMember] private logString teamName { get; set; }
     [DataMember] private ConcurrentBag<Player> players { get; set; }
     [DataMember] private bool teamActive { get; set; }
     [DataMember] private int teamId { get; set; }

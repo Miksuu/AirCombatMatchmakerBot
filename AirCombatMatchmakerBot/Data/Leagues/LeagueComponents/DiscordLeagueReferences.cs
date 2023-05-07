@@ -6,14 +6,8 @@ public class DiscordLeagueReferences
 {
     public ulong LeagueCategoryId
     {
-        get
-        {
-            return leagueCategoryId.GetValue();
-        }
-        set
-        {
-            leagueCategoryId.SetValue(value);
-        }
+        get => leagueCategoryId.GetValue();
+        set => leagueCategoryId.SetValue(value);
     }
 
     public ConcurrentDictionary<ChannelType, ulong> LeagueChannels
@@ -34,26 +28,14 @@ public class DiscordLeagueReferences
 
     public ulong LeagueRoleId
     {
-        get
-        {
-            return leagueRoleId.GetValue();
-        }
-        set
-        {
-            leagueRoleId.SetValue(value);
-        }
+        get => leagueRoleId.GetValue();
+        set => leagueRoleId.SetValue(value);
     }
 
     public ulong LeagueRegistrationMessageId
     {
-        get
-        {
-            return leagueRegistrationMessageId.GetValue();
-        }
-        set
-        {
-            leagueRegistrationMessageId.SetValue(value);
-        }
+        get => leagueRegistrationMessageId.GetValue();
+        set => leagueRegistrationMessageId.SetValue(value);
     }
 
     // The reference to the category created by the system

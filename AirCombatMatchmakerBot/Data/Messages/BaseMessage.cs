@@ -90,38 +90,20 @@ public abstract class BaseMessage : InterfaceMessage
 
     ulong InterfaceMessage.MessageId
     {
-        get
-        {
-            return messageId.GetValue();
-        }
-        set
-        {
-            messageId.SetValue(value);
-        }
+        get => messageId.GetValue();
+        set => messageId.SetValue(value);
     }
 
     ulong InterfaceMessage.MessageChannelId
     {
-        get
-        {
-            return messageChannelId.GetValue();
-        }
-        set
-        {
-            messageChannelId.SetValue(value);
-        }
+        get => messageChannelId.GetValue();
+        set => messageChannelId.SetValue(value);
     }
 
     ulong InterfaceMessage.MessageCategoryId
     {
-        get
-        {
-            return messageCategoryId.GetValue();
-        }
-        set
-        {
-            messageCategoryId.SetValue(value);
-        }
+        get => messageCategoryId.GetValue();
+        set => messageCategoryId.SetValue(value);
     }
 
     ConcurrentBag<InterfaceButton> InterfaceMessage.ButtonsInTheMessage
@@ -160,8 +142,8 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected ConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount;
 
     // Embed properties
-    [DataMember] protected string? messageEmbedTitle { get; set; }
-    [DataMember] protected string? messageDescription { get; set; } // Not necessary for embed
+    [DataMember] protected logString messageEmbedTitle { get; set; }
+    [DataMember] protected logString messageDescription { get; set; } // Not necessary for embed
     protected Discord.Color messageEmbedColor { get; set; } //= Discord.Color.DarkGrey;
 
     [DataMember] protected logUlong messageId = new logUlong();

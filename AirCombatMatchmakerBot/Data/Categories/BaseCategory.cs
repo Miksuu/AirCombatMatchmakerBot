@@ -57,14 +57,8 @@ public abstract class BaseCategory : InterfaceCategory
 
     ulong InterfaceCategory.SocketCategoryChannelId
     {
-        get
-        {
-            return socketCategoryChannelId.GetValue();
-        }
-        set
-        {
-            socketCategoryChannelId.SetValue(value);
-        }
+        get => socketCategoryChannelId.GetValue();
+        set => socketCategoryChannelId.SetValue(value);
     }
 
     [DataMember] protected CategoryType categoryTypes;

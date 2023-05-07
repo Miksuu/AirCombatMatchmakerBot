@@ -109,7 +109,7 @@ public class ReportData
         }
     }
 
-    [DataMember] private string teamName { get; set; }
+    [DataMember] private logString teamName { get; set; }
     [DataMember] private ReportObject reportedScore { get; set; }
     [DataMember] private ReportObject tacviewLink { get; set; }
     [DataMember] private ReportObject commentByTheUser { get; set; }

@@ -42,14 +42,8 @@ public class LeagueMatch
 
     public ulong MatchChannelId
     {
-        get
-        {
-            return matchChannelId.GetValue();
-        }
-        set
-        {
-            matchChannelId.SetValue(value);
-        }
+        get => matchChannelId.GetValue();
+        set => matchChannelId.SetValue(value);
     }
 
     public MatchReporting MatchReporting

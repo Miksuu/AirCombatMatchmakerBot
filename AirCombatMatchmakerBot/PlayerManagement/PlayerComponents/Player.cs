@@ -3,6 +3,13 @@
 [DataContract]
 public class Player
 {
+    public ulong PlayerDiscordId
+    {
+        get => playerDiscordId.GetValue();
+        set => playerDiscordId.SetValue(value);
+    }
+
+
     public string PlayerNickName
     {
         get
@@ -18,25 +25,14 @@ public class Player
         }
     }
 
-    public ulong PlayerDiscordId
-    {
-        get
-        {
-            return playerDiscordId.GetValue();
-        }
-        set
-        {
-            playerDiscordId.SetValue(value);
-        }
-    }
-
-    [DataMember] private string playerNickName { get; set; }
     [DataMember] private logUlong playerDiscordId = new logUlong();
+    [DataMember] private logString playerNickName { get; set; }
 
     public Player()
     {
-        playerNickName = string.Empty;
+
         PlayerDiscordId = 0;
+        playerNickName = string.Empty;
     }
 
     public Player(ulong _playerDiscordID, string _playerNickName)

@@ -2,9 +2,9 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class logstring
+public class logString
 {
-    [DataMember] private string _value;
+    [DataMember] private string? _value;
 
     public string GetValue(
         [CallerFilePath] string _filePath = "",

@@ -93,8 +93,8 @@ public class ReportObject
         }
     }
 
-    [DataMember] private string? fieldNameDisplay { get; set; }
-    [DataMember] private string? objectValue { get; set; }
+    [DataMember] private logString fieldNameDisplay { get; set; }
+    [DataMember] private logString objectValue { get; set; }
     //[DataMember] private bool fieldFilled { get; set; }
     //[DataMember] private EmojiName defaultStateEmoji { get; set; }
     [DataMember] private EmojiName currentStatus { get; set; }

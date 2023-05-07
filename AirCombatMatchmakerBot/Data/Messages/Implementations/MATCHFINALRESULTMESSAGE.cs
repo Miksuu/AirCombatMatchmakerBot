@@ -29,7 +29,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         }
     }
 
-    [DataMember] protected string alternativeMessage = "";
+    [DataMember] protected logString alternativeMessage = "";
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
     {
