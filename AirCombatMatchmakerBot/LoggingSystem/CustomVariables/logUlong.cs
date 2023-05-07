@@ -20,7 +20,7 @@ public class logUlong
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Setting ulong " + _memberName + ": " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
+        Log.WriteLine("Setting ulong " + _memberName + ": " + _value + " TO:" + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
         _value = value;
     }
 }
