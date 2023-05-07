@@ -7,17 +7,8 @@ public class Team
 {
     public float SkillRating
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(skillRating), LogLevel.VERBOSE);
-            return skillRating;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(skillRating)
-                + " to: " + value, LogLevel.VERBOSE);
-            skillRating = value;
-        }
+        get => skillRating.GetValue();
+        set => skillRating.SetValue(value);
     }
 
     public string TeamName
@@ -72,7 +63,7 @@ public class Team
         }
     }
 
-    [DataMember] private float skillRating { get; set; }
+    [DataMember] private logFloat skillRating = new logFloat();
     [DataMember] private logString teamName = new logString();
     [DataMember] private ConcurrentBag<Player> players { get; set; }
     [DataMember] private bool teamActive { get; set; }
@@ -80,7 +71,7 @@ public class Team
 
     public Team()
     {
-        skillRating = 1600;
+        SkillRating = 1600f;
         TeamName = string.Empty;
         players = new ConcurrentBag<Player>();
         teamActive = false;
@@ -88,7 +79,7 @@ public class Team
 
     public Team(ConcurrentBag<Player> _players, string _TeamName, int _teamId)
     {
-        skillRating = 1600;
+        SkillRating = 1600f;
         TeamName = _TeamName;
         players = _players;
         teamId = _teamId;

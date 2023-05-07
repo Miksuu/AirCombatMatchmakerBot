@@ -56,17 +56,8 @@ public class ReportData
 
     public float FinalEloDelta
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(finalEloDelta) + ": " + finalEloDelta, LogLevel.VERBOSE);
-            return finalEloDelta;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(finalEloDelta)
-                + " to: " + value, LogLevel.VERBOSE);
-            finalEloDelta = value;
-        }
+        get => finalEloDelta.GetValue();
+        set => finalEloDelta.SetValue(value);
     }
 
     public bool ConfirmedMatch
@@ -88,8 +79,7 @@ public class ReportData
     [DataMember] private ReportObject reportedScore { get; set; }
     [DataMember] private ReportObject tacviewLink { get; set; }
     [DataMember] private ReportObject commentByTheUser { get; set; }
-    //[DataMember] private float cachedSkillRating { get; set; }
-    [DataMember] private float finalEloDelta { get; set; }
+    [DataMember] private logFloat finalEloDelta = new logFloat();
     [DataMember] private bool confirmedMatch { get; set; }
 
     public ReportData(string _reportingTeamName)
