@@ -62,17 +62,8 @@ public class ReportData
 
     public bool ConfirmedMatch
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(confirmedMatch) + ": " + confirmedMatch, LogLevel.VERBOSE);
-            return confirmedMatch;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(confirmedMatch)
-                + " to: " + value, LogLevel.VERBOSE);
-            confirmedMatch = value;
-        }
+        get => confirmedMatch.GetValue();
+        set => confirmedMatch.SetValue(value);
     }
 
     [DataMember] private logString teamName = new logString();
@@ -80,7 +71,7 @@ public class ReportData
     [DataMember] private ReportObject tacviewLink { get; set; }
     [DataMember] private ReportObject commentByTheUser { get; set; }
     [DataMember] private logFloat finalEloDelta = new logFloat();
-    [DataMember] private bool confirmedMatch { get; set; }
+    [DataMember] private logBool confirmedMatch = new logBool();
 
     public ReportData(string _reportingTeamName)
     {

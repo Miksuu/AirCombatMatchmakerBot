@@ -38,32 +38,14 @@ public class MatchReporting
 
     public bool ShowingConfirmationMessage
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(showingConfirmationMessage), LogLevel.VERBOSE);
-            return showingConfirmationMessage;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(showingConfirmationMessage)
-                + " to: " + value, LogLevel.VERBOSE);
-            showingConfirmationMessage = value;
-        }
+        get => showingConfirmationMessage.GetValue();
+        set => showingConfirmationMessage.SetValue(value);
     }
 
     public bool MatchDone
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(matchDone), LogLevel.VERBOSE);
-            return matchDone;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(matchDone)
-                + " to: " + value, LogLevel.VERBOSE);
-            matchDone = value;
-        }
+        get => matchDone.GetValue();
+        set => matchDone.SetValue(value);
     }
 
     public string FinalResultForConfirmation
@@ -86,8 +68,8 @@ public class MatchReporting
 
     private EloSystem eloSystem { get; set; }
     [DataMember] private ConcurrentDictionary<int, ReportData> teamIdsWithReportData { get; set; }
-    [DataMember] private bool showingConfirmationMessage { get; set; }
-    [DataMember] private bool matchDone { get; set; }
+    [DataMember] private logBool showingConfirmationMessage = new logBool();
+    [DataMember] private logBool matchDone = new logBool();
     [DataMember] private logString finalResultForConfirmation = new logString();
     [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
     [DataMember] private logString finalResultTitleForConfirmation = new logString();
@@ -127,7 +109,7 @@ public class MatchReporting
             _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
             _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
 
-        if (matchDone)
+        if (MatchDone)
         {
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already over.", LogLevel.VERBOSE);
@@ -135,7 +117,7 @@ public class MatchReporting
         }
 
         // Can receive comments still even though the the confirmation is under way
-        if (showingConfirmationMessage && _typeOfTheReportingObject == TypeOfTheReportingObject.REPORTEDSCORE)
+        if (ShowingConfirmationMessage && _typeOfTheReportingObject == TypeOfTheReportingObject.REPORTEDSCORE)
         {
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already in confirmation.", LogLevel.VERBOSE);
@@ -213,7 +195,7 @@ public class MatchReporting
         // If the match is on the confirmation phase,
         // edit that MessageDescription instead of the reporting status MessageDescription which would be null
         MessageName messageNameToEdit = MessageName.REPORTINGSTATUSMESSAGE;
-        if (showingConfirmationMessage)
+        if (ShowingConfirmationMessage)
         {
             messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
 
@@ -355,7 +337,7 @@ public class MatchReporting
 
         if (confirmationMessageCanBeShown) //&& !showingConfirmationMessage)
         {
-            showingConfirmationMessage = true;
+            ShowingConfirmationMessage = true;
         }
 
         return Task.FromResult(("", confirmationMessageCanBeShown, interfaceChannel));

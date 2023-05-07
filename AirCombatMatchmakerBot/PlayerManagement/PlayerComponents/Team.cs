@@ -35,17 +35,8 @@ public class Team
 
     public bool TeamActive
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teamActive), LogLevel.VERBOSE);
-            return teamActive;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teamActive)
-                + " to: " + value, LogLevel.VERBOSE);
-            teamActive = value;
-        }
+        get => teamActive.GetValue();
+        set => teamActive.SetValue(value);
     }
 
     public int TeamId
@@ -66,7 +57,7 @@ public class Team
     [DataMember] private logFloat skillRating = new logFloat();
     [DataMember] private logString teamName = new logString();
     [DataMember] private ConcurrentBag<Player> players { get; set; }
-    [DataMember] private bool teamActive { get; set; }
+    [DataMember] private logBool teamActive = new logBool();
     [DataMember] private int teamId { get; set; }
 
     public Team()
@@ -74,7 +65,7 @@ public class Team
         SkillRating = 1600f;
         TeamName = string.Empty;
         players = new ConcurrentBag<Player>();
-        teamActive = false;
+        TeamActive = false;
     }
 
     public Team(ConcurrentBag<Player> _players, string _TeamName, int _teamId)
