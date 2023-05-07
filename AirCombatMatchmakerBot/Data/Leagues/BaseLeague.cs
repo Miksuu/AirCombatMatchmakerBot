@@ -45,17 +45,8 @@ public abstract class BaseLeague : InterfaceLeague
 
     ConcurrentBag<UnitName> InterfaceLeague.LeagueUnits
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(leagueUnits) + ": " + leagueUnits, LogLevel.VERBOSE);
-            return leagueUnits;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(leagueUnits) + leagueUnits
-                + " to: " + value, LogLevel.VERBOSE);
-            leagueUnits = value;
-        }
+        get => leagueUnits.GetValue();
+        set => leagueUnits.SetValue(value);
     }
 
     LeagueData InterfaceLeague.LeagueData
@@ -92,7 +83,7 @@ public abstract class BaseLeague : InterfaceLeague
     [DataMember] protected CategoryType leagueCategoryName;
     [DataMember] protected Era leagueEra;
     [DataMember] protected logInt leaguePlayerCountPerTeam = new logInt();
-    [DataMember] protected ConcurrentBag<UnitName> leagueUnits = new ConcurrentBag<UnitName>();
+    [DataMember] protected logConcurrentBag<UnitName> leagueUnits = new logConcurrentBag<UnitName>();
     [DataMember] protected LeagueData leagueData = new LeagueData();
     [DataMember] protected DiscordLeagueReferences discordLeagueReferences = new DiscordLeagueReferences();
 

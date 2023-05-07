@@ -1,5 +1,4 @@
 ﻿using Discord;
-using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 

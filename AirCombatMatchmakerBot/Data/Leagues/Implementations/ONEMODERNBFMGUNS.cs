@@ -12,7 +12,7 @@ public class ONEMODERNBFMGUNS : BaseLeague
         leagueEra = Era.MODERN;
         thisInterfaceLeague.LeaguePlayerCountPerTeam = 1;
 
-        leagueUnits = new ConcurrentBag<UnitName> {
+        leagueUnits = new logConcurrentBag<UnitName> {
             UnitName.FA18C,
             UnitName.F16C,
             UnitName.M2000C,
