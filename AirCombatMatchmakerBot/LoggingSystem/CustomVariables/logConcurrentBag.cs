@@ -77,9 +77,7 @@ public class logConcurrentBag<T> : IEnumerable<T>
             }
         }
 
-        string members = membersBuilder.ToString().TrimEnd(',', ' ');
-
-        return members;
+        return membersBuilder.ToString().TrimEnd(',', ' ');
     }
 
 }
