@@ -1,8 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
+[DataContract]
 public class logUlong
 {
-    private ulong _value;
+    [DataMember] private ulong _value;
 
     public ulong GetValue(
         [CallerFilePath] string _filePath = "",
