@@ -39,17 +39,8 @@ public abstract class BaseLeague : InterfaceLeague
 
     int InterfaceLeague.LeaguePlayerCountPerTeam
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(leaguePlayerCountPerTeam) + ": " + leaguePlayerCountPerTeam, LogLevel.VERBOSE);
-            return leaguePlayerCountPerTeam;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(leaguePlayerCountPerTeam) + leaguePlayerCountPerTeam
-                + " to: " + value, LogLevel.VERBOSE);
-            leaguePlayerCountPerTeam = value;
-        }
+        get => leaguePlayerCountPerTeam.GetValue();
+        set => leaguePlayerCountPerTeam.SetValue(value);
     }
 
     ConcurrentBag<UnitName> InterfaceLeague.LeagueUnits
@@ -100,13 +91,16 @@ public abstract class BaseLeague : InterfaceLeague
     // Generated based on the implementation
     [DataMember] protected CategoryType leagueCategoryName;
     [DataMember] protected Era leagueEra;
-    [DataMember] protected int leaguePlayerCountPerTeam;
+    [DataMember] protected logInt leaguePlayerCountPerTeam = new logInt();
     [DataMember] protected ConcurrentBag<UnitName> leagueUnits = new ConcurrentBag<UnitName>();
     [DataMember] protected LeagueData leagueData = new LeagueData();
     [DataMember] protected DiscordLeagueReferences discordLeagueReferences = new DiscordLeagueReferences();
 
+    protected InterfaceLeague thisInterfaceLeague;
+
     public BaseLeague()
     {
+        thisInterfaceLeague = this;
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
@@ -207,10 +201,10 @@ public abstract class BaseLeague : InterfaceLeague
                 " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
 
             bool playerIsInATeamAlready = leagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
-                leaguePlayerCountPerTeam, _userId);
+                thisInterfaceLeague.LeaguePlayerCountPerTeam, _userId);
 
             bool playerIsInActiveTeamAlready = leagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
-                leaguePlayerCountPerTeam, _userId).TeamActive;
+                thisInterfaceLeague.LeaguePlayerCountPerTeam, _userId).TeamActive;
 
             if (!playerIsInATeamAlready)
             {
@@ -223,10 +217,10 @@ public abstract class BaseLeague : InterfaceLeague
                     player.PlayerNickName,
                     leagueData.Teams.CurrentTeamInt);
 
-                if (leaguePlayerCountPerTeam < 2)
+                if (thisInterfaceLeague.LeaguePlayerCountPerTeam < 2)
                 {
                     Log.WriteLine("This league is solo", LogLevel.VERBOSE);
-
+                        
                     leagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
 
                     responseMsg = "Registration complete on: " +

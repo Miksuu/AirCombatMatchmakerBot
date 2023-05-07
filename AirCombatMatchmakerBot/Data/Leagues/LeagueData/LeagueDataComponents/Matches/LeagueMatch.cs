@@ -26,18 +26,8 @@ public class LeagueMatch
 
     public int MatchId
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(matchId)
-                + ": " + matchId, LogLevel.VERBOSE);
-            return matchId;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(matchId) +
-                matchId + " to: " + value, LogLevel.VERBOSE);
-            matchId = value;
-        }
+        get => matchId.GetValue();
+        set => matchId.SetValue(value);
     }
 
     public ulong MatchChannelId
@@ -79,7 +69,7 @@ public class LeagueMatch
     }
 
     [DataMember] private ConcurrentDictionary<int, string> teamsInTheMatch { get; set; }
-    [DataMember] private int matchId { get; set; }
+    [DataMember] private logInt matchId = new logInt();
     [DataMember] private logUlong matchChannelId = new logUlong();
     [DataMember] private MatchReporting matchReporting { get; set; }
     [DataMember] private CategoryType matchLeague { get; set; }
@@ -118,7 +108,7 @@ public class LeagueMatch
             Log.WriteLine("final teamsInTheMatch: " + item.Key, LogLevel.DEBUG);
         }
 
-        matchId = Database.Instance.Leagues.LeaguesMatchCounter;
+        MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
         matchReporting = new MatchReporting(teamsInTheMatch);
@@ -216,7 +206,7 @@ public class LeagueMatch
         matchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
         AttachmentData[] attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
-            matchId, _interfaceLeague).Result;
+            MatchId, _interfaceLeague).Result;
 
         /*
         foreach (var item in attachmentDatas)
@@ -267,14 +257,14 @@ public class LeagueMatch
                 MatchChannelId, out InterfaceChannel? _ic);
         Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(MatchChannelId, out ulong _id);
 
-        int matchIdTemp = matchId;
+        int matchIdTemp = MatchId;
 
         Database.Instance.ArchivedLeagueMatches.Add(tempMatch);
         Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
             Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
 
         foreach (var item in _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Where(
-            m => m.matchId == tempMatch.MatchId))
+            m => m.MatchId == tempMatch.MatchId))
         {
             _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? _leagueMatch);
             Log.WriteLine("Removed match " + item.MatchId, LogLevel.DEBUG);

@@ -41,24 +41,15 @@ public class Team
 
     public int TeamId
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teamId), LogLevel.VERBOSE);
-            return teamId;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teamId)
-                + " to: " + value, LogLevel.VERBOSE);
-            teamId = value;
-        }
+        get => teamId.GetValue();
+        set => teamId.SetValue(value);
     }
 
     [DataMember] private logFloat skillRating = new logFloat();
     [DataMember] private logString teamName = new logString();
     [DataMember] private ConcurrentBag<Player> players { get; set; }
     [DataMember] private logBool teamActive = new logBool();
-    [DataMember] private int teamId { get; set; }
+    [DataMember] private logInt teamId = new logInt();
 
     public Team()
     {
@@ -73,7 +64,7 @@ public class Team
         SkillRating = 1600f;
         TeamName = _TeamName;
         players = _players;
-        teamId = _teamId;
+        TeamId = _teamId;
     }
 
     public string GetTeamMembersInAString()

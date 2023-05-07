@@ -10,7 +10,7 @@ public class ONEMODERNBFMFOXTWO : BaseLeague
     {
         leagueCategoryName = CategoryType.ONEMODERNBFMFOXTWO;
         leagueEra = Era.MODERN;
-        leaguePlayerCountPerTeam = 1;
+        thisInterfaceLeague.LeaguePlayerCountPerTeam = 1;
 
         leagueUnits = new ConcurrentBag<UnitName> {
             UnitName.FA18C,
