@@ -115,7 +115,7 @@ public static class RoleManager
         Log.WriteLine("Role" + _roleName + " was not found, creating it", LogLevel.DEBUG);
 
         var newRole = await _guild.CreateRoleAsync(_roleName);
-        Log.WriteLine("Created a new role: " + newRole.Name, LogLevel.VERBOSE);
+        Log.WriteLine("Created a new role: " + newRole.Name + " with id: " + newRole.Id, LogLevel.DEBUG);
 
         SocketRole socketRole = _guild.GetRole(newRole.Id);
         Log.WriteLine("Found socketrole: " + socketRole.Name + " with id: " +

@@ -59,27 +59,25 @@ public abstract class BaseCategory : InterfaceCategory
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(socketCategoryChannelId) +
-                ": " + socketCategoryChannelId, LogLevel.VERBOSE);
-            return socketCategoryChannelId;
+            return socketCategoryChannelId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(socketCategoryChannelId) + socketCategoryChannelId
-                + " to: " + value, LogLevel.VERBOSE);
-            socketCategoryChannelId = value;
+            socketCategoryChannelId.SetValue(value);
         }
     }
 
     [DataMember] protected CategoryType categoryTypes;
     protected ConcurrentBag<ChannelType> channelTypes;
-    [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels;
-    [DataMember] protected ulong socketCategoryChannelId;
+    [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels { get; set; } 
+    [DataMember] protected logUlong socketCategoryChannelId = new logUlong();
+    private InterfaceCategory thisInterfaceCategory;
 
     public BaseCategory()
     {
         channelTypes = new ConcurrentBag<ChannelType>();
         interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
+        thisInterfaceCategory = this;
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
@@ -124,14 +122,14 @@ public abstract class BaseCategory : InterfaceCategory
             " Channel count: " + channelTypes.Count +
             " and setting the references", LogLevel.DEBUG);
 
-        socketCategoryChannelId = _socketCategoryChannelId;
+        thisInterfaceCategory.SocketCategoryChannelId = _socketCategoryChannelId;
 
         foreach (ChannelType channelType in channelTypes)
         {
             // Checks for missing match channels from the league category
             if (channelType == ChannelType.MATCHCHANNEL)
             {
-                await CreateTheMissingMatchChannels(_client, socketCategoryChannelId);
+                await CreateTheMissingMatchChannels(_client, thisInterfaceCategory.SocketCategoryChannelId);
                 continue;
             }
 
@@ -183,15 +181,21 @@ public abstract class BaseCategory : InterfaceCategory
         if (interfaceChannels.Any(
             x => x.Value.ChannelName == interfaceChannel.ChannelName))
         {
-            Log.WriteLine(nameof(interfaceChannels) + " already contains channel: " +
-                interfaceChannel.ChannelName, LogLevel.VERBOSE);
+            Log.WriteLine(nameof(interfaceChannels) + " with count: " + interfaceChannels.Count +
+                " already contains channel: " + interfaceChannel.ChannelName, LogLevel.DEBUG);
+
+            foreach ( var channel in interfaceChannels ) 
+            {
+                Log.WriteLine(channel.Value.ChannelType + " when searching for: " + _channelType +
+                    " with id: " + channel.Value.ChannelId, LogLevel.DEBUG);
+            }
 
             // Replace interfaceChannel with a one that is from the database
             interfaceChannel = interfaceChannels.FirstOrDefault(
                 x => x.Value.ChannelType == _channelType).Value;
 
             Log.WriteLine("Replaced with: " +
-                interfaceChannel.ChannelType + " from db", LogLevel.DEBUG);
+                interfaceChannel.ChannelType + " from db. with id: " + interfaceChannel.ChannelId, LogLevel.DEBUG);
 
             channelExists = ChannelRestore.CheckIfChannelHasBeenDeletedAndRestoreForCategory(
                 _socketCategoryChannelId, interfaceChannel, guild);

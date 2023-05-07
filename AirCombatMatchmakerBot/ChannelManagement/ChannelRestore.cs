@@ -10,7 +10,7 @@ public static class ChannelRestore
         SocketGuild _guild)
     {
         Log.WriteLine("Checking if channel in " + _categoryId +
-            " has been deleted.", LogLevel.VERBOSE);
+            " has been deleted. Trying to find: " + _interfaceChannel.ChannelId, LogLevel.DEBUG);
 
         if (_guild.GetCategoryChannel(_categoryId).Channels.Any(
             x => x.Id == _interfaceChannel.ChannelId))

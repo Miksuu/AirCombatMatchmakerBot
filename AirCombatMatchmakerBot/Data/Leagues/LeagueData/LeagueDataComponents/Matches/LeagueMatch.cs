@@ -44,15 +44,11 @@ public class LeagueMatch
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(matchChannelId)
-                + ": " + matchChannelId, LogLevel.VERBOSE);
-            return matchChannelId;
+            return matchChannelId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(matchChannelId) +
-                matchChannelId + " to: " + value, LogLevel.VERBOSE);
-            matchChannelId = value;
+            matchChannelId.SetValue(value);
         }
     }
 
@@ -90,7 +86,7 @@ public class LeagueMatch
 
     [DataMember] private ConcurrentDictionary<int, string> teamsInTheMatch { get; set; }
     [DataMember] private int matchId { get; set; }
-    [DataMember] private ulong matchChannelId { get; set; }
+    [DataMember] private logUlong matchChannelId = new logUlong();
     [DataMember] private MatchReporting matchReporting { get; set; }
     [DataMember] private CategoryType matchLeague { get; set; }
 
@@ -202,7 +198,7 @@ public class LeagueMatch
 
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                matchChannelId);
+                MatchChannelId);
 
         var interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.MATCHFINALRESULTMESSAGE, false);
@@ -251,11 +247,11 @@ public class LeagueMatch
         await _interfaceLeague.PostMatchReport(
             matchReporting.FinalMessageForMatchReportingChannel, matchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
-        LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(matchChannelId);
+        LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(MatchChannelId);
 
         // Perhaps search within category for a faster operation
         var channel = guild.Channels.FirstOrDefault(
-            c => c.Id == matchChannelId &&
+            c => c.Id == MatchChannelId &&
                 c.Name.Contains("match"));// Just in case
 
         if (channel == null)
@@ -274,8 +270,8 @@ public class LeagueMatch
 
         Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.InterfaceChannels.TryRemove(
-                matchChannelId, out InterfaceChannel? _ic);
-        Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(matchChannelId, out ulong _id);
+                MatchChannelId, out InterfaceChannel? _ic);
+        Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(MatchChannelId, out ulong _id);
 
         int matchIdTemp = matchId;
 

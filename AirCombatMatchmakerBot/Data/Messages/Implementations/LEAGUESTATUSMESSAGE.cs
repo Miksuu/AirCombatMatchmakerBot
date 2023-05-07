@@ -26,7 +26,8 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         string finalMessage = string.Empty;
         ConcurrentBag<Team> sortedTeamConcurrentBagByElo = new ConcurrentBag<Team>();
 
-        InterfaceLeague? interfaceLeague = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(messageCategoryId);
+        InterfaceLeague? interfaceLeague = 
+            Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(thisInterfaceMessage.MessageCategoryId);
 
         if (interfaceLeague == null)
         {

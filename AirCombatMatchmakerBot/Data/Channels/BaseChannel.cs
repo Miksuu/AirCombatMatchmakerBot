@@ -40,14 +40,11 @@ public abstract class BaseChannel : InterfaceChannel
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(channelId) + ": " + channelId, LogLevel.VERBOSE);
-            return channelId;
+            return channelId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(channelId) + channelId
-                + " to: " + value, LogLevel.VERBOSE);
-            channelId = value;
+            channelId.SetValue(value);
         }
     }
 
@@ -55,14 +52,11 @@ public abstract class BaseChannel : InterfaceChannel
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(channelsCategoryId) + ": " + channelsCategoryId, LogLevel.VERBOSE);
-            return channelsCategoryId;
+            return channelsCategoryId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(channelsCategoryId) + channelsCategoryId
-                + " to: " + value, LogLevel.VERBOSE);
-            channelsCategoryId = value;
+            channelsCategoryId.SetValue(value);
         }
     }
 
@@ -100,14 +94,18 @@ public abstract class BaseChannel : InterfaceChannel
 
     [DataMember] protected ChannelType channelType { get; set; }
     [DataMember] protected string? channelName { get; set; }
-    [DataMember] protected ulong channelId { get; set; }
-    [DataMember] protected ulong channelsCategoryId { get; set; }
+    [DataMember] protected logUlong channelId = new logUlong();
+    [DataMember] protected logUlong channelsCategoryId = new logUlong();
     [DataMember] protected ConcurrentDictionary<MessageName, bool> channelMessages { get; set; }
     [DataMember] protected ConcurrentDictionary<ulong, InterfaceMessage> interfaceMessagesWithIds { get; set; }
+    private InterfaceChannel thisInterfaceChannel;
+
+
     public BaseChannel()
     {
         channelMessages = new ConcurrentDictionary<MessageName, bool>();
         interfaceMessagesWithIds = new ConcurrentDictionary<ulong, InterfaceMessage>();
+        thisInterfaceChannel = this;
     }
 
     public abstract List<Overwrite> GetGuildPermissions(
@@ -117,7 +115,7 @@ public abstract class BaseChannel : InterfaceChannel
          params ulong[] _allowedUsersIdsArray)
     {
         Log.WriteLine("Creating a channel named: " + channelType +
-            " for category: " + channelsCategoryId, LogLevel.VERBOSE);
+            " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
 
         string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(channelType);
 
@@ -144,13 +142,13 @@ public abstract class BaseChannel : InterfaceChannel
         var channel = await _guild.CreateTextChannelAsync(channelTypeString, x =>
         {
             x.PermissionOverwrites = GetGuildPermissions(_guild, _role, _allowedUsersIdsArray);
-            x.CategoryId = channelsCategoryId;
+            x.CategoryId = thisInterfaceChannel.ChannelsCategoryId;
         });
 
-        channelId = channel.Id;
+        thisInterfaceChannel.ChannelId = channel.Id;
 
         Log.WriteLine("Done creating a channel named: " + channelType + " with ID: " + channel.Id +
-            " for category: " + channelsCategoryId, LogLevel.DEBUG);
+            " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.DEBUG);
     }
 
     public async Task<InterfaceMessage?> CreateAMessageForTheChannelFromMessageName(
@@ -250,12 +248,12 @@ public abstract class BaseChannel : InterfaceChannel
     {
         //Log.WriteLine("Starting to post channel messages on: " + channelType, LogLevel.VERBOSE);
 
-        Log.WriteLine("Finding channel: " + channelType + " (" + channelId +
-            ") parent category with id: " + channelsCategoryId, LogLevel.VERBOSE);
+        Log.WriteLine("Finding channel: " + channelType + " (" + thisInterfaceChannel.ChannelId +
+            ") parent category with id: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
 
         // If the messageDescription doesn't exist, set it ID to 0 to regenerate it
 
-        var channel = _client.GetChannelAsync(channelId).Result as ITextChannel;
+        var channel = _client.GetChannelAsync(thisInterfaceChannel.ChannelId).Result as ITextChannel;
 
         if (channel == null)
         {
@@ -353,7 +351,7 @@ public abstract class BaseChannel : InterfaceChannel
 
             if (channelType == ChannelType.BOTLOG)
             {
-                BotMessageLogging.loggingChannelId = channelId;
+                BotMessageLogging.loggingChannelId = thisInterfaceChannel.ChannelId;
             }
         }
     }
@@ -405,9 +403,9 @@ public abstract class BaseChannel : InterfaceChannel
 
     public async Task<IMessageChannel?> GetMessageChannelById(DiscordSocketClient _client)
     {
-        Log.WriteLine("Getting IMessageChannel with id: " + channelId, LogLevel.VERBOSE);
+        Log.WriteLine("Getting IMessageChannel with id: " + thisInterfaceChannel.ChannelId, LogLevel.VERBOSE);
 
-        var channel = await _client.GetChannelAsync(channelId) as IMessageChannel;
+        var channel = await _client.GetChannelAsync(thisInterfaceChannel.ChannelId) as IMessageChannel;
         if (channel == null)
         {
             Log.WriteLine(nameof(channel) + " was null!", LogLevel.ERROR);

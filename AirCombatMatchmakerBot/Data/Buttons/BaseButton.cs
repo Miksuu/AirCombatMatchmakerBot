@@ -58,15 +58,11 @@ public abstract class BaseButton : InterfaceButton
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(buttonCategoryId)
-                + ": " + buttonCategoryId, LogLevel.GET_VERBOSE);
-            return buttonCategoryId;
+            return buttonCategoryId.GetValue();
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(buttonCategoryId) +
-                buttonCategoryId + " to: " + value, LogLevel.SET_VERBOSE);
-            buttonCategoryId = value;
+            buttonCategoryId.SetValue(value);
         }
     }
 
@@ -105,10 +101,16 @@ public abstract class BaseButton : InterfaceButton
     [DataMember] protected ButtonName buttonName;
     [DataMember] protected string buttonLabel = "";
     [DataMember] protected ButtonStyle buttonStyle;
-    [DataMember] protected ulong buttonCategoryId;
+    [DataMember] protected logUlong buttonCategoryId = new logUlong();
     [DataMember] protected string buttonCustomId = "";
     protected bool ephemeralResponse = false;
     //[DataMember] protected int buttonIndex = 0;
+    protected InterfaceButton thisInterfaceButton;
+
+    public BaseButton()
+    {
+        thisInterfaceButton = this;
+    }
 
     public Discord.ButtonBuilder CreateTheButton(
         string _customId, int _buttonIndex, ulong _buttonCategoryId,
@@ -133,7 +135,7 @@ public abstract class BaseButton : InterfaceButton
         Log.WriteLine("_customId: " + _customId, LogLevel.VERBOSE);
 
         // Insert the button category id for faster reference later
-        buttonCategoryId = _buttonCategoryId;
+        thisInterfaceButton.ButtonCategoryId = _buttonCategoryId;
         buttonCustomId = _customId;
 
         var button = new Discord.ButtonBuilder()
