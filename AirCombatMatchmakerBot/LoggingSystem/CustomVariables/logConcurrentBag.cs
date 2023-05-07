@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-
+using System.Text;
 
 [DataContract]
 public class logConcurrentBag<T> : IEnumerable<T>
@@ -59,27 +59,27 @@ public class logConcurrentBag<T> : IEnumerable<T>
 
     private string GetConcurrentBagMembers(ConcurrentBag<T> _customValues)
     {
-        string members = string.Empty;
+        StringBuilder membersBuilder = new StringBuilder();
 
-        var type = typeof(T);
         foreach (var item in _customValues)
         {
-            if (item is UnitName unitName)
+            switch (item)
             {
-                members += EnumExtensions.GetEnumMemberAttrValue(unitName) + ", ";
-            }
-            else
-            {
-                Log.WriteLine("Tried to get type: " + type + " unknown, undefined type?", LogLevel.CRITICAL);
-                break;
+                case UnitName unitName:
+                    membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(unitName)).Append(", ");
+                    break;
+                case ChannelType channelType:
+                    membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(channelType)).Append(", ");
+                    break;
+                default:
+                    Log.WriteLine("Tried to get type: " + typeof(T) + " unknown, undefined type?", LogLevel.CRITICAL);
+                    break;
             }
         }
 
-        if (!string.IsNullOrEmpty(members))
-        {
-            members = members.Substring(0, members.Length - 2);
-        }
+        string members = membersBuilder.ToString().TrimEnd(',', ' ');
 
         return members;
     }
+
 }

@@ -25,18 +25,8 @@ public abstract class BaseCategory : InterfaceCategory
 
     ConcurrentBag<ChannelType> InterfaceCategory.ChannelTypes
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(channelTypes) + " with count of: " +
-                channelTypes.Count, LogLevel.VERBOSE);
-            return channelTypes;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(channelTypes)
-                + " to: " + value, LogLevel.VERBOSE);
-            channelTypes = value;
-        }
+        get => channelTypes.GetValue();
+        set => channelTypes.SetValue(value);
     }
 
     ConcurrentDictionary<ulong, InterfaceChannel> InterfaceCategory.InterfaceChannels
@@ -62,17 +52,18 @@ public abstract class BaseCategory : InterfaceCategory
     }
 
     [DataMember] protected CategoryType categoryTypes;
-    protected ConcurrentBag<ChannelType> channelTypes;
+    protected logConcurrentBag<ChannelType> channelTypes = new logConcurrentBag<ChannelType>();
     [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels { get; set; } 
     [DataMember] protected logUlong socketCategoryChannelId = new logUlong();
 
-    private InterfaceCategory thisInterfaceCategory;
+    protected InterfaceCategory thisInterfaceCategory;
 
     public BaseCategory()
     {
-        channelTypes = new ConcurrentBag<ChannelType>();
-        interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
         thisInterfaceCategory = this;
+
+        thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>();
+        interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
@@ -114,12 +105,12 @@ public abstract class BaseCategory : InterfaceCategory
         ulong _socketCategoryChannelId, DiscordSocketClient _client, SocketRole _role)
     {
         Log.WriteLine("Starting to create channels for: " + _socketCategoryChannelId + ")" + 
-            " Channel count: " + channelTypes.Count +
+            " Channel count: " + thisInterfaceCategory.ChannelTypes +
             " and setting the references", LogLevel.DEBUG);
 
         thisInterfaceCategory.SocketCategoryChannelId = _socketCategoryChannelId;
 
-        foreach (ChannelType channelType in channelTypes)
+        foreach (ChannelType channelType in thisInterfaceCategory.ChannelTypes)
         {
             // Checks for missing match channels from the league category
             if (channelType == ChannelType.MATCHCHANNEL)
