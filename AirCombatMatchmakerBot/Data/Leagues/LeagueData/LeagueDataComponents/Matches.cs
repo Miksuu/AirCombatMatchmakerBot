@@ -7,26 +7,11 @@ public class Matches
 {
     public ConcurrentBag<LeagueMatch> MatchesConcurrentBag
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(matchesConcurrentBag) + " with count of: " +
-                matchesConcurrentBag.Count, LogLevel.VERBOSE);
-            return matchesConcurrentBag;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(matchesConcurrentBag) + matchesConcurrentBag
-                + " to: " + value, LogLevel.VERBOSE);
-            matchesConcurrentBag = value;
-        }
+        get => matchesConcurrentBag.GetValue();
+        set => matchesConcurrentBag.SetValue(value);
     }
 
-    [DataMember] private ConcurrentBag<LeagueMatch> matchesConcurrentBag { get; set; }
-
-    public Matches() 
-    {
-        matchesConcurrentBag = new ConcurrentBag<LeagueMatch>();
-    }
+    [DataMember] private logConcurrentBag<LeagueMatch> matchesConcurrentBag = new logConcurrentBag<LeagueMatch>();
 
     public Task CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
@@ -47,8 +32,8 @@ public class Matches
 
         LeagueMatch newMatch = new(_interfaceLeague, _teamsToFormMatchOn);
         MatchesConcurrentBag.Add(newMatch);
-        Log.WriteLine("Added to the " + nameof(matchesConcurrentBag) + " count is now: " +
-            matchesConcurrentBag.Count, LogLevel.VERBOSE);
+        Log.WriteLine("Added to the " + nameof(MatchesConcurrentBag) + " count is now: " +
+            MatchesConcurrentBag.Count, LogLevel.VERBOSE);
 
         CreateAMatchChannel(newMatch, _interfaceLeague, client);
 
@@ -107,12 +92,6 @@ public class Matches
     public LeagueMatch? FindLeagueMatchByTheChannelId(ulong _channelId)
     {
         Log.WriteLine("Getting match by channelId: " + _channelId, LogLevel.VERBOSE);
-
-        /*
-        foreach (var item in MatchesConcurrentBag)
-        {
-            Log.WriteLine("ChannelID debug: " + item.MatchChannelId, LogLevel.DEBUG);
-        }*/
 
         LeagueMatch? foundMatch = MatchesConcurrentBag.FirstOrDefault(x => x.MatchChannelId == _channelId);
 

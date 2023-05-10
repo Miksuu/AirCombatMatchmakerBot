@@ -76,6 +76,6 @@ public static class UserManager
        _interfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(
            _interfaceLeague.LeaguePlayerCountPerTeam, _playerId).TeamActive = true;
         await RoleManager.GrantUserAccessWithId(
-            _playerId, _interfaceLeague.DiscordLeagueReferences.LeagueRoleId);
+            _playerId, _interfaceLeague.LeagueRoleId);
     }
 }

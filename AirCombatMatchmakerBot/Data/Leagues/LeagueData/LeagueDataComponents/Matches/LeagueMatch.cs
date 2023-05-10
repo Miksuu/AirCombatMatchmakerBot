@@ -68,17 +68,11 @@ public class LeagueMatch
         }
     }
 
-    [DataMember] private ConcurrentDictionary<int, string> teamsInTheMatch { get; set; }
+    [DataMember] private ConcurrentDictionary<int, string> teamsInTheMatch = new ConcurrentDictionary<int, string>();
     [DataMember] private logInt matchId = new logInt();
     [DataMember] private logUlong matchChannelId = new logUlong();
-    [DataMember] private MatchReporting matchReporting { get; set; }
+    [DataMember] private MatchReporting matchReporting = new MatchReporting();
     [DataMember] private CategoryType matchLeague { get; set; }
-
-    public LeagueMatch()
-    {
-        teamsInTheMatch = new ConcurrentDictionary<int, string>();
-        matchReporting = new MatchReporting();
-    }
 
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
@@ -181,7 +175,7 @@ public class LeagueMatch
         Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+            _interfaceLeague.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                 MatchChannelId);
 
         var interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
@@ -253,7 +247,7 @@ public class LeagueMatch
         }
 
         Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.InterfaceChannels.TryRemove(
+            _interfaceLeague.LeagueCategoryId).Value.InterfaceChannels.TryRemove(
                 MatchChannelId, out InterfaceChannel? _ic);
         Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(MatchChannelId, out ulong _id);
 

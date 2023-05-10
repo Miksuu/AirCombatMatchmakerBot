@@ -195,7 +195,7 @@ public static class CategoryAndChannelManager
                     return;
                 }
 
-                interfaceLeague.DiscordLeagueReferences.LeagueCategoryId = socketCategoryChannel.Id;
+                interfaceLeague.LeagueCategoryId = socketCategoryChannel.Id;
             }
 
             Database.Instance.Categories.AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(

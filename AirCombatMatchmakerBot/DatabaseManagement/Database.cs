@@ -80,8 +80,6 @@ public class Database
 
             foreach (int teamId in teamsToRemove)
             {
-                //interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.TryRemove(teamId);
-
                 while (interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.TryTake(out int element) && !element.Equals(teamId))
                 {
                     interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Add(element);
@@ -103,8 +101,6 @@ public class Database
                     }
                 }
 
-                //interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.RemoveAll(t => t.TeamId == teamId);
-
                 foreach (var item in interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Where(
                     t => t.TeamId == teamId))
                 {
@@ -116,7 +112,7 @@ public class Database
             }
 
             var challengeMessage = Categories.FindCreatedCategoryWithChannelKvpWithId(
-                interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.
+                interfaceLeague.LeagueCategoryId).Value.
                     FindInterfaceChannelWithNameInTheCategory(
                         ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
                             MessageName.CHALLENGEMESSAGE);

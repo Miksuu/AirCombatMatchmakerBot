@@ -63,7 +63,7 @@ public static class LeagueManager
                 {
                     interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Clear();
                     var message = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                        interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
+                        interfaceLeague.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
                             ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
                     if (message == null) 
                     {
@@ -87,7 +87,7 @@ public static class LeagueManager
 
             Log.WriteLine("Role is named: " + role.Name + " with ID: " + role.Id, LogLevel.VERBOSE);
 
-            interfaceLeagueCategory.DiscordLeagueReferences.LeagueRoleId = role.Id;
+            interfaceLeagueCategory.LeagueRoleId = role.Id;
 
             Database.Instance.Leagues.AddToStoredLeagues(interfaceLeagueCategory);
         }

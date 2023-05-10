@@ -61,7 +61,6 @@ public abstract class BaseCategory : InterfaceCategory
     public BaseCategory()
     {
         thisInterfaceCategory = this;
-
         thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>();
         interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
     }
