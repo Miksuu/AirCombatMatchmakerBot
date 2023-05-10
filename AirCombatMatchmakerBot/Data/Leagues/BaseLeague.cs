@@ -1,4 +1,4 @@
-﻿using Discord.WebSocket;
+using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
@@ -64,19 +64,38 @@ public abstract class BaseLeague : InterfaceLeague
         }
     }
 
-    DiscordLeagueReferences InterfaceLeague.DiscordLeagueReferences
+    public ulong LeagueCategoryId
+    {
+        get => leagueCategoryId.GetValue();
+        set => leagueCategoryId.SetValue(value);
+    }
+
+    public ConcurrentDictionary<ChannelType, ulong> LeagueChannels
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(discordLeagueReferences) + ": " + discordLeagueReferences, LogLevel.VERBOSE);
-            return discordLeagueReferences;
+            Log.WriteLine("Getting " + nameof(leagueChannels) + " with count of: " +
+                leagueChannels.Count, LogLevel.VERBOSE);
+            return leagueChannels;
         }
         set
         {
-            Log.WriteLine("Setting " + nameof(discordLeagueReferences) + discordLeagueReferences
+            Log.WriteLine("Setting " + nameof(leagueChannels)
                 + " to: " + value, LogLevel.VERBOSE);
-            discordLeagueReferences = value;
+            leagueChannels = value;
         }
+    }
+
+    public ulong LeagueRoleId
+    {
+        get => leagueRoleId.GetValue();
+        set => leagueRoleId.SetValue(value);
+    }
+
+    public ulong LeagueRegistrationMessageId
+    {
+        get => leagueRegistrationMessageId.GetValue();
+        set => leagueRegistrationMessageId.SetValue(value);
     }
 
     // Generated based on the implementation
@@ -85,7 +104,18 @@ public abstract class BaseLeague : InterfaceLeague
     [DataMember] protected logInt leaguePlayerCountPerTeam = new logInt();
     [DataMember] protected logConcurrentBag<UnitName> leagueUnits = new logConcurrentBag<UnitName>();
     [DataMember] protected LeagueData leagueData = new LeagueData();
-    [DataMember] protected DiscordLeagueReferences discordLeagueReferences = new DiscordLeagueReferences();
+
+    // The reference to the category created by the system
+    [DataMember] private logUlong leagueCategoryId = new logUlong();
+
+    // The references for the channelTypes inside the category
+    [DataMember] private ConcurrentDictionary<ChannelType, ulong> leagueChannels = new ConcurrentDictionary<ChannelType, ulong>();
+
+    // Id of the role which gives access to the league channelTypes
+    [DataMember] private logUlong leagueRoleId = new logUlong();
+
+    // Reference to the MessageDescription related to this league on the #league-registration channel
+    [DataMember] private logUlong leagueRegistrationMessageId = new logUlong();
 
     protected InterfaceLeague thisInterfaceLeague;
 
@@ -99,11 +129,11 @@ public abstract class BaseLeague : InterfaceLeague
     public InterfaceCategory? FindLeaguesInterfaceCategory()
     {
         Log.WriteLine("Finding interfaceCategory in: " + leagueCategoryName +
-            " with id: " + discordLeagueReferences.LeagueCategoryId, LogLevel.VERBOSE);
+            " with id: " + LeagueCategoryId, LogLevel.VERBOSE);
 
         InterfaceCategory interfaceCategory = 
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                discordLeagueReferences.LeagueCategoryId).Value;
+                LeagueCategoryId).Value;
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
@@ -120,7 +150,7 @@ public abstract class BaseLeague : InterfaceLeague
     {
         InterfaceCategory leagueCategory =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                discordLeagueReferences.LeagueCategoryId).Value;
+                LeagueCategoryId).Value;
 
         InterfaceChannel matchReportsChannelInterface =
             leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
@@ -148,7 +178,7 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Updating leaderboard on: " + leagueCategoryName, LogLevel.VERBOSE);
 
         var leagueStatusMessage = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            discordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
+            LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
                 ChannelType.LEAGUESTATUS).FindInterfaceMessageWithNameInTheChannel(
                     MessageName.LEAGUESTATUSMESSAGE);
 
@@ -171,7 +201,7 @@ public abstract class BaseLeague : InterfaceLeague
             leagueCategoryName, LogLevel.VERBOSE);
 
         ulong challengeChannelId = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            discordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
+            LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
             ChannelType.CHALLENGE).ChannelId;
 
         // Check that the player is in the PlayerData

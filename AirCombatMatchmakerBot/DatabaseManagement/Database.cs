@@ -116,7 +116,7 @@ public class Database
             }
 
             var challengeMessage = Categories.FindCreatedCategoryWithChannelKvpWithId(
-                interfaceLeague.DiscordLeagueReferences.LeagueCategoryId).Value.
+                interfaceLeague.LeagueCategoryId).Value.
                     FindInterfaceChannelWithNameInTheCategory(
                         ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
                             MessageName.CHALLENGEMESSAGE);

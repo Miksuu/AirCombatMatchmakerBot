@@ -47,7 +47,7 @@ public class COMMENT : BaseCommand
             await leagueInterfaceWithTheMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
                  leagueInterfaceWithTheMatch.Item1, commandPlayerId,
                     _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER,
-                    leagueInterfaceWithTheMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, commandChannelId);
+                    leagueInterfaceWithTheMatch.Item1.LeagueCategoryId, commandChannelId);
 
         if (finalResponseTuple.serialize)
         {

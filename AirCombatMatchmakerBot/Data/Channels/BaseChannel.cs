@@ -293,18 +293,18 @@ public abstract class BaseChannel : InterfaceChannel
                 Log.WriteLine(nameof(leagueInterfaceFromDatabase) + " before creating leagueButtonRegisterationCustomId: "
                     + leagueInterfaceFromDatabase.ToString(), LogLevel.VERBOSE);
 
-                if (leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueRegistrationMessageId != 0) continue;
+                if (leagueInterfaceFromDatabase.LeagueRegistrationMessageId != 0) continue;
 
                 InterfaceMessage interfaceMessage =
                     (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
                 
                 var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                        _client, this, true, true, leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId);
+                        _client, this, true, true, leagueInterfaceFromDatabase.LeagueCategoryId);
 
-                leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueRegistrationMessageId = interfaceMessage.MessageId;
+                leagueInterfaceFromDatabase.LeagueRegistrationMessageId = interfaceMessage.MessageId;
 
                 interfaceMessagesWithIds.TryAdd(
-                    leagueInterfaceFromDatabase.DiscordLeagueReferences.LeagueCategoryId,
+                    leagueInterfaceFromDatabase.LeagueCategoryId,
                         (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString()));
 
                 Log.WriteLine("Added to the ConcurrentDictionary, count is now: " +
