@@ -88,18 +88,8 @@ public abstract class BaseMessage : InterfaceMessage
 
     ConcurrentBag<InterfaceButton> InterfaceMessage.ButtonsInTheMessage
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(buttonsInTheMessage) + " with count of: " +
-                buttonsInTheMessage.Count, LogLevel.VERBOSE);
-            return buttonsInTheMessage;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(buttonsInTheMessage)
-                + " to: " + value, LogLevel.VERBOSE);
-            buttonsInTheMessage = value;
-        }
+        get => buttonsInTheMessage.GetValue();
+        set => buttonsInTheMessage.SetValue(value);
     }
 
     Discord.IUserMessage? InterfaceMessage.CachedUserMessage
@@ -129,7 +119,7 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected logUlong messageId = new logUlong();
     [DataMember] protected logUlong messageChannelId = new logUlong();
     [DataMember] protected logUlong messageCategoryId = new logUlong();
-    [DataMember] protected ConcurrentBag<InterfaceButton> buttonsInTheMessage { get; set; }
+    [DataMember] protected logConcurrentBag<InterfaceButton> buttonsInTheMessage = new logConcurrentBag<InterfaceButton>();
 
     protected bool mentionMatchPlayers { get; set; }
     protected Discord.IUserMessage? cachedUserMessage { get; set; }
@@ -138,10 +128,9 @@ public abstract class BaseMessage : InterfaceMessage
 
     public BaseMessage()
     {
-        messageEmbedColor = Discord.Color.Default;
-        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
-        buttonsInTheMessage = new ConcurrentBag<InterfaceButton>();
         thisInterfaceMessage = this;
+        messageEmbedColor = Discord.Color.Default;
+        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(); 
     }
 
     // If the component is not null, this is a reply
@@ -348,7 +337,7 @@ public abstract class BaseMessage : InterfaceMessage
 
             component.WithButton(linkButton.CreateALinkButton(_attachmentDatas[a]));
 
-            buttonsInTheMessage.Add(interfaceButton);
+            thisInterfaceMessage.ButtonsInTheMessage.Add(interfaceButton);
         }
 
         messageForGenerating = "\n" + GenerateMessage();
@@ -462,7 +451,7 @@ public abstract class BaseMessage : InterfaceMessage
                 _component.WithButton(interfaceButton.CreateTheButton(
                     finalCustomId, b, thisInterfaceMessage.MessageCategoryId, _leagueCategoryId));
 
-                buttonsInTheMessage.Add(interfaceButton);
+                thisInterfaceMessage.ButtonsInTheMessage.Add(interfaceButton);
             }
         }
     }
@@ -490,7 +479,7 @@ public abstract class BaseMessage : InterfaceMessage
             _component.WithButton(interfaceButton.CreateTheButton(
                 buttonToGenerateKvp.Key, ++buttonId, thisInterfaceMessage.MessageCategoryId, _leagueCategoryId));
 
-            buttonsInTheMessage.Add(interfaceButton);
+            thisInterfaceMessage.ButtonsInTheMessage.Add(interfaceButton);
         }
 
         Log.WriteLine("Done generating buttons", LogLevel.VERBOSE);

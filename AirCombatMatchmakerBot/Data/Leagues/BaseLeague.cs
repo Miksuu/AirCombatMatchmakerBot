@@ -85,7 +85,7 @@ public abstract class BaseLeague : InterfaceLeague
     [DataMember] protected logInt leaguePlayerCountPerTeam = new logInt();
     [DataMember] protected logConcurrentBag<UnitName> leagueUnits = new logConcurrentBag<UnitName>();
     [DataMember] protected LeagueData leagueData = new LeagueData();
-    [DataMember] protected DiscordLeagueReferences discordLeagueReferences = new DiscordLeagueReferences();
+    [DataMember] protected DiscordLeagueReferences //discordLeagueReferences = new DiscordLeagueReferences();
 
     protected InterfaceLeague thisInterfaceLeague;
 
@@ -99,11 +99,11 @@ public abstract class BaseLeague : InterfaceLeague
     public InterfaceCategory? FindLeaguesInterfaceCategory()
     {
         Log.WriteLine("Finding interfaceCategory in: " + leagueCategoryName +
-            " with id: " + discordLeagueReferences.LeagueCategoryId, LogLevel.VERBOSE);
+            " with id: " + DiscordLeagueReferences.LeagueCategoryId, LogLevel.VERBOSE);
 
         InterfaceCategory interfaceCategory = 
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                discordLeagueReferences.LeagueCategoryId).Value;
+                DiscordLeagueReferences.LeagueCategoryId).Value;
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
@@ -120,7 +120,7 @@ public abstract class BaseLeague : InterfaceLeague
     {
         InterfaceCategory leagueCategory =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                discordLeagueReferences.LeagueCategoryId).Value;
+                DiscordLeagueReferences.LeagueCategoryId).Value;
 
         InterfaceChannel matchReportsChannelInterface =
             leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
@@ -148,7 +148,7 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Updating leaderboard on: " + leagueCategoryName, LogLevel.VERBOSE);
 
         var leagueStatusMessage = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            discordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
+            DiscordLeagueReferences.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
                 ChannelType.LEAGUESTATUS).FindInterfaceMessageWithNameInTheChannel(
                     MessageName.LEAGUESTATUSMESSAGE);
 

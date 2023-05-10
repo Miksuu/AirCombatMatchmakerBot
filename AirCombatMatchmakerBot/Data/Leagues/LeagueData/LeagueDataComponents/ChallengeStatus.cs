@@ -7,50 +7,34 @@ public class ChallengeStatus
 {
     public ConcurrentBag<int> TeamsInTheQueue
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teamsInTheQueue) +  " with count of: " +
-                teamsInTheQueue.Count, LogLevel.VERBOSE);
-            return teamsInTheQueue;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teamsInTheQueue) + teamsInTheQueue
-                + " to: " + value, LogLevel.VERBOSE);
-            teamsInTheQueue = value;
-        }
+        get => teamsInTheQueue.GetValue();
+        set => teamsInTheQueue.SetValue(value);
     }
 
-    [DataMember] private ConcurrentBag<int> teamsInTheQueue { get; set; }
-
-    public ChallengeStatus()
-    {
-        teamsInTheQueue = new ConcurrentBag<int>();
-    }
+    [DataMember] private logConcurrentBag<int> teamsInTheQueue = new logConcurrentBag<int>();
 
     public void AddToTeamsInTheQueue(Team _Team)
     {
         Log.WriteLine("Adding Team: " + _Team + " (" + 
             _Team.TeamId + ") to the queue", LogLevel.VERBOSE);
-        teamsInTheQueue.Add(_Team.TeamId);
+        TeamsInTheQueue.Add(_Team.TeamId);
         Log.WriteLine("Done adding the team to the queue. Count is now: " +
-            teamsInTheQueue.Count, LogLevel.VERBOSE);
+            TeamsInTheQueue.Count, LogLevel.VERBOSE);
     }
 
     public void RemoveFromTeamsInTheQueue(Team _Team)
     {
         Log.WriteLine("Removing Team: " + _Team + " (" +
             _Team.TeamId + ") from the queue", LogLevel.VERBOSE);
-        //teamsInTheQueue.TryTake(out int element) && !element.Equals(_Team.TeamId));
 
-        foreach (int team in teamsInTheQueue.Where(t => t == _Team.TeamId))
+        foreach (int team in TeamsInTheQueue.Where(t => t == _Team.TeamId))
         {
-            teamsInTheQueue.TryTake(out int _removedTeamInt);
+            TeamsInTheQueue.TryTake(out int _removedTeamInt);
             Log.WriteLine("Removed team: " + team, LogLevel.DEBUG);
         }
 
         Log.WriteLine("Done removing the team from the queue. Count is now: " +
-            teamsInTheQueue.Count, LogLevel.VERBOSE);
+            TeamsInTheQueue.Count, LogLevel.VERBOSE);
     }
 
     // Returns the teams in the queue as a string
@@ -58,7 +42,7 @@ public class ChallengeStatus
     public string ReturnTeamsInTheQueueOfAChallenge(int _leagueTeamSize, LeagueData _leagueData)
     {
         string teamsString = string.Empty;
-        foreach (int teamInt in teamsInTheQueue)
+        foreach (int teamInt in TeamsInTheQueue)
         {
             Team team = _leagueData.Teams.FindTeamById(_leagueTeamSize, teamInt);
             teamsString += team.GetTeamInAString(true, _leagueTeamSize);
@@ -155,23 +139,23 @@ public class ChallengeStatus
         // Replace this with some method later on that calculates ELO between the teams in the queue
         if (TeamsInTheQueue.Count < 2)
         {
-            Log.WriteLine(nameof(teamsInTheQueue) + " count: " + TeamsInTheQueue.Count +
+            Log.WriteLine(nameof(TeamsInTheQueue) + " count: " + TeamsInTheQueue.Count +
                 " is smaller than 2, returning.", LogLevel.DEBUG);
             return;
         }
 
-        Log.WriteLine(nameof(teamsInTheQueue) + " count: " + teamsInTheQueue.Count +
+        Log.WriteLine(nameof(TeamsInTheQueue) + " count: " + TeamsInTheQueue.Count +
             ", match found!", LogLevel.DEBUG);
 
         for (int t = 0; t < 2; t++)
         {
             Log.WriteLine("Looping on team index: " + t, LogLevel.VERBOSE);
-            teamsToFormMatchOn[t] = teamsInTheQueue.FirstOrDefault();
+            teamsToFormMatchOn[t] = TeamsInTheQueue.FirstOrDefault();
             Log.WriteLine("Done adding to " + nameof(teamsToFormMatchOn) +
                 ", Length: " + teamsToFormMatchOn.Length, LogLevel.VERBOSE);
-            teamsInTheQueue = new ConcurrentBag<int>(teamsInTheQueue.Except(new[] { teamsToFormMatchOn[t] }));
-            Log.WriteLine("Done removing from " + nameof(teamsInTheQueue) +
-                ", count: " + teamsInTheQueue.Count, LogLevel.VERBOSE);
+            TeamsInTheQueue = new ConcurrentBag<int>(TeamsInTheQueue.Except(new[] { teamsToFormMatchOn[t] }));
+            Log.WriteLine("Done removing from " + nameof(TeamsInTheQueue) +
+                ", count: " + TeamsInTheQueue.Count, LogLevel.VERBOSE);
         }
 
         Log.WriteLine("Done looping.", LogLevel.VERBOSE);

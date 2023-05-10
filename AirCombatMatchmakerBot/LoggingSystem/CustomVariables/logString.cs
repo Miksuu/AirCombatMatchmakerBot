@@ -6,6 +6,13 @@ public class logString
 {
     [DataMember] private string? _value;
 
+    public logString() { }
+    public logString(string value)
+    {
+        Log.WriteLine("Creating " + nameof(logString) + " with value: " + value, LogLevel.SET_VERBOSE);
+        _value = value;
+    }
+
     public string GetValue(
         [CallerFilePath] string _filePath = "",
         [CallerMemberName] string _memberName = "",

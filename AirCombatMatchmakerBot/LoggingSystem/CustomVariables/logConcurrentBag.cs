@@ -57,7 +57,7 @@ public class logConcurrentBag<T> : IEnumerable<T>
         return GetEnumerator();
     }
 
-    private string GetConcurrentBagMembers(ConcurrentBag<T> _customValues)
+    public string GetConcurrentBagMembers(ConcurrentBag<T> _customValues)
     {
         StringBuilder membersBuilder = new StringBuilder();
 
@@ -70,6 +70,30 @@ public class logConcurrentBag<T> : IEnumerable<T>
                     break;
                 case ChannelType channelType:
                     membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(channelType)).Append(", ");
+                    break;
+                case ulong or int:
+                    membersBuilder.Append(item.ToString()).Append(", ");
+                    break;
+                case Player player:
+                    membersBuilder.Append(player.PlayerDiscordId + "|" + player.PlayerNickName).Append(", ");
+                    break;
+                case Team team:
+                    membersBuilder.Append(team.TeamId + "|" + team.TeamName + "|" + team.Players + "|" +
+                        team.SkillRating + "|" + team.TeamActive).Append(", ");
+                    break;
+                case LeagueMatch leagueMatch:
+                    membersBuilder.Append(leagueMatch.TeamsInTheMatch + "|" + leagueMatch.MatchId + "|" + leagueMatch.MatchChannelId + "|" +
+                        leagueMatch.MatchReporting + "|" + leagueMatch.MatchLeague).Append(", ");
+                    break;
+                case InterfaceLeague interfaceLeague:
+                    membersBuilder.Append(interfaceLeague.LeagueCategoryName + "|" + interfaceLeague.LeagueEra + "|" +
+                        interfaceLeague.LeaguePlayerCountPerTeam + "|" + interfaceLeague.LeagueUnits + "|" +
+                        interfaceLeague.LeagueData + "|" + interfaceLeague.DiscordLeagueReferences).Append(", ");
+                    break;
+                case InterfaceButton interfaceButton:
+                    membersBuilder.Append(interfaceButton.ButtonName + "|" + interfaceButton.ButtonLabel + "|" +
+                        interfaceButton.ButtonStyle + "|" + interfaceButton.ButtonCategoryId + "|" +
+                        interfaceButton.ButtonCustomId + "|" + interfaceButton.EphemeralResponse).Append(", ");
                     break;
                 default:
                     Log.WriteLine("Tried to get type: " + typeof(T) + " unknown, undefined type?", LogLevel.CRITICAL);

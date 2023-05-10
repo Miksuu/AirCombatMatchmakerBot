@@ -7,33 +7,18 @@ public class CachedUsers
 {
     public ConcurrentBag<ulong> CachedUserIDs
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(cachedUserIDs) + " with count of: " +
-                cachedUserIDs.Count, LogLevel.VERBOSE);
-            return cachedUserIDs;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(cachedUserIDs)
-                + " to: " + value, LogLevel.VERBOSE);
-            cachedUserIDs = value;
-        }
+        get => cachedUserIDs.GetValue();
+        set => cachedUserIDs.SetValue(value);
     }
 
-    [DataMember] private ConcurrentBag<ulong> cachedUserIDs { get; set; }
-
-    public CachedUsers()
-    {
-        cachedUserIDs = new ConcurrentBag<ulong>();
-    }
+    [DataMember] private logConcurrentBag<ulong> cachedUserIDs = new logConcurrentBag<ulong>();
 
     public void AddUserIdToCachedConcurrentBag(ulong _userId)
     {
         Log.WriteLine("Adding " + _userId + " to the cache ConcurrentBag", LogLevel.VERBOSE);
         if (!CachedUserIDs.Contains(_userId))
         {
-            cachedUserIDs.Add(_userId);
+            CachedUserIDs.Add(_userId);
             Log.WriteLine("Added " + _userId +
                 " to cached users ConcurrentBag.", LogLevel.DEBUG);
         }

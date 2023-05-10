@@ -5,10 +5,10 @@ using System.Runtime.Serialization;
 [DataContract]
 public class Team
 {
-    public float SkillRating
+    public int TeamId
     {
-        get => skillRating.GetValue();
-        set => skillRating.SetValue(value);
+        get => teamId.GetValue();
+        set => teamId.SetValue(value);
     }
 
     public string TeamName
@@ -19,18 +19,14 @@ public class Team
 
     public ConcurrentBag<Player> Players
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(players) + " with count of: " +
-                players.Count, LogLevel.VERBOSE);
-            return players;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(players) + players
-                + " to: " + value, LogLevel.VERBOSE);
-            players = value;
-        }
+        get => players.GetValue();
+        set => players.SetValue(value);
+    }
+
+    public float SkillRating
+    {
+        get => skillRating.GetValue();
+        set => skillRating.SetValue(value);
     }
 
     public bool TeamActive
@@ -39,41 +35,28 @@ public class Team
         set => teamActive.SetValue(value);
     }
 
-    public int TeamId
-    {
-        get => teamId.GetValue();
-        set => teamId.SetValue(value);
-    }
-
-    [DataMember] private logFloat skillRating = new logFloat();
-    [DataMember] private logString teamName = new logString();
-    [DataMember] private ConcurrentBag<Player> players { get; set; }
-    [DataMember] private logBool teamActive = new logBool();
     [DataMember] private logInt teamId = new logInt();
+    [DataMember] private logString teamName = new logString();
+    [DataMember] private logConcurrentBag<Player> players = new logConcurrentBag<Player>();    
+    [DataMember] private logFloat skillRating = new logFloat(1600f);
+    [DataMember] private logBool teamActive = new logBool();
 
-    public Team()
-    {
-        SkillRating = 1600f;
-        TeamName = string.Empty;
-        players = new ConcurrentBag<Player>();
-        TeamActive = false;
-    }
+    public Team(){ }
 
     public Team(ConcurrentBag<Player> _players, string _TeamName, int _teamId)
     {
-        SkillRating = 1600f;
         TeamName = _TeamName;
-        players = _players;
+        Players = _players;
         TeamId = _teamId;
     }
 
     public string GetTeamMembersInAString()
     {
         string playersInATeam = string.Empty;
-        for (int p = 0; p < players.Count; p++)
+        for (int p = 0; p < Players.Count; p++)
         {
             playersInATeam += players.ElementAt(p).GetPlayerIdAsMention();
-            if (p != players.Count - 1) playersInATeam += ", ";
+            if (p != Players.Count - 1) playersInATeam += ", ";
         }
 
         Log.WriteLine("Players in the team: " + playersInATeam, LogLevel.DEBUG);
@@ -88,7 +71,7 @@ public class Team
 
         if (_leagueTeamSize < 2 && _getAsMention)
         {
-            Player? player = players.FirstOrDefault();
+            Player? player = Players.FirstOrDefault();
             if (player == null)
             {
                 Log.WriteLine(nameof(player) + " was null!", LogLevel.CRITICAL);
@@ -105,7 +88,7 @@ public class Team
     }
 
     public string GetTeamInAString(
-    bool _includeSkillRating, int _leagueTeamSize)
+        bool _includeSkillRating, int _leagueTeamSize)
     {
         string result = string.Empty;
 
@@ -127,7 +110,7 @@ public class Team
     {
         bool contains = false;
         Log.WriteLine("Checking if " + _playerId + " if is in the team.", LogLevel.VERBOSE);
-        contains = players.Any(x => x.PlayerDiscordId == _playerId);
+        contains = Players.Any(x => x.PlayerDiscordId == _playerId);
         Log.WriteLine(_playerId + " contains: " + contains, LogLevel.VERBOSE);
         return contains;
     }

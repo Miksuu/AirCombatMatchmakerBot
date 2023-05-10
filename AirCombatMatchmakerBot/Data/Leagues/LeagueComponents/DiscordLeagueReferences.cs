@@ -42,16 +42,11 @@ public class DiscordLeagueReferences
     [DataMember] private logUlong leagueCategoryId = new logUlong();
 
     // The references for the channelTypes inside the category
-    [DataMember] private ConcurrentDictionary<ChannelType, ulong> leagueChannels { get; set; }
+    [DataMember] private ConcurrentDictionary<ChannelType, ulong> leagueChannels = new ConcurrentDictionary<ChannelType, ulong>();
 
     // Id of the role which gives access to the league channelTypes
     [DataMember] private logUlong leagueRoleId = new logUlong();
 
     // Reference to the MessageDescription related to this league on the #league-registration channel
     [DataMember] private logUlong leagueRegistrationMessageId = new logUlong();
-
-    public DiscordLeagueReferences()
-    {
-        leagueChannels = new();
-    }
 }

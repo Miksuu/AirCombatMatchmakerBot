@@ -57,6 +57,8 @@ public class BotRuntimeManager
                 if (Directory.Exists(pathToDelete)) Directory.Delete(pathToDelete, true);
 
                 // Delete db here
+
+
                 await SerializationManager.HandleDatabaseCreationOrLoading("0");
 
                 // Delete roles here
