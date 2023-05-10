@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
 [DataContract]
@@ -6,18 +6,8 @@ public class Leagues
 {
     public ConcurrentBag<InterfaceLeague> StoredLeagues
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(storedLeagues) + " with count of: " +
-                storedLeagues.Count, LogLevel.VERBOSE);
-            return storedLeagues;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(storedLeagues)
-                + " to: " + value, LogLevel.VERBOSE);
-            storedLeagues = value;
-        }
+        get => storedLeagues.GetValue();
+        set => storedLeagues.SetValue(value);
     }
 
     public int LeaguesMatchCounter
@@ -26,14 +16,8 @@ public class Leagues
         set => leaguesMatchCounter.SetValue(value);
     }
 
-    [DataMember] private ConcurrentBag<InterfaceLeague> storedLeagues { get; set; }
-    [DataMember] private logInt leaguesMatchCounter = new logInt();
-
-    public Leagues()
-    {
-        storedLeagues = new ConcurrentBag<InterfaceLeague>();
-        LeaguesMatchCounter = 1;
-    }
+    [DataMember] private logConcurrentBag<InterfaceLeague> storedLeagues = new logConcurrentBag<InterfaceLeague>();
+    [DataMember] private logInt leaguesMatchCounter = new logInt(1);
 
     public bool CheckIfILeagueExistsByCategoryName(CategoryType _leagueCategoryName)
     {
@@ -79,9 +63,18 @@ public class Leagues
 
     public InterfaceLeague? GetILeagueByCategoryId(ulong _leagueCategoryId)
     {
-        Log.WriteLine("Getting ILeague by ID: " + _leagueCategoryId, LogLevel.VERBOSE);
+        Log.WriteLine("Getting ILeague by ID: " + _leagueCategoryId + " with " + nameof(StoredLeagues) +
+            " count: "+ StoredLeagues.Count, LogLevel.DEBUG);
+
+        foreach (var item in StoredLeagues)
+        {
+            Log.WriteLine("storedLeagueCategoryId: " + item.LeagueRoleId.ToString(), LogLevel.DEBUG);
+            Log.WriteLine("storedLeagueCategoryId: " +
+                item.LeagueCategoryId.ToString(), LogLevel.DEBUG);
+        }
+
         InterfaceLeague? FoundLeague = StoredLeagues.FirstOrDefault(
-            x => x.DiscordLeagueReferences.LeagueCategoryId == _leagueCategoryId);
+            x => x.LeagueCategoryId == _leagueCategoryId);
 
         if (FoundLeague == null)
         {
@@ -233,7 +226,6 @@ public class Leagues
                 " creating a new LeagueData for it", LogLevel.DEBUG);
 
             _leagueInterface.LeagueData = new LeagueData();
-            _leagueInterface.DiscordLeagueReferences = new DiscordLeagueReferences();
 
             return _leagueInterface;
         }

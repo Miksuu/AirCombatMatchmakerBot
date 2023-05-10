@@ -6,6 +6,13 @@ public class logFloat
 {
     [DataMember] private float _value;
 
+    public logFloat() { }
+    public logFloat(float value)
+    {
+        Log.WriteLine("Creating " + nameof(logFloat) + " with value: " + value, LogLevel.SET_VERBOSE);
+        _value = value;
+    }
+
     public float GetValue(
         [CallerFilePath] string _filePath = "",
         [CallerMemberName] string _memberName = "",

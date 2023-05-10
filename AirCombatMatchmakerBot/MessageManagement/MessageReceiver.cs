@@ -114,7 +114,7 @@ public static class MessageReceiver
             var finalResponseTuple = interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
                 interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id, acmiUrl,
                     TypeOfTheReportingObject.TACVIEWLINK,
-                    interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId,
+                    interfaceLeagueWithLeagueMatch.Item1.LeagueCategoryId,
                     _socketMessage.Channel.Id).Result;
 
             if (!finalResponseTuple.serialize)
@@ -126,7 +126,7 @@ public static class MessageReceiver
             {
                 finalResponseTuple = await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.PrepareFinalMatchResult(
                     interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
-                    interfaceLeagueWithLeagueMatch.Item1.DiscordLeagueReferences.LeagueCategoryId, _socketMessage.Channel.Id);
+                    interfaceLeagueWithLeagueMatch.Item1.LeagueCategoryId, _socketMessage.Channel.Id);
 
                 if (!finalResponseTuple.serialize)
                 {
