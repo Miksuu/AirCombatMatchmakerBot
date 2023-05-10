@@ -9,9 +9,12 @@ public class logConcurrentBag<T> : IEnumerable<T>
 {
     [DataMember] private ConcurrentBag<T> _values = new ConcurrentBag<T>();
 
-    public logConcurrentBag() : base() { }
+    public logConcurrentBag() { }
 
-    public logConcurrentBag(IEnumerable<T> collection) : base() { }
+    public logConcurrentBag(IEnumerable<T> collection)
+    {
+        _values = new ConcurrentBag<T>(collection);
+    }
 
     public ConcurrentBag<T> GetValue(
         [CallerFilePath] string _filePath = "",

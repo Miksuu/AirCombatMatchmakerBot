@@ -6,18 +6,8 @@ public class Leagues
 {
     public ConcurrentBag<InterfaceLeague> StoredLeagues
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(storedLeagues) + " with count of: " +
-                storedLeagues.Count, LogLevel.VERBOSE);
-            return storedLeagues;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(storedLeagues)
-                + " to: " + value, LogLevel.VERBOSE);
-            storedLeagues = value;
-        }
+        get => storedLeagues.GetValue();
+        set => storedLeagues.SetValue(value);
     }
 
     public int LeaguesMatchCounter
@@ -26,7 +16,7 @@ public class Leagues
         set => leaguesMatchCounter.SetValue(value);
     }
 
-    [DataMember] private ConcurrentBag<InterfaceLeague> storedLeagues = new ConcurrentBag<InterfaceLeague>();
+    [DataMember] private logConcurrentBag<InterfaceLeague> storedLeagues = new logConcurrentBag<InterfaceLeague>();
     [DataMember] private logInt leaguesMatchCounter = new logInt(1);
 
     public bool CheckIfILeagueExistsByCategoryName(CategoryType _leagueCategoryName)
