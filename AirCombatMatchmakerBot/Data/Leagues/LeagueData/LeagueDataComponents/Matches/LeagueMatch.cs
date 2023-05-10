@@ -1,4 +1,4 @@
-﻿using Discord.WebSocket;
+using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
@@ -73,6 +73,8 @@ public class LeagueMatch
     [DataMember] private logUlong matchChannelId = new logUlong();
     [DataMember] private MatchReporting matchReporting = new MatchReporting();
     [DataMember] private CategoryType matchLeague { get; set; }
+
+    public LeagueMatch() { }
 
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
