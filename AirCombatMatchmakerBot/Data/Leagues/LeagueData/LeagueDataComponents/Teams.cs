@@ -6,55 +6,25 @@ public class Teams
 {
     public ConcurrentBag<Team> TeamsConcurrentBag
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teamsConcurrentBag) + " with count of: " +
-                teamsConcurrentBag.Count, LogLevel.VERBOSE);
-            return teamsConcurrentBag;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teamsConcurrentBag) + teamsConcurrentBag
-                + " to: " + value, LogLevel.VERBOSE);
-            teamsConcurrentBag = value;
-        }
+        get => teamsConcurrentBag.GetValue();
+        set => teamsConcurrentBag.SetValue(value);
     }
-
     public int CurrentTeamInt
     {
         get => currentTeamInt.GetValue();
         set => currentTeamInt.SetValue(value);
     }
 
-    [DataMember] private ConcurrentBag<Team> teamsConcurrentBag { get; set; }
-    [DataMember] private logInt currentTeamInt = new logInt();
-
-    public Teams() 
-    {
-        teamsConcurrentBag = new ConcurrentBag<Team>();
-        CurrentTeamInt = 1;
-    }
+    [DataMember] private logConcurrentBag<Team> teamsConcurrentBag = new logConcurrentBag<Team>();
+    [DataMember] private logInt currentTeamInt = new logInt(1);
 
     public void AddToConcurrentBagOfTeams(Team _Team)
     {
         Log.WriteLine(
             "Adding Team: " + _Team + " (" + _Team.TeamId + ") to the Teams ConcurrentBag", LogLevel.VERBOSE);
-        teamsConcurrentBag.Add(_Team);
-        Log.WriteLine("Done adding the team. Count is now: " + teamsConcurrentBag.Count, LogLevel.VERBOSE);
+        TeamsConcurrentBag.Add(_Team);
+        Log.WriteLine("Done adding the team. Count is now: " + TeamsConcurrentBag.Count, LogLevel.VERBOSE);
     }
-
-    /*
-    public ConcurrentBag<Team> GetConcurrentBagOfTeams()
-    {
-        Log.WriteLine("Getting ConcurrentBag of teams with count of: " + teamsConcurrentBag.Count, LogLevel.VERBOSE);
-        return teamsConcurrentBag;
-    }
-
-    public int GetCurrentTeamInt()
-    {
-        Log.WriteLine("Getting currentTeamInt: " + currentTeamInt, LogLevel.VERBOSE);
-        return currentTeamInt;
-    }*/
 
     public void IncrementCurrentTeamInt()
     {
@@ -66,10 +36,8 @@ public class Teams
     public bool CheckIfPlayerIsAlreadyInATeamById(
         int _leagueTeamSize, ulong _idToSearchFor)
     {
-        foreach (Team team in teamsConcurrentBag)
+        foreach (Team team in TeamsConcurrentBag)
         {
-            //ConcurrentBag<Player> Players = team.Players;
-
             Log.WriteLine("Searching team: " + team.GetTeamName(_leagueTeamSize), LogLevel.VERBOSE);
 
             foreach (Player teamPlayer in team.Players)
@@ -92,7 +60,7 @@ public class Teams
     public Team CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
         int _leagueTeamSize, ulong _idToSearchFor)
     {
-        foreach (Team team in teamsConcurrentBag)
+        foreach (Team team in TeamsConcurrentBag)
         {
             Log.WriteLine("Searching team: " + team.GetTeamName(_leagueTeamSize), LogLevel.VERBOSE);
 
@@ -117,7 +85,7 @@ public class Teams
     public Team ReturnTeamThatThePlayerIsIn(
         int _leagueTeamSize, ulong _idToSearchFor)
     {
-        foreach (Team team in teamsConcurrentBag)
+        foreach (Team team in TeamsConcurrentBag)
         {
             ConcurrentBag<Player> Players = team.Players;
 
@@ -145,14 +113,14 @@ public class Teams
     {
         Log.WriteLine("Finding team by id: " + _id, LogLevel.VERBOSE);
 
-        if (!teamsConcurrentBag.Any(x => x.TeamId == _id))
+        if (!TeamsConcurrentBag.Any(x => x.TeamId == _id))
         {
             Log.WriteLine("Trying to get a team by id: + " + _id +
                 " that is nonexistent!", LogLevel.CRITICAL);
             return new Team();
         }
 
-        Team? foundTeam = teamsConcurrentBag.FirstOrDefault(x => x.TeamId == _id);
+        Team? foundTeam = TeamsConcurrentBag.FirstOrDefault(x => x.TeamId == _id);
 
         if (foundTeam == null)
         {

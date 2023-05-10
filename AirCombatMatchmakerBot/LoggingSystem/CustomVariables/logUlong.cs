@@ -6,6 +6,13 @@ public class logUlong
 {
     [DataMember] private ulong _value;
 
+    public logUlong() { }
+    public logUlong(ulong value)
+    {
+        Log.WriteLine("Creating " + nameof(logUlong) + " with value: " + value, LogLevel.SET_VERBOSE);
+        _value = value;
+    }
+
     public ulong GetValue(
         [CallerFilePath] string _filePath = "",
         [CallerMemberName] string _memberName = "",

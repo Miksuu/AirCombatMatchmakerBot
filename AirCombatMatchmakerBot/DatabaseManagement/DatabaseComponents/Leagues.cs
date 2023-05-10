@@ -26,12 +26,12 @@ public class Leagues
         set => leaguesMatchCounter.SetValue(value);
     }
 
-    [DataMember] private ConcurrentBag<InterfaceLeague> storedLeagues { get; set; }
+    [DataMember] private ConcurrentBag<InterfaceLeague> storedLeagues = new ConcurrentBag<InterfaceLeague>();
     [DataMember] private logInt leaguesMatchCounter = new logInt();
 
     public Leagues()
     {
-        storedLeagues = new ConcurrentBag<InterfaceLeague>();
+        StoredLeagues = new ConcurrentBag<InterfaceLeague>();
         LeaguesMatchCounter = 1;
     }
 

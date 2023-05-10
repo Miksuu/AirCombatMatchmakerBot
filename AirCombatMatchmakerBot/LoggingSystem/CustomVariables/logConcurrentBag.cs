@@ -57,7 +57,7 @@ public class logConcurrentBag<T> : IEnumerable<T>
         return GetEnumerator();
     }
 
-    private string GetConcurrentBagMembers(ConcurrentBag<T> _customValues)
+    public string GetConcurrentBagMembers(ConcurrentBag<T> _customValues)
     {
         StringBuilder membersBuilder = new StringBuilder();
 

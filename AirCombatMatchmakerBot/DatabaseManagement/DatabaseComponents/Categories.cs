@@ -38,14 +38,8 @@ public class Categories
     }
 
     // ConcurrentDictionary of channel categories and channelTypes inside them
-    [DataMember] private ConcurrentDictionary<ulong, InterfaceCategory> createdCategoriesWithChannels { get; set; }
+    [DataMember] private ConcurrentDictionary<ulong, InterfaceCategory> createdCategoriesWithChannels = new ConcurrentDictionary<ulong, InterfaceCategory>();
     [DataMember] private ConcurrentDictionary<ulong, ulong> matchChannelsIdWithCategoryId = new ConcurrentDictionary<ulong, ulong>();
-
-    public Categories()
-    {
-        createdCategoriesWithChannels = new();
-        matchChannelsIdWithCategoryId = new();
-    }
 
     public KeyValuePair<ulong, InterfaceCategory> FindCreatedCategoryWithChannelKvpWithId(
         ulong _idToSearchWith)

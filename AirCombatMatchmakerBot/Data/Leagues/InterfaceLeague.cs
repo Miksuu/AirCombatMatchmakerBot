@@ -7,12 +7,9 @@ using System.Collections.Concurrent;
 public interface InterfaceLeague
 {
     public CategoryType LeagueCategoryName { get; set; }
-
     public Era LeagueEra { get; set; }
     public int LeaguePlayerCountPerTeam { get; set; }
-
     public ConcurrentBag<UnitName> LeagueUnits { get; set; }
-
     public LeagueData LeagueData { get; set; }
 
     public ulong LeagueCategoryId { get; set; }

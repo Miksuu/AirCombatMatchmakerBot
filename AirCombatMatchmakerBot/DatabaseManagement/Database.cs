@@ -80,8 +80,6 @@ public class Database
 
             foreach (int teamId in teamsToRemove)
             {
-                //interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.TryRemove(teamId);
-
                 while (interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.TryTake(out int element) && !element.Equals(teamId))
                 {
                     interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Add(element);
@@ -102,8 +100,6 @@ public class Database
                         match.FinishTheMatch(interfaceLeague);
                     }
                 }
-
-                //interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.RemoveAll(t => t.TeamId == teamId);
 
                 foreach (var item in interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Where(
                     t => t.TeamId == teamId))

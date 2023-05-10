@@ -68,17 +68,11 @@ public class LeagueMatch
         }
     }
 
-    [DataMember] private ConcurrentDictionary<int, string> teamsInTheMatch { get; set; }
+    [DataMember] private ConcurrentDictionary<int, string> teamsInTheMatch = new ConcurrentDictionary<int, string>();
     [DataMember] private logInt matchId = new logInt();
     [DataMember] private logUlong matchChannelId = new logUlong();
-    [DataMember] private MatchReporting matchReporting { get; set; }
+    [DataMember] private MatchReporting matchReporting = new MatchReporting();
     [DataMember] private CategoryType matchLeague { get; set; }
-
-    public LeagueMatch()
-    {
-        teamsInTheMatch = new ConcurrentDictionary<int, string>();
-        matchReporting = new MatchReporting();
-    }
 
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
