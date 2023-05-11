@@ -11,7 +11,7 @@ public class PlayerData : logClass<PlayerData>
     public void AddAPlayerProfile(Player _Player)
     {
         Log.WriteLine("Adding a player profile: " + _Player.PlayerNickName + " (" +
-            _Player.PlayerDiscordId + ") to the PlayerIDs ConcurrentBag", LogLevel.VERBOSE);
+            _Player.PlayerDiscordId + ") to the PlayerIDs ConcurrentDictionary", LogLevel.VERBOSE);
 
         PlayerIDs.TryAdd(_Player.PlayerDiscordId, _Player);
         Log.WriteLine("Done adding, count is now: " + PlayerIDs.Count, LogLevel.VERBOSE);

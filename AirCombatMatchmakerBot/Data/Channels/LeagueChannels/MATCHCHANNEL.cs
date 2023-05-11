@@ -34,7 +34,7 @@ public class MATCHCHANNEL : BaseChannel
 
         foreach (ulong userId in _allowedUsersIdsArray)
         {
-            Log.WriteLine("Adding " + userId + " to the permission allowed ConcurrentBag on: " +
+            Log.WriteLine("Adding " + userId + " to the permission allowed List on: " +
                 thisInterfaceChannel.ChannelName, LogLevel.VERBOSE);
 
             listOfOverwrites.Add(

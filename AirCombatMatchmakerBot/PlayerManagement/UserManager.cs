@@ -14,7 +14,7 @@ public static class UserManager
         // Check if the user is already in the database
         if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(_user.Id))
         {
-            Log.WriteLine("User is not in the PlayerID's ConcurrentBag," +
+            Log.WriteLine("User is not in the PlayerID's ConcurrentDictionary," +
                 " disregarding any further action", LogLevel.VERBOSE);
             return;
         }
@@ -52,7 +52,7 @@ public static class UserManager
     }
 
 
-    public static async void HandleQuitUsersDuringDowntimeFromIdConcurrentBag(ConcurrentBag<ulong> _userIds)
+    public static async void HandleQuitUsersDuringDowntimeFromIdList(List<ulong> _userIds)
     {
         // Maybe make own log level for this
         Log.WriteLine("Handling " + _userIds.Count +
