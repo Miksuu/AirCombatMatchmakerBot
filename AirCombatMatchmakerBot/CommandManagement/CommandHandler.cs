@@ -17,7 +17,6 @@ public static class CommandHandler
 
         await PrepareCommands();
 
-        // ConcurrentBagens for command usage
         client.SlashCommandExecuted += SlashCommandHandler;
 
         return;

@@ -87,7 +87,7 @@ public class Teams
     {
         foreach (Team team in TeamsConcurrentBag)
         {
-            ConcurrentBag<Player> Players = team.Players;
+            List<Player> Players = team.Players.ToList();
 
             Log.WriteLine("Searching team: " + team.GetTeamName(
                 _leagueTeamSize) + " with " + Players.Count, LogLevel.VERBOSE);

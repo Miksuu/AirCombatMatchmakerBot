@@ -24,7 +24,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
     public override string GenerateMessage()
     {
         string finalMessage = string.Empty;
-        ConcurrentBag<Team> sortedTeamConcurrentBagByElo = new ConcurrentBag<Team>();
+        List<Team> sortedTeamListgByElo = new List<Team>();
 
         InterfaceLeague? interfaceLeague = 
             Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(thisInterfaceMessage.MessageCategoryId);
@@ -35,17 +35,17 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
             return nameof(interfaceLeague) + " was null!";
         }
 
-        sortedTeamConcurrentBagByElo =
-            new ConcurrentBag<Team>(interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.OrderBy(
+        sortedTeamListgByElo =
+            new List<Team>(interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.OrderBy(
                 x => x.SkillRating));
 
-        foreach (Team team in sortedTeamConcurrentBagByElo)
+        foreach (Team team in sortedTeamListgByElo)
         {
             finalMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
         }
-        if (sortedTeamConcurrentBagByElo.Count > 0)
+        if (sortedTeamListgByElo.Count > 0)
         {
-            Log.WriteLine("Generated the leaderboard (" + sortedTeamConcurrentBagByElo.Count + "): " + finalMessage, LogLevel.VERBOSE);
+            Log.WriteLine("Generated the leaderboard (" + sortedTeamListgByElo.Count + "): " + finalMessage, LogLevel.VERBOSE);
         }
         else
         {
