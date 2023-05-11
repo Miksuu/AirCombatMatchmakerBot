@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
 [DataContract]
-public class Leagues
+public class Leagues : logClass<Leagues>
 {
     public ConcurrentBag<InterfaceLeague> StoredLeagues
     {

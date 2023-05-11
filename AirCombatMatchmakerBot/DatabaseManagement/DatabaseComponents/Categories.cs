@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [DataContract]
-public class Categories
+public class Categories : logClass<Categories>
 {
     public ConcurrentDictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels
     {
