@@ -101,21 +101,21 @@ public abstract class BaseLeague : InterfaceLeague
     // Generated based on the implementation
     [DataMember] protected CategoryType leagueCategoryName;
     [DataMember] protected Era leagueEra;
-    [DataMember] protected logInt leaguePlayerCountPerTeam = new logInt();
+    [DataMember] protected logClass<int> leaguePlayerCountPerTeam = new logClass<int>();
     [DataMember] protected logConcurrentBag<UnitName> leagueUnits = new logConcurrentBag<UnitName>();
     [DataMember] protected LeagueData leagueData = new LeagueData();
 
     // The reference to the category created by the system
-    [DataMember] private logUlong leagueCategoryId = new logUlong();
+    [DataMember] private logClass<ulong> leagueCategoryId = new logClass<ulong>();
 
     // The references for the channelTypes inside the category
     [DataMember] private ConcurrentDictionary<ChannelType, ulong> leagueChannels = new ConcurrentDictionary<ChannelType, ulong>();
 
     // Id of the role which gives access to the league channelTypes
-    [DataMember] private logUlong leagueRoleId = new logUlong();
+    [DataMember] private logClass<ulong> leagueRoleId = new logClass<ulong>();
 
     // Reference to the MessageDescription related to this league on the #league-registration channel
-    [DataMember] private logUlong leagueRegistrationMessageId = new logUlong();
+    [DataMember] private logClass<ulong> leagueRegistrationMessageId = new logClass<ulong>();
 
     protected InterfaceLeague thisInterfaceLeague;
 

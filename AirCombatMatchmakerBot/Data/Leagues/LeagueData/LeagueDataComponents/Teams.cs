@@ -16,7 +16,7 @@ public class Teams
     }
 
     [DataMember] private logConcurrentBag<Team> teamsConcurrentBag = new logConcurrentBag<Team>();
-    [DataMember] private logInt currentTeamInt = new logInt(1);
+    [DataMember] private logClass<int> currentTeamInt = new logClass<int>(1);
 
     public void AddToConcurrentBagOfTeams(Team _Team)
     {

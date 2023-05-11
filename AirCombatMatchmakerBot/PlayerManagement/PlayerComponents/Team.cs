@@ -35,11 +35,11 @@ public class Team
         set => teamActive.SetValue(value);
     }
 
-    [DataMember] private logInt teamId = new logInt();
+    [DataMember] private logClass<int> teamId = new logClass<int>();
     [DataMember] private logString teamName = new logString();
     [DataMember] private logConcurrentBag<Player> players = new logConcurrentBag<Player>();    
-    [DataMember] private logFloat skillRating = new logFloat(1600f);
-    [DataMember] private logBool teamActive = new logBool();
+    [DataMember] private logClass<float> skillRating = new logClass<float>(1600f);
+    [DataMember] private logClass<bool> teamActive = new logClass<bool>();
 
     public Team(){ }
 

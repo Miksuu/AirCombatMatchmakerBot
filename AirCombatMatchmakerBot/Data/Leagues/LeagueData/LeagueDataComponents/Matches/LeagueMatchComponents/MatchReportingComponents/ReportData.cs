@@ -70,8 +70,8 @@ public class ReportData
     [DataMember] private ReportObject reportedScore { get; set; }
     [DataMember] private ReportObject tacviewLink { get; set; }
     [DataMember] private ReportObject commentByTheUser { get; set; }
-    [DataMember] private logFloat finalEloDelta = new logFloat();
-    [DataMember] private logBool confirmedMatch = new logBool();
+    [DataMember] private logClass<float> finalEloDelta = new logClass<float>();
+    [DataMember] private logClass<bool> confirmedMatch = new logClass<bool>();
 
     public ReportData(string _reportingTeamName)
     {

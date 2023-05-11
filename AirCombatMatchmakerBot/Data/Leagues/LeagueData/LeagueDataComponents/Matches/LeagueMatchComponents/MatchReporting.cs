@@ -68,8 +68,8 @@ public class MatchReporting
 
     private EloSystem eloSystem { get; set; }
     [DataMember] private ConcurrentDictionary<int, ReportData> teamIdsWithReportData { get; set; }
-    [DataMember] private logBool showingConfirmationMessage = new logBool();
-    [DataMember] private logBool matchDone = new logBool();
+    [DataMember] private logClass<bool> showingConfirmationMessage = new logClass<bool>();
+    [DataMember] private logClass<bool> matchDone = new logClass<bool>();
     [DataMember] private logString finalResultForConfirmation = new logString();
     [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
     [DataMember] private logString finalResultTitleForConfirmation = new logString();

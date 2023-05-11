@@ -6,7 +6,11 @@ public class logClass<T>
 {
     [DataMember] private T _value;
 
-    public logClass() { }
+    public logClass()
+    {
+        _value = default(T);
+    }
+
     public logClass(T _initialValue = default(T))
     {
         if (_initialValue == null)
@@ -34,8 +38,10 @@ public class logClass<T>
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Setting " + _value.GetType() + " "+ _memberName + ": " + _value +
-            " TO: " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
+        //Log.WriteLine(_value.ToString(), LogLevel.VERBOSE);
+
         _value = value;
+        Log.WriteLine("Setting " + _value.GetType() + " " + _memberName + ": " + _value +
+            " TO: " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
     }
 }

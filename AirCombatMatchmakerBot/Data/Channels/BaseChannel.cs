@@ -73,8 +73,8 @@ public abstract class BaseChannel : InterfaceChannel
 
     [DataMember] protected ChannelType channelType { get; set; }
     [DataMember] protected logString channelName = new logString();
-    [DataMember] protected logUlong channelId = new logUlong();
-    [DataMember] protected logUlong channelsCategoryId = new logUlong();
+    [DataMember] protected logClass<ulong> channelId = new logClass<ulong>();
+    [DataMember] protected logClass<ulong> channelsCategoryId = new logClass<ulong>();
     [DataMember] protected ConcurrentDictionary<MessageName, bool> channelMessages { get; set; }
     [DataMember] protected ConcurrentDictionary<ulong, InterfaceMessage> interfaceMessagesWithIds { get; set; }
     protected InterfaceChannel thisInterfaceChannel;
