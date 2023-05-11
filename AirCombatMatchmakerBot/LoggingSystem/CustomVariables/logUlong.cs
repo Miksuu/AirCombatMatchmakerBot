@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+﻿/*using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 [DataContract]
@@ -30,4 +30,4 @@ public class logUlong
         Log.WriteLine("Setting ulong " + _memberName + ": " + _value + " TO: " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
         _value = value;
     }
-}
+}*/

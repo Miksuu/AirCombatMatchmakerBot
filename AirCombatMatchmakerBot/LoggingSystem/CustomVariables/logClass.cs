@@ -6,15 +6,16 @@ public class logClass<T>
 {
     [DataMember] private T _value;
 
-    public logClass(T initialValue = default(T))
+    public logClass() { }
+    public logClass(T _initialValue = default(T))
     {
-        if (initialValue == null)
+        if (_initialValue == null)
         {
             _value = default(T);
         }
         else
         {
-            _value = initialValue;
+            _value = _initialValue;
         }
     }
 

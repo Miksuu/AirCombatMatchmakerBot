@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+﻿/*using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 [DataContract]
@@ -24,3 +24,4 @@ public class logBool
         _value = value;
     }
 }
+*/
