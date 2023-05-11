@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using Discord;
 
 [DataContract]
-public class CachedUsers
+public class CachedUsers : logClass<CachedUsers>
 {
     public ConcurrentBag<ulong> CachedUserIDs
     {

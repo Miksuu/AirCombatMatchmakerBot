@@ -16,7 +16,7 @@ public class Teams
     }
 
     [DataMember] private logConcurrentBag<Team> teamsConcurrentBag = new logConcurrentBag<Team>();
-    [DataMember] private logInt currentTeamInt = new logInt(1);
+    [DataMember] private logClass<int> currentTeamInt = new logClass<int>(1);
 
     public void AddToConcurrentBagOfTeams(Team _Team)
     {
@@ -87,7 +87,7 @@ public class Teams
     {
         foreach (Team team in TeamsConcurrentBag)
         {
-            ConcurrentBag<Player> Players = team.Players;
+            List<Player> Players = team.Players.ToList();
 
             Log.WriteLine("Searching team: " + team.GetTeamName(
                 _leagueTeamSize) + " with " + Players.Count, LogLevel.VERBOSE);

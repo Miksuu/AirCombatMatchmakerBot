@@ -69,8 +69,8 @@ public class LeagueMatch
     }
 
     [DataMember] private ConcurrentDictionary<int, string> teamsInTheMatch = new ConcurrentDictionary<int, string>();
-    [DataMember] private logInt matchId = new logInt();
-    [DataMember] private logUlong matchChannelId = new logUlong();
+    [DataMember] private logClass<int> matchId = new logClass<int>();
+    [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
     [DataMember] private MatchReporting matchReporting = new MatchReporting();
     [DataMember] private CategoryType matchLeague { get; set; }
 

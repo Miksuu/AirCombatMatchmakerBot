@@ -68,8 +68,8 @@ public class MatchReporting
 
     private EloSystem eloSystem { get; set; }
     [DataMember] private ConcurrentDictionary<int, ReportData> teamIdsWithReportData { get; set; }
-    [DataMember] private logBool showingConfirmationMessage = new logBool();
-    [DataMember] private logBool matchDone = new logBool();
+    [DataMember] private logClass<bool> showingConfirmationMessage = new logClass<bool>();
+    [DataMember] private logClass<bool> matchDone = new logClass<bool>();
     [DataMember] private logString finalResultForConfirmation = new logString();
     [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
     [DataMember] private logString finalResultTitleForConfirmation = new logString();
@@ -418,11 +418,11 @@ public class MatchReporting
         return teamsInTheMatch;
     }
 
-    public (ConcurrentBag<ReportData>?, string) GetTeamReportDatasOfTheMatchWithPlayerId(
+    public (List<ReportData>?, string) GetTeamReportDatasOfTheMatchWithPlayerId(
         InterfaceLeague _interfaceLeague, LeagueMatch _leagueMatch, ulong _playerId)
     {
-        ConcurrentBag<Team> foundTeams = new ConcurrentBag<Team>();
-        ConcurrentBag<ReportData> reportDatas = new ConcurrentBag<ReportData>();
+        List<Team> foundTeams = new List<Team>();
+        List<ReportData> reportDatas = new List<ReportData>();
 
         Log.WriteLine("Getting ReportData on match: " + _leagueMatch.MatchId +
             " with: " + _playerId, LogLevel.DEBUG);

@@ -1,17 +1,12 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [DataContract]
-public class PlayerData
+public class PlayerData : logClass<PlayerData>
 {
-    [DataMember] private ConcurrentDictionary<ulong, Player> PlayerIDs { get; set; }
-    public PlayerData()
-    {
-        PlayerIDs = new ConcurrentDictionary<ulong, Player>();
-    }
+    [DataMember] private ConcurrentDictionary<ulong, Player> PlayerIDs = new ConcurrentDictionary<ulong, Player>();
 
     public void AddAPlayerProfile(Player _Player)
     {

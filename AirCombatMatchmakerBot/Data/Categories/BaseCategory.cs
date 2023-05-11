@@ -53,16 +53,15 @@ public abstract class BaseCategory : InterfaceCategory
 
     [DataMember] protected CategoryType categoryTypes;
     protected logConcurrentBag<ChannelType> channelTypes = new logConcurrentBag<ChannelType>();
-    [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels { get; set; } 
-    [DataMember] protected logUlong socketCategoryChannelId = new logUlong();
+    [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
+    [DataMember] protected logClass<ulong> socketCategoryChannelId = new logClass<ulong>();
 
     protected InterfaceCategory thisInterfaceCategory;
 
     public BaseCategory()
     {
         thisInterfaceCategory = this;
-        thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>();
-        interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
+        //thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);

@@ -16,7 +16,7 @@ public class Player
         set => playerNickName.SetValue(value);
     }
 
-    [DataMember] private logUlong playerDiscordId = new logUlong();
+    [DataMember] private logClass<ulong> playerDiscordId = new logClass<ulong>();
     [DataMember] private logString playerNickName = new logString();
 
     public Player()

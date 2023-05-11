@@ -5,7 +5,7 @@ public static class CategoryAndChannelManager
 {
     // Do not create these categories,
     // as they are used as template (such as generating from a league template)
-    private static ConcurrentBag<CategoryType> categoriesThatWontGetGenerated = new ConcurrentBag<CategoryType> {
+    private static List<CategoryType> categoriesThatWontGetGenerated = new List<CategoryType> {
         CategoryType.LEAGUETEMPLATE };
 
     public static async Task CreateCategoriesAndChannelsForTheDiscordServer()

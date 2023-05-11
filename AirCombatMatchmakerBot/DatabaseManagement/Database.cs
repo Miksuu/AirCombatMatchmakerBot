@@ -1,9 +1,42 @@
 using Discord;
 using System.Collections.Concurrent;
+using System.Runtime.Serialization;
 
-[Serializable]
+[DataContract]
 public class Database
 {
+    public PlayerData PlayerData
+    {
+        get => playerData.GetValue();
+        set => playerData.SetValue(value);
+    }
+    public Admins Admins
+    {
+        get => admins.GetValue();
+        set => admins.SetValue(value);
+    }
+    public CachedUsers CachedUsers
+    {
+        get => cachedUsers.GetValue();
+        set => cachedUsers.SetValue(value);
+    }
+    public Categories Categories
+    {
+        get => categories.GetValue();
+        set => categories.SetValue(value);
+    }
+    public Leagues Leagues
+    {
+        get => leagues.GetValue();
+        set => leagues.SetValue(value);
+    }
+
+    public ConcurrentBag<LeagueMatch> ArchivedLeagueMatches
+    {
+        get => archivedLeagueMatches.GetValue();
+        set => archivedLeagueMatches.SetValue(value);
+    }
+
     public static Database Instance
     {
         get
@@ -28,22 +61,12 @@ public class Database
     private static readonly object padlock = new object();
 
     // The Database components
-    public PlayerData PlayerData { get; set; }
-    public Admins Admins { get; set; }
-    public CachedUsers CachedUsers { get; set; }
-    public Categories Categories { get; set; }
-    public Leagues Leagues { get; set; }
-    public ConcurrentBag<LeagueMatch> ArchivedLeagueMatches { get; set; }
-
-    public Database()
-    {
-        Admins = new Admins();
-        CachedUsers = new CachedUsers();
-        Categories = new Categories();
-        PlayerData = new PlayerData();
-        Leagues = new Leagues();
-        ArchivedLeagueMatches = new ConcurrentBag<LeagueMatch>();
-    }
+    [DataMember] private logClass<PlayerData> playerData = new logClass<PlayerData>(new PlayerData());
+    [DataMember] private logClass<Admins> admins = new logClass<Admins>(new Admins());
+    [DataMember] private logClass<CachedUsers> cachedUsers = new logClass<CachedUsers>(new CachedUsers());
+    [DataMember] private logClass<Categories> categories = new logClass<Categories>(new Categories());
+    [DataMember] private logClass<Leagues> leagues = new logClass<Leagues>(new Leagues());
+    [DataMember] private logConcurrentBag<LeagueMatch> archivedLeagueMatches = new logConcurrentBag<LeagueMatch>();
 
     public async Task RemovePlayerFromTheDatabase(ulong _playerDiscordId)
     {

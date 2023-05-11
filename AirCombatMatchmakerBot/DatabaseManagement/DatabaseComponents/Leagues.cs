@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
 [DataContract]
-public class Leagues
+public class Leagues : logClass<Leagues>
 {
     public ConcurrentBag<InterfaceLeague> StoredLeagues
     {
@@ -17,7 +17,7 @@ public class Leagues
     }
 
     [DataMember] private logConcurrentBag<InterfaceLeague> storedLeagues = new logConcurrentBag<InterfaceLeague>();
-    [DataMember] private logInt leaguesMatchCounter = new logInt(1);
+    [DataMember] private logClass<int> leaguesMatchCounter = new logClass<int>(1);
 
     public bool CheckIfILeagueExistsByCategoryName(CategoryType _leagueCategoryName)
     {
