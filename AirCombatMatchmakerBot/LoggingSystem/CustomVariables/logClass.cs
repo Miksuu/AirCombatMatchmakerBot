@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 
 [DataContract]
-public class logClass<T>
+public class logClass<T> 
 {
     [DataMember] private T _value;
 
@@ -34,22 +35,29 @@ public class logClass<T>
 
         List<Type> regularVariableTypes = new List<Type>
             {
-                typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
+                typeof(ulong), typeof(System.Int32), typeof(float), typeof(bool)
             };
 
-        if (regularVariableTypes.Contains(typeof(logClass<T>)))
+        if (regularVariableTypes.Contains(typeof(T)))
         {
             finalVal = _value.ToString();
         }
         else 
         {
             StringBuilder membersBuilder = new StringBuilder();
-
-            var interfaceLoggableClass = (InterfaceLoggableClass)this;
-
-            foreach (var item in interfaceLoggableClass.GetClassParameters())
+            var interfaceLoggableClass = Activator.CreateInstance(typeof(T)) as InterfaceLoggableClass;
+            Log.WriteLine(typeof(T).ToString(), LogLevel.VERBOSE);
+            MethodInfo getParametersMethod = interfaceLoggableClass.GetType().GetMethod("GetClassParameters");
+            if (getParametersMethod != null)
             {
-                membersBuilder.Append(item).Append(", ");
+                List<string> parameters = getParametersMethod.Invoke(interfaceLoggableClass, null) as List<string>;
+                if (parameters != null)
+                {
+                    foreach (string param in parameters)
+                    {
+                        membersBuilder.Append(param).Append(", ");
+                    }
+                }
             }
 
             finalVal = membersBuilder.ToString().TrimEnd(',', ' ');
@@ -80,12 +88,19 @@ public class logClass<T>
         else
         {
             StringBuilder membersBuilder = new StringBuilder();
-
-            var interfaceLoggableClass = (InterfaceLoggableClass)this;
-
-            foreach (var item in interfaceLoggableClass.GetClassParameters())
+            var interfaceLoggableClass = Activator.CreateInstance(typeof(T)) as InterfaceLoggableClass;
+            Log.WriteLine(typeof(T).ToString(), LogLevel.VERBOSE);
+            MethodInfo getParametersMethod = interfaceLoggableClass.GetType().GetMethod("GetClassParameters");
+            if (getParametersMethod != null)
             {
-                membersBuilder.Append(item).Append(", ");
+                List<string> parameters = getParametersMethod.Invoke(interfaceLoggableClass, null) as List<string>;
+                if (parameters != null)
+                {
+                    foreach (string param in parameters)
+                    {
+                        membersBuilder.Append(param).Append(", ");
+                    }
+                }
             }
 
             finalVal = membersBuilder.ToString().TrimEnd(',', ' ');

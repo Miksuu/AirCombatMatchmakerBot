@@ -40,7 +40,7 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
                 }
             }
 
-            membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(finalValueForTheProperty)).Append(", ");
+            membersBuilder.Append(finalValueForTheProperty).Append(", ");
         }
 
         return membersBuilder.ToString().TrimEnd(',', ' ');

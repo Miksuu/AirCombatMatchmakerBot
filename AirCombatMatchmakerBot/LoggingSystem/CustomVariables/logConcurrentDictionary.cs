@@ -112,13 +112,16 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
         return GetEnumerator();
     }
 
+
     public string GetConcurrentDictionaryMembers(ConcurrentDictionary<TKey, TValue> _customValues)
     {
         StringBuilder membersBuilder = new StringBuilder();
 
         foreach (var item in _customValues)
         {
-            switch (item.Value)
+            Log.WriteLine(item.Key.GetType().ToString() + " | " + item.Value.GetType().ToString(), LogLevel.DEBUG);
+
+            switch (item.Key)
             {
                 case UnitName unitName:
                     membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(unitName)).Append(", ");
@@ -126,7 +129,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
                 case ChannelType channelType:
                     membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(channelType)).Append(", ");
                     break;
-                case ulong or int:
+                case ulong or int or UInt64:
                     membersBuilder.Append(item.ToString()).Append(", ");
                     break;
                 case Player player:
@@ -154,7 +157,50 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
                     membersBuilder.Append(playerData).Append(", ");
                     break;
                 default:
-                    Log.WriteLine("Tried to get type: " + typeof(TKey) + " unknown, undefined type?", LogLevel.CRITICAL);
+                    Log.WriteLine("Tried to get type: " + item.Key.GetType().ToString() + " unknown, undefined type?", LogLevel.CRITICAL);
+                    break;
+            }
+
+            switch (item.Value)
+            {
+                case UnitName unitName:
+                    membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(unitName)).Append(", ");
+                    break;
+                case ChannelType channelType:
+                    membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(channelType)).Append(", ");
+                    break;
+                case ulong or int or UInt64:
+                    membersBuilder.Append(item.ToString()).Append(", ");
+                    break;
+                case Player player:
+                    membersBuilder.Append(player.PlayerDiscordId + "|" + player.PlayerNickName).Append(", ");
+                    break;
+                case Team team:
+                    membersBuilder.Append(team.TeamId + "|" + team.TeamName + "|" + team.Players + "|" +
+                        team.SkillRating + "|" + team.TeamActive).Append(", ");
+                    break;
+                case LeagueMatch leagueMatch:
+                    membersBuilder.Append(leagueMatch.TeamsInTheMatch + "|" + leagueMatch.MatchId + "|" + leagueMatch.MatchChannelId + "|" +
+                        leagueMatch.MatchReporting + "|" + leagueMatch.MatchLeague).Append(", ");
+                    break;
+                case InterfaceLeague interfaceLeague:
+                    membersBuilder.Append(interfaceLeague.LeagueCategoryName + "|" + interfaceLeague.LeagueEra + "|" +
+                        interfaceLeague.LeaguePlayerCountPerTeam + "|" + interfaceLeague.LeagueUnits + "|" +
+                        interfaceLeague.LeagueData).Append(", ");
+                    break;
+                case InterfaceButton interfaceButton:
+                    membersBuilder.Append(interfaceButton.ButtonName + "|" + interfaceButton.ButtonLabel + "|" +
+                        interfaceButton.ButtonStyle + "|" + interfaceButton.ButtonCategoryId + "|" +
+                        interfaceButton.ButtonCustomId + "|" + interfaceButton.EphemeralResponse).Append(", ");
+                    break;
+                case PlayerData playerData:
+                    membersBuilder.Append(playerData).Append(", ");
+                    break;
+                case LEAGUETEMPLATE or BOTSTUFF or REGISTRATIONCATEGORY:
+                    membersBuilder.Append("leagueTemplateTemp").Append(", ");
+                    break;
+                default:
+                    Log.WriteLine("Tried to get type: " + item.Value.GetType().ToString() + " unknown, undefined type?", LogLevel.CRITICAL);
                     break;
             }
         }

@@ -3,43 +3,29 @@ using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [DataContract]
-public class Categories : logClass<Categories>
+public class Categories : logClass<Categories>, InterfaceLoggableClass
 {
     public ConcurrentDictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(createdCategoriesWithChannels) + " with count of: " +
-                createdCategoriesWithChannels.Count, LogLevel.VERBOSE);
-            return createdCategoriesWithChannels;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(createdCategoriesWithChannels)
-                + " to: " + value, LogLevel.VERBOSE);
-            createdCategoriesWithChannels = value;
-        }
+        get => createdCategoriesWithChannels.GetValue();
+        set => createdCategoriesWithChannels.SetValue(value);
     }
 
     public ConcurrentDictionary<ulong, ulong> MatchChannelsIdWithCategoryId
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(matchChannelsIdWithCategoryId) + " with count of: " +
-                matchChannelsIdWithCategoryId.Count, LogLevel.VERBOSE);
-            return matchChannelsIdWithCategoryId;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(matchChannelsIdWithCategoryId)
-                + " to: " + value, LogLevel.VERBOSE);
-            matchChannelsIdWithCategoryId = value;
-        }
+        get => matchChannelsIdWithCategoryId.GetValue();
+        set => matchChannelsIdWithCategoryId.SetValue(value);
     }
 
     // ConcurrentDictionary of channel categories and channelTypes inside them
-    [DataMember] private ConcurrentDictionary<ulong, InterfaceCategory> createdCategoriesWithChannels = new ConcurrentDictionary<ulong, InterfaceCategory>();
-    [DataMember] private ConcurrentDictionary<ulong, ulong> matchChannelsIdWithCategoryId = new ConcurrentDictionary<ulong, ulong>();
+    [DataMember] private logConcurrentDictionary<ulong, InterfaceCategory> createdCategoriesWithChannels = new logConcurrentDictionary<ulong, InterfaceCategory>();
+    [DataMember] private logConcurrentDictionary<ulong, ulong> matchChannelsIdWithCategoryId = new logConcurrentDictionary<ulong, ulong>();
+
+    public List<string> GetClassParameters()
+    {
+        return new List<string> { createdCategoriesWithChannels.GetLoggingClassParameters<ulong, InterfaceCategory>(),
+            matchChannelsIdWithCategoryId.GetLoggingClassParameters<ulong, ulong>() };
+    }
 
     public KeyValuePair<ulong, InterfaceCategory> FindCreatedCategoryWithChannelKvpWithId(
         ulong _idToSearchWith)
@@ -114,4 +100,6 @@ public class Categories : logClass<Categories>
         Log.WriteLine("Done removing, count is now: " +
             CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
     }
+
+
 }

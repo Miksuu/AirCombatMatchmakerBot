@@ -40,7 +40,6 @@ public static class EnumExtensions
         }
 
         var memInfo = _enumVal.GetType().GetMember(enumValString);
-        Log.WriteLine("meminfo: " + memInfo.Length, LogLevel.VERBOSE);
 
         var attr = memInfo[0].GetCustomAttributes(false).OfType<EnumMemberAttribute>().FirstOrDefault();
 
@@ -55,7 +54,7 @@ public static class EnumExtensions
             Log.WriteLine("attr.value was null!", LogLevel.CRITICAL);
             return "null";
         }
-        Log.WriteLine("returning attr.value: " + attr.Value, LogLevel.VERBOSE);
+        //Log.WriteLine("returning attr.value: " + attr.Value, LogLevel.VERBOSE);
 
         return attr.Value;
     }

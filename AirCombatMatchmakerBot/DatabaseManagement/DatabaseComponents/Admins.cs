@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [DataContract]
-public class Admins : logClass<Admins>
+public class Admins : logClass<Admins>, InterfaceLoggableClass
 {
     ConcurrentBag<ulong> AdminIDs
     {
@@ -12,6 +12,12 @@ public class Admins : logClass<Admins>
     }
 
     [DataMember] private logConcurrentBag<ulong> adminIDs = new logConcurrentBag<ulong> { 111788167195033600 };
+
+    public List<string> GetClassParameters()
+    {
+        Log.WriteLine(nameof(GetClassParameters) + " on: " + nameof(Leagues), LogLevel.VERBOSE);
+        return new List<string> { adminIDs.GetLoggingClassParameters<ulong, ulong>()};
+    }
 
     public bool CheckIfCommandSenderWasAnAdmin(SocketSlashCommand _command)
     {
