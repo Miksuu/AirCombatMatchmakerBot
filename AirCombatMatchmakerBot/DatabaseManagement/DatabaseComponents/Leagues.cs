@@ -21,9 +21,8 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
 
     public List<string> GetClassParameters()
     {
-        Log.WriteLine(nameof(GetClassParameters) + " on: " + nameof(Leagues), LogLevel.VERBOSE);
         return new List<string> { storedLeagues.GetLoggingClassParameters<InterfaceLeague, InterfaceLeague>(),
-            leaguesMatchCounter.GetParameter<int>() };
+            leaguesMatchCounter.GetParameter() };
     }
 
     public bool CheckIfILeagueExistsByCategoryName(CategoryType _leagueCategoryName)
