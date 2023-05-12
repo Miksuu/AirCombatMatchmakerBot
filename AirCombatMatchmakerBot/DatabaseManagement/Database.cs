@@ -86,7 +86,7 @@ public class Database
             Log.WriteLine("Starting to process league: " + interfaceLeague.LeagueCategoryName, LogLevel.DEBUG);
 
             // Place the teams to remove 
-            ConcurrentBag<int> teamsToRemove = new ConcurrentBag<int>();
+            List<int> teamsToRemove = new List<int>();
             foreach (Team team in interfaceLeague.LeagueData.Teams.TeamsConcurrentBag)
             {
                 Log.WriteLine("Looping through team: " + team.TeamName + "(" + team.TeamId + ")", LogLevel.VERBOSE);

@@ -6,6 +6,7 @@ public static class LeagueManager
 {
     public static InterfaceLeague GetCategoryInstance(CategoryType _leagueCategoryName)
     {
+        
         return (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
 
@@ -41,6 +42,8 @@ public static class LeagueManager
                     " was null!", LogLevel.CRITICAL);
                 return;
             }
+
+            Log.WriteLine(nameof(LeagueManager) + " with: " + Database.Instance.PlayerData, LogLevel.VERBOSE);
 
             // Add the new newly from the interface implementations added units here
             if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(

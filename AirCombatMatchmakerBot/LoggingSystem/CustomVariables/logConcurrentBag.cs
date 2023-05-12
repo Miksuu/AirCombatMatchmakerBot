@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 
 [DataContract]
-public class logConcurrentBag<T> : IEnumerable<T>
+public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
 {
     [DataMember] private ConcurrentBag<T> _values = new ConcurrentBag<T>();
 
@@ -14,6 +14,36 @@ public class logConcurrentBag<T> : IEnumerable<T>
     public logConcurrentBag(IEnumerable<T> collection)
     {
         _values = new ConcurrentBag<T>(collection);
+    }
+
+    public string GetLoggingClassParameters<TKey, TValue>()
+    {
+        StringBuilder membersBuilder = new StringBuilder();
+        foreach (var item in _values)
+        {
+            string finalValueForTheProperty = string.Empty;
+
+            List<Type> regularVariableTypes = new List<Type>
+            {
+                typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
+            };
+
+            if (regularVariableTypes.Contains(item.GetType()))
+            {
+                finalValueForTheProperty = item.ToString();
+            }
+            else
+            {
+                if (item is logClass<TKey>)
+                {
+                    finalValueForTheProperty = ((logClass<TKey>)(object)item).GetParameter<TKey>();
+                }
+            }
+
+            membersBuilder.Append(finalValueForTheProperty).Append(", ");
+        }
+
+        return membersBuilder.ToString().TrimEnd(',', ' ');
     }
 
     public ConcurrentBag<T> GetValue(
@@ -106,5 +136,6 @@ public class logConcurrentBag<T> : IEnumerable<T>
 
         return membersBuilder.ToString().TrimEnd(',', ' ');
     }
+
 
 }

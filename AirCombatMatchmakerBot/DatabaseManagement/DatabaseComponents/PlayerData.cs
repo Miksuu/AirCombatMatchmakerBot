@@ -4,14 +4,25 @@ using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [DataContract]
-public class PlayerData : logClass<PlayerData>
+public class PlayerData : logClass<PlayerData>, InterfaceLoggableClass
 {
-    [DataMember] private ConcurrentDictionary<ulong, Player> PlayerIDs = new ConcurrentDictionary<ulong, Player>();
+    public ConcurrentDictionary<ulong, Player> PlayerIDs
+    {
+        get => playerIDs.GetValue();
+        set => playerIDs.SetValue(value);
+    }
+
+    [DataMember] private logConcurrentDictionary<ulong, Player> playerIDs = new logConcurrentDictionary<ulong, Player>();
+
+    public List<string> GetClassParameters()
+    {
+        return new List<string> { playerIDs.GetLoggingClassParameters<ulong, Player>() };
+    }
 
     public void AddAPlayerProfile(Player _Player)
     {
         Log.WriteLine("Adding a player profile: " + _Player.PlayerNickName + " (" +
-            _Player.PlayerDiscordId + ") to the PlayerIDs ConcurrentBag", LogLevel.VERBOSE);
+            _Player.PlayerDiscordId + ") to the PlayerIDs ConcurrentDictionary", LogLevel.VERBOSE);
 
         PlayerIDs.TryAdd(_Player.PlayerDiscordId, _Player);
         Log.WriteLine("Done adding, count is now: " + PlayerIDs.Count, LogLevel.VERBOSE);
