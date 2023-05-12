@@ -38,10 +38,8 @@ public class logClass<T>
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        //Log.WriteLine(_value.ToString(), LogLevel.VERBOSE);
-
-        _value = value;
         Log.WriteLine("Setting " + _value.GetType() + " " + _memberName + ": " + _value +
             " TO: " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
+        _value = value;
     }
 }

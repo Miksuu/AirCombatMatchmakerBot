@@ -4,9 +4,14 @@ using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [DataContract]
-public class PlayerData : logClass<PlayerData>
+public class PlayerData : logClass<PlayerData>, InterfaceLogClass
 {
     [DataMember] private ConcurrentDictionary<ulong, Player> PlayerIDs = new ConcurrentDictionary<ulong, Player>();
+
+    public List<string> GetClassParameters()
+    {
+        throw new NotImplementedException();
+    }
 
     public void AddAPlayerProfile(Player _Player)
     {
