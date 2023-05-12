@@ -36,7 +36,7 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
             {
                 if (item is logClass<TKey>)
                 {
-                    finalValueForTheProperty = ((logClass<TKey>)(object)item).GetParameter<TKey>();
+                    finalValueForTheProperty = ((logClass<TKey>)(object)item).GetParameter();
                 }
             }
 
