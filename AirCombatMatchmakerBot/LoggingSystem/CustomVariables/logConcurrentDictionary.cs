@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
@@ -5,18 +6,21 @@ using System.Runtime.Serialization;
 using System.Text;
 
 [DataContract]
-public class logConcurrentDictionary<T> : IEnumerable<KeyValuePair<T, T>>
+public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
 {
-    [DataMember] private ConcurrentDictionary<T, T> _values = new ConcurrentDictionary<T, T>();
+    [DataMember] private ConcurrentDictionary<TKey, TValue> _values;
 
-    public logConcurrentDictionary() { }
-
-    public logConcurrentDictionary(IEnumerable<KeyValuePair<T, T>> collection)
+    public logConcurrentDictionary()
     {
-        _values = new ConcurrentDictionary<T, T>(collection);
+        _values = new ConcurrentDictionary<TKey, TValue>();
     }
 
-    public ConcurrentDictionary<T, T> GetValue(
+    public logConcurrentDictionary(IEnumerable<KeyValuePair<TKey, TValue>> collection)
+    {
+        _values = new ConcurrentDictionary<TKey, TValue>(collection ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>());
+    }
+
+    public ConcurrentDictionary<TKey, TValue> GetValue(
         [CallerFilePath] string _filePath = "",
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
@@ -27,7 +31,7 @@ public class logConcurrentDictionary<T> : IEnumerable<KeyValuePair<T, T>>
         return _values;
     }
 
-    public void SetValue(ConcurrentDictionary<T, T> values,
+    public void SetValue(ConcurrentDictionary<TKey, TValue> values,
         [CallerFilePath] string _filePath = "",
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
@@ -39,7 +43,7 @@ public class logConcurrentDictionary<T> : IEnumerable<KeyValuePair<T, T>>
         _values = values;
     }
 
-    public void Add(KeyValuePair<T, T> _itemKvp,
+    public void Add(KeyValuePair<TKey, TValue> _itemKvp,
         [CallerFilePath] string _filePath = "",
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
@@ -53,17 +57,18 @@ public class logConcurrentDictionary<T> : IEnumerable<KeyValuePair<T, T>>
         _values.TryAdd( key, val);
     }
 
-    public IEnumerator<KeyValuePair<T, T>> GetEnumerator()
+    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
         return _values.GetEnumerator();
     }
+
 
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
     }
 
-    public string GetConcurrentDictionaryMembers(ConcurrentDictionary<T, T> _customValues)
+    public string GetConcurrentDictionaryMembers(ConcurrentDictionary<TKey, TValue> _customValues)
     {
         StringBuilder membersBuilder = new StringBuilder();
 
@@ -101,8 +106,11 @@ public class logConcurrentDictionary<T> : IEnumerable<KeyValuePair<T, T>>
                         interfaceButton.ButtonStyle + "|" + interfaceButton.ButtonCategoryId + "|" +
                         interfaceButton.ButtonCustomId + "|" + interfaceButton.EphemeralResponse).Append(", ");
                     break;
+                case PlayerData playerData:
+                    membersBuilder.Append(playerData).Append(", ");
+                    break;
                 default:
-                    Log.WriteLine("Tried to get type: " + typeof(T) + " unknown, undefined type?", LogLevel.CRITICAL);
+                    Log.WriteLine("Tried to get type: " + typeof(TKey) + " unknown, undefined type?", LogLevel.CRITICAL);
                     break;
             }
         }

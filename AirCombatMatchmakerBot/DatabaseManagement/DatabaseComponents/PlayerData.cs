@@ -6,11 +6,17 @@ using System.Collections.Concurrent;
 [DataContract]
 public class PlayerData : logClass<PlayerData>, InterfaceLogClass
 {
-    [DataMember] private ConcurrentDictionary<ulong, Player> PlayerIDs = new ConcurrentDictionary<ulong, Player>();
+    public ConcurrentDictionary<ulong, Player> PlayerIDs
+    {
+        get => playerIDs.GetValue();
+        set => playerIDs.SetValue(value);
+    }
+
+    [DataMember] private logConcurrentDictionary<ulong, Player> playerIDs = new logConcurrentDictionary<ulong, Player>();
 
     public List<string> GetClassParameters()
     {
-        throw new NotImplementedException();
+        return new List<string> {  };
     }
 
     public void AddAPlayerProfile(Player _Player)
