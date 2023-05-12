@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [DataContract]
-public class PlayerData : logClass<PlayerData>, InterfaceLogClass
+public class PlayerData : logClass<PlayerData>, InterfaceLoggableClass
 {
     public ConcurrentDictionary<ulong, Player> PlayerIDs
     {
@@ -16,7 +16,7 @@ public class PlayerData : logClass<PlayerData>, InterfaceLogClass
 
     public List<string> GetClassParameters()
     {
-        return new List<string> {  };
+        return new List<string> { playerIDs.GetLoggingClassParameters<ulong, Player>() };
     }
 
     public void AddAPlayerProfile(Player _Player)

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 [JsonObjectAttribute]
-public interface InterfaceLogClass
+public interface InterfaceLoggableClass
 {
     public abstract List<string> GetClassParameters();
 }

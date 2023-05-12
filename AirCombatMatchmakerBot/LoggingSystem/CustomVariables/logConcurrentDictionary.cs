@@ -1,12 +1,13 @@
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Formats.Asn1;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 
 [DataContract]
-public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
+public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, InterfaceLoggingClass
 {
     [DataMember] private ConcurrentDictionary<TKey, TValue> _values;
 
@@ -19,6 +20,49 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
     {
         _values = new ConcurrentDictionary<TKey, TValue>(collection ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>());
     }
+
+    public string GetLoggingClassParameters<TKey, TValue>()
+    {
+        StringBuilder membersBuilder = new StringBuilder();
+        foreach (var kvp in _values)
+        {
+            string finalValueForTheProperty = string.Empty;
+
+            List<Type> regularVariableTypes = new List<Type>
+            {
+                typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
+            };
+
+            if (regularVariableTypes.Contains(kvp.Key.GetType()))
+            {
+                finalValueForTheProperty = kvp.Key.ToString();
+            }
+            else
+            {
+                if (kvp.Key is logClass<TKey>)
+                {
+                    finalValueForTheProperty = ((logClass<TKey>)(object)kvp.Key).GetParameter<TKey>();
+                }
+            }
+
+            if (regularVariableTypes.Contains(kvp.Value.GetType()))
+            {
+                finalValueForTheProperty = kvp.Value.ToString();
+            }
+            else
+            {
+                if (kvp.Value is logClass<TValue>)
+                {
+                    finalValueForTheProperty = ((logClass<TValue>)(object)kvp.Value).GetParameter<TValue>();
+                }
+            }
+
+            membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(finalValueForTheProperty)).Append(", ");
+        }
+
+        return membersBuilder.ToString().TrimEnd(',', ' ');
+    }
+
 
     public ConcurrentDictionary<TKey, TValue> GetValue(
         [CallerFilePath] string _filePath = "",
@@ -117,5 +161,4 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
 
         return membersBuilder.ToString().TrimEnd(',', ' ');
     }
-
 }
