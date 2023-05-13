@@ -107,6 +107,46 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.DEBUG);
     }
 
+    public async Task CreateAChannelForTheCategoryWithoutRole(
+        SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
+    {
+        Log.WriteLine("Creating a channel named: " + channelType +
+            " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
+
+        string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(channelType);
+
+        if (thisInterfaceChannel.ChannelName == null)
+        {
+            Log.WriteLine("thisInterfaceChannel.ChannelName was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        // Temp fix perhaps unnecessary after the name has been set more properly 
+        // for non-match channels
+        if (thisInterfaceChannel.ChannelName.Contains("match-"))
+        {
+            channelTypeString = thisInterfaceChannel.ChannelName;
+        }
+
+        var client = BotReference.GetClientRef();
+        if (client == null)
+        {
+            Exceptions.BotClientRefNull();
+            return;
+        }
+
+        var channel = await _guild.CreateTextChannelAsync(channelTypeString, x =>
+        {
+            //x.PermissionOverwrites = GetGuildPermissions(_guild, _allowedUsersIdsArray);
+            x.CategoryId = thisInterfaceChannel.ChannelsCategoryId;
+        });
+
+        thisInterfaceChannel.ChannelId = channel.Id;
+
+        Log.WriteLine("Done creating a channel named: " + channelType + " with ID: " + channel.Id +
+            " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.DEBUG);
+    }
+
     public async Task<InterfaceMessage?> CreateAMessageForTheChannelFromMessageName(
         MessageName _MessageName, bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true)

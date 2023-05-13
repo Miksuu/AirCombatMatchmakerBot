@@ -26,7 +26,7 @@ public class logClass<T>
         }
     }
 
-    public T? GetValue(
+    public T GetValue(
         [CallerFilePath] string _filePath = "",
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)

@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 
 [DataContract]
-public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, InterfaceLoggingClass
+public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, InterfaceLoggingClass where TKey : notnull
 {
     [DataMember] private ConcurrentDictionary<TKey, TValue> _values;
 
@@ -55,8 +55,6 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
 
         return membersBuilder.ToString().TrimEnd(',', ' ');
     }
-
-
 
     public ConcurrentDictionary<TKey, TValue> GetValue(
         [CallerFilePath] string _filePath = "",

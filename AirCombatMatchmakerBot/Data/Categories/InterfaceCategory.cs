@@ -20,8 +20,13 @@ public interface InterfaceCategory
         ulong _socketCategoryChannelId, DiscordSocketClient _client, SocketRole _role);
 
     public Task<InterfaceChannel?> CreateSpecificChannelFromChannelType(
-        ChannelType _channelType, ulong _socketCategoryChannelId, SocketRole? _role,
+        ChannelType _channelType, ulong _socketCategoryChannelId, SocketRole _role,
         string _overrideChannelName = "", params ulong[] _allowedUsersIdsArray);
+
+    public Task<InterfaceChannel?> CreateSpecificChannelFromChannelTypeWithoutRole(
+    ChannelType _channelType, ulong _socketCategoryChannelId,
+    string _overrideChannelName = "", params ulong[] _allowedUsersIdsArray);
+
     public InterfaceChannel FindInterfaceChannelWithIdInTheCategory(
         ulong _idToSearchWith);
     public InterfaceChannel FindInterfaceChannelWithNameInTheCategory(
