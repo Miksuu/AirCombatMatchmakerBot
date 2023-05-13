@@ -100,6 +100,4 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
         Log.WriteLine("Done removing, count is now: " +
             CreatedCategoriesWithChannels.Count, LogLevel.VERBOSE);
     }
-
-
 }
