@@ -45,6 +45,7 @@ public class logClass<T>
         else 
         {
             StringBuilder membersBuilder = new StringBuilder();
+
             var interfaceLoggableClass = Activator.CreateInstance(typeof(T)) as InterfaceLoggableClass;
             Log.WriteLine(typeof(T).ToString(), LogLevel.VERBOSE);
             MethodInfo getParametersMethod = interfaceLoggableClass.GetType().GetMethod("GetClassParameters");
@@ -58,6 +59,10 @@ public class logClass<T>
                         membersBuilder.Append(param).Append(", ");
                     }
                 }
+            }
+            else
+            {
+                Log.WriteLine(typeof(T) + " does not have: " + nameof(interfaceLoggableClass.GetClassParameters), LogLevel.WARNING);
             }
 
             finalVal = membersBuilder.ToString().TrimEnd(',', ' ');
@@ -78,7 +83,7 @@ public class logClass<T>
         List<Type> regularVariableTypes = new List<Type>
             {
                 typeof(logClass<ulong>), typeof(logClass<Int32>),
-            typeof(logClass<float>), typeof(logClass<bool>)
+                typeof(logClass<float>), typeof(logClass<bool>)
             };
 
         if (regularVariableTypes.Contains(typeof(logClass<T>)))
@@ -88,6 +93,7 @@ public class logClass<T>
         else
         {
             StringBuilder membersBuilder = new StringBuilder();
+
             var interfaceLoggableClass = Activator.CreateInstance(typeof(T)) as InterfaceLoggableClass;
             Log.WriteLine(typeof(T).ToString(), LogLevel.VERBOSE);
             MethodInfo getParametersMethod = interfaceLoggableClass.GetType().GetMethod("GetClassParameters");

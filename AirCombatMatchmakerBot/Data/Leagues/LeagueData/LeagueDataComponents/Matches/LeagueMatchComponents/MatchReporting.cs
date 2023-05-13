@@ -3,37 +3,12 @@ using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [DataContract]
-public class MatchReporting
+public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 {
-    public EloSystem EloSystem
-    {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(eloSystem) + " to: " + eloSystem, LogLevel.VERBOSE);
-            return eloSystem;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(eloSystem)
-                + " to: " + value, LogLevel.VERBOSE);
-            eloSystem = value;
-        }
-    }
-
     public ConcurrentDictionary<int, ReportData> TeamIdsWithReportData
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teamIdsWithReportData) + " with count of: " +
-                teamIdsWithReportData.Count, LogLevel.VERBOSE);
-            return teamIdsWithReportData;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teamIdsWithReportData)
-                + " to: " + value, LogLevel.VERBOSE);
-            teamIdsWithReportData = value;
-        }
+        get => teamIdsWithReportData.GetValue();
+        set => teamIdsWithReportData.SetValue(value);
     }
 
     public bool ShowingConfirmationMessage
@@ -66,25 +41,24 @@ public class MatchReporting
         set => finalResultTitleForConfirmation.SetValue(value);
     }
 
-    private EloSystem eloSystem { get; set; }
-    [DataMember] private ConcurrentDictionary<int, ReportData> teamIdsWithReportData { get; set; }
+    [DataMember] private logConcurrentDictionary<int, ReportData> teamIdsWithReportData = new logConcurrentDictionary<int, ReportData>();
     [DataMember] private logClass<bool> showingConfirmationMessage = new logClass<bool>();
     [DataMember] private logClass<bool> matchDone = new logClass<bool>();
     [DataMember] private logString finalResultForConfirmation = new logString();
     [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
     [DataMember] private logString finalResultTitleForConfirmation = new logString();
 
-    public MatchReporting()
+    public List<string> GetClassParameters()
     {
-        eloSystem = new EloSystem();
-        teamIdsWithReportData = new ConcurrentDictionary<int, ReportData>();
+        return new List<string> { teamIdsWithReportData.GetLoggingClassParameters<int, ReportData>(),
+        showingConfirmationMessage.GetParameter(), matchDone.GetParameter(), finalResultForConfirmation.GetValue(),
+            finalMessageForMatchReportingChannel.GetValue(), finalResultForConfirmation.GetValue() };
     }
+
+    public MatchReporting() { }
 
     public MatchReporting(ConcurrentDictionary<int, string> _teamsInTheMatch)
     {
-        eloSystem = new EloSystem();
-        teamIdsWithReportData = new ConcurrentDictionary<int, ReportData>();
-
         foreach (var teamKvp in _teamsInTheMatch)
         {
             if (TeamIdsWithReportData.ContainsKey(teamKvp.Key))
@@ -162,13 +136,6 @@ public class MatchReporting
                         {
                             if (item.Value.TacviewLink.CurrentStatus == EmojiName.REDSQUARE)
                             {
-                                /*
-                                if (item.Value == null)
-                                {
-                                    Log.WriteLine(nameof(item.Value.TacviewLink.ObjectValue) + " was null!", LogLevel.CRITICAL);
-                                    continue;
-                                }*/
-
                                 item.Value.TacviewLink.SetObjectValueAndFieldBool(
                                     item.Value.TacviewLink.ObjectValue, EmojiName.YELLOWSQUARE);
                             }
@@ -395,8 +362,8 @@ public class MatchReporting
             TeamIdsWithReportData.ElementAt(0).Value.TeamName + " and: " +
             TeamIdsWithReportData.ElementAt(1).Value.TeamName, LogLevel.DEBUG);
 
-        return eloSystem.CalculateAndSaveFinalEloDelta(
-            FindTeamsInTheMatch(_interfaceLeague), teamIdsWithReportData);
+        return EloSystem.CalculateAndSaveFinalEloDelta(
+            FindTeamsInTheMatch(_interfaceLeague), TeamIdsWithReportData);
     }
 
     public Team[] FindTeamsInTheMatch(InterfaceLeague _interfaceLeague)
@@ -459,7 +426,7 @@ public class MatchReporting
 
         foreach (Team team in foundTeams)
         {
-            reportDatas.Add(teamIdsWithReportData.FirstOrDefault(
+            reportDatas.Add(TeamIdsWithReportData.FirstOrDefault(
                 t => t.Key == team.TeamId).Value);
         }
 

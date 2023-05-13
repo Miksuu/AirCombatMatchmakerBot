@@ -10,7 +10,7 @@ public class CHALLENGE : BaseChannel
     {
         channelType = ChannelType.CHALLENGE;
 
-        channelMessages = new ConcurrentDictionary<MessageName, bool>(
+        ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
             new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                 new KeyValuePair<MessageName, bool>(MessageName.CHALLENGEMESSAGE, false),

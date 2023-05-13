@@ -1,9 +1,9 @@
 ﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
-public class EloSystem
-{
-    public string CalculateAndSaveFinalEloDelta(
+public static class EloSystem 
+{ 
+    public static string CalculateAndSaveFinalEloDelta(
         Team[] _teamsInTheMatch, ConcurrentDictionary<int, ReportData> _teamIdsWithReportData)
     {
         float firstTeamSkillRating = _teamsInTheMatch[0].SkillRating;
@@ -45,7 +45,7 @@ public class EloSystem
         return "";
     }
 
-    public void CalculateAndSaveFinalEloDeltaForMatchForfeit(
+    public static void CalculateAndSaveFinalEloDeltaForMatchForfeit(
         Team[] _teamsInTheMatch, ConcurrentDictionary<int, ReportData> _teamIdsWithReportData,
         int _losingTeamId)
     {
@@ -80,7 +80,7 @@ public class EloSystem
             " | " + _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta, LogLevel.DEBUG);
     }
 
-    public void CalculateFinalEloForBothTeams(
+    public static void CalculateFinalEloForBothTeams(
         InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch,
         ConcurrentDictionary<int, ReportData> _teamIdsWithReportData)
     {
@@ -99,12 +99,12 @@ public class EloSystem
         }        
     }
 
-    private double ExpectationToWin(float _playerOneRating, float _playerTwoRating)
+    private static double ExpectationToWin(float _playerOneRating, float _playerTwoRating)
     {
         return 1 / (1 + Math.Pow(10, (_playerTwoRating - _playerOneRating) / 400.0));
     }
 
-    public int DecideWinnerIndex(ConcurrentDictionary<int, ReportData> _teamIdsWithReportData)
+    public static int DecideWinnerIndex(ConcurrentDictionary<int, ReportData> _teamIdsWithReportData)
     {
         int winnerIndex = 0;
 

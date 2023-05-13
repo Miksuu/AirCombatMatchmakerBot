@@ -6,22 +6,12 @@ using Discord;
 using System.Diagnostics;
 
 [DataContract]
-public class LeagueMatch
+public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 {
     public ConcurrentDictionary<int, string> TeamsInTheMatch
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teamsInTheMatch) + " with count of: " +
-                teamsInTheMatch.Count, LogLevel.VERBOSE);
-            return teamsInTheMatch;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teamsInTheMatch) + teamsInTheMatch
-                + " to: " + value, LogLevel.VERBOSE);
-            teamsInTheMatch = value;
-        }
+        get => teamsInTheMatch.GetValue();
+        set => teamsInTheMatch.SetValue(value);
     }
 
     public int MatchId
@@ -38,18 +28,8 @@ public class LeagueMatch
 
     public MatchReporting MatchReporting
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(matchReporting)
-                + ": " + matchReporting, LogLevel.VERBOSE);
-            return matchReporting;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(matchReporting) +
-                matchReporting + " to: " + value, LogLevel.VERBOSE);
-            matchReporting = value;
-        }
+        get => matchReporting.GetValue();
+        set => matchReporting.SetValue(value);
     }
 
     public CategoryType MatchLeague
@@ -68,17 +48,23 @@ public class LeagueMatch
         }
     }
 
-    [DataMember] private ConcurrentDictionary<int, string> teamsInTheMatch = new ConcurrentDictionary<int, string>();
+    [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logClass<int> matchId = new logClass<int>();
     [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
-    [DataMember] private MatchReporting matchReporting = new MatchReporting();
+    [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
     [DataMember] private CategoryType matchLeague { get; set; }
+
+    public List<string> GetClassParameters()
+    {
+        return new List<string> { teamsInTheMatch.GetLoggingClassParameters<int, string>(), matchId.GetParameter(),
+            matchChannelId.GetParameter(), matchReporting.GetParameter(), matchLeague.ToString() };
+    }
 
     public LeagueMatch() { }
 
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
-        teamsInTheMatch = new ConcurrentDictionary<int, string>();
+        TeamsInTheMatch = new ConcurrentDictionary<int, string>();
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
         matchLeague = _interfaceLeague.LeagueCategoryName;
 
@@ -94,12 +80,12 @@ public class LeagueMatch
 
             Log.WriteLine("Found team: " + foundTeam.TeamId, LogLevel.DEBUG);
 
-            teamsInTheMatch.TryAdd(teamId, foundTeam.GetTeamInAString(false, leagueTeamSize));
+            TeamsInTheMatch.TryAdd(teamId, foundTeam.GetTeamInAString(false, leagueTeamSize));
 
-            Log.WriteLine("Count is now: " + teamsInTheMatch.Count, LogLevel.DEBUG);
+            Log.WriteLine("Count is now: " + TeamsInTheMatch.Count, LogLevel.DEBUG);
         }
 
-        foreach (var item in teamsInTheMatch)
+        foreach (var item in TeamsInTheMatch)
         {
             Log.WriteLine("final teamsInTheMatch: " + item.Key, LogLevel.DEBUG);
         }
@@ -107,7 +93,7 @@ public class LeagueMatch
         MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
-        matchReporting = new MatchReporting(teamsInTheMatch);
+        MatchReporting = new MatchReporting(TeamsInTheMatch);
 
         Log.WriteLine("Constructed a new match with teams ids: " + TeamsInTheMatch.ElementAt(0) +
             TeamsInTheMatch.ElementAt(1) + " with matchId of: " + MatchId, LogLevel.DEBUG);
@@ -152,12 +138,12 @@ public class LeagueMatch
 
     public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
     {
-        matchReporting.MatchDone = true;
+        MatchReporting.MatchDone = true;
 
         Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
-        matchReporting.EloSystem.CalculateFinalEloForBothTeams(
-            _interfaceLeague, matchReporting.FindTeamsInTheMatch(_interfaceLeague),
-            matchReporting.TeamIdsWithReportData);
+        EloSystem.CalculateFinalEloForBothTeams(
+            _interfaceLeague, MatchReporting.FindTeamsInTheMatch(_interfaceLeague),
+            MatchReporting.TeamIdsWithReportData);
 
         var guild = BotReference.GetGuildRef();
 
@@ -197,9 +183,9 @@ public class LeagueMatch
 
         Log.WriteLine("altMsg: " + matchFinalResultMessage.AlternativeMessage, LogLevel.DEBUG);
 
-        matchReporting.FinalResultForConfirmation = interfaceMessage.MessageDescription;
-        matchReporting.FinalMessageForMatchReportingChannel = matchFinalResultMessage.AlternativeMessage;
-        matchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
+        MatchReporting.FinalResultForConfirmation = interfaceMessage.MessageDescription;
+        MatchReporting.FinalMessageForMatchReportingChannel = matchFinalResultMessage.AlternativeMessage;
+        MatchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
         AttachmentData[] attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
             MatchId, _interfaceLeague).Result;
@@ -210,22 +196,22 @@ public class LeagueMatch
             Log.WriteLine("attachmentData: " + item.attachmentName + " | " + item.attachmentLink, LogLevel.DEBUG);
         }*/
 
-        if (matchReporting.FinalMessageForMatchReportingChannel == null)
+        if (MatchReporting.FinalMessageForMatchReportingChannel == null)
         {
-            Log.WriteLine(nameof(matchReporting) + " FinalMessageForMatchReportingChannel was null!", LogLevel.ERROR);
+            Log.WriteLine(nameof(MatchReporting) + " FinalMessageForMatchReportingChannel was null!", LogLevel.ERROR);
             return;
         }
 
-        if (matchReporting.FinalResultTitleForConfirmation == null)
+        if (MatchReporting.FinalResultTitleForConfirmation == null)
         {
-            Log.WriteLine(nameof(matchReporting) + " matchReporting.FinalResultTitleForConfirmation was null!", LogLevel.ERROR);
+            Log.WriteLine(nameof(MatchReporting) + " matchReporting.FinalResultTitleForConfirmation was null!", LogLevel.ERROR);
             return;
         }
 
-        Log.WriteLine("finalMsg: " + matchReporting.FinalMessageForMatchReportingChannel, LogLevel.DEBUG);
+        Log.WriteLine("finalMsg: " + MatchReporting.FinalMessageForMatchReportingChannel, LogLevel.DEBUG);
 
         await _interfaceLeague.PostMatchReport(
-            matchReporting.FinalMessageForMatchReportingChannel, matchReporting.FinalResultTitleForConfirmation, attachmentDatas);
+            MatchReporting.FinalMessageForMatchReportingChannel, MatchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
         LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(MatchChannelId);
 

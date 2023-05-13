@@ -2,7 +2,6 @@ using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
-using System.Runtime.ConstrainedExecution;
 
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
@@ -72,18 +71,8 @@ public abstract class BaseLeague : InterfaceLeague
 
     public ConcurrentDictionary<ChannelType, ulong> LeagueChannels
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(leagueChannels) + " with count of: " +
-                leagueChannels.Count, LogLevel.VERBOSE);
-            return leagueChannels;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(leagueChannels)
-                + " to: " + value, LogLevel.VERBOSE);
-            leagueChannels = value;
-        }
+        get => leagueChannels.GetValue();
+        set => leagueChannels.SetValue(value);
     }
 
     public ulong LeagueRoleId
@@ -109,7 +98,7 @@ public abstract class BaseLeague : InterfaceLeague
     [DataMember] private logClass<ulong> leagueCategoryId = new logClass<ulong>();
 
     // The references for the channelTypes inside the category
-    [DataMember] private ConcurrentDictionary<ChannelType, ulong> leagueChannels = new ConcurrentDictionary<ChannelType, ulong>();
+    [DataMember] private logConcurrentDictionary<ChannelType, ulong> leagueChannels = new logConcurrentDictionary<ChannelType, ulong>();
 
     // Id of the role which gives access to the league channelTypes
     [DataMember] private logClass<ulong> leagueRoleId = new logClass<ulong>();
