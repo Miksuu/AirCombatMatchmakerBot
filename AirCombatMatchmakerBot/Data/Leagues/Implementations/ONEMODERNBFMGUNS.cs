@@ -8,8 +8,8 @@ public class ONEMODERNBFMGUNS : BaseLeague
 {
     public ONEMODERNBFMGUNS()
     {
-        leagueCategoryName = CategoryType.ONEMODERNBFMGUNS;
-        leagueEra = Era.MODERN;
+        thisInterfaceLeague.LeagueCategoryName = CategoryType.ONEMODERNBFMGUNS;
+        thisInterfaceLeague.LeagueEra = Era.MODERN;
         thisInterfaceLeague.LeaguePlayerCountPerTeam = 1;
 
         thisInterfaceLeague.LeagueUnits = new ConcurrentBag<UnitName> {

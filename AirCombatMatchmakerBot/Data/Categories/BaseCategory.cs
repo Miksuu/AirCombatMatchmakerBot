@@ -11,17 +11,8 @@ public abstract class BaseCategory : InterfaceCategory
 {
     CategoryType InterfaceCategory.CategoryType
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(categoryTypes) + ": " + categoryTypes, LogLevel.VERBOSE);
-            return categoryTypes;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(categoryTypes) + categoryTypes
-                + " to: " + value, LogLevel.VERBOSE);
-            categoryTypes = value;
-        }
+        get => categoryType.GetValue();
+        set => categoryType.SetValue(value);
     }
 
     ConcurrentBag<ChannelType> InterfaceCategory.ChannelTypes
@@ -42,7 +33,7 @@ public abstract class BaseCategory : InterfaceCategory
         set => socketCategoryChannelId.SetValue(value);
     }
 
-    [DataMember] protected CategoryType categoryTypes;
+    [DataMember] protected logClass<CategoryType> categoryType = new logClass<CategoryType>(new CategoryType());
     protected logConcurrentBag<ChannelType> channelTypes = new logConcurrentBag<ChannelType>();
     [DataMember] protected logConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels = new logConcurrentDictionary<ulong, InterfaceChannel>();
     [DataMember] protected logClass<ulong> socketCategoryChannelId = new logClass<ulong>();
@@ -180,13 +171,13 @@ public abstract class BaseCategory : InterfaceCategory
         if (!channelExists)
         {
             Log.WriteLine("Creating a channel named: " + interfaceChannel.ChannelType +
-                " for category: " + categoryTypes + " (" +
+                " for category: " + categoryType + " (" +
                 _socketCategoryChannelId + ")" + " with name: " +
                 interfaceChannel.ChannelName, LogLevel.DEBUG);
 
             ulong categoryId =
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
-            categoryTypes).Key;
+            thisInterfaceCategory.CategoryType).Key;
 
             await interfaceChannel.CreateAChannelForTheCategory(guild, _role, _allowedUsersIdsArray);
 
@@ -196,7 +187,7 @@ public abstract class BaseCategory : InterfaceCategory
 
             Log.WriteLine("Done adding to the db. Count is now: " +
                 InterfaceChannels.Count +
-                " for the ConcurrentBag of category: " + categoryTypes.ToString() +
+                " for the ConcurrentBag of category: " + categoryType.ToString() +
                 " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
         }
 
@@ -266,13 +257,13 @@ public abstract class BaseCategory : InterfaceCategory
         if (!channelExists)
         {
             Log.WriteLine("Creating a channel named: " + interfaceChannel.ChannelType +
-                " for category: " + categoryTypes + " (" +
+                " for category: " + categoryType + " (" +
                 _socketCategoryChannelId + ")" + " with name: " +
                 interfaceChannel.ChannelName, LogLevel.DEBUG);
 
             ulong categoryId =
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
-            categoryTypes).Key;
+            thisInterfaceCategory.CategoryType).Key;
 
             await interfaceChannel.CreateAChannelForTheCategoryWithoutRole(guild, _allowedUsersIdsArray);
 
@@ -282,7 +273,7 @@ public abstract class BaseCategory : InterfaceCategory
 
             Log.WriteLine("Done adding to the db. Count is now: " +
                 InterfaceChannels.Count +
-                " for the ConcurrentBag of category: " + categoryTypes.ToString() +
+                " for the ConcurrentBag of category: " + categoryType.ToString() +
                 " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
         }
 

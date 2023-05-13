@@ -9,32 +9,14 @@ public abstract class BaseLeague : InterfaceLeague
 {
     CategoryType InterfaceLeague.LeagueCategoryName
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(leagueCategoryName) + ": " + leagueCategoryName, LogLevel.VERBOSE);
-            return leagueCategoryName;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(leagueCategoryName) + leagueCategoryName
-                + " to: " + value, LogLevel.VERBOSE);
-            leagueCategoryName = value;
-        }
+        get => leagueCategoryName.GetValue();
+        set => leagueCategoryName.SetValue(value);
     }
 
     Era InterfaceLeague.LeagueEra
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(leagueEra) + ": " + leagueEra, LogLevel.VERBOSE);
-            return leagueEra;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(leagueEra) + leagueEra
-                + " to: " + value, LogLevel.VERBOSE);
-            leagueEra = value;
-        }
+        get => leagueEra.GetValue();
+        set => leagueEra.SetValue(value);
     }
 
     int InterfaceLeague.LeaguePlayerCountPerTeam
@@ -80,8 +62,8 @@ public abstract class BaseLeague : InterfaceLeague
     }
 
     // Generated based on the implementation
-    [DataMember] protected CategoryType leagueCategoryName;
-    [DataMember] protected Era leagueEra;
+    [DataMember] protected logClass<CategoryType> leagueCategoryName = new logClass<CategoryType>(new CategoryType());
+    [DataMember] protected logClass<Era> leagueEra = new logClass<Era>(new Era());
     [DataMember] protected logClass<int> leaguePlayerCountPerTeam = new logClass<int>();
     [DataMember] protected logConcurrentBag<UnitName> leagueUnits = new logConcurrentBag<UnitName>();
     [DataMember] protected logClass<LeagueData> leagueData = new logClass<LeagueData>(new LeagueData());
@@ -109,7 +91,7 @@ public abstract class BaseLeague : InterfaceLeague
 
     public InterfaceCategory? FindLeaguesInterfaceCategory()
     {
-        Log.WriteLine("Finding interfaceCategory in: " + leagueCategoryName +
+        Log.WriteLine("Finding interfaceCategory in: " + thisInterfaceLeague.LeagueCategoryName +
             " with id: " + LeagueCategoryId, LogLevel.VERBOSE);
 
         InterfaceCategory interfaceCategory = 
@@ -156,7 +138,7 @@ public abstract class BaseLeague : InterfaceLeague
 
     public void UpdateLeagueLeaderboard()
     {
-        Log.WriteLine("Updating leaderboard on: " + leagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("Updating leaderboard on: " + thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
         var leagueStatusMessage = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
@@ -171,7 +153,7 @@ public abstract class BaseLeague : InterfaceLeague
 
         leagueStatusMessage.GenerateAndModifyTheMessage();
 
-        Log.WriteLine("Done updating leaderboard on: " + leagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("Done updating leaderboard on: " + thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
     }
 
     public Task<Response> RegisterUserToALeague(ulong _userId)
@@ -179,7 +161,7 @@ public abstract class BaseLeague : InterfaceLeague
         string responseMsg = string.Empty;
 
         Log.WriteLine("Registering user to league: " +
-            leagueCategoryName, LogLevel.VERBOSE);
+            thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
         ulong challengeChannelId = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
@@ -226,7 +208,7 @@ public abstract class BaseLeague : InterfaceLeague
                     LeagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
 
                     responseMsg = "Registration complete on: " +
-                        EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName) + "\n" +
+                        EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
                         " You can look for a match in: <#" + challengeChannelId + ">";
                 }
                 else
@@ -256,14 +238,14 @@ public abstract class BaseLeague : InterfaceLeague
                 UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
 
                 responseMsg = "You have rejoined: " +
-                    EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName) + "\n" +
+                    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
                     " You can look for a match in: <#" + challengeChannelId + ">";
             }
             else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
             {
-                Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + leagueCategoryName +
+                Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + thisInterfaceLeague.LeagueCategoryName +
                     ", had a team already active", LogLevel.VERBOSE);
-                responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName) +
+                responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) +
                     "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
                 return Task.FromResult(new Response(responseMsg, false));
             }

@@ -60,6 +60,10 @@ public class logClass<T>
                     }
                 }
             }
+            else if (typeof(T).IsEnum)
+            {
+                finalVal = _value == null ? null : _value.ToString();
+            }
             else
             {
                 Log.WriteLine(typeof(T) + " does not have: " + nameof(interfaceLoggableClass.GetClassParameters), LogLevel.WARNING);
@@ -107,6 +111,10 @@ public class logClass<T>
                         membersBuilder.Append(param).Append(", ");
                     }
                 }
+            }
+            else if (typeof(T).IsEnum)
+            {
+                finalVal = _value == null ? null : _value.ToString();
             }
             else
             {

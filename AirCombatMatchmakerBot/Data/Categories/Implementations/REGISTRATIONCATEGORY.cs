@@ -8,7 +8,7 @@ public class REGISTRATIONCATEGORY : BaseCategory
 {
     public REGISTRATIONCATEGORY()
     {
-        categoryTypes = CategoryType.REGISTRATIONCATEGORY;
+        thisInterfaceCategory.CategoryType = CategoryType.REGISTRATIONCATEGORY;
         thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>()
         {
             ChannelType.REGISTRATIONCHANNEL,

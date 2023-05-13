@@ -34,39 +34,28 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 
     public CategoryType MatchLeague
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(matchLeague)
-                + ": " + matchLeague, LogLevel.VERBOSE);
-            return matchLeague;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(matchLeague) +
-                matchLeague + " to: " + value, LogLevel.VERBOSE);
-            matchLeague = value;
-        }
+        get => matchLeague.GetValue();
+        set => matchLeague.SetValue(value);
     }
 
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logClass<int> matchId = new logClass<int>();
     [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
     [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
-    [DataMember] private CategoryType matchLeague { get; set; }
+    [DataMember] private logClass<CategoryType> matchLeague = new logClass<CategoryType>(new CategoryType());
 
     public List<string> GetClassParameters()
     {
         return new List<string> { teamsInTheMatch.GetLoggingClassParameters(), matchId.GetParameter(),
-            matchChannelId.GetParameter(), matchReporting.GetParameter(), matchLeague.ToString() };
+            matchChannelId.GetParameter(), matchReporting.GetParameter(), matchLeague.GetParameter() };
     }
 
     public LeagueMatch() { }
 
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
-        TeamsInTheMatch = new ConcurrentDictionary<int, string>();
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
-        matchLeague = _interfaceLeague.LeagueCategoryName;
+        MatchLeague = _interfaceLeague.LeagueCategoryName;
 
         Log.WriteLine("Teams to from the match on: " + _teamsToFormMatchOn[0] +
             ", " + _teamsToFormMatchOn[1], LogLevel.DEBUG);

@@ -10,7 +10,7 @@ public class BOTSTUFF : BaseCategory
 {
     public BOTSTUFF()
     {
-        categoryTypes = CategoryType.BOTSTUFF;
+        thisInterfaceCategory.CategoryType = CategoryType.BOTSTUFF;
         thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>()
         {
             ChannelType.BOTLOG,
