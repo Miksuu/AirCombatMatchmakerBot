@@ -28,34 +28,28 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
             string? finalValueForTheProperty = string.Empty;
 
             List<Type> regularVariableTypes = new List<Type>
-        {
-            typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
-        };
+            {
+                typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
+            };
 
-            if (regularVariableTypes.Contains(kvp.Key.GetType()))
+            if (kvp.Key?.GetType() is Type keyType && regularVariableTypes.Contains(keyType))
             {
                 finalValueForTheProperty = kvp.Key.ToString();
             }
-            else
+            else if (kvp.Key is logClass<TKey> keyLogClass)
             {
-                if (kvp.Key is logClass<TKey>)
-                {
-                    finalValueForTheProperty = ((logClass<TKey>)(object)kvp.Key).GetParameter();
-                }
+                finalValueForTheProperty = keyLogClass.GetParameter();
             }
 
-            if (regularVariableTypes.Contains(kvp.Value.GetType()))
+            if (kvp.Value?.GetType() is Type valueType && regularVariableTypes.Contains(valueType))
             {
                 finalValueForTheProperty = kvp.Value.ToString();
             }
-            else
+            else if (kvp.Value is logClass<TValue> valueLogClass)
             {
-                if (kvp.Value is logClass<TValue>)
-                {
-                    Log.WriteLine(kvp.Value.ToString(), LogLevel.VERBOSE);
-                    finalValueForTheProperty = ((logClass<TValue>)(object)kvp.Value).GetParameter();
-                }
+                finalValueForTheProperty = valueLogClass.GetParameter();
             }
+
 
             membersBuilder.Append(finalValueForTheProperty).Append(", ");
         }
