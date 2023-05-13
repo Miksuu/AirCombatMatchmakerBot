@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 public static class EloSystem 
 { 
     public static string CalculateAndSaveFinalEloDelta(
-        Team[] _teamsInTheMatch, ConcurrentDictionary<int, ReportData> _teamIdsWithReportData)
+        Team[] _teamsInTheMatch, Dictionary<int, ReportData> _teamIdsWithReportData)
     {
         float firstTeamSkillRating = _teamsInTheMatch[0].SkillRating;
         float secondTeamSkillRating = _teamsInTheMatch[1].SkillRating;
@@ -46,7 +46,7 @@ public static class EloSystem
     }
 
     public static void CalculateAndSaveFinalEloDeltaForMatchForfeit(
-        Team[] _teamsInTheMatch, ConcurrentDictionary<int, ReportData> _teamIdsWithReportData,
+        Team[] _teamsInTheMatch, Dictionary<int, ReportData> _teamIdsWithReportData,
         int _losingTeamId)
     {
         float firstTeamSkillRating = _teamsInTheMatch[0].SkillRating;
@@ -104,7 +104,7 @@ public static class EloSystem
         return 1 / (1 + Math.Pow(10, (_playerTwoRating - _playerOneRating) / 400.0));
     }
 
-    public static int DecideWinnerIndex(ConcurrentDictionary<int, ReportData> _teamIdsWithReportData)
+    public static int DecideWinnerIndex(Dictionary<int, ReportData> _teamIdsWithReportData)
     {
         int winnerIndex = 0;
 

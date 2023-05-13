@@ -48,16 +48,10 @@ public class LeagueData
         }
     }
 
-    [DataMember] private Teams teams { get; set; }
-    [DataMember] private ChallengeStatus challengeStatus { get; set; }
-    [DataMember] private Matches matches { get; set; }
-    [DataMember] private logClass<bool> matchmakerActive { get; set; }
-    public LeagueData()
-    {
-        teams = new();
-        challengeStatus = new();
-        matches = new Matches();
-    }
+    [DataMember] private Teams teams = new Teams();
+    [DataMember] private ChallengeStatus challengeStatus = new ChallengeStatus();
+    [DataMember] private Matches matches = new Matches();
+    [DataMember] private logClass<bool> matchmakerActive = new logClass<bool>();
 
     public Team? FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)
     {

@@ -3,5 +3,5 @@
 [JsonObjectAttribute]
 public interface InterfaceLoggingClass
 {
-    public abstract string GetLoggingClassParameters<TKey, TValue>();
+    public abstract string GetLoggingClassParameters();
 }

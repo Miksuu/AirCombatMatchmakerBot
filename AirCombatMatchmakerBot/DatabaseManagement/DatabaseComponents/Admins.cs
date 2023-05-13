@@ -16,7 +16,7 @@ public class Admins : logClass<Admins>, InterfaceLoggableClass
     public List<string> GetClassParameters()
     {
         Log.WriteLine(nameof(GetClassParameters) + " on: " + nameof(Leagues), LogLevel.VERBOSE);
-        return new List<string> { adminIDs.GetLoggingClassParameters<ulong, ulong>()};
+        return new List<string> { adminIDs.GetLoggingClassParameters()};
     }
 
     public bool CheckIfCommandSenderWasAnAdmin(SocketSlashCommand _command)

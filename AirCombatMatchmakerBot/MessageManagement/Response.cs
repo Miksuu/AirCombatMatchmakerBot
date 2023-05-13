@@ -3,11 +3,6 @@
     public string responseString;
     public bool serialize;
 
-    public Response()
-    {
-        Log.WriteLine(nameof(Response) + " default constructor!", LogLevel.ERROR);
-    }
-
     public Response(string _responseString, bool _serialize)
     {
         Log.WriteLine("Init " + nameof(responseString) +

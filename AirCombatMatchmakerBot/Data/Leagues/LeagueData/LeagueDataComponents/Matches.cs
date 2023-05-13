@@ -57,8 +57,8 @@ public class Matches
             overriddenMatchName, LogLevel.VERBOSE);
 
         // Prepare the match with the ID of the current new match
-        InterfaceChannel? interfaceChannel = categoryKvp.Value.CreateSpecificChannelFromChannelType(
-                ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId, null,
+        InterfaceChannel? interfaceChannel = categoryKvp.Value.CreateSpecificChannelFromChannelTypeWithoutRole(
+                ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
                 overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
                 _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague)).Result;
 

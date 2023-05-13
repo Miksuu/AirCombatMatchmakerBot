@@ -56,7 +56,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 
     public List<string> GetClassParameters()
     {
-        return new List<string> { teamsInTheMatch.GetLoggingClassParameters<int, string>(), matchId.GetParameter(),
+        return new List<string> { teamsInTheMatch.GetLoggingClassParameters(), matchId.GetParameter(),
             matchChannelId.GetParameter(), matchReporting.GetParameter(), matchLeague.ToString() };
     }
 

@@ -8,7 +8,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
     public MATCHFINALRESULTMESSAGE()
     {
         messageName = MessageName.MATCHFINALRESULTMESSAGE;
-        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
+            thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
         {
         };
         thisInterfaceMessage.MessageDescription = "Insert the confirmation message here";

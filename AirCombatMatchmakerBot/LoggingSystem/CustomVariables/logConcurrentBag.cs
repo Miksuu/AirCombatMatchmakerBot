@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
@@ -16,32 +17,36 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
         _values = new ConcurrentBag<T>(collection);
     }
 
-    public string GetLoggingClassParameters<TKey, TValue>()
+    public string GetLoggingClassParameters()
     {
         StringBuilder membersBuilder = new StringBuilder();
-        foreach (var item in _values)
+        foreach (T concurrentBag in _values)
         {
-            string finalValueForTheProperty = string.Empty;
+            string? finalValueForTheProperty = string.Empty;
 
-            List<Type> regularVariableTypes = new List<Type>
+            if (concurrentBag != null)
             {
-                typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
-            };
-
-            if (regularVariableTypes.Contains(item.GetType()))
-            {
-                finalValueForTheProperty = item.ToString();
-            }
-            else
-            {
-                if (item is logClass<TKey>)
+                List<Type> regularVariableTypes = new List<Type>
                 {
-                    finalValueForTheProperty = ((logClass<TKey>)(object)item).GetParameter();
+                    typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
+                };
+
+                if (regularVariableTypes.Contains(concurrentBag.GetType()))
+                {
+                    finalValueForTheProperty = concurrentBag.ToString();
+                }
+                else
+                {
+                    if (concurrentBag is logClass<T>)
+                    {
+                        finalValueForTheProperty = ((logClass<T>)(object)concurrentBag).GetParameter();
+                    }
                 }
             }
 
             membersBuilder.Append(finalValueForTheProperty).Append(", ");
         }
+
 
         return membersBuilder.ToString().TrimEnd(',', ' ');
     }

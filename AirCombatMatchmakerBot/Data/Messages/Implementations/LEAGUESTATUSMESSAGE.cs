@@ -9,7 +9,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
     public LEAGUESTATUSMESSAGE()
     {
         messageName = MessageName.LEAGUESTATUSMESSAGE;
-        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
+        thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
         {
         };
         thisInterfaceMessage.MessageEmbedTitle = "Leaderboard:\n"; ;

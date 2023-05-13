@@ -1,8 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using Newtonsoft.Json;
-using System.Reflection;
-using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [JsonObjectAttribute]   
@@ -12,8 +10,8 @@ public interface InterfaceMessage
     public ConcurrentDictionary<ButtonName, int> MessageButtonNamesWithAmount { get; set; }
 
     // Embed properties
-    public string? MessageEmbedTitle { get; set; }
-    public string? MessageDescription { get; set; }
+    public string MessageEmbedTitle { get; set; }
+    public string MessageDescription { get; set; }
     public Discord.Color MessageEmbedColor { get; set; }
     public ulong MessageId { get; set; }
     public ulong MessageChannelId { get; set; }

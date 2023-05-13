@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Linq;
+using Newtonsoft.Json.Linq;
 
 [DataContract]
 public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
@@ -50,7 +52,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
     public List<string> GetClassParameters()
     {
-        return new List<string> { teamIdsWithReportData.GetLoggingClassParameters<int, ReportData>(),
+        return new List<string> { teamIdsWithReportData.GetLoggingClassParameters(),
         showingConfirmationMessage.GetParameter(), matchDone.GetParameter(), finalResultForConfirmation.GetValue(),
             finalMessageForMatchReportingChannel.GetValue(), finalResultForConfirmation.GetValue() };
     }
@@ -210,12 +212,12 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
     }
 
     public async Task<Response> PrepareFinalMatchResult(
-        InterfaceLeague _interfaceLeague, ulong _playerId,
-         ulong _leagueCategoryId, ulong _messageChannelId)
+        InterfaceLeague _interfaceLeague, ulong _playerId, ulong _leagueCategoryId, ulong _messageChannelId)
     {
-        string response = string.Empty;
+        string? response = string.Empty;
 
-        (string, bool, InterfaceChannel) responseTuple = CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId).Result;
+        (string?, bool, InterfaceChannel?) responseTuple =
+            CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId);
         if (responseTuple.Item3 == null)
         {
             Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
@@ -224,6 +226,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
         response = responseTuple.Item1;
         InterfaceChannel interfaceChannel = responseTuple.Item3;
+
 
         if (responseTuple.Item2)
         {
@@ -283,10 +286,10 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
         Log.WriteLine("returning response: " + response, LogLevel.VERBOSE);
 
-        return new Response(response, true);
+        return new Response(response?.ToString() ?? "[null]", true);
     }
 
-    private Task<(string, bool, InterfaceChannel)>? CheckIfMatchCanBeSentToConfirmation(
+    private (string?, bool, InterfaceChannel?) CheckIfMatchCanBeSentToConfirmation(
         ulong _leagueCategoryId, ulong _messageChannelId)
     {
         bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
@@ -296,7 +299,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         if (interfaceChannel == null)
         {
             Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-            return null;
+            return (null, false, null);
         }
 
         Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
@@ -307,7 +310,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             ShowingConfirmationMessage = true;
         }
 
-        return Task.FromResult(("", confirmationMessageCanBeShown, interfaceChannel));
+        return ("", confirmationMessageCanBeShown, interfaceChannel);
     }
 
     private bool CheckIfConfirmationMessageCanBeShown()
@@ -363,7 +366,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             TeamIdsWithReportData.ElementAt(1).Value.TeamName, LogLevel.DEBUG);
 
         return EloSystem.CalculateAndSaveFinalEloDelta(
-            FindTeamsInTheMatch(_interfaceLeague), TeamIdsWithReportData);
+            FindTeamsInTheMatch(_interfaceLeague), TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
     }
 
     public Team[] FindTeamsInTheMatch(InterfaceLeague _interfaceLeague)

@@ -15,7 +15,7 @@ public class CachedUsers : logClass<CachedUsers>, InterfaceLoggableClass
 
     public List<string> GetClassParameters()
     {
-        return new List<string> { cachedUserIDs.GetLoggingClassParameters<ulong, ulong>() };
+        return new List<string> { cachedUserIDs.GetLoggingClassParameters() };
     }
 
     public void AddUserIdToCachedConcurrentBag(ulong _userId)

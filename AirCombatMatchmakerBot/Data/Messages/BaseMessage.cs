@@ -26,18 +26,8 @@ public abstract class BaseMessage : InterfaceMessage
 
     ConcurrentDictionary<ButtonName, int> InterfaceMessage.MessageButtonNamesWithAmount
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(messageButtonNamesWithAmount) + " with count of: " +
-                messageButtonNamesWithAmount.Count, LogLevel.VERBOSE);
-            return messageButtonNamesWithAmount;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(messageButtonNamesWithAmount)
-                + " to: " + value, LogLevel.VERBOSE);
-            messageButtonNamesWithAmount = value;
-        }
+        get => messageButtonNamesWithAmount.GetValue();
+        set => messageButtonNamesWithAmount.SetValue(value);
     }
 
     string InterfaceMessage.MessageEmbedTitle
@@ -109,12 +99,12 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     [DataMember] protected MessageName messageName;
-    [DataMember] protected ConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount;
+    [DataMember] protected logConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount = new logConcurrentDictionary<ButtonName, int>();
 
     // Embed properties
     [DataMember] protected logString messageEmbedTitle = new logString();
     [DataMember] protected logString messageDescription = new logString(); // Not necessary for embed
-    protected Discord.Color messageEmbedColor { get; set; } //= Discord.Color.DarkGrey;
+    protected Discord.Color messageEmbedColor = Discord.Color.Default;
 
     [DataMember] protected logClass<ulong> messageId = new logClass<ulong>();
     [DataMember] protected logClass<ulong> messageChannelId = new logClass<ulong>();
@@ -129,8 +119,6 @@ public abstract class BaseMessage : InterfaceMessage
     public BaseMessage()
     {
         thisInterfaceMessage = this;
-        messageEmbedColor = Discord.Color.Default;
-        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(); 
     }
 
     // If the component is not null, this is a reply
@@ -160,7 +148,7 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
 
         Log.WriteLine("messageButtonNames.Count: " +
-            messageButtonNamesWithAmount.Count, LogLevel.VERBOSE);
+            thisInterfaceMessage.MessageButtonNamesWithAmount.Count, LogLevel.VERBOSE);
 
         // Generates either normal buttons, or custom amount of buttons with different properties
         GenerateButtons(component, _leagueCategoryId);
@@ -428,7 +416,7 @@ public abstract class BaseMessage : InterfaceMessage
     protected abstract void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId);
     protected void GenerateRegularButtons(ComponentBuilder _component, ulong _leagueCategoryId)
     {
-        foreach (var buttonNameWithAmount in messageButtonNamesWithAmount)
+        foreach (var buttonNameWithAmount in thisInterfaceMessage.MessageButtonNamesWithAmount)
         {
             Log.WriteLine("Looping through button name: " + buttonNameWithAmount.Key +
                 " with amount: " + buttonNameWithAmount.Value, LogLevel.DEBUG);
