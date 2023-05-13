@@ -16,7 +16,7 @@ public class PlayerData : logClass<PlayerData>, InterfaceLoggableClass
 
     public List<string> GetClassParameters()
     {
-        return new List<string> { playerIDs.GetLoggingClassParameters<ulong, Player>() };
+        return new List<string> { playerIDs.GetLoggingClassParameters() };
     }
 
     public void AddAPlayerProfile(Player _Player)

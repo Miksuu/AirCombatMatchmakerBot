@@ -18,7 +18,7 @@ public class BotRuntimeManager
         // Reads token from the same directory as the .exe
         var token = File.ReadAllText("token.txt");
         await client.LoginAsync(TokenType.Bot, token);
-        await client.StartAsync();
+        await client.StartAsync();  
 
         client.Ready += async () =>
         {

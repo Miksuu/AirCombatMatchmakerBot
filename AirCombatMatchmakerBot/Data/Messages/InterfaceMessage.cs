@@ -1,8 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using Newtonsoft.Json;
-using System.Reflection;
-using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [JsonObjectAttribute]   

@@ -51,7 +51,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
     public List<string> GetClassParameters()
     {
-        return new List<string> { teamIdsWithReportData.GetLoggingClassParameters<int, ReportData>(),
+        return new List<string> { teamIdsWithReportData.GetLoggingClassParameters(),
         showingConfirmationMessage.GetParameter(), matchDone.GetParameter(), finalResultForConfirmation.GetValue(),
             finalMessageForMatchReportingChannel.GetValue(), finalResultForConfirmation.GetValue() };
     }

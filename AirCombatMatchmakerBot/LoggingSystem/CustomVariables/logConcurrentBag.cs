@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
@@ -16,27 +17,27 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
         _values = new ConcurrentBag<T>(collection);
     }
 
-    public string GetLoggingClassParameters<TKey, TValue>()
+    public string GetLoggingClassParameters()
     {
         StringBuilder membersBuilder = new StringBuilder();
-        foreach (var item in _values)
+        foreach (T concurrentBag in _values)
         {
-            string finalValueForTheProperty = string.Empty;
+            string? finalValueForTheProperty = string.Empty;
 
             List<Type> regularVariableTypes = new List<Type>
             {
                 typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
             };
 
-            if (regularVariableTypes.Contains(item.GetType()))
+            if (regularVariableTypes.Contains(concurrentBag.GetType()))
             {
-                finalValueForTheProperty = item.ToString();
+                finalValueForTheProperty = concurrentBag.ToString();
             }
             else
             {
-                if (item is logClass<TKey>)
+                if (concurrentBag is logClass<T>)
                 {
-                    finalValueForTheProperty = ((logClass<TKey>)(object)item).GetParameter();
+                    finalValueForTheProperty = ((logClass<T>)(object)concurrentBag).GetParameter();
                 }
             }
 

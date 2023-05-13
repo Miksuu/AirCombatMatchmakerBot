@@ -23,8 +23,8 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
 
     public List<string> GetClassParameters()
     {
-        return new List<string> { createdCategoriesWithChannels.GetLoggingClassParameters<ulong, InterfaceCategory>(),
-            matchChannelsIdWithCategoryId.GetLoggingClassParameters<ulong, ulong>() };
+        return new List<string> { createdCategoriesWithChannels.GetLoggingClassParameters(),
+            matchChannelsIdWithCategoryId.GetLoggingClassParameters() };
     }
 
     public KeyValuePair<ulong, InterfaceCategory> FindCreatedCategoryWithChannelKvpWithId(

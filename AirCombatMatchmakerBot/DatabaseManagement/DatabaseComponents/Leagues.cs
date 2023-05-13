@@ -21,7 +21,7 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
 
     public List<string> GetClassParameters()
     {
-        return new List<string> { storedLeagues.GetLoggingClassParameters<InterfaceLeague, InterfaceLeague>(),
+        return new List<string> { storedLeagues.GetLoggingClassParameters(),
             leaguesMatchCounter.GetParameter() };
     }
 

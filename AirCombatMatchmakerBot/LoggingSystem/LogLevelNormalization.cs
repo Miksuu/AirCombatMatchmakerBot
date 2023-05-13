@@ -1,10 +1,4 @@
-﻿using Discord;
-using Pastel;
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Collections.Concurrent;
-
-public static class LogLevelNormalization
+﻿public static class LogLevelNormalization
 {
     // Could automate this, maybe unnecessary
     readonly static int highestCount = 13;
