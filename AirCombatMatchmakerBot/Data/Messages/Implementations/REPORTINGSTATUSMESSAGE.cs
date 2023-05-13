@@ -1,11 +1,6 @@
 ﻿using Discord;
-using System.Data;
-using System;
 using System.Runtime.Serialization;
-using Discord.WebSocket;
-using System.Threading.Channels;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Collections.Concurrent;
 
 [DataContract]
@@ -14,7 +9,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
     public REPORTINGSTATUSMESSAGE()
     {
         messageName = MessageName.REPORTINGSTATUSMESSAGE;
-        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
+        thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
         thisInterfaceMessage.MessageEmbedTitle = "Current reporting status";
         thisInterfaceMessage.MessageDescription = "Insert the reporting status message here";
     }

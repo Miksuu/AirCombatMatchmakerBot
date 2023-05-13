@@ -9,7 +9,7 @@ public static class LogLevelNormalization
     // Could automate this, maybe unnecessary
     readonly static int highestCount = 13;
 
-    public static ConcurrentDictionary<LogLevel, string> logLevelNormalizationStrings = new ConcurrentDictionary<LogLevel, string>();
+    public static Dictionary<LogLevel, string> logLevelNormalizationStrings = new Dictionary<LogLevel, string>();
 
     public static void InitLogLevelNormalizationStrings()
     {

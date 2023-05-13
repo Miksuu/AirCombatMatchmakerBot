@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Linq;
 
 [DataContract]
 public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
@@ -363,7 +364,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             TeamIdsWithReportData.ElementAt(1).Value.TeamName, LogLevel.DEBUG);
 
         return EloSystem.CalculateAndSaveFinalEloDelta(
-            FindTeamsInTheMatch(_interfaceLeague), TeamIdsWithReportData);
+            FindTeamsInTheMatch(_interfaceLeague), TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
     }
 
     public Team[] FindTeamsInTheMatch(InterfaceLeague _interfaceLeague)

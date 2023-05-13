@@ -14,7 +14,7 @@ public class REGISTRATIONMESSAGE : BaseMessage
     {
         messageName = MessageName.REGISTRATIONMESSAGE;
 
-        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
+        thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
             new ConcurrentBag<KeyValuePair<ButtonName, int>>()
             {
                 new KeyValuePair<ButtonName, int>(ButtonName.REGISTRATIONBUTTON, 1),
