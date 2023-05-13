@@ -1,8 +1,10 @@
 ﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using Discord;
+using System.Text.RegularExpressions;
 
 [DataContract]
-public class Teams
+public class Teams : logClass<Teams>, InterfaceLoggableClass
 {
     public ConcurrentBag<Team> TeamsConcurrentBag
     {
@@ -17,6 +19,10 @@ public class Teams
 
     [DataMember] private logConcurrentBag<Team> teamsConcurrentBag = new logConcurrentBag<Team>();
     [DataMember] private logClass<int> currentTeamInt = new logClass<int>(1);
+    public List<string> GetClassParameters()
+    {
+        return new List<string> { teamsConcurrentBag.GetLoggingClassParameters(), currentTeamInt.GetParameter() };
+    }
 
     public void AddToConcurrentBagOfTeams(Team _Team)
     {

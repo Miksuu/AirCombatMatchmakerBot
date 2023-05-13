@@ -2,6 +2,7 @@ using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
 
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
@@ -48,19 +49,10 @@ public abstract class BaseLeague : InterfaceLeague
         set => leagueUnits.SetValue(value);
     }
 
-    LeagueData InterfaceLeague.LeagueData
+    public LeagueData LeagueData
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(leagueData) + ": " + leagueData, LogLevel.VERBOSE);
-            return leagueData;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(leagueData) + leagueData
-                + " to: " + value, LogLevel.VERBOSE);
-            leagueData = value;
-        }
+        get => leagueData.GetValue();
+        set => leagueData.SetValue(value);
     }
 
     public ulong LeagueCategoryId
@@ -92,7 +84,7 @@ public abstract class BaseLeague : InterfaceLeague
     [DataMember] protected Era leagueEra;
     [DataMember] protected logClass<int> leaguePlayerCountPerTeam = new logClass<int>();
     [DataMember] protected logConcurrentBag<UnitName> leagueUnits = new logConcurrentBag<UnitName>();
-    [DataMember] protected LeagueData leagueData = new LeagueData();
+    [DataMember] protected logClass<LeagueData> leagueData = new logClass<LeagueData>(new LeagueData());
 
     // The reference to the category created by the system
     [DataMember] private logClass<ulong> leagueCategoryId = new logClass<ulong>();
@@ -210,10 +202,10 @@ public abstract class BaseLeague : InterfaceLeague
             Log.WriteLine("Found player: " + player.PlayerNickName +
                 " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
 
-            bool playerIsInATeamAlready = leagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
+            bool playerIsInATeamAlready = LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
                 thisInterfaceLeague.LeaguePlayerCountPerTeam, _userId);
 
-            bool playerIsInActiveTeamAlready = leagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
+            bool playerIsInActiveTeamAlready = LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
                 thisInterfaceLeague.LeaguePlayerCountPerTeam, _userId).TeamActive;
 
             if (!playerIsInATeamAlready)
@@ -225,13 +217,13 @@ public abstract class BaseLeague : InterfaceLeague
                 Team newTeam = new Team(
                     new ConcurrentBag<Player> { player },
                     player.PlayerNickName,
-                    leagueData.Teams.CurrentTeamInt);
+                    LeagueData.Teams.CurrentTeamInt);
 
                 if (thisInterfaceLeague.LeaguePlayerCountPerTeam < 2)
                 {
                     Log.WriteLine("This league is solo", LogLevel.VERBOSE);
                         
-                    leagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
+                    LeagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
 
                     responseMsg = "Registration complete on: " +
                         EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName) + "\n" +
@@ -250,9 +242,9 @@ public abstract class BaseLeague : InterfaceLeague
                 UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
 
                 Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
-                    leagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
+                    LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
 
-                leagueData.Teams.IncrementCurrentTeamInt();
+                LeagueData.Teams.IncrementCurrentTeamInt();
             }
             else if (playerIsInATeamAlready && !playerIsInActiveTeamAlready)
             {

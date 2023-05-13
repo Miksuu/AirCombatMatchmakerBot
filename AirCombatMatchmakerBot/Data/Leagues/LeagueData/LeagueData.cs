@@ -1,57 +1,34 @@
-﻿using Discord;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class LeagueData
+public class LeagueData : logClass<LeagueData>, InterfaceLoggableClass
 {
     public Teams Teams
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(teams), LogLevel.VERBOSE);
-            return teams;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(teams)
-                + " to: " + value, LogLevel.VERBOSE);
-            teams = value;
-        }
+        get => teams.GetValue();
+        set => teams.SetValue(value);
     }
 
     public ChallengeStatus ChallengeStatus
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(challengeStatus), LogLevel.VERBOSE);
-            return challengeStatus;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(challengeStatus)
-                + " to: " + value, LogLevel.VERBOSE);
-            challengeStatus = value;
-        }
-    }
-    public Matches Matches
-    {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(matches), LogLevel.VERBOSE);
-            return matches;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(matches)
-                + " to: " + value, LogLevel.VERBOSE);
-            matches = value;
-        }
+        get => challengeStatus.GetValue();
+        set => challengeStatus.SetValue(value);
     }
 
-    [DataMember] private Teams teams = new Teams();
-    [DataMember] private ChallengeStatus challengeStatus = new ChallengeStatus();
-    [DataMember] private Matches matches = new Matches();
-    [DataMember] private logClass<bool> matchmakerActive = new logClass<bool>();
+    public Matches Matches
+    {
+        get => matches.GetValue();
+        set => matches.SetValue(value);
+    }
+
+    [DataMember] private logClass<Teams> teams = new logClass<Teams>(new Teams());
+    [DataMember] private logClass<ChallengeStatus> challengeStatus = new logClass<ChallengeStatus>(new ChallengeStatus());
+    [DataMember] private logClass<Matches> matches = new logClass<Matches>(new Matches());
+
+    public List<string> GetClassParameters()
+    {
+        return new List<string> { teams.GetParameter(), challengeStatus.GetParameter(), matches.GetParameter() };
+    }
 
     public Team? FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)
     {
