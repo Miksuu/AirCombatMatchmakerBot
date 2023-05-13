@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using Discord.Rest;
 using System;
 using System.Collections.Concurrent;
+using Newtonsoft.Json.Linq;
 
 [DataContract]
 public abstract class BaseCategory : InterfaceCategory
@@ -185,7 +186,7 @@ public abstract class BaseCategory : InterfaceCategory
 
             ulong categoryId =
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
-                    categoryTypes).Key;
+            categoryTypes).Key;
 
             await interfaceChannel.CreateAChannelForTheCategory(guild, _role, _allowedUsersIdsArray);
 

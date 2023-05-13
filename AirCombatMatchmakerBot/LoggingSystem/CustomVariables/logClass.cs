@@ -121,10 +121,8 @@ public class logClass<T>
         _value = value;
     }
 
-    public string? GetParameter()
+    public string GetParameter()
     {
-        if (_value == null) return "[null]";
-
-        return _value != null ? _value.ToString() : null;
+        return _value?.ToString() ?? "[null]";
     }
 }
