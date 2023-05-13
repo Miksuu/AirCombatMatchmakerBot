@@ -10,7 +10,7 @@ public class REGISTRATIONCHANNEL : BaseChannel
     {
         channelType = ChannelType.REGISTRATIONCHANNEL;
 
-        channelMessages = new ConcurrentDictionary<MessageName, bool>(
+        ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
         new ConcurrentBag<KeyValuePair<MessageName, bool>>()
         {
             new KeyValuePair<MessageName, bool>(MessageName.REGISTRATIONMESSAGE, false),

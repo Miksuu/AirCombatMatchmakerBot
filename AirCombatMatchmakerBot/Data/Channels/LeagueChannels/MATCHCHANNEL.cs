@@ -10,7 +10,7 @@ public class MATCHCHANNEL : BaseChannel
     {
         channelType = ChannelType.MATCHCHANNEL;
 
-        channelMessages = new ConcurrentDictionary<MessageName, bool>(
+        ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
             new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                 new KeyValuePair<MessageName, bool>(MessageName.MATCHSTARTMESSAGE, false),

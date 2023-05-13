@@ -115,7 +115,7 @@ public class Database
                         Log.WriteLine("Match: " + match.MatchId + " contains: " + teamId +
                             " which has player: " + _playerDiscordId, LogLevel.DEBUG);
 
-                        match.MatchReporting.EloSystem.CalculateAndSaveFinalEloDeltaForMatchForfeit(
+                        EloSystem.CalculateAndSaveFinalEloDeltaForMatchForfeit(
                             match.MatchReporting.FindTeamsInTheMatch(interfaceLeague),
                             match.MatchReporting.TeamIdsWithReportData, teamId);
 

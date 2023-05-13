@@ -29,20 +29,10 @@ public abstract class BaseCategory : InterfaceCategory
         set => channelTypes.SetValue(value);
     }
 
-    ConcurrentDictionary<ulong, InterfaceChannel> InterfaceCategory.InterfaceChannels
+    public ConcurrentDictionary<ulong, InterfaceChannel> InterfaceChannels
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(interfaceChannels) + " with count of: " +
-                interfaceChannels.Count, LogLevel.VERBOSE);
-            return interfaceChannels;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(interfaceChannels)
-                + " to: " + value, LogLevel.VERBOSE);
-            interfaceChannels = value;
-        }
+        get => interfaceChannels.GetValue();
+        set => interfaceChannels.SetValue(value);
     }
 
     ulong InterfaceCategory.SocketCategoryChannelId
@@ -53,7 +43,7 @@ public abstract class BaseCategory : InterfaceCategory
 
     [DataMember] protected CategoryType categoryTypes;
     protected logConcurrentBag<ChannelType> channelTypes = new logConcurrentBag<ChannelType>();
-    [DataMember] protected ConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels = new ConcurrentDictionary<ulong, InterfaceChannel>();
+    [DataMember] protected logConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels = new logConcurrentDictionary<ulong, InterfaceChannel>();
     [DataMember] protected logClass<ulong> socketCategoryChannelId = new logClass<ulong>();
 
     protected InterfaceCategory thisInterfaceCategory;
@@ -61,7 +51,6 @@ public abstract class BaseCategory : InterfaceCategory
     public BaseCategory()
     {
         thisInterfaceCategory = this;
-        //thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>();
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
@@ -162,20 +151,20 @@ public abstract class BaseCategory : InterfaceCategory
             GetChannelNameFromOverridenString(_overrideChannelName, _channelType);
 
         // Channel found from the basecategory (it exists)
-        if (interfaceChannels.Any(
+        if (InterfaceChannels.Any(
             x => x.Value.ChannelName == interfaceChannel.ChannelName))
         {
-            Log.WriteLine(nameof(interfaceChannels) + " with count: " + interfaceChannels.Count +
+            Log.WriteLine(nameof(InterfaceChannels) + " with count: " + InterfaceChannels.Count +
                 " already contains channel: " + interfaceChannel.ChannelName, LogLevel.DEBUG);
 
-            foreach ( var channel in interfaceChannels ) 
+            foreach ( var channel in InterfaceChannels ) 
             {
                 Log.WriteLine(channel.Value.ChannelType + " when searching for: " + _channelType +
                     " with id: " + channel.Value.ChannelId, LogLevel.DEBUG);
             }
 
             // Replace interfaceChannel with a one that is from the database
-            interfaceChannel = interfaceChannels.FirstOrDefault(
+            interfaceChannel = InterfaceChannels.FirstOrDefault(
                 x => x.Value.ChannelType == _channelType).Value;
 
             Log.WriteLine("Replaced with: " +
@@ -202,10 +191,10 @@ public abstract class BaseCategory : InterfaceCategory
 
             interfaceChannel.InterfaceMessagesWithIds.Clear();
 
-            interfaceChannels.TryAdd(interfaceChannel.ChannelId, interfaceChannel);
+            InterfaceChannels.TryAdd(interfaceChannel.ChannelId, interfaceChannel);
 
             Log.WriteLine("Done adding to the db. Count is now: " +
-                interfaceChannels.Count +
+                InterfaceChannels.Count +
                 " for the ConcurrentBag of category: " + categoryTypes.ToString() +
                 " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
         }
@@ -286,7 +275,7 @@ public abstract class BaseCategory : InterfaceCategory
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
 
-        var foundInterfaceChannel = interfaceChannels.FirstOrDefault(x => x.Key == _idToSearchWith);
+        var foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Key == _idToSearchWith);
         Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName, LogLevel.VERBOSE);
         return foundInterfaceChannel.Value;
     }
@@ -296,7 +285,7 @@ public abstract class BaseCategory : InterfaceCategory
     {
         Log.WriteLine("Getting CategoryKvp with name: " + _nameToSearchWith, LogLevel.VERBOSE);
 
-        var foundInterfaceChannel = interfaceChannels.FirstOrDefault(x => x.Value.ChannelType == _nameToSearchWith);
+        var foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Value.ChannelType == _nameToSearchWith);
         Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName, LogLevel.VERBOSE);
         return foundInterfaceChannel.Value;
     }

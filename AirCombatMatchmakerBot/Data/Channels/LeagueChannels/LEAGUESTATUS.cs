@@ -12,7 +12,7 @@ public class LEAGUESTATUS : BaseChannel
     {
         channelType = ChannelType.LEAGUESTATUS;
 
-        channelMessages = new ConcurrentDictionary<MessageName, bool>(
+        ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
             new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                         new KeyValuePair<MessageName, bool>(MessageName.LEAGUESTATUSMESSAGE, false),
