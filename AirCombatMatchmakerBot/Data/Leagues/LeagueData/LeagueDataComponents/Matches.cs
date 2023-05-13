@@ -1,9 +1,11 @@
 ﻿using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using Discord;
+using System.Text.RegularExpressions;
 
 [DataContract]
-public class Matches
+public class Matches : logClass<Matches>, InterfaceLoggableClass
 {
     public ConcurrentBag<LeagueMatch> MatchesConcurrentBag
     {
@@ -12,6 +14,11 @@ public class Matches
     }
 
     [DataMember] private logConcurrentBag<LeagueMatch> matchesConcurrentBag = new logConcurrentBag<LeagueMatch>();
+
+    public List<string> GetClassParameters()
+    {
+        return new List<string> { matchesConcurrentBag.GetLoggingClassParameters() };
+    }
 
     public Task CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
