@@ -8,7 +8,7 @@ public class BOTLOG : BaseChannel
 {
     public BOTLOG()
     {
-        channelType = ChannelType.BOTLOG;
+        thisInterfaceChannel.ChannelType = ChannelType.BOTLOG;
     }
 
     public override List<Overwrite> GetGuildPermissions(

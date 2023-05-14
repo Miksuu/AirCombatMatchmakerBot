@@ -11,9 +11,9 @@ public class LEAGUEREGISTRATION : BaseChannel
 {
     public LEAGUEREGISTRATION()
     {
-        channelType = ChannelType.LEAGUEREGISTRATION;
+        thisInterfaceChannel.ChannelType = ChannelType.LEAGUEREGISTRATION;
 
-        ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
+        thisInterfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
             new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                 new KeyValuePair<MessageName, bool>(MessageName.LEAGUEREGISTRATIONMESSAGE, false),

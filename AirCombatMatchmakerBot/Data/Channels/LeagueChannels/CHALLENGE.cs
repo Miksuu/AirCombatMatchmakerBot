@@ -8,9 +8,9 @@ public class CHALLENGE : BaseChannel
 {
     public CHALLENGE()
     {
-        channelType = ChannelType.CHALLENGE;
+        thisInterfaceChannel.ChannelType = ChannelType.CHALLENGE;
 
-        ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
+        thisInterfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
             new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                 new KeyValuePair<MessageName, bool>(MessageName.CHALLENGEMESSAGE, false),

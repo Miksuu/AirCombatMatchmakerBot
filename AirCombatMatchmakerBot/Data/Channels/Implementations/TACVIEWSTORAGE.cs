@@ -7,7 +7,7 @@ public class TACVIEWSTORAGE : BaseChannel
 {
     public TACVIEWSTORAGE()
     {
-        channelType = ChannelType.TACVIEWSTORAGE;
+        thisInterfaceChannel.ChannelType = ChannelType.TACVIEWSTORAGE;
     }
 
     public override List<Overwrite> GetGuildPermissions(

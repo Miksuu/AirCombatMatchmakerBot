@@ -8,9 +8,9 @@ public class MATCHCHANNEL : BaseChannel
 {
     public MATCHCHANNEL()
     {
-        channelType = ChannelType.MATCHCHANNEL;
+        thisInterfaceChannel.ChannelType = ChannelType.MATCHCHANNEL;
 
-        ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
+        thisInterfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
             new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                 new KeyValuePair<MessageName, bool>(MessageName.MATCHSTARTMESSAGE, false),

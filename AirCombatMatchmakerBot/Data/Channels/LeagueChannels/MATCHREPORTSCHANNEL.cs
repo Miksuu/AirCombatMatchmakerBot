@@ -10,8 +10,8 @@ public class MATCHREPORTSCHANNEL : BaseChannel
 {
     public MATCHREPORTSCHANNEL()
     {
-        channelType = ChannelType.MATCHREPORTSCHANNEL;
-        ChannelMessages = new ConcurrentDictionary<MessageName, bool>
+        thisInterfaceChannel.ChannelType = ChannelType.MATCHREPORTSCHANNEL;
+        thisInterfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>
         {
         };
     }

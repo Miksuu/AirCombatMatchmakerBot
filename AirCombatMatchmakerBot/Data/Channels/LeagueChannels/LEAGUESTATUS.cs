@@ -10,9 +10,9 @@ public class LEAGUESTATUS : BaseChannel
 {
     public LEAGUESTATUS()
     {
-        channelType = ChannelType.LEAGUESTATUS;
+        thisInterfaceChannel.ChannelType = ChannelType.LEAGUESTATUS;
 
-        ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
+        thisInterfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
             new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                         new KeyValuePair<MessageName, bool>(MessageName.LEAGUESTATUSMESSAGE, false),

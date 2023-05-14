@@ -39,13 +39,13 @@ public abstract class BaseChannel : InterfaceChannel
         set => channelsCategoryId.SetValue(value);
     }
 
-    public ConcurrentDictionary<MessageName, bool> ChannelMessages
+    ConcurrentDictionary<MessageName, bool> InterfaceChannel.ChannelMessages
     {
         get => channelMessages.GetValue();
         set => channelMessages.SetValue(value);
     }
 
-    public ConcurrentDictionary<ulong, InterfaceMessage> InterfaceMessagesWithIds
+    ConcurrentDictionary<ulong, InterfaceMessage> InterfaceChannel.InterfaceMessagesWithIds
     {
         get => interfaceMessagesWithIds.GetValue();
         set => interfaceMessagesWithIds.SetValue(value);
@@ -264,11 +264,11 @@ public abstract class BaseChannel : InterfaceChannel
             return;
         }
 
-        Log.WriteLine(nameof(InterfaceMessagesWithIds) + " count: " +
-            InterfaceMessagesWithIds.Count + " | " + nameof(channelMessagesFromDb) +
+        Log.WriteLine(nameof(thisInterfaceChannel.InterfaceMessagesWithIds) + " count: " +
+            thisInterfaceChannel.InterfaceMessagesWithIds.Count + " | " + nameof(channelMessagesFromDb) +
             " count: " + channelMessagesFromDb.Count, LogLevel.VERBOSE);
 
-        if (channelType == ChannelType.LEAGUEREGISTRATION)
+        if (thisInterfaceChannel.ChannelType == ChannelType.LEAGUEREGISTRATION)
         {
             Log.WriteLine("Starting to to prepare channel messages on " + channelType +
                 " count: " + Enum.GetValues(typeof(CategoryType)).Length, LogLevel.VERBOSE);
@@ -320,32 +320,32 @@ public abstract class BaseChannel : InterfaceChannel
 
                 leagueInterfaceFromDatabase.LeagueRegistrationMessageId = interfaceMessage.MessageId;
 
-                InterfaceMessagesWithIds.TryAdd(
+                thisInterfaceChannel.InterfaceMessagesWithIds.TryAdd(
                     leagueInterfaceFromDatabase.LeagueCategoryId,
                         (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString()));
 
                 Log.WriteLine("Added to the ConcurrentDictionary, count is now: " +
-                    InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+                    thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
 
                 Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
             }
         }
         else
         {
-            for (int m = 0; m < ChannelMessages.Count; ++m)
+            for (int m = 0; m < thisInterfaceChannel.ChannelMessages.Count; ++m)
             {
                 // Skip the messages that have been generated already
-                if (!ChannelMessages.ElementAt(m).Value)
+                if (!thisInterfaceChannel.ChannelMessages.ElementAt(m).Value)
                 {
                     InterfaceMessage interfaceMessage =
-                        (InterfaceMessage)EnumExtensions.GetInstance(ChannelMessages.ElementAt(m).Key.ToString());
+                        (InterfaceMessage)EnumExtensions.GetInstance(thisInterfaceChannel.ChannelMessages.ElementAt(m).Key.ToString());
 
                     await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(_client, this, true, true);
-                    ChannelMessages[ChannelMessages.ElementAt(m).Key] = true;
+                    thisInterfaceChannel.ChannelMessages[thisInterfaceChannel.ChannelMessages.ElementAt(m).Key] = true;
                 }
             }
 
-            if (channelType == ChannelType.BOTLOG)
+            if (thisInterfaceChannel.ChannelType == ChannelType.BOTLOG)
             {
                 BotMessageLogging.loggingChannelId = thisInterfaceChannel.ChannelId;
             }
@@ -358,7 +358,7 @@ public abstract class BaseChannel : InterfaceChannel
     {
         Log.WriteLine("Getting MessageName with name: " + _messageName, LogLevel.VERBOSE);
 
-        var foundInterfaceMessage = InterfaceMessagesWithIds.FirstOrDefault(
+        var foundInterfaceMessage = thisInterfaceChannel.InterfaceMessagesWithIds.FirstOrDefault(
             x => x.Value.MessageName == _messageName);
         if (foundInterfaceMessage.Value == null)
         {
@@ -378,7 +378,7 @@ public abstract class BaseChannel : InterfaceChannel
 
         Log.WriteLine("Getting CategoryKvp with name: " + _messageName, LogLevel.VERBOSE);
 
-        var foundInterfaceMessages = InterfaceMessagesWithIds.Where(
+        var foundInterfaceMessages = thisInterfaceChannel.InterfaceMessagesWithIds.Where(
             x => x.Value.MessageName == _messageName);
         if (foundInterfaceMessages == null)
         {
@@ -451,17 +451,17 @@ public abstract class BaseChannel : InterfaceChannel
 
             await message.DeleteAsync();
             Log.WriteLine("Deleted the message: " + message.Id +
-                " deleting it from DB count: " + InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+                " deleting it from DB count: " + thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
 
-            if (!InterfaceMessagesWithIds.Any(msg => msg.Value.MessageId == message.Id))
+            if (!thisInterfaceChannel.InterfaceMessagesWithIds.Any(msg => msg.Value.MessageId == message.Id))
             {
                 Log.WriteLine("Did not contain: " + message.Id, LogLevel.WARNING);
                 continue;
             }
 
-            InterfaceMessagesWithIds.TryRemove(message.Id, out InterfaceMessage? im);
+            thisInterfaceChannel.InterfaceMessagesWithIds.TryRemove(message.Id, out InterfaceMessage? im);
             Log.WriteLine("Deleted the message: " + message.Id + " from DB. count now:" +
-                InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+                thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
         }
 
         return "";

@@ -8,9 +8,9 @@ public class REGISTRATIONCHANNEL : BaseChannel
 {
     public REGISTRATIONCHANNEL()
     {
-        channelType = ChannelType.REGISTRATIONCHANNEL;
+        thisInterfaceChannel.ChannelType = ChannelType.REGISTRATIONCHANNEL;
 
-        ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
+        thisInterfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
         new ConcurrentBag<KeyValuePair<MessageName, bool>>()
         {
             new KeyValuePair<MessageName, bool>(MessageName.REGISTRATIONMESSAGE, false),
