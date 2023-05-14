@@ -17,37 +17,20 @@ public class ReportObject
 
     public EmojiName CurrentStatus
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(currentStatus), LogLevel.VERBOSE);
-            return currentStatus;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(currentStatus)
-                + " to: " + value, LogLevel.VERBOSE);
-            currentStatus = value;
-        }
+        get => currentStatus.GetValue();
+        set => currentStatus.SetValue(value);
     }
+
     public EmojiName CachedDefaultStatus
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(cachedDefaultStatus), LogLevel.VERBOSE);
-            return cachedDefaultStatus;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(cachedDefaultStatus)
-                + " to: " + value, LogLevel.VERBOSE);
-            cachedDefaultStatus = value;
-        }
+        get => cachedDefaultStatus.GetValue();
+        set => cachedDefaultStatus.SetValue(value);
     }
 
     [DataMember] private logString fieldNameDisplay = new logString();
     [DataMember] private logString objectValue = new logString();
-    [DataMember] private EmojiName currentStatus { get; set; }
-    [DataMember] private EmojiName cachedDefaultStatus { get; set; }
+    [DataMember] private logClass<EmojiName> currentStatus = new logClass<EmojiName>(new EmojiName());
+    [DataMember] private logClass<EmojiName> cachedDefaultStatus = new logClass<EmojiName>(new EmojiName());
 
     public ReportObject()
     {
@@ -56,8 +39,8 @@ public class ReportObject
     public ReportObject(string _FieldNameDisplay, EmojiName _defaultStateEmoji)
     {
         FieldNameDisplay = _FieldNameDisplay;
-        cachedDefaultStatus = _defaultStateEmoji;
-        currentStatus = _defaultStateEmoji;
+        CachedDefaultStatus = _defaultStateEmoji;
+        CurrentStatus = _defaultStateEmoji;
     }
 
     public void SetObjectValueAndFieldBool(string _value, EmojiName _currentStatus)
