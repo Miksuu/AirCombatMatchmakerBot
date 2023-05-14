@@ -9,6 +9,7 @@ using System.Reflection;
 [DataContract]
 public class MATCHSTARTMESSAGE : BaseMessage
 {
+    MatchChannelComponents mcc = new MatchChannelComponents();
     public MATCHSTARTMESSAGE()
     {
         messageName = MessageName.MATCHSTARTMESSAGE;
@@ -29,30 +30,21 @@ public class MATCHSTARTMESSAGE : BaseMessage
         Log.WriteLine("Starting to generate match initiation message on channel: with id: " +
             thisInterfaceMessage.MessageChannelId + " under category ID: " + thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
 
-        InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
-        if (interfaceLeague == null)
+        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.ERROR);
-            return "";
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+            return nameof(mcc) + " was null!";
         }
 
-        LeagueMatch? foundMatch =
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(thisInterfaceMessage.MessageChannelId);
-        if (foundMatch == null)
+        foreach (var teamKvp in mcc.leagueMatchCached.TeamsInTheMatch)
         {
-            Log.WriteLine(nameof(foundMatch) + " was null!", LogLevel.ERROR);
-            return "";
-        }
-
-        foreach (var teamKvp in foundMatch.TeamsInTheMatch)
-        {
-            Team team = interfaceLeague.LeagueData.Teams.FindTeamById(
-                interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key);
+            Team team = mcc.interfaceLeagueCached.LeagueData.Teams.FindTeamById(
+                mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam, teamKvp.Key);
 
             string teamMembers =
                 team.GetTeamInAString(
-                    true, interfaceLeague.LeaguePlayerCountPerTeam);
+                    true, mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam);
 
             generatedMessage += teamMembers;
 
