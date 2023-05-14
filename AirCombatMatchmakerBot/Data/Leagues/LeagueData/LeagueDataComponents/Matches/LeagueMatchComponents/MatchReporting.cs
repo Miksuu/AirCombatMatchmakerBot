@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
-using System.Linq;
-using Newtonsoft.Json.Linq;
 
 [DataContract]
 public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass

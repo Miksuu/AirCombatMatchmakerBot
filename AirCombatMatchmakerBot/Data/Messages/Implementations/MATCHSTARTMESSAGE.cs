@@ -1,10 +1,5 @@
 ﻿using Discord;
-using System.Data;
-using System;
 using System.Runtime.Serialization;
-using Discord.WebSocket;
-using System.Threading.Channels;
-using System.Reflection;
 
 [DataContract]
 public class MATCHSTARTMESSAGE : BaseMessage
@@ -28,7 +23,8 @@ public class MATCHSTARTMESSAGE : BaseMessage
         bool firstTeam = true;
 
         Log.WriteLine("Starting to generate match initiation message on channel: with id: " +
-            thisInterfaceMessage.MessageChannelId + " under category ID: " + thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
+            thisInterfaceMessage.MessageChannelId + " under category ID: " +
+            thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
 
         mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
