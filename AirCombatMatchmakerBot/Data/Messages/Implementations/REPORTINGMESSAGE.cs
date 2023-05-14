@@ -18,7 +18,8 @@ public class REPORTINGMESSAGE : BaseMessage
         thisInterfaceMessage.MessageEmbedTitle = "Report match score";
         thisInterfaceMessage.MessageDescription = "After the match has been completed, click on the buttons below to report your score.\n" +
             "Upload your Tacview by dragging it to the window and post it.\n" +
-            "Optionally, you can use the /comment command to post a comment on the match.";
+            "Optionally, you can use the /comment command to post a comment on the match, and write " + @"""" + "-" + @"""" + " to the command to " +
+            "remove your comment";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)

@@ -147,8 +147,16 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
                     response = "You posted tacview link: " + _reportedObjectByThePlayer;
                     break;
                 case TypeOfTheReportingObject.COMMENTBYTHEUSER:
-                    TeamIdsWithReportData[reportingTeam.TeamId].CommentByTheUser.SetObjectValueAndFieldBool(
-                        _reportedObjectByThePlayer, EmojiName.WHITECHECKMARK);
+                    if (_reportedObjectByThePlayer == "-")
+                    {
+                        TeamIdsWithReportData[reportingTeam.TeamId].CommentByTheUser.SetObjectValueAndFieldBool(
+                            "", EmojiName.YELLOWSQUARE);
+                    }
+                    else
+                    {
+                        TeamIdsWithReportData[reportingTeam.TeamId].CommentByTheUser.SetObjectValueAndFieldBool(
+                          _reportedObjectByThePlayer, EmojiName.WHITECHECKMARK);
+                    }
                     break;
                 default:
                     Log.WriteLine("Unknown type! (not implemented?)", LogLevel.CRITICAL);

@@ -6,9 +6,11 @@ public class COMMENT : BaseCommand
 {
     public COMMENT()
     {
+        string removeComment = " Type " + @"""" + " - " + @"""" + " to remove your comment";
+
         commandName = CommandName.COMMENT;
-        commandDescription = "Posts a comment about your match.";
-        commandOption = new("comment", "Enter your comment here.");
+        commandDescription = "Posts a comment about your match." + removeComment;
+        commandOption = new("comment", "Enter your comment here." + removeComment);
         isAdminCommand = false;
     }
 
@@ -18,7 +20,7 @@ public class COMMENT : BaseCommand
         ulong commandPlayerId = _command.User.Id;
 
         Log.WriteLine("Activating a comment command: " + commandChannelId +
-            " by: " + commandPlayerId, LogLevel.DEBUG);
+            " by: " + commandPlayerId + " with: " + _firstOptionString, LogLevel.DEBUG);
 
         if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
             commandChannelId))
@@ -51,7 +53,15 @@ public class COMMENT : BaseCommand
 
         if (finalResponseTuple.serialize)
         {
-            return new Response("Comment posted: " + _firstOptionString, true);
+            if (_firstOptionString == "-")
+            {
+                return new Response("Comment removed!", true);
+            }
+            else
+            {
+                return new Response("Comment posted: " + _firstOptionString, true);
+            }
+            
         }
 
         return new Response("Couldn't post comment", false);
