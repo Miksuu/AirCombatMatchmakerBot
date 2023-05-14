@@ -171,7 +171,7 @@ public abstract class BaseCategory : InterfaceCategory
         if (!channelExists)
         {
             Log.WriteLine("Creating a channel named: " + interfaceChannel.ChannelType +
-                " for category: " + categoryType + " (" +
+                " for category: " + thisInterfaceCategory.CategoryType + " (" +
                 _socketCategoryChannelId + ")" + " with name: " +
                 interfaceChannel.ChannelName, LogLevel.DEBUG);
 
@@ -187,7 +187,7 @@ public abstract class BaseCategory : InterfaceCategory
 
             Log.WriteLine("Done adding to the db. Count is now: " +
                 InterfaceChannels.Count +
-                " for the ConcurrentBag of category: " + categoryType.ToString() +
+                " for the ConcurrentBag of category: " + thisInterfaceCategory.CategoryType.ToString() +
                 " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
         }
 
@@ -257,7 +257,7 @@ public abstract class BaseCategory : InterfaceCategory
         if (!channelExists)
         {
             Log.WriteLine("Creating a channel named: " + interfaceChannel.ChannelType +
-                " for category: " + categoryType + " (" +
+                " for category: " + thisInterfaceCategory.CategoryType + " (" +
                 _socketCategoryChannelId + ")" + " with name: " +
                 interfaceChannel.ChannelName, LogLevel.DEBUG);
 
@@ -273,7 +273,7 @@ public abstract class BaseCategory : InterfaceCategory
 
             Log.WriteLine("Done adding to the db. Count is now: " +
                 InterfaceChannels.Count +
-                " for the ConcurrentBag of category: " + categoryType.ToString() +
+                " for the ConcurrentBag of category: " + thisInterfaceCategory.CategoryType.ToString() +
                 " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
         }
 
