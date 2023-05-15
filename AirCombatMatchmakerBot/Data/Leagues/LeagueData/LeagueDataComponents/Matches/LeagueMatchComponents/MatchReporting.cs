@@ -147,12 +147,12 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
                 case TypeOfTheReportingObject.COMMENTBYTHEUSER:
                     if (_reportedObjectByThePlayer == "-")
                     {
-                        TeamIdsWithReportData[reportingTeam.TeamId].CommentByTheUser.SetObjectValueAndFieldBool(
+                        TeamIdsWithReportData[reportingTeam.TeamId].CommentsByTheTeamMembers.SetObjectValueAndFieldBool(
                             "", EmojiName.YELLOWSQUARE);
                     }
                     else
                     {
-                        TeamIdsWithReportData[reportingTeam.TeamId].CommentByTheUser.SetObjectValueAndFieldBool(
+                        TeamIdsWithReportData[reportingTeam.TeamId].CommentsByTheTeamMembers.SetObjectValueAndFieldBool(
                           _reportedObjectByThePlayer, EmojiName.WHITECHECKMARK);
                     }
                     break;

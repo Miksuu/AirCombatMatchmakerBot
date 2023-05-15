@@ -103,13 +103,13 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
-            if (reportDataKvp.Value.CommentByTheUser.CurrentStatus == EmojiName.YELLOWSQUARE)
+            if (reportDataKvp.Value.CommentsByTheTeamMembers.CurrentStatus == EmojiName.YELLOWSQUARE)
             {
                 Log.WriteLine(reportDataKvp.Value.TeamName + " did not comment.", LogLevel.VERBOSE);
                 continue;
             }
 
-            finalMessage += reportDataKvp.Value.TeamName + " commented: " + reportDataKvp.Value.CommentByTheUser.ObjectValue + "\n";
+            finalMessage += reportDataKvp.Value.TeamName + " commented: " + reportDataKvp.Value.CommentsByTheTeamMembers.ObjectValue + "\n";
         }
 
         // Cache the finalMessage on to the alternativeMessage form for match results page where tacviews have link buttons
