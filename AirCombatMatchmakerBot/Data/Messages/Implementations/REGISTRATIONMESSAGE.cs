@@ -12,7 +12,7 @@ public class REGISTRATIONMESSAGE : BaseMessage
 {
     public REGISTRATIONMESSAGE()
     {
-        messageName = MessageName.REGISTRATIONMESSAGE;
+        thisInterfaceMessage.MessageName = MessageName.REGISTRATIONMESSAGE;
 
         thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
             new ConcurrentBag<KeyValuePair<ButtonName, int>>()

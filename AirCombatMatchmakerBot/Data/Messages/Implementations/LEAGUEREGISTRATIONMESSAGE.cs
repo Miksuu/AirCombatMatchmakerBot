@@ -7,7 +7,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 {
     public LEAGUEREGISTRATIONMESSAGE()
     {
-        messageName = MessageName.LEAGUEREGISTRATIONMESSAGE;
+        thisInterfaceMessage.MessageName = MessageName.LEAGUEREGISTRATIONMESSAGE;
 
         thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
             new ConcurrentBag<KeyValuePair<ButtonName, int>>()

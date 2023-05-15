@@ -7,7 +7,7 @@ public class CHALLENGEMESSAGE : BaseMessage
 {
     public CHALLENGEMESSAGE()
     {
-        messageName = MessageName.CHALLENGEMESSAGE;
+        thisInterfaceMessage.MessageName = MessageName.CHALLENGEMESSAGE;
 
         thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
             new ConcurrentBag<KeyValuePair<ButtonName, int>>()

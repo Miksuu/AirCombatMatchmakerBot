@@ -7,7 +7,7 @@ public class REPORTINGMESSAGE : BaseMessage
 {
     public REPORTINGMESSAGE()
     {
-        messageName = MessageName.REPORTINGMESSAGE;
+        thisInterfaceMessage.MessageName = MessageName.REPORTINGMESSAGE;
 
         thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
             new ConcurrentBag<KeyValuePair<ButtonName, int>>()

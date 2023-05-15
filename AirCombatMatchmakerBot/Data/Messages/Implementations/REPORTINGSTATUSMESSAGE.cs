@@ -8,7 +8,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 {
     public REPORTINGSTATUSMESSAGE()
     {
-        messageName = MessageName.REPORTINGSTATUSMESSAGE;
+        thisInterfaceMessage.MessageName = MessageName.REPORTINGSTATUSMESSAGE;
         thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>();
         thisInterfaceMessage.MessageEmbedTitle = "Current reporting status";
         thisInterfaceMessage.MessageDescription = "Insert the reporting status message here";

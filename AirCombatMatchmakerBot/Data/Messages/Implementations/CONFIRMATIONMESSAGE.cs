@@ -13,7 +13,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
     MatchChannelComponents mcc = new MatchChannelComponents();
     public CONFIRMATIONMESSAGE()
     {
-        messageName = MessageName.CONFIRMATIONMESSAGE;
+        thisInterfaceMessage.MessageName = MessageName.CONFIRMATIONMESSAGE;
 
         thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
             new ConcurrentBag<KeyValuePair<ButtonName, int>>()
@@ -45,19 +45,6 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         string finalMessage = "Confirmed:\n";
 
-        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            thisInterfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                thisInterfaceMessage.MessageChannelId);
-        if (interfaceChannel == null)
-        {
-            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-            return "InterfaceChannel was null!";
-        }
-
-        Log.WriteLine("Found interfaceChannel:" + interfaceChannel.ChannelId, LogLevel.VERBOSE);
-
-        //Log.WriteLine("Found match tuple: " + mcc.leagueMatchCached.MatchChannelId, LogLevel.VERBOSE);
-
         var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
 
         int confirmedTeamsCounter = 0;
@@ -76,15 +63,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         if (confirmedTeamsCounter > 1) 
         {
-            InterfaceLeague? interfaceLeague =
-                Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(thisInterfaceMessage.MessageCategoryId);
-            if (interfaceLeague == null)
-            {
-                Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
-                return nameof(interfaceLeague) + " was null!";
-            }
-
-            mcc.leagueMatchCached.FinishTheMatch(interfaceLeague);
+            mcc.leagueMatchCached.FinishTheMatch(mcc.interfaceLeagueCached);
         }
 
         finalMessage += "You can either Confirm/Dispute the result below.";

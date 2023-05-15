@@ -8,7 +8,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
 {
     public LEAGUESTATUSMESSAGE()
     {
-        messageName = MessageName.LEAGUESTATUSMESSAGE;
+        thisInterfaceMessage.MessageName = MessageName.LEAGUESTATUSMESSAGE;
         thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
         {
         };

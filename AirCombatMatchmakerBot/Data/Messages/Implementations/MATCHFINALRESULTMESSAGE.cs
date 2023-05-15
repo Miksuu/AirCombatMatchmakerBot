@@ -7,7 +7,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 {
     public MATCHFINALRESULTMESSAGE()
     {
-        messageName = MessageName.MATCHFINALRESULTMESSAGE;
+        thisInterfaceMessage.MessageName = MessageName.MATCHFINALRESULTMESSAGE;
             thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>
         {
         };

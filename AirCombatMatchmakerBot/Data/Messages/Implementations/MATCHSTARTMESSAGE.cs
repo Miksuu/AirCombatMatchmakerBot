@@ -7,7 +7,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
     MatchChannelComponents mcc = new MatchChannelComponents();
     public MATCHSTARTMESSAGE()
     {
-        messageName = MessageName.MATCHSTARTMESSAGE;
+        thisInterfaceMessage.MessageName = MessageName.MATCHSTARTMESSAGE;
         thisInterfaceMessage.MessageDescription = "Insert the match start message here";
         mentionMatchPlayers = true;
     }

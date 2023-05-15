@@ -6,7 +6,7 @@ public class RAWMESSAGEINPUT : BaseMessage
 {
     public RAWMESSAGEINPUT()
     {
-        messageName = MessageName.RAWMESSAGEINPUT;
+        thisInterfaceMessage.MessageName = MessageName.RAWMESSAGEINPUT;
 
         /*
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(

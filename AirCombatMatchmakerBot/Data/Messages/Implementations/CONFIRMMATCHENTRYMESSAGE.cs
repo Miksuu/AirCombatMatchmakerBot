@@ -7,7 +7,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 {
     public CONFIRMMATCHENTRYMESSAGE()
     {
-        messageName = MessageName.CONFIRMMATCHENTRYMESSAGE;
+        thisInterfaceMessage.MessageName = MessageName.CONFIRMMATCHENTRYMESSAGE;
 
         /*
         messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(

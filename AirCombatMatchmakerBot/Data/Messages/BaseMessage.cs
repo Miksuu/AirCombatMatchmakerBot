@@ -10,18 +10,8 @@ public abstract class BaseMessage : InterfaceMessage
 {
     MessageName InterfaceMessage.MessageName
     {
-        get
-        {
-            Log.WriteLine("Getting " + nameof(messageName) + 
-                ": " + messageName, LogLevel.VERBOSE);
-            return messageName;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(messageName) + messageName
-                + " to: " + value, LogLevel.VERBOSE);
-            messageName = value;
-        }
+        get => messageName.GetValue();
+        set => messageName.SetValue(value);
     }
 
     ConcurrentDictionary<ButtonName, int> InterfaceMessage.MessageButtonNamesWithAmount
@@ -98,7 +88,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    [DataMember] protected MessageName messageName;
+    [DataMember] protected logClass<MessageName> messageName = new logClass<MessageName>(new MessageName());
     [DataMember] protected logConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount = new logConcurrentDictionary<ButtonName, int>();
 
     // Embed properties
@@ -154,7 +144,7 @@ public abstract class BaseMessage : InterfaceMessage
         GenerateButtons(component, _leagueCategoryId);
 
         // Add this as inherited button method
-        if (messageName == MessageName.LEAGUEREGISTRATIONMESSAGE)
+        if (thisInterfaceMessage.MessageName == MessageName.LEAGUEREGISTRATIONMESSAGE)
         {
             LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = this as LEAGUEREGISTRATIONMESSAGE;
             if (leagueRegistrationMessage == null)
