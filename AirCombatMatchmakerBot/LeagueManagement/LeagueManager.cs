@@ -6,7 +6,6 @@ public static class LeagueManager
 {
     public static InterfaceLeague GetCategoryInstance(CategoryType _leagueCategoryName)
     {
-        
         return (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
 

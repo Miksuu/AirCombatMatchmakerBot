@@ -53,7 +53,6 @@ public class ReportData
             commentByTheUser = value;
         }
     }
-
     public float FinalEloDelta
     {
         get => finalEloDelta.GetValue();
@@ -67,17 +66,14 @@ public class ReportData
     }
 
     [DataMember] private logString teamName = new logString();
-    [DataMember] private ReportObject reportedScore { get; set; }
-    [DataMember] private ReportObject tacviewLink { get; set; }
-    [DataMember] private ReportObject commentByTheUser { get; set; }
+    [DataMember] private ReportObject reportedScore = new ReportObject("Reported score", EmojiName.REDSQUARE);
+    [DataMember] private ReportObject tacviewLink = new ReportObject("Tacview link", EmojiName.REDSQUARE);
+    [DataMember] private ReportObject commentByTheUser = new ReportObject("Comment", EmojiName.YELLOWSQUARE);
     [DataMember] private logClass<float> finalEloDelta = new logClass<float>();
     [DataMember] private logClass<bool> confirmedMatch = new logClass<bool>();
 
     public ReportData(string _reportingTeamName)
     {
-        TeamName = _reportingTeamName;      
-        reportedScore = new ReportObject("Reported score", EmojiName.REDSQUARE);
-        tacviewLink = new ReportObject("Tacview link", EmojiName.REDSQUARE);
-        commentByTheUser = new ReportObject("Comment", EmojiName.YELLOWSQUARE);
+        TeamName = _reportingTeamName;
     }
 }

@@ -8,17 +8,8 @@ public abstract class BaseChannel : InterfaceChannel
 {
     ChannelType InterfaceChannel.ChannelType
     {
-        get 
-        {
-            Log.WriteLine("Getting " + nameof(ChannelType) + ": " + channelType, LogLevel.VERBOSE);
-            return channelType;
-        }
-        set
-        {
-            Log.WriteLine("Setting " + nameof(channelType) + channelType
-                + " to: " + value, LogLevel.VERBOSE);
-            channelType = value;
-        }
+        get => channelType.GetValue();
+        set => channelType.SetValue(value);
     }
 
     string InterfaceChannel.ChannelName
@@ -42,7 +33,7 @@ public abstract class BaseChannel : InterfaceChannel
     ConcurrentDictionary<MessageName, bool> InterfaceChannel.ChannelMessages
     {
         get => channelMessages.GetValue();
-        set => channelMessages.SetValue(value);
+        set => channelMessages.SetValue(value);
     }
 
     ConcurrentDictionary<ulong, InterfaceMessage> InterfaceChannel.InterfaceMessagesWithIds
@@ -51,7 +42,7 @@ public abstract class BaseChannel : InterfaceChannel
         set => interfaceMessagesWithIds.SetValue(value);
     }
 
-    [DataMember] protected ChannelType channelType { get; set; }
+    [DataMember] protected logClass<ChannelType> channelType = new logClass<ChannelType>();
     [DataMember] protected logString channelName = new logString();
     [DataMember] protected logClass<ulong> channelId = new logClass<ulong>();
     [DataMember] protected logClass<ulong> channelsCategoryId = new logClass<ulong>();
@@ -70,10 +61,10 @@ public abstract class BaseChannel : InterfaceChannel
     public async Task CreateAChannelForTheCategory(SocketGuild _guild, SocketRole _role,
          params ulong[] _allowedUsersIdsArray)
     {
-        Log.WriteLine("Creating a channel named: " + channelType +
+        Log.WriteLine("Creating a channel named: " + thisInterfaceChannel.ChannelType +
             " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
 
-        string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(channelType);
+        string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(thisInterfaceChannel.ChannelType);
 
         if (thisInterfaceChannel.ChannelName == null)
         {
@@ -103,17 +94,17 @@ public abstract class BaseChannel : InterfaceChannel
 
         thisInterfaceChannel.ChannelId = channel.Id;
 
-        Log.WriteLine("Done creating a channel named: " + channelType + " with ID: " + channel.Id +
+        Log.WriteLine("Done creating a channel named: " + thisInterfaceChannel.ChannelType + " with ID: " + channel.Id +
             " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.DEBUG);
-    }
-
+    }
+
     public async Task CreateAChannelForTheCategoryWithoutRole(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
-        Log.WriteLine("Creating a channel named: " + channelType +
+        Log.WriteLine("Creating a channel named: " + thisInterfaceChannel.ChannelType +
             " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
 
-        string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(channelType);
+        string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(thisInterfaceChannel.ChannelType);
 
         if (thisInterfaceChannel.ChannelName == null)
         {
@@ -143,7 +134,7 @@ public abstract class BaseChannel : InterfaceChannel
 
         thisInterfaceChannel.ChannelId = channel.Id;
 
-        Log.WriteLine("Done creating a channel named: " + channelType + " with ID: " + channel.Id +
+        Log.WriteLine("Done creating a channel named: " + thisInterfaceChannel.ChannelType + " with ID: " + channel.Id +
             " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.DEBUG);
     }
 
@@ -206,8 +197,8 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public async Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
-    string _input, AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
-    SocketMessageComponent? _component = null, bool _ephemeral = true)
+        string _input, AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
+        SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
         Log.WriteLine("Creating a raw message with attachmentdata: " + _input +
             " count: " + _attachmentDatas.Length, LogLevel.DEBUG);
@@ -244,7 +235,7 @@ public abstract class BaseChannel : InterfaceChannel
     {
         //Log.WriteLine("Starting to post channel messages on: " + channelType, LogLevel.VERBOSE);
 
-        Log.WriteLine("Finding channel: " + channelType + " (" + thisInterfaceChannel.ChannelId +
+        Log.WriteLine("Finding channel: " + thisInterfaceChannel.ChannelType + " (" + thisInterfaceChannel.ChannelId +
             ") parent category with id: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
 
         // If the MessageDescription doesn't exist, set it ID to 0 to regenerate it
@@ -270,7 +261,7 @@ public abstract class BaseChannel : InterfaceChannel
 
         if (thisInterfaceChannel.ChannelType == ChannelType.LEAGUEREGISTRATION)
         {
-            Log.WriteLine("Starting to to prepare channel messages on " + channelType +
+            Log.WriteLine("Starting to to prepare channel messages on " + thisInterfaceChannel.ChannelType +
                 " count: " + Enum.GetValues(typeof(CategoryType)).Length, LogLevel.VERBOSE);
 
             foreach (CategoryType leagueName in Enum.GetValues(typeof(CategoryType)))
@@ -313,8 +304,8 @@ public abstract class BaseChannel : InterfaceChannel
                 if (leagueInterfaceFromDatabase.LeagueRegistrationMessageId != 0) continue;
 
                 InterfaceMessage interfaceMessage =
-                    (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
-                
+                    (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
+
                 var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
                         _client, this, true, true, leagueInterfaceFromDatabase.LeagueCategoryId);
 

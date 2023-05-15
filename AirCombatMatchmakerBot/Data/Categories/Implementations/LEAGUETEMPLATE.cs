@@ -8,7 +8,7 @@ public class LEAGUETEMPLATE : BaseCategory
 {
     public LEAGUETEMPLATE()
     {
-        thisInterfaceCategory.CategoryType = global::CategoryType.LEAGUETEMPLATE;
+        thisInterfaceCategory.CategoryType = CategoryType.LEAGUETEMPLATE;
         thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>()
         {
             ChannelType.LEAGUESTATUS,

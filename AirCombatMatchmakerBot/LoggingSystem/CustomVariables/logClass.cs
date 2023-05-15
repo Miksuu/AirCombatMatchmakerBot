@@ -47,7 +47,7 @@ public class logClass<T>
             StringBuilder membersBuilder = new StringBuilder();
 
             var interfaceLoggableClass = Activator.CreateInstance(typeof(T)) as InterfaceLoggableClass;
-            Log.WriteLine(typeof(T).ToString(), LogLevel.VERBOSE);
+            //Log.WriteLine(typeof(T).ToString(), LogLevel.VERBOSE);
             MethodInfo getParametersMethod = interfaceLoggableClass?.GetType()?.GetMethod("GetClassParameters")!;
             if (getParametersMethod != null)
             {
