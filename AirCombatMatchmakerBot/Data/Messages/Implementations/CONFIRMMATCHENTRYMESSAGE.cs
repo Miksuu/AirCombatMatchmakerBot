@@ -5,6 +5,8 @@ using Discord;
 [DataContract]
 public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 {
+    MatchChannelComponents mcc = new MatchChannelComponents();
+
     public CONFIRMMATCHENTRYMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.CONFIRMMATCHENTRYMESSAGE;
@@ -52,11 +54,42 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
-        if (thisInterfaceMessage.MessageDescription == null)
+        Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
+
+        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine("MessageDescription was null!", LogLevel.CRITICAL);
-            return "";
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+            return nameof(mcc) + " was null!";
         }
-        return thisInterfaceMessage.MessageDescription;
+
+        string finalMessage = "Selected plane:\n";
+
+        var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
+
+        int selectedTeamsCounter = 0;
+        foreach (var teamKvp in matchReportData)
+        {
+            string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
+
+            if (teamKvp.Value.ConfirmedMatch)
+            {
+                checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
+                selectedTeamsCounter++;
+            }
+
+            finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
+        }
+
+        if (selectedTeamsCounter > 1)
+        {
+            mcc.leagueMatchCached.FinishTheMatch(mcc.interfaceLeagueCached);
+        }
+
+        finalMessage += "You can either Confirm/Dispute the result below.";
+
+        Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
+
+        return finalMessage;
     }
 }
