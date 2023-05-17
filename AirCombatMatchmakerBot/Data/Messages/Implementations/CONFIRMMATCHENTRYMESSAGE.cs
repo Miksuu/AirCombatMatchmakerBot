@@ -85,12 +85,9 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         {
             InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 thisInterfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                thisInterfaceMessage.MessageChannelId);.
-
+                thisInterfaceMessage.MessageChannelId);
             new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
         }
-
-        finalMessage += "You can either Confirm/Dispute the result below.";
 
         Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 
