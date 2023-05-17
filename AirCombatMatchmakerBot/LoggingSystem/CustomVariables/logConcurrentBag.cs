@@ -1,4 +1,3 @@
-using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
@@ -141,6 +140,4 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
 
         return membersBuilder.ToString().TrimEnd(',', ' ');
     }
-
-
 }
