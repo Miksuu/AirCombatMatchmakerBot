@@ -56,7 +56,7 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
         [CallerLineNumber] int _lineNumber = 0)
     {
         Log.WriteLine("Getting ConcurrentBag " + _memberName + " with count: " +
-            _values.Count + " that has members of: " + GetConcurrentBagMembers(_values),
+            _values.Count + " that has members of: " + GetLoggingClassParameters(),
             LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
         return _values;
     }
@@ -67,8 +67,8 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
         [CallerLineNumber] int _lineNumber = 0)
     {
         Log.WriteLine("Setting ConcurrentBag " + _memberName + " with count: " +_values.Count +
-            " that has members of: " + GetConcurrentBagMembers(_values) + " TO: " + " with count: " +
-            values.Count + " that has members of: " + GetConcurrentBagMembers(values),
+            " that has members of: " + GetLoggingClassParameters() + " TO: " + " with count: " +
+            values.Count + " that has members of: " + GetLoggingClassParameters(),
             LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
         _values = values;
     }
@@ -79,7 +79,7 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
         [CallerLineNumber] int _lineNumber = 0)
     {
         Log.WriteLine("Adding item to ConcurrentBag " + _memberName + ": " + _item +
-            " with count: " + _values.Count + " that has members of: " + GetConcurrentBagMembers(_values),
+            " with count: " + _values.Count + " that has members of: " + GetLoggingClassParameters(),
             LogLevel.ADD_VERBOSE, _filePath, "", _lineNumber);
         _values.Add(_item);
     }
@@ -92,52 +92,5 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
-    }
-
-    public string GetConcurrentBagMembers(ConcurrentBag<T> _customValues)
-    {
-        StringBuilder membersBuilder = new StringBuilder();
-
-        foreach (var item in _customValues)
-        {
-            switch (item)
-            {
-                case UnitName unitName:
-                    membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(unitName)).Append(", ");
-                    break;
-                case ChannelType channelType:
-                    membersBuilder.Append(EnumExtensions.GetEnumMemberAttrValue(channelType)).Append(", ");
-                    break;
-                case ulong or int:
-                    membersBuilder.Append(item.ToString()).Append(", ");
-                    break;
-                case Player player:
-                    membersBuilder.Append(player.PlayerDiscordId + "|" + player.PlayerNickName).Append(", ");
-                    break;
-                case Team team:
-                    membersBuilder.Append(team.TeamId + "|" + team.TeamName + "|" + team.Players + "|" +
-                        team.SkillRating + "|" + team.TeamActive).Append(", ");
-                    break;
-                case LeagueMatch leagueMatch:
-                    membersBuilder.Append(leagueMatch.TeamsInTheMatch + "|" + leagueMatch.MatchId + "|" + leagueMatch.MatchChannelId + "|" +
-                        leagueMatch.MatchReporting + "|" + leagueMatch.MatchLeague).Append(", ");
-                    break;
-                case InterfaceLeague interfaceLeague:
-                    membersBuilder.Append(interfaceLeague.LeagueCategoryName + "|" + interfaceLeague.LeagueEra + "|" +
-                        interfaceLeague.LeaguePlayerCountPerTeam + "|" + interfaceLeague.LeagueUnits + "|" +
-                        interfaceLeague.LeagueData).Append(", ");
-                    break;
-                case InterfaceButton interfaceButton:
-                    membersBuilder.Append(interfaceButton.ButtonName + "|" + interfaceButton.ButtonLabel + "|" +
-                        interfaceButton.ButtonStyle + "|" + interfaceButton.ButtonCategoryId + "|" +
-                        interfaceButton.ButtonCustomId + "|" + interfaceButton.EphemeralResponse).Append(", ");
-                    break;
-                default:
-                    Log.WriteLine("Tried to get type: " + typeof(T) + " unknown, undefined type?", LogLevel.CRITICAL);
-                    break;
-            }
-        }
-
-        return membersBuilder.ToString().TrimEnd(',', ' ');
     }
 }
