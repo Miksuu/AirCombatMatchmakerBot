@@ -83,7 +83,11 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
         if (selectedTeamsCounter > 1)
         {
-            mcc.leagueMatchCached.FinishTheMatch(mcc.interfaceLeagueCached);
+            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                thisInterfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                thisInterfaceMessage.MessageChannelId);.
+
+            new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
         }
 
         finalMessage += "You can either Confirm/Dispute the result below.";

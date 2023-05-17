@@ -125,6 +125,18 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         return allowedUserIds;
     }
 
+    public async void StartTheMatchOnSecondThread(InterfaceChannel _interfaceChannel)
+    {
+        Log.WriteLine("Starting the match on second thread on channel: " + _interfaceChannel.ChannelId, LogLevel.VERBOSE);
+
+        // Delete the MatchStart and ConfirmEntry Message here too
+
+        await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+            MessageName.REPORTINGMESSAGE, false);
+        await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+            MessageName.REPORTINGSTATUSMESSAGE, false);
+    }
+
     public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
     {
         MatchReporting.MatchDone = true;
