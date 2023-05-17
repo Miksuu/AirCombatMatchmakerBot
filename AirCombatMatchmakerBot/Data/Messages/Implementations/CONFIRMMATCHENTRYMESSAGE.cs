@@ -29,16 +29,15 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
         Dictionary<string, string> buttonsToGenerate = new Dictionary<string, string>();
 
-        var league = Database.Instance.Leagues.GetILeagueByCategoryId(_leagueCategoryId);
-        if (league == null)
+        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(league) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
             return;
         }
+        Log.WriteLine("units count: " + mcc.interfaceLeagueCached.LeagueUnits.Count, LogLevel.VERBOSE);
 
-        Log.WriteLine("units count: " + league.LeagueUnits.Count, LogLevel.VERBOSE);
-
-        foreach (UnitName unitName in league.LeagueUnits)
+        foreach (UnitName unitName in mcc.interfaceLeagueCached.LeagueUnits)
         {
             string unitNameKey = unitName.ToString();
             string unitNameEnumMemberValue = EnumExtensions.GetEnumMemberAttrValue(unitName);
