@@ -1,10 +1,12 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Text.Json.Serialization;
 
 [DataContract]
 public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 {
+    [JsonIgnore]
     public ConcurrentDictionary<int, ReportData> TeamIdsWithReportData
     {
         get => teamIdsWithReportData.GetValue();

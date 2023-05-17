@@ -2,10 +2,12 @@
 using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Text.Json.Serialization;
 
 [DataContract]
 public class PlayerData : logClass<PlayerData>, InterfaceLoggableClass
 {
+    [JsonIgnore]
     public ConcurrentDictionary<ulong, Player> PlayerIDs
     {
         get => playerIDs.GetValue();

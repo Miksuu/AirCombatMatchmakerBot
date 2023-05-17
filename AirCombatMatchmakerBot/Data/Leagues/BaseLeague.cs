@@ -3,6 +3,7 @@ using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
+using System.Text.Json.Serialization;
 
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
@@ -43,6 +44,7 @@ public abstract class BaseLeague : InterfaceLeague
         set => leagueCategoryId.SetValue(value);
     }
 
+    [JsonIgnore]
     public ConcurrentDictionary<ChannelType, ulong> LeagueChannels
     {
         get => leagueChannels.GetValue();

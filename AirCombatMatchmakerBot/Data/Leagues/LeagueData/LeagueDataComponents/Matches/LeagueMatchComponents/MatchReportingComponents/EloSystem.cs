@@ -82,7 +82,7 @@ public static class EloSystem
 
     public static void CalculateFinalEloForBothTeams(
         InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch,
-        ConcurrentDictionary<int, ReportData> _teamIdsWithReportData)
+        Dictionary<int, ReportData> _teamIdsWithReportData)
     {
         for (int t = 0; t < _teamsInTheMatch.Length; ++t)
         {

@@ -1,16 +1,19 @@
 ﻿using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Text.Json.Serialization;
 
 [DataContract]
 public class Categories : logClass<Categories>, InterfaceLoggableClass
 {
+    [JsonIgnore]
     public ConcurrentDictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels
     {
         get => createdCategoriesWithChannels.GetValue();
         set => createdCategoriesWithChannels.SetValue(value);
     }
 
+    [JsonIgnore]
     public ConcurrentDictionary<ulong, ulong> MatchChannelsIdWithCategoryId
     {
         get => matchChannelsIdWithCategoryId.GetValue();

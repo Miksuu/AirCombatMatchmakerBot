@@ -45,8 +45,8 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         thisInterfaceMessage.MessageEmbedTitle = "Match " + interfaceLeagueMatchTuple.Item2.MatchId + " has finished\n";
 
-        ConcurrentDictionary<int, ReportData>? matchReportingTeamIdsWithReportData =
-            interfaceLeagueMatchTuple.Item2.MatchReporting.TeamIdsWithReportData;
+        Dictionary<int, ReportData>? matchReportingTeamIdsWithReportData =
+            interfaceLeagueMatchTuple.Item2.MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value);
 
         finalMessage += "\nPlayers: ";
 

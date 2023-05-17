@@ -1,13 +1,11 @@
-using Discord.WebSocket;
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
-using Discord;
-using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 [DataContract]
 public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 {
+    [JsonIgnore]
     public ConcurrentDictionary<int, string> TeamsInTheMatch
     {
         get => teamsInTheMatch.GetValue();
@@ -144,7 +142,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
         EloSystem.CalculateFinalEloForBothTeams(
             _interfaceLeague, MatchReporting.FindTeamsInTheMatch(_interfaceLeague),
-            MatchReporting.TeamIdsWithReportData);
+            MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
 
         var guild = BotReference.GetGuildRef();
 
