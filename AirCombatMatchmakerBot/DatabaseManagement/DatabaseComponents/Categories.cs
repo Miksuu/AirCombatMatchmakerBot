@@ -6,14 +6,14 @@ using System.Text.Json.Serialization;
 [DataContract]
 public class Categories : logClass<Categories>, InterfaceLoggableClass
 {
-    [JsonIgnore]
+    [IgnoreDataMember]
     public ConcurrentDictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels
     {
         get => createdCategoriesWithChannels.GetValue();
         set => createdCategoriesWithChannels.SetValue(value);
     }
 
-    [JsonIgnore]
+    [IgnoreDataMember]
     public ConcurrentDictionary<ulong, ulong> MatchChannelsIdWithCategoryId
     {
         get => matchChannelsIdWithCategoryId.GetValue();

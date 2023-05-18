@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 [DataContract]
 public class PlayerData : logClass<PlayerData>, InterfaceLoggableClass
 {
-    [JsonIgnore]
+    [IgnoreDataMember]
     public ConcurrentDictionary<ulong, Player> PlayerIDs
     {
         get => playerIDs.GetValue();

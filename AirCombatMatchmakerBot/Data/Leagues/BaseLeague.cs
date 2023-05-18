@@ -44,7 +44,7 @@ public abstract class BaseLeague : InterfaceLeague
         set => leagueCategoryId.SetValue(value);
     }
 
-    [JsonIgnore]
+    [IgnoreDataMember]
     public ConcurrentDictionary<ChannelType, ulong> LeagueChannels
     {
         get => leagueChannels.GetValue();

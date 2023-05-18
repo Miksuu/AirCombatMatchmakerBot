@@ -13,7 +13,7 @@ public abstract class BaseMessage : InterfaceMessage
         set => messageName.SetValue(value);
     }
 
-    [JsonIgnore]
+    [IgnoreDataMember]
     ConcurrentDictionary<ButtonName, int> InterfaceMessage.MessageButtonNamesWithAmount
     {
         get => messageButtonNamesWithAmount.GetValue();

@@ -31,14 +31,14 @@ public abstract class BaseChannel : InterfaceChannel
         set => channelsCategoryId.SetValue(value);
     }
 
-    [JsonIgnore]
+    [IgnoreDataMember]
     ConcurrentDictionary<MessageName, bool> InterfaceChannel.ChannelMessages
     {
         get => channelMessages.GetValue();
         set => channelMessages.SetValue(value);
     }
 
-    [JsonIgnore]
+    [IgnoreDataMember]
     ConcurrentDictionary<ulong, InterfaceMessage> InterfaceChannel.InterfaceMessagesWithIds
     {
         get => interfaceMessagesWithIds.GetValue();

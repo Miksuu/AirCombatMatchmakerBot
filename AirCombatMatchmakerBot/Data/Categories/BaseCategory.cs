@@ -20,7 +20,7 @@ public abstract class BaseCategory : InterfaceCategory
         set => channelTypes.SetValue(value);
     }
 
-    [JsonIgnore]
+    [IgnoreDataMember]
     public ConcurrentDictionary<ulong, InterfaceChannel> InterfaceChannels
     {
         get => interfaceChannels.GetValue();
