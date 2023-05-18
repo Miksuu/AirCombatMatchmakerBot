@@ -40,7 +40,14 @@ public static class EnumExtensions
         }
 
         var type = _enumVal.GetType();
-        Log.WriteLine(nameof(type) + ": " + type.ToString(), LogLevel.VERBOSE);
+        if (type == typeof(string))
+        {
+            Log.WriteLine("Trying to insert a string to: " + nameof(GetEnumMemberAttrValue), LogLevel.WARNING);
+        }
+        else
+        {
+            Log.WriteLine(nameof(type) + ": " + type.ToString(), LogLevel.VERBOSE);
+        }
 
         var memInfo = _enumVal.GetType().GetMember(enumValString);
 
