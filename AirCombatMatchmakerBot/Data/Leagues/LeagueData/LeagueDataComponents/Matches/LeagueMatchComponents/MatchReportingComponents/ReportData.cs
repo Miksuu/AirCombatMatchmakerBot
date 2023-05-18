@@ -1,6 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using Discord;
+using System;
+using System.Collections.Concurrent;
 using System.Numerics;
 using System.Runtime.Serialization;
+using System.Text;
 
 [DataContract]
 public class ReportData
@@ -75,7 +78,8 @@ public class ReportData
     }
 
     [DataMember] private logString teamName = new logString();
-    [DataMember] private logConcurrentDictionary<ulong, ReportObject> teamMemberIdsWithSelectedPlanesByTheTeam = new logConcurrentDictionary<ulong, ReportObject>();
+    [DataMember] private logConcurrentDictionary<ulong, ReportObject> teamMemberIdsWithSelectedPlanesByTheTeam = 
+        new logConcurrentDictionary<ulong, ReportObject>();
     [DataMember] private ReportObject reportedScore = new ReportObject("Reported score", EmojiName.REDSQUARE);
     [DataMember] private ReportObject tacviewLink = new ReportObject("Tacview link", EmojiName.REDSQUARE);
     [DataMember] private ReportObject commentsByTheTeamMembers = new ReportObject("Comment", EmojiName.YELLOWSQUARE);
@@ -95,6 +99,24 @@ public class ReportData
             TeamMemberIdsWithSelectedPlanesByTheTeam.TryAdd(player.PlayerDiscordId, newReportObject);
         }
 
-        Log.WriteLine("done adding players: " + TeamMemberIdsWithSelectedPlanesByTheTeam.Count + " on team: " + _reportingTeamName, LogLevel.VERBOSE);
+        Log.WriteLine("done adding players: " + TeamMemberIdsWithSelectedPlanesByTheTeam.Count +
+            " on team: " + _reportingTeamName, LogLevel.VERBOSE);
+    }
+
+    public string GetTeamPlanes()
+    {
+        Log.WriteLine("Starting to " + nameof(GetTeamPlanes) + " with count: " +
+            teamMemberIdsWithSelectedPlanesByTheTeam.Count(), LogLevel.VERBOSE);
+
+        StringBuilder membersBuilder = new StringBuilder();
+        foreach (var item in teamMemberIdsWithSelectedPlanesByTheTeam)
+        {
+            UnitName objectValueEnum = (UnitName)Enum.Parse(typeof(UnitName), item.Value.ObjectValue);
+            Log.WriteLine("objectValue: " + objectValueEnum, LogLevel.VERBOSE);
+            string unitNameEnumMemberValue = EnumExtensions.GetEnumMemberAttrValue(objectValueEnum);
+            Log.WriteLine("unitNameEnumMemberValue: " + unitNameEnumMemberValue, LogLevel.VERBOSE);
+            membersBuilder.Append(unitNameEnumMemberValue).Append(", ");
+        }
+        return membersBuilder.ToString().TrimEnd(',', ' ');
     }
 }

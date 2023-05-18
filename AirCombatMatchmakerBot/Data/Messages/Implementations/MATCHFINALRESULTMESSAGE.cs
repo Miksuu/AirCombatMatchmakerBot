@@ -54,7 +54,9 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         int pIndex = 0;
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
-            finalMessage += reportDataKvp.Value.TeamName;
+            //Log.WriteLine("Before getting team planes", LogLevel.DEBUG);
+            finalMessage += reportDataKvp.Value.TeamName + " (" + reportDataKvp.Value.GetTeamPlanes() + ")";
+            //Log.WriteLine("After getting team planes", LogLevel.DEBUG);
             if (pIndex == 0) finalMessage += " vs ";
             pIndex++;
         }
