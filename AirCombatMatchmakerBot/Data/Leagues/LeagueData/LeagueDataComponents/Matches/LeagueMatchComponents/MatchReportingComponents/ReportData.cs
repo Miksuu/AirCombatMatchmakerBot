@@ -82,7 +82,9 @@ public class ReportData
     [DataMember] private logClass<float> finalEloDelta = new logClass<float>();
     [DataMember] private logClass<bool> confirmedMatch = new logClass<bool>();
 
-    public ReportData(string _reportingTeamName, List<Player> _players)
+    public ReportData() { }
+
+    public ReportData(string _reportingTeamName, ConcurrentBag<Player> _players)
     {
         TeamName = _reportingTeamName;
 

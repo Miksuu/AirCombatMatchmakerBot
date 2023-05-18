@@ -73,7 +73,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
             TeamIdsWithReportData.TryAdd(teamKvp.Key, new ReportData(teamKvp.Value,
                 _interfaceLeague.LeagueData.Teams.FindTeamById(
-                    _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key).Players.ToList()));
+                    _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key).Players));
         }
     }
 
