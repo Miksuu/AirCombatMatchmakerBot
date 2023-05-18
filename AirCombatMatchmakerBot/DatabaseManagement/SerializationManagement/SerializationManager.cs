@@ -1,7 +1,9 @@
 ﻿using Discord.WebSocket;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System.Collections.Concurrent;
+using System.Runtime.Serialization;
 
 public static class SerializationManager
 {
@@ -24,6 +26,7 @@ public static class SerializationManager
         serializer.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
         serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
         serializer.ObjectCreationHandling = ObjectCreationHandling.Replace;
+        serializer.ContractResolver = new DataMemberContractResolver();
 
         using (StreamWriter sw = new StreamWriter(dbPathWithFileName))
         using (JsonWriter writer = new JsonTextWriter(sw))
@@ -34,6 +37,15 @@ public static class SerializationManager
         };
 
         Log.WriteLine("DB SERIALIZATION DONE!", LogLevel.SERIALIZATION);
+    }
+
+    public class DataMemberContractResolver : DefaultContractResolver
+    {
+        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+        {
+            var properties = base.CreateProperties(type, memberSerialization);
+            return properties.Where(p => p.AttributeProvider.GetAttributes(typeof(DataMemberAttribute), true).Any()).ToList();
+        }
     }
 
     public static Task SerializeUsersOnTheServer()

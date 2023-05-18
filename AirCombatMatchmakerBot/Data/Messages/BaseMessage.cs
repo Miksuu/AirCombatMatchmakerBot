@@ -2,8 +2,7 @@ using Discord;
 using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
-using System.ComponentModel;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 [DataContract]
 public abstract class BaseMessage : InterfaceMessage
@@ -14,6 +13,7 @@ public abstract class BaseMessage : InterfaceMessage
         set => messageName.SetValue(value);
     }
 
+    [IgnoreDataMember]
     ConcurrentDictionary<ButtonName, int> InterfaceMessage.MessageButtonNamesWithAmount
     {
         get => messageButtonNamesWithAmount.GetValue();

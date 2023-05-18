@@ -2,6 +2,7 @@ using Discord.WebSocket;
 using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Text.Json.Serialization;
 
 [DataContract]
 public abstract class BaseChannel : InterfaceChannel
@@ -30,12 +31,14 @@ public abstract class BaseChannel : InterfaceChannel
         set => channelsCategoryId.SetValue(value);
     }
 
+    [IgnoreDataMember]
     ConcurrentDictionary<MessageName, bool> InterfaceChannel.ChannelMessages
     {
         get => channelMessages.GetValue();
         set => channelMessages.SetValue(value);
     }
 
+    [IgnoreDataMember]
     ConcurrentDictionary<ulong, InterfaceMessage> InterfaceChannel.InterfaceMessagesWithIds
     {
         get => interfaceMessagesWithIds.GetValue();

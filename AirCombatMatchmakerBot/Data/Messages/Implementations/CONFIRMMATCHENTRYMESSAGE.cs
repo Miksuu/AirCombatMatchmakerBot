@@ -29,16 +29,15 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
         Dictionary<string, string> buttonsToGenerate = new Dictionary<string, string>();
 
-        var league = Database.Instance.Leagues.GetILeagueByCategoryId(_leagueCategoryId);
-        if (league == null)
+        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(league) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
             return;
         }
+        Log.WriteLine("units count: " + mcc.interfaceLeagueCached.LeagueUnits.Count, LogLevel.VERBOSE);
 
-        Log.WriteLine("units count: " + league.LeagueUnits.Count, LogLevel.VERBOSE);
-
-        foreach (UnitName unitName in league.LeagueUnits)
+        foreach (UnitName unitName in mcc.interfaceLeagueCached.LeagueUnits)
         {
             string unitNameKey = unitName.ToString();
             string unitNameEnumMemberValue = EnumExtensions.GetEnumMemberAttrValue(unitName);
@@ -67,26 +66,36 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
         var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
 
-        int selectedTeamsCounter = 0;
+        int playersThatAreReady = 0;
         foreach (var teamKvp in matchReportData)
         {
-            string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
-
-            if (teamKvp.Value.ConfirmedMatch)
+            foreach (var item in teamKvp.Value.TeamMemberIdsWithSelectedPlanesByTheTeam)
             {
-                checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
-                selectedTeamsCounter++;
+                string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
+
+                if (item.Value.CurrentStatus == EmojiName.WHITECHECKMARK)
+                {
+                    checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
+                    playersThatAreReady++;
+                }
+
+                finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
             }
-
-            finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
         }
 
-        if (selectedTeamsCounter > 1)
+        Log.WriteLine(playersThatAreReady + " | " +
+            mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2, LogLevel.DEBUG);
+
+        if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
+            !mcc.leagueMatchCached.MatchReporting.MatchStarted)
         {
-            mcc.leagueMatchCached.FinishTheMatch(mcc.interfaceLeagueCached);
-        }
+            mcc.leagueMatchCached.MatchReporting.MatchStarted = true;
 
-        finalMessage += "You can either Confirm/Dispute the result below.";
+             InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                thisInterfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+                thisInterfaceMessage.MessageChannelId);
+            new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
+        }
 
         Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 

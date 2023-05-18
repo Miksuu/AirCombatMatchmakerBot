@@ -7,16 +7,13 @@ using System.Text;
 [DataContract]
 public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, InterfaceLoggingClass where TKey : notnull
 {
-    [DataMember] private ConcurrentDictionary<TKey, TValue> _values;
+    [DataMember] private ConcurrentDictionary<TKey, TValue> _values = new ConcurrentDictionary<TKey, TValue>();
 
-    public logConcurrentDictionary()
-    {
-        _values = new ConcurrentDictionary<TKey, TValue>();
-    }
+    public logConcurrentDictionary() { }
 
     public logConcurrentDictionary(IEnumerable<KeyValuePair<TKey, TValue>> collection)
     {
-        _values = new ConcurrentDictionary<TKey, TValue>(collection ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>());
+        _values = new ConcurrentDictionary<TKey, TValue>(collection); //?? Enumerable.Empty<KeyValuePair<TKey, TValue>>());
     }
 
     public string GetLoggingClassParameters()

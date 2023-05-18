@@ -27,20 +27,29 @@ public class ReportObject
         set => cachedDefaultStatus.SetValue(value);
     }
 
+    public bool HiddenBeforeConfirmation
+    {
+        get => hiddenBeforeConfirmation.GetValue();
+        set => hiddenBeforeConfirmation.SetValue(value);
+    }
+
     [DataMember] private logString fieldNameDisplay = new logString();
     [DataMember] private logString objectValue = new logString();
     [DataMember] private logClass<EmojiName> currentStatus = new logClass<EmojiName>(new EmojiName());
     [DataMember] private logClass<EmojiName> cachedDefaultStatus = new logClass<EmojiName>(new EmojiName());
+    [DataMember] private logClass<bool> hiddenBeforeConfirmation = new logClass<bool>();
 
     public ReportObject()
     {
     }
 
-    public ReportObject(string _FieldNameDisplay, EmojiName _defaultStateEmoji)
+    public ReportObject(
+        string _FieldNameDisplay, EmojiName _defaultStateEmoji, bool _hiddenBeforeConfirmation = false)
     {
         FieldNameDisplay = _FieldNameDisplay;
         CachedDefaultStatus = _defaultStateEmoji;
         CurrentStatus = _defaultStateEmoji;
+        HiddenBeforeConfirmation = _hiddenBeforeConfirmation;
     }
 
     public void SetObjectValueAndFieldBool(string _value, EmojiName _currentStatus)

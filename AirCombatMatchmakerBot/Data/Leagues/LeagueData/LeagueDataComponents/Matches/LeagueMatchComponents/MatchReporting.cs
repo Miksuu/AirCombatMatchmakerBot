@@ -1,10 +1,12 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using System.Text.Json.Serialization;
 
 [DataContract]
 public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 {
+    [IgnoreDataMember]
     public ConcurrentDictionary<int, ReportData> TeamIdsWithReportData
     {
         get => teamIdsWithReportData.GetValue();
@@ -15,6 +17,12 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
     {
         get => showingConfirmationMessage.GetValue();
         set => showingConfirmationMessage.SetValue(value);
+    }
+
+    public bool MatchStarted
+    {
+        get => matchStarted.GetValue();
+        set => matchStarted.SetValue(value);
     }
 
     public bool MatchDone
@@ -43,6 +51,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
     [DataMember] private logConcurrentDictionary<int, ReportData> teamIdsWithReportData = new logConcurrentDictionary<int, ReportData>();
     [DataMember] private logClass<bool> showingConfirmationMessage = new logClass<bool>();
+    [DataMember] private logClass<bool> matchStarted = new logClass<bool>();
     [DataMember] private logClass<bool> matchDone = new logClass<bool>();
     [DataMember] private logString finalResultForConfirmation = new logString();
     [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
@@ -57,7 +66,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
     public MatchReporting() { }
 
-    public MatchReporting(ConcurrentDictionary<int, string> _teamsInTheMatch)
+    public MatchReporting(ConcurrentDictionary<int, string> _teamsInTheMatch, InterfaceLeague _interfaceLeague)
     {
         foreach (var teamKvp in _teamsInTheMatch)
         {
@@ -69,7 +78,9 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
             Log.WriteLine("Adding team: " + teamKvp.Key + " | " + teamKvp.Value, LogLevel.VERBOSE);
 
-            TeamIdsWithReportData.TryAdd(teamKvp.Key, new ReportData(teamKvp.Value));
+            TeamIdsWithReportData.TryAdd(teamKvp.Key, new ReportData(teamKvp.Value,
+                _interfaceLeague.LeagueData.Teams.FindTeamById(
+                    _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key).Players));
         }
     }
 

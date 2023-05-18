@@ -2,9 +2,8 @@
 using Discord;
 using System.Runtime.Serialization;
 using Discord.Rest;
-using System;
 using System.Collections.Concurrent;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Serialization;
 
 [DataContract]
 public abstract class BaseCategory : InterfaceCategory
@@ -21,6 +20,7 @@ public abstract class BaseCategory : InterfaceCategory
         set => channelTypes.SetValue(value);
     }
 
+    [IgnoreDataMember]
     public ConcurrentDictionary<ulong, InterfaceChannel> InterfaceChannels
     {
         get => interfaceChannels.GetValue();

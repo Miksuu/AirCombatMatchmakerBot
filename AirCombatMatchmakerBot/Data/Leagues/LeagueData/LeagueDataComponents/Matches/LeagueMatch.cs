@@ -1,13 +1,11 @@
-using Discord.WebSocket;
 using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
-using Discord;
-using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 [DataContract]
 public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 {
+    [IgnoreDataMember]
     public ConcurrentDictionary<int, string> TeamsInTheMatch
     {
         get => teamsInTheMatch.GetValue();
@@ -82,7 +80,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
-        MatchReporting = new MatchReporting(TeamsInTheMatch);
+        MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague);
 
         Log.WriteLine("Constructed a new match with teams ids: " + TeamsInTheMatch.ElementAt(0) +
             TeamsInTheMatch.ElementAt(1) + " with matchId of: " + MatchId, LogLevel.DEBUG);
@@ -125,6 +123,18 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         return allowedUserIds;
     }
 
+    public async void StartTheMatchOnSecondThread(InterfaceChannel _interfaceChannel)
+    {
+        Log.WriteLine("Starting the match on second thread on channel: " + _interfaceChannel.ChannelId, LogLevel.VERBOSE);
+
+        await _interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMMATCHENTRYMESSAGE);
+
+        await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+            MessageName.REPORTINGMESSAGE, true);
+        await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+            MessageName.REPORTINGSTATUSMESSAGE, true);
+    }
+
     public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
     {
         MatchReporting.MatchDone = true;
@@ -132,7 +142,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
         EloSystem.CalculateFinalEloForBothTeams(
             _interfaceLeague, MatchReporting.FindTeamsInTheMatch(_interfaceLeague),
-            MatchReporting.TeamIdsWithReportData);
+            MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
 
         var guild = BotReference.GetGuildRef();
 

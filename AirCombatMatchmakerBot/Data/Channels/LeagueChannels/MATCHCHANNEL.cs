@@ -14,9 +14,9 @@ public class MATCHCHANNEL : BaseChannel
             new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {
                 new KeyValuePair<MessageName, bool>(MessageName.MATCHSTARTMESSAGE, false),
-                //new KeyValuePair<MessageName, bool>(MessageName.CONFIRMMATCHENTRYMESSAGE, false),
-                new KeyValuePair<MessageName, bool>(MessageName.REPORTINGMESSAGE, false),
-                new KeyValuePair<MessageName, bool>(MessageName.REPORTINGSTATUSMESSAGE, false),
+                new KeyValuePair<MessageName, bool>(MessageName.CONFIRMMATCHENTRYMESSAGE, false),
+                //new KeyValuePair<MessageName, bool>(MessageName.REPORTINGMESSAGE, false),
+                //new KeyValuePair<MessageName, bool>(MessageName.REPORTINGSTATUSMESSAGE, false),
             });
     }
 
@@ -44,31 +44,4 @@ public class MATCHCHANNEL : BaseChannel
 
         return listOfOverwrites;
     }
-
-    /*
-    public (InterfaceLeague?, LeagueMatch?, string) FindInterfaceLeagueAndLeagueMatchOnThePressedButtonsChannel(
-        ulong _buttonCategoryId, ulong _messageChannelId)
-    {
-        Log.WriteLine("Trying to find a league match with: " + _buttonCategoryId, LogLevel.VERBOSE);
-
-        InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.GetILeagueByCategoryId(_buttonCategoryId);
-        if (interfaceLeague == null)
-        {
-            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
-            return (null, null, "Could not find the interface league");
-        }
-
-        LeagueMatch? foundMatch =
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(
-                _messageChannelId);
-        if (foundMatch == null)
-        {
-            Log.WriteLine("Match with: " + _messageChannelId +
-                " was not found.", LogLevel.CRITICAL);
-            return (interfaceLeague, null, "Could not find the LeagueMatch!");
-        }
-
-        return (interfaceLeague, foundMatch, "");
-    }*/
 }
