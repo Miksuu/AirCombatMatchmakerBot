@@ -80,7 +80,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
-        MatchReporting = new MatchReporting(TeamsInTheMatch);
+        MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague);
 
         Log.WriteLine("Constructed a new match with teams ids: " + TeamsInTheMatch.ElementAt(0) +
             TeamsInTheMatch.ElementAt(1) + " with matchId of: " + MatchId, LogLevel.DEBUG);
@@ -130,9 +130,9 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         // Delete the MatchStart and ConfirmEntry Message here too
 
         await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-            MessageName.REPORTINGMESSAGE, false);
+            MessageName.REPORTINGMESSAGE, true);
         await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-            MessageName.REPORTINGSTATUSMESSAGE, false);
+            MessageName.REPORTINGSTATUSMESSAGE, true);
     }
 
     public async void FinishTheMatch(InterfaceLeague _interfaceLeague)

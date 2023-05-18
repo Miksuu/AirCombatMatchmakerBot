@@ -59,7 +59,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
     public MatchReporting() { }
 
-    public MatchReporting(ConcurrentDictionary<int, string> _teamsInTheMatch)
+    public MatchReporting(ConcurrentDictionary<int, string> _teamsInTheMatch, InterfaceLeague _interfaceLeague)
     {
         foreach (var teamKvp in _teamsInTheMatch)
         {
@@ -71,7 +71,9 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
             Log.WriteLine("Adding team: " + teamKvp.Key + " | " + teamKvp.Value, LogLevel.VERBOSE);
 
-            TeamIdsWithReportData.TryAdd(teamKvp.Key, new ReportData(teamKvp.Value));
+            TeamIdsWithReportData.TryAdd(teamKvp.Key, new ReportData(teamKvp.Value,
+                _interfaceLeague.LeagueData.Teams.FindTeamById(
+                    _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key).Players.ToList()));
         }
     }
 

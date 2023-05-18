@@ -31,7 +31,7 @@ public class BotRuntimeManager
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
-                
+                /*
                 var guild = BotReference.GetGuildRef();
                 foreach (var cat in guild.CategoryChannels)
                 {
@@ -61,6 +61,7 @@ public class BotRuntimeManager
 
                 await SerializationManager.HandleDatabaseCreationOrLoading("0");
 
+                
                 // Delete roles here
                 foreach (var item in guild.Roles)
                 {

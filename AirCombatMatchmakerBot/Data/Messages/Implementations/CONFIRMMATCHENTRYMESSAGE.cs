@@ -66,23 +66,28 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
         var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
 
-        int selectedTeamsCounter = 0;
+        int playersThatAreReady = 0;
         foreach (var teamKvp in matchReportData)
         {
-            string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
-
-            if (teamKvp.Value.ConfirmedMatch)
+            foreach (var item in teamKvp.Value.TeamMemberIdsWithSelectedPlanesByTheTeam)
             {
-                checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
-                selectedTeamsCounter++;
-            }
+                string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
 
-            finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
+                if (item.Value.CurrentStatus == EmojiName.WHITECHECKMARK)
+                {
+                    checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
+                    playersThatAreReady++;
+                }
+
+                finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
+            }
         }
 
-        if (selectedTeamsCounter > 1)
+        Log.WriteLine(playersThatAreReady + " | " + mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2, LogLevel.DEBUG);
+
+        if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2)
         {
-            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+                        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 thisInterfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                 thisInterfaceMessage.MessageChannelId);
             new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();

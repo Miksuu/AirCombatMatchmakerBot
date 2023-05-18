@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Numerics;
 using System.Runtime.Serialization;
 
 [DataContract]
@@ -8,6 +9,13 @@ public class ReportData
     {
         get => teamName.GetValue();
         set => teamName.SetValue(value);
+    }
+
+    [IgnoreDataMember]
+    public ConcurrentDictionary<ulong, ReportObject> TeamMemberIdsWithSelectedPlanesByTheTeam
+    {
+        get => teamMemberIdsWithSelectedPlanesByTheTeam.GetValue();
+        set => teamMemberIdsWithSelectedPlanesByTheTeam.SetValue(value);
     }
 
     public ReportObject ReportedScore
@@ -67,14 +75,24 @@ public class ReportData
     }
 
     [DataMember] private logString teamName = new logString();
+    [DataMember] private logConcurrentDictionary<ulong, ReportObject> teamMemberIdsWithSelectedPlanesByTheTeam = new logConcurrentDictionary<ulong, ReportObject>();
     [DataMember] private ReportObject reportedScore = new ReportObject("Reported score", EmojiName.REDSQUARE);
     [DataMember] private ReportObject tacviewLink = new ReportObject("Tacview link", EmojiName.REDSQUARE);
     [DataMember] private ReportObject commentsByTheTeamMembers = new ReportObject("Comment", EmojiName.YELLOWSQUARE);
     [DataMember] private logClass<float> finalEloDelta = new logClass<float>();
     [DataMember] private logClass<bool> confirmedMatch = new logClass<bool>();
 
-    public ReportData(string _reportingTeamName)
+    public ReportData(string _reportingTeamName, List<Player> _players)
     {
         TeamName = _reportingTeamName;
+
+        foreach (var player in _players)
+        {
+            Log.WriteLine("Adding player: " + player.PlayerDiscordId, LogLevel.VERBOSE);
+            var newReportObject = new ReportObject("Plane", EmojiName.REDSQUARE, true);
+            TeamMemberIdsWithSelectedPlanesByTheTeam.TryAdd(player.PlayerDiscordId, newReportObject);
+        }
+
+        Log.WriteLine("done adding players: " + TeamMemberIdsWithSelectedPlanesByTheTeam.Count + " on team: " + _reportingTeamName, LogLevel.VERBOSE);
     }
 }
