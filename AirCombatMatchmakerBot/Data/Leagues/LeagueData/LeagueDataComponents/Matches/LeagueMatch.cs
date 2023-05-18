@@ -127,7 +127,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
     {
         Log.WriteLine("Starting the match on second thread on channel: " + _interfaceChannel.ChannelId, LogLevel.VERBOSE);
 
-        // Delete the MatchStart and ConfirmEntry Message here too
+        await _interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMMATCHENTRYMESSAGE);
 
         await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
             MessageName.REPORTINGMESSAGE, true);

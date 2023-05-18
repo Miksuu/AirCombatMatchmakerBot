@@ -83,11 +83,15 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             }
         }
 
-        Log.WriteLine(playersThatAreReady + " | " + mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2, LogLevel.DEBUG);
+        Log.WriteLine(playersThatAreReady + " | " +
+            mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2, LogLevel.DEBUG);
 
-        if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2)
+        if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
+            !mcc.leagueMatchCached.MatchReporting.MatchStarted)
         {
-                        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            mcc.leagueMatchCached.MatchReporting.MatchStarted = true;
+
+             InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 thisInterfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                 thisInterfaceMessage.MessageChannelId);
             new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
