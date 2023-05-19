@@ -197,7 +197,19 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         await _interfaceLeague.PostMatchReport(
             MatchReporting.FinalMessageForMatchReportingChannel, MatchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
-        await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", 45);
+        int matchChannelDeleteDelay = 45;
+
+        var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
+        if (messageToModify == null)
+        {
+            Log.WriteLine(nameof(messageToModify) + " was null!", LogLevel.ERROR);
+            return;
+        }
+
+        await messageToModify.AddContentToTheEndOfTheMessage(
+            "Match is done. Deleting this channel in " + matchChannelDeleteDelay + " seconds!");
+
+        await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
 
         LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(MatchChannelId);
         if (tempMatch == null)

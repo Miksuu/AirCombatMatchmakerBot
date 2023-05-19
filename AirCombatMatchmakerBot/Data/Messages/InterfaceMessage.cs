@@ -31,7 +31,7 @@ public interface InterfaceMessage
         bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
     public Task ModifyMessage(string _newContent);
-    //public abstract void GenerateButtons();
+    public Task AddContentToTheEndOfTheMessage(string _content);
     public abstract string GenerateMessage();
     public Task GenerateAndModifyTheMessage();
     public Task<Discord.IMessage?> GetMessageById(IMessageChannel _channel);

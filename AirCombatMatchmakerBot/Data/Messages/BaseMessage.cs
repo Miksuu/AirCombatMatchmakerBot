@@ -398,6 +398,17 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("Modifying the message: " + thisInterfaceMessage.MessageId + " done.", LogLevel.VERBOSE);
     }
 
+    public async Task AddContentToTheEndOfTheMessage(string _content)
+    {
+        Log.WriteLine("Adding content: " + _content + " to the end of the message: " +
+            thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
+
+        await ModifyMessage(thisInterfaceMessage.MessageDescription + "\n\n" + _content);
+
+        Log.WriteLine("Done adding content: " + _content + " to the end of the message: " +
+            thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
+    }
+
     public async Task GenerateAndModifyTheMessage()
     {
         await ModifyMessage(GenerateMessage());
