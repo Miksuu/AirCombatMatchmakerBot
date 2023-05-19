@@ -144,7 +144,6 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
             _interfaceLeague, MatchReporting.FindTeamsInTheMatch(_interfaceLeague),
             MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
 
-
         Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
@@ -198,7 +197,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         await _interfaceLeague.PostMatchReport(
             MatchReporting.FinalMessageForMatchReportingChannel, MatchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
-        await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match");
+        await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", 45);
 
         LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(MatchChannelId);
         if (tempMatch == null)

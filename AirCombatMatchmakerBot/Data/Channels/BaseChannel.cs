@@ -461,12 +461,12 @@ public abstract class BaseChannel : InterfaceChannel
         return "";
     }
 
-    public async Task DeleteThisChannel(ulong _categoryId, string _nameMustContain)
+    public async Task DeleteThisChannel(ulong _categoryId, string _nameMustContain, int _delayInSeconds)
     {
         ulong channelId = thisInterfaceChannel.ChannelId;
 
-        Log.WriteLine("Starting to delete channel: " + channelId +
-            " with nameMustContain: " + _nameMustContain + " on category: " + _categoryId, LogLevel.DEBUG);
+        Log.WriteLine("Starting to delete channel: " + channelId + " with nameMustContain: " +
+            _nameMustContain + " on category: " + _categoryId + " with delay: " + _delayInSeconds, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
         if (guild == null)
@@ -485,7 +485,12 @@ public abstract class BaseChannel : InterfaceChannel
             return;
         }
 
-        Log.WriteLine("Found channel: " + +channel.Id + " named: " + channel.Name + " deleting it.", LogLevel.VERBOSE);
+        Log.WriteLine("Found channel: " + +channel.Id + " named: " + channel.Name +
+            " deleting it after " + _delayInSeconds + " seconds", LogLevel.VERBOSE);
+
+        await Task.Delay(_delayInSeconds * 1000);
+
+        Log.WriteLine("After delay on: " + channel.Id + " deleting channel.", LogLevel.VERBOSE);
 
         await channel.DeleteAsync();
 
@@ -496,6 +501,6 @@ public abstract class BaseChannel : InterfaceChannel
                 thisInterfaceChannel.ChannelId, out InterfaceChannel? _ic);
         Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(channelId, out ulong _id);
 
-        Log.WriteLine("Deleted channel: " + _id + " from the database.", LogLevel.VERBOSE);
+        Log.WriteLine("Deleted channel: " + _id + " from the database.", LogLevel.DEBUG);
     }
 }
