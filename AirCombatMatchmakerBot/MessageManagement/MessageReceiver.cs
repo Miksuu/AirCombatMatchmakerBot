@@ -122,7 +122,7 @@ public static class MessageReceiver
                 return;
             }
 
-            if (!interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ShowingConfirmationMessage)
+            if (interfaceLeagueWithLeagueMatch.Item2.MatchReporting.MatchState == MatchState.REPORTINGPHASE)
             {
                 finalResponseTuple = await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.PrepareFinalMatchResult(
                     interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,

@@ -137,7 +137,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 
     public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
     {
-        MatchReporting.MatchDone = true;
+        MatchReporting.MatchState = MatchState.MATCHDONE;
 
         Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
         EloSystem.CalculateFinalEloForBothTeams(
@@ -151,13 +151,6 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
             Exceptions.BotGuildRefNull();
             return;
         }
-
-        /*
-        if (!_removingPlayerFromDatabase)
-        {
-            Log.WriteLine("Final result for the confirmation was null!", LogLevel.CRITICAL);
-            return;
-        }*/
 
         Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 

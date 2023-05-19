@@ -87,9 +87,9 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2, LogLevel.DEBUG);
 
         if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
-            !mcc.leagueMatchCached.MatchReporting.MatchStarted)
+            mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
         {
-            mcc.leagueMatchCached.MatchReporting.MatchStarted = true;
+            mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.REPORTINGPHASE;
 
              InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
                 thisInterfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(

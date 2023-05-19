@@ -13,6 +13,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         set => teamIdsWithReportData.SetValue(value);
     }
 
+    /*
     public bool ShowingConfirmationMessage
     {
         get => showingConfirmationMessage.GetValue();
@@ -29,6 +30,12 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
     {
         get => matchDone.GetValue();
         set => matchDone.SetValue(value);
+    }*/
+
+    public MatchState MatchState
+    {
+        get => matchState.GetValue();
+        set => matchState.SetValue(value);
     }
 
     public string FinalResultForConfirmation
@@ -49,19 +56,21 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         set => finalResultTitleForConfirmation.SetValue(value);
     }
 
-    [DataMember] private logConcurrentDictionary<int, ReportData> teamIdsWithReportData = new logConcurrentDictionary<int, ReportData>();
-    [DataMember] private logClass<bool> showingConfirmationMessage = new logClass<bool>();
-    [DataMember] private logClass<bool> matchStarted = new logClass<bool>();
-    [DataMember] private logClass<bool> matchDone = new logClass<bool>();
+    [DataMember] private logConcurrentDictionary<int, ReportData> teamIdsWithReportData =
+        new logConcurrentDictionary<int, ReportData>();
+    //[DataMember] private logClass<bool> showingConfirmationMessage = new logClass<bool>();
+    //[DataMember] private logClass<bool> matchStarted = new logClass<bool>();
+    //[DataMember] private logClass<bool> matchDone = new logClass<bool>();
+    [DataMember] private logClass<MatchState> matchState = new logClass<MatchState>();
     [DataMember] private logString finalResultForConfirmation = new logString();
     [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
     [DataMember] private logString finalResultTitleForConfirmation = new logString();
 
     public List<string> GetClassParameters()
     {
-        return new List<string> { teamIdsWithReportData.GetLoggingClassParameters(),
-        showingConfirmationMessage.GetParameter(), matchDone.GetParameter(), finalResultForConfirmation.GetValue(),
-            finalMessageForMatchReportingChannel.GetValue(), finalResultForConfirmation.GetValue() };
+        return new List<string> { teamIdsWithReportData.GetLoggingClassParameters(), MatchState.ToString(),
+            finalResultForConfirmation.GetValue(), finalMessageForMatchReportingChannel.GetValue(), 
+            finalResultForConfirmation.GetValue() };
     }
 
     public MatchReporting() { }
@@ -94,7 +103,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
             _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
 
-        if (MatchDone)
+        if (MatchState == MatchState.MATCHDONE)
         {
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already over.", LogLevel.VERBOSE);
@@ -102,7 +111,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         }
 
         // Can receive comments still even though the the confirmation is under way
-        if (ShowingConfirmationMessage && _typeOfTheReportingObject == TypeOfTheReportingObject.REPORTEDSCORE)
+        if (MatchState == MatchState.CONFIRMATIONPHASE && _typeOfTheReportingObject == TypeOfTheReportingObject.REPORTEDSCORE)
         {
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already in confirmation.", LogLevel.VERBOSE);
@@ -181,7 +190,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         // If the match is on the confirmation phase,
         // edit that MessageDescription instead of the reporting status MessageDescription which would be null
         MessageName messageNameToEdit = MessageName.REPORTINGSTATUSMESSAGE;
-        if (ShowingConfirmationMessage)
+        if (MatchState == MatchState.CONFIRMATIONPHASE)
         {
             messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
 
@@ -320,11 +329,11 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         }
 
         Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
-            " showing: " + ShowingConfirmationMessage, LogLevel.DEBUG);
+            " state: " + MatchState.ToString(), LogLevel.DEBUG);
 
-        if (confirmationMessageCanBeShown) //&& !showingConfirmationMessage)
+        if (confirmationMessageCanBeShown)
         {
-            ShowingConfirmationMessage = true;
+            MatchState = MatchState.CONFIRMATIONPHASE;
         }
 
         return ("", confirmationMessageCanBeShown, interfaceChannel);

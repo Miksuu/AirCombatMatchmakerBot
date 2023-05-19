@@ -63,7 +63,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
 
         if (reportDataTupleWithString.Item1.ElementAt(1).ConfirmedMatch == true)
         {
-            mcc.leagueMatchCached.MatchReporting.MatchDone = true;
+            mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.MATCHDONE;
             Log.WriteLine("Both teams are done with the reporting on match: " +
                 mcc.leagueMatchCached.MatchId, LogLevel.DEBUG);
         }
