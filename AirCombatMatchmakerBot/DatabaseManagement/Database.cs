@@ -30,7 +30,7 @@ public class Database
         get => leagues.GetValue();
         set => leagues.SetValue(value);
     }
-    public EventScheduler<int> EventScheduler
+    public EventScheduler EventScheduler
     {
         get => eventScheduler.GetValue();
         set => eventScheduler.SetValue(value);
@@ -71,7 +71,7 @@ public class Database
     [DataMember] private logClass<CachedUsers> cachedUsers = new logClass<CachedUsers>(new CachedUsers());
     [DataMember] private logClass<Categories> categories = new logClass<Categories>(new Categories());
     [DataMember] private logClass<Leagues> leagues = new logClass<Leagues>(new Leagues());
-    [DataMember] private logClass<EventScheduler<int>> eventScheduler = new logClass<EventScheduler<int>>(new EventScheduler<int>());
+    [DataMember] private logClass<EventScheduler> eventScheduler = new logClass<EventScheduler>(new EventScheduler());
     [DataMember] private logConcurrentBag<LeagueMatch> archivedLeagueMatches = new logConcurrentBag<LeagueMatch>();
 
     public async Task RemovePlayerFromTheDatabase(ulong _playerDiscordId)

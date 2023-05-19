@@ -147,8 +147,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceLeague.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                MatchChannelId);
+            _interfaceLeague.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(MatchChannelId);
 
         var interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.MATCHFINALRESULTMESSAGE, false);
@@ -209,10 +208,11 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         await messageToModify.AddContentToTheEndOfTheMessage(
             "Match is done. Deleting this channel in " + matchChannelDeleteDelay + " seconds!");
 
-        Database.Instance.EventScheduler.ScheduledEvents.Add()
+        // Schedule an event to delete the channel later
+        Database.Instance.EventScheduler.ScheduledEvents.Add(
+            new DeleteChannelEvent(matchChannelDeleteDelay, _interfaceLeague.LeagueCategoryId, MatchChannelId, "match"));
 
-
-        await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
+        //await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
 
         LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(MatchChannelId);
         if (tempMatch == null)

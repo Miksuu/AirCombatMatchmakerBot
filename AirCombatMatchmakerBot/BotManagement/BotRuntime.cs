@@ -112,10 +112,15 @@ public class BotRuntimeManager
 
                 await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
 
+                await Database.Instance.EventScheduler.CheckCurrentTimeAndExecuteScheduledEvents();
+
                 await SerializationManager.SerializeUsersOnTheServer();
                 await SerializationManager.SerializeDB();
 
                 await CommandHandler.InstallCommandsAsync();
+
+                Thread secondThread = new Thread(Database.Instance.EventScheduler.EventSchedulerLoop);
+                secondThread.Start();
             }
             else
             {

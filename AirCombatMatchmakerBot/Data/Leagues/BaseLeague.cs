@@ -97,8 +97,7 @@ public abstract class BaseLeague : InterfaceLeague
             " with id: " + LeagueCategoryId, LogLevel.VERBOSE);
 
         InterfaceCategory interfaceCategory = 
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                LeagueCategoryId).Value;
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(LeagueCategoryId).Value;
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);

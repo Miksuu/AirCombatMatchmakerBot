@@ -242,9 +242,8 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
         Log.WriteLine("Starting to find Ileague from db with: " +
             _leagueCategoryId, LogLevel.VERBOSE);
 
-        KeyValuePair<ulong, InterfaceCategory> findLeagueCategoryType =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _leagueCategoryId);
+        var findLeagueCategoryType =
+            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(_leagueCategoryId);
         CategoryType leagueCategoryName = findLeagueCategoryType.Value.CategoryType;
 
         Log.WriteLine("found: " + nameof(leagueCategoryName) + ": " +

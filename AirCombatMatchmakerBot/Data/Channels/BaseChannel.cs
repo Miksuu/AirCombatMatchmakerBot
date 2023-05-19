@@ -461,12 +461,13 @@ public abstract class BaseChannel : InterfaceChannel
         return "";
     }
 
-    public async Task DeleteThisChannel(ulong _categoryId, string _nameMustContain, int _delayInSeconds)
+    public async Task DeleteThisChannel(
+        InterfaceCategory _interfaceCategory, InterfaceChannel _interfaceChannel, string _nameMustContain)
     {
-        ulong channelId = thisInterfaceChannel.ChannelId;
+        ulong channelId = _interfaceChannel.ChannelId;
 
         Log.WriteLine("Starting to delete channel: " + channelId + " with nameMustContain: " +
-            _nameMustContain + " on category: " + _categoryId + " with delay: " + _delayInSeconds, LogLevel.DEBUG);
+            _nameMustContain + " on category: " + _interfaceCategory, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
         if (guild == null)
@@ -478,7 +479,7 @@ public abstract class BaseChannel : InterfaceChannel
         // Perhaps search within category for a faster operation
         var channel = guild.Channels.FirstOrDefault(
             c => c.Id == channelId &&
-                c.Name.Contains(_nameMustContain));// Just in case
+                c.Name.Contains(_nameMustContain)); // Just in case
         if (channel == null)
         {
             Log.WriteLine(nameof(channel) + " was null!", LogLevel.ERROR);
@@ -486,19 +487,24 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         Log.WriteLine("Found channel: " + +channel.Id + " named: " + channel.Name +
-            " deleting it after " + _delayInSeconds + " seconds", LogLevel.VERBOSE);
+            " deleting it.", LogLevel.VERBOSE);
 
-        await Task.Delay(_delayInSeconds * 1000);
+        //await Task.Delay(_delayInSeconds * 1000);
 
-        Log.WriteLine("After delay on: " + channel.Id + " deleting channel.", LogLevel.VERBOSE);
+        //Log.WriteLine("After delay on: " + channel.Id + " deleting channel.", LogLevel.VERBOSE);
 
         await channel.DeleteAsync();
 
         Log.WriteLine("Deleted channel: " + channel.Id + " deleting db entry.", LogLevel.VERBOSE);
 
+        /*
         Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             _categoryId).Value.InterfaceChannels.TryRemove(
-                thisInterfaceChannel.ChannelId, out InterfaceChannel? _ic);
+                channelId, out InterfaceChannel? _ic);
+        Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(channelId, out ulong _id);*/
+
+        _interfaceCategory.InterfaceChannels.TryRemove(
+                channelId, out InterfaceChannel? _ic);
         Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(channelId, out ulong _id);
 
         Log.WriteLine("Deleted channel: " + _id + " from the database.", LogLevel.DEBUG);

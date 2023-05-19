@@ -91,8 +91,8 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         {
             mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.REPORTINGPHASE;
 
-             InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                thisInterfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+            var interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+               thisInterfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
                 thisInterfaceMessage.MessageChannelId);
             new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
         }

@@ -32,8 +32,7 @@ public class REPORTSCOREBUTTON : BaseButton
     {
         InterfaceMessage? reportingStatusMessage =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                    _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
+                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(_interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
                         MessageName.REPORTINGSTATUSMESSAGE);
         if (reportingStatusMessage == null)
         {

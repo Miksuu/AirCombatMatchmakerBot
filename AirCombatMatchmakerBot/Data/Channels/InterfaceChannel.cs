@@ -35,5 +35,5 @@ public interface InterfaceChannel
         MessageName _messageName);
     public Task<IMessageChannel?> GetMessageChannelById(DiscordSocketClient _client);
     public Task<string> DeleteMessagesInAChannelWithMessageName(MessageName _messageNameToDelete);
-    public Task DeleteThisChannel(ulong _categoryId, string _nameMustContain, int _delayInSeconds);
+    public Task DeleteThisChannel(InterfaceCategory _interfaceCategory, InterfaceChannel _interfaceChannel, string _nameMustContain);
 }

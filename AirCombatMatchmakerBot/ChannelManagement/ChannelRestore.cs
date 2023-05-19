@@ -22,12 +22,12 @@ public static class ChannelRestore
         // Handles deleting the old value
         var dbKeyValue =
             Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _categoryId).Value;
+                _categoryId);
 
-        var dbFinal = dbKeyValue.InterfaceChannels.FirstOrDefault(
+        var dbFinal = dbKeyValue.Value.InterfaceChannels.FirstOrDefault(
             ic => ic.Value.ChannelId == _interfaceChannel.ChannelId);
 
-        dbKeyValue.InterfaceChannels.TryRemove(dbFinal.Value.ChannelId, out InterfaceChannel? _ic);
+        dbKeyValue.Value.InterfaceChannels.TryRemove(dbFinal.Value.ChannelId, out InterfaceChannel? _ic);
 
         Log.WriteLine("Channel " + _interfaceChannel.ChannelType +
             " not found, regenerating it...", LogLevel.ERROR);

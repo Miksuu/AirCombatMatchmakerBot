@@ -184,8 +184,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         }
 
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _leagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
-                    _messageChannelId);
+            _leagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
 
         // If the match is on the confirmation phase,
         // edit that MessageDescription instead of the reporting status MessageDescription which would be null
