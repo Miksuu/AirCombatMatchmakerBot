@@ -209,6 +209,9 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         await messageToModify.AddContentToTheEndOfTheMessage(
             "Match is done. Deleting this channel in " + matchChannelDeleteDelay + " seconds!");
 
+        Database.Instance.EventScheduler.ScheduledEvents.Add()
+
+
         await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
 
         LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(MatchChannelId);
