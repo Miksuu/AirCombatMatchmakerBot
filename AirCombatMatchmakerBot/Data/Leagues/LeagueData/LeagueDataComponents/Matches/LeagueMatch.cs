@@ -144,13 +144,6 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
             _interfaceLeague, MatchReporting.FindTeamsInTheMatch(_interfaceLeague),
             MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
 
-        var guild = BotReference.GetGuildRef();
-
-        if (guild == null)
-        {
-            Exceptions.BotGuildRefNull();
-            return;
-        }
 
         Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 
@@ -205,31 +198,14 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         await _interfaceLeague.PostMatchReport(
             MatchReporting.FinalMessageForMatchReportingChannel, MatchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
+        await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match");
+
         LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(MatchChannelId);
-
-        // Perhaps search within category for a faster operation
-        var channel = guild.Channels.FirstOrDefault(
-            c => c.Id == MatchChannelId &&
-                c.Name.Contains("match"));// Just in case
-
-        if (channel == null)
-        {
-            Log.WriteLine(nameof(channel) + " was null!", LogLevel.ERROR);
-            return;
-        }
-
-        await channel.DeleteAsync();
-
         if (tempMatch == null)
         {
             Log.WriteLine(nameof(tempMatch) + " was null!", LogLevel.ERROR);
             return;
         }
-
-        Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceLeague.LeagueCategoryId).Value.InterfaceChannels.TryRemove(
-                MatchChannelId, out InterfaceChannel? _ic);
-        Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(MatchChannelId, out ulong _id);
 
         int matchIdTemp = MatchId;
 

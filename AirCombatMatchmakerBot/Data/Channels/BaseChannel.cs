@@ -460,4 +460,42 @@ public abstract class BaseChannel : InterfaceChannel
 
         return "";
     }
+
+    public async Task DeleteThisChannel(ulong _categoryId, string _nameMustContain)
+    {
+        ulong channelId = thisInterfaceChannel.ChannelId;
+
+        Log.WriteLine("Starting to delete channel: " + channelId +
+            " with nameMustContain: " + _nameMustContain + " on category: " + _categoryId, LogLevel.DEBUG);
+
+        var guild = BotReference.GetGuildRef();
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
+        // Perhaps search within category for a faster operation
+        var channel = guild.Channels.FirstOrDefault(
+            c => c.Id == channelId &&
+                c.Name.Contains(_nameMustContain));// Just in case
+        if (channel == null)
+        {
+            Log.WriteLine(nameof(channel) + " was null!", LogLevel.ERROR);
+            return;
+        }
+
+        Log.WriteLine("Found channel: " + +channel.Id + " named: " + channel.Name + " deleting it.", LogLevel.VERBOSE);
+
+        await channel.DeleteAsync();
+
+        Log.WriteLine("Deleted channel: " + channel.Id + " deleting db entry.", LogLevel.VERBOSE);
+
+        Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
+            _categoryId).Value.InterfaceChannels.TryRemove(
+                thisInterfaceChannel.ChannelId, out InterfaceChannel? _ic);
+        Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(channelId, out ulong _id);
+
+        Log.WriteLine("Deleted channel: " + _id + " from the database.", LogLevel.VERBOSE);
+    }
 }
