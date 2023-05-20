@@ -12,26 +12,6 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         get => teamIdsWithReportData.GetValue();
         set => teamIdsWithReportData.SetValue(value);
     }
-
-    /*
-    public bool ShowingConfirmationMessage
-    {
-        get => showingConfirmationMessage.GetValue();
-        set => showingConfirmationMessage.SetValue(value);
-    }
-
-    public bool MatchStarted
-    {
-        get => matchStarted.GetValue();
-        set => matchStarted.SetValue(value);
-    }
-
-    public bool MatchDone
-    {
-        get => matchDone.GetValue();
-        set => matchDone.SetValue(value);
-    }*/
-
     public MatchState MatchState
     {
         get => matchState.GetValue();
@@ -58,9 +38,6 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
     [DataMember] private logConcurrentDictionary<int, ReportData> teamIdsWithReportData =
         new logConcurrentDictionary<int, ReportData>();
-    //[DataMember] private logClass<bool> showingConfirmationMessage = new logClass<bool>();
-    //[DataMember] private logClass<bool> matchStarted = new logClass<bool>();
-    //[DataMember] private logClass<bool> matchDone = new logClass<bool>();
     [DataMember] private logClass<MatchState> matchState = new logClass<MatchState>();
     [DataMember] private logString finalResultForConfirmation = new logString();
     [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
