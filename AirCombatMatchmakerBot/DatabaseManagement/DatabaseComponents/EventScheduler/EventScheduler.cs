@@ -51,14 +51,14 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
         {
             Log.WriteLine("Loop on event: " + scheduledEvent.EventId, LogLevel.VERBOSE);
 
-            if (scheduledEvent.EventIsBeingExecuted)
-            {
-                Log.WriteLine("Event: " + scheduledEvent.EventId + " was being executed already, continuing.", LogLevel.VERBOSE);
-                continue;
-            }
-
             if (currentUnixTime >= scheduledEvent.TimeToExecuteTheEventOn)
             {
+                if (scheduledEvent.EventIsBeingExecuted)
+                {
+                    Log.WriteLine("Event: " + scheduledEvent.EventId + " was being executed already, continuing.", LogLevel.VERBOSE);
+                    continue;
+                }
+
                 scheduledEvent.EventIsBeingExecuted = true;
 
                 InterfaceEventType interfaceEventType = (InterfaceEventType)scheduledEvent;
