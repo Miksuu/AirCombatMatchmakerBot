@@ -27,8 +27,7 @@ public interface InterfaceCategory
     ChannelType _channelType, ulong _socketCategoryChannelId,
     string _overrideChannelName = "", params ulong[] _allowedUsersIdsArray);
 
-    public InterfaceChannel FindInterfaceChannelWithIdInTheCategory(
-        ulong _idToSearchWith);
-    public InterfaceChannel FindInterfaceChannelWithNameInTheCategory(
-        ChannelType _nameToSearchWith);
+    public bool FindIfInterfaceChannelExistsWithIdInTheCategory(ulong _idToSearchWith);
+    public InterfaceChannel? FindInterfaceChannelWithIdInTheCategory(ulong _idToSearchWith);
+    public InterfaceChannel? FindInterfaceChannelWithNameInTheCategory(ChannelType _nameToSearchWith);
 }

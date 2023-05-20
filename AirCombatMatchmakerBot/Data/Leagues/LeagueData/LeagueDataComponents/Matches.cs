@@ -52,7 +52,7 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
     {
         // Get the category by the league category name passed in the method
         var categoryKvp =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
+            Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
                 _interfaceLeague.LeagueCategoryName);
 
         string leagueMatchIdString = _leagueMatch.MatchId.ToString();
@@ -64,8 +64,8 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
             overriddenMatchName, LogLevel.VERBOSE);
 
         // Prepare the match with the ID of the current new match
-        InterfaceChannel? interfaceChannel = categoryKvp.Value.CreateSpecificChannelFromChannelTypeWithoutRole(
-                ChannelType.MATCHCHANNEL, categoryKvp.Value.SocketCategoryChannelId,
+        InterfaceChannel? interfaceChannel = categoryKvp.CreateSpecificChannelFromChannelTypeWithoutRole(
+                ChannelType.MATCHCHANNEL, categoryKvp.SocketCategoryChannelId,
                 overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
                 _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague)).Result;
 
@@ -81,7 +81,7 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
             interfaceChannel.ChannelId))
         {
             Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryAdd(
-                interfaceChannel.ChannelId, categoryKvp.Value.SocketCategoryChannelId);
+                interfaceChannel.ChannelId, categoryKvp.SocketCategoryChannelId);
         }
 
         Thread secondThread = new Thread(() => InitChannelOnSecondThread(_client, interfaceChannel));

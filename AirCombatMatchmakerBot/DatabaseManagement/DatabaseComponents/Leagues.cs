@@ -151,8 +151,8 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
                                 return;
                             }
 
-                            var interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
-                                CategoryType.REGISTRATIONCATEGORY).Value.FindInterfaceChannelWithNameInTheCategory(
+                            var interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
+                                CategoryType.REGISTRATIONCATEGORY).FindInterfaceChannelWithNameInTheCategory(
                                 ChannelType.LEAGUEREGISTRATION);
 
                             var leagueRegistrationMessages = interfaceChannel.InterfaceMessagesWithIds.Where(
@@ -243,8 +243,8 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
             _leagueCategoryId, LogLevel.VERBOSE);
 
         var findLeagueCategoryType =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(_leagueCategoryId);
-        CategoryType leagueCategoryName = findLeagueCategoryType.Value.CategoryType;
+            Database.Instance.Categories.FindInterfaceCategoryWithId(_leagueCategoryId);
+        CategoryType leagueCategoryName = findLeagueCategoryType.CategoryType;
 
         Log.WriteLine("found: " + nameof(leagueCategoryName) + ": " +
             leagueCategoryName.ToString(), LogLevel.VERBOSE);

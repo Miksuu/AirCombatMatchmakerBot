@@ -112,7 +112,7 @@ public class BotRuntimeManager
 
                 await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
 
-                await Database.Instance.EventScheduler.CheckCurrentTimeAndExecuteScheduledEvents();
+                await Database.Instance.EventScheduler.CheckCurrentTimeAndExecuteScheduledEvents(true);
 
                 await SerializationManager.SerializeUsersOnTheServer();
                 await SerializationManager.SerializeDB();

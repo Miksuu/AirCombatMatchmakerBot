@@ -146,8 +146,13 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 
         Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 
-        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceLeague.LeagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(MatchChannelId);
+        InterfaceChannel? interfaceChannel = Database.Instance.Categories.FindInterfaceChannelInsideACategoryWithIds(
+            _interfaceLeague.LeagueCategoryId, MatchChannelId);
+        if (interfaceChannel == null)
+        {
+            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
 
         var interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.MATCHFINALRESULTMESSAGE, false);

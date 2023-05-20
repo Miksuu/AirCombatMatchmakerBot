@@ -56,7 +56,7 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass, Interf
             _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.DEBUG);
     }
 
-    public async void ExecuteTheScheduledEvent()
+    public async void ExecuteTheScheduledEvent()//bool _clearEventOnTheStartup = false)
     {
         ulong categoryId = CategoryIdToDeleteChannelOn;
         ulong channelId = ChannelIdToDelete;
@@ -65,13 +65,30 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass, Interf
         Log.WriteLine("Starting to execute event: " + nameof(DeleteChannelEvent) + " with: " +
             categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.VERBOSE);
 
-        InterfaceCategory interfaceCategory =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(categoryId).Value;
+        InterfaceCategory? interfaceCategory =
+            Database.Instance.Categories.FindInterfaceCategoryWithId(categoryId);
+        if (interfaceCategory == null)
+        {
+            Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
 
-        InterfaceChannel interfaceChannel = 
-            interfaceCategory.FindInterfaceChannelWithIdInTheCategory(channelId);
+        if (interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory(channelId))
+        {
+            InterfaceChannel? interfaceChannel =
+                interfaceCategory.FindInterfaceChannelWithIdInTheCategory(channelId);
+            if (interfaceChannel == null)
+            {
+                Log.WriteLine(nameof(interfaceChannel) + " was null! with id: " + channelId, LogLevel.CRITICAL);
+                return;
+            }
 
-        await interfaceChannel.DeleteThisChannel(interfaceCategory, interfaceChannel, nameMustContain);
+            await interfaceChannel.DeleteThisChannel(interfaceCategory, interfaceChannel, nameMustContain);
+        }
+        else
+        {
+            Log.WriteLine("Finished an event without deleting the channel, because it didn't exist!", LogLevel.WARNING);
+        }
 
         Log.WriteLine("Done executing event: " + nameof(DeleteChannelEvent) + " with: " +
             categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.DEBUG);

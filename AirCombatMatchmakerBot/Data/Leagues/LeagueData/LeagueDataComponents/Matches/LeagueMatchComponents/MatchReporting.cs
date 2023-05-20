@@ -160,8 +160,13 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             }
         }
 
-        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _leagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
+        InterfaceChannel? interfaceChannel = Database.Instance.Categories.FindInterfaceChannelInsideACategoryWithIds(
+            _leagueCategoryId, _messageChannelId);
+        if (interfaceChannel == null)
+        {
+            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
+            return new Response(nameof(interfaceChannel) + " was null!", false);
+        }
 
         // If the match is on the confirmation phase,
         // edit that MessageDescription instead of the reporting status MessageDescription which would be null
@@ -269,7 +274,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             }
 
             // Copypasted to MODIFYMATCHBUTTON.CS, maybe replace to method
-            InterfaceChannel interfaceChannelToDeleteTheMessageIn =
+            InterfaceChannel? interfaceChannelToDeleteTheMessageIn =
                 interfaceCategory.FindInterfaceChannelWithIdInTheCategory(
                     _messageChannelId);
             if (interfaceChannelToDeleteTheMessageIn == null)
@@ -296,8 +301,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
     {
         bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
 
-        InterfaceChannel? interfaceChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _leagueCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
+        InterfaceChannel? interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(_leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
         if (interfaceChannel == null)
         {
             Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);

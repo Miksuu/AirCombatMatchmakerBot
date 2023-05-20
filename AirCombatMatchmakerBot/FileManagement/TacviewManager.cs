@@ -46,11 +46,18 @@ public class TacviewManager
         {
             string[] finalFiles = new string[1];
 
-            var cachedUserMessage =
-                await Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
-                    CategoryType.BOTSTUFF).Value.FindInterfaceChannelWithNameInTheCategory(
-                        ChannelType.TACVIEWSTORAGE).CreateARawMessageForTheChannelFromMessageName(
-                            "", "Match " + _matchId + "'s tacviews", true, null, false, finalFiles[0] = fileIndex);
+            InterfaceChannel? interfaceChannel =
+                Database.Instance.Categories.FindInterfaceChannelInsideACategoryWithNames(
+                    CategoryType.BOTSTUFF, ChannelType.TACVIEWSTORAGE);
+            if (interfaceChannel == null)
+            {
+                Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
+                return Array.Empty<AttachmentData>();
+            }
+
+            Discord.IUserMessage? cachedUserMessage =
+                interfaceChannel.CreateARawMessageForTheChannelFromMessageName(
+                    "", "Match " + _matchId + "'s tacviews", true, null, false, finalFiles[0] = fileIndex).Result;
             if (cachedUserMessage == null)
             {
                 Log.WriteLine(nameof(cachedUserMessage) + " was null!", LogLevel.CRITICAL);

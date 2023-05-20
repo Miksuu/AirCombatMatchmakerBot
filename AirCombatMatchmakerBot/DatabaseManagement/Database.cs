@@ -81,8 +81,8 @@ public class Database
         await PlayerData.DeletePlayerProfile(_playerDiscordId);
         CachedUsers.RemoveUserFromTheCachedConcurrentBag(_playerDiscordId);
 
-        var interfaceChannel = Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
-            CategoryType.REGISTRATIONCATEGORY).Value.FindInterfaceChannelWithNameInTheCategory(
+        var interfaceChannel = Categories.FindInterfaceCategoryByCategoryName(
+            CategoryType.REGISTRATIONCATEGORY).FindInterfaceChannelWithNameInTheCategory(
                 ChannelType.LEAGUEREGISTRATION);
 
         Log.WriteLine("leagues count: " + Leagues.StoredLeagues.Count, LogLevel.VERBOSE);
@@ -140,8 +140,8 @@ public class Database
                 Log.WriteLine("Found and removed" + _playerDiscordId + " in team with id: " + teamId, LogLevel.DEBUG);
             }
 
-            var challengeMessage = Categories.FindCreatedCategoryWithChannelKvpWithId(
-                interfaceLeague.LeagueCategoryId).Value.
+            var challengeMessage = Categories.FindInterfaceCategoryWithId(
+                interfaceLeague.LeagueCategoryId).
                     FindInterfaceChannelWithNameInTheCategory(
                         ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
                             MessageName.CHALLENGEMESSAGE);
