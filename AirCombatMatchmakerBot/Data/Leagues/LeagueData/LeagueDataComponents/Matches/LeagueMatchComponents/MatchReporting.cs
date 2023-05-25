@@ -99,29 +99,6 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
             _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
 
-        /*
-        if (MatchState == MatchState.MATCHDONE)
-        {
-            Log.WriteLine(_playerId + " requested to report the match," +
-                " when it was already over.", LogLevel.VERBOSE);
-            return Task.FromResult(new Response("Match is already done!", false)).Result;
-        }
-
-        if (MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
-            _typeOfTheReportingObject == TypeOfTheReportingObject.TACVIEWLINK)
-        {
-            Log.WriteLine(_playerId + " tried to enter tacview on " + MatchState, LogLevel.VERBOSE);
-            return Task.FromResult(new Response("You can not upload tacview on this stage!", false)).Result;
-        }
-
-        // Can receive comments still even though the the confirmation is under way
-        if (MatchState == MatchState.CONFIRMATIONPHASE && _typeOfTheReportingObject == TypeOfTheReportingObject.REPORTEDSCORE)
-        {
-            Log.WriteLine(_playerId + " requested to report the match," +
-                " when it was already in confirmation.", LogLevel.VERBOSE);
-            return Task.FromResult(new Response("Match is in confirmation already! Finish that first, ", false)).Result;
-        }*/
-
         try
         {
             reportingTeam = _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
@@ -147,8 +124,6 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             var reportingObject = TeamIdsWithReportData[reportingTeam.TeamId].ReportingObjects.FirstOrDefault(x 
                  => x.GetTypeOfTheReportingObject() == _typeOfTheReportingObject) as BaseReportingObject;
 
-           
-
             if (_reportedObjectByThePlayer == "-")
             {
                 reportingObject.CancelTheReportingObjectAction();
@@ -157,27 +132,6 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             {
                 reportingObject.ProcessTheReportingObjectAction(_reportedObjectByThePlayer);
             }
-
-
-            /*
-            switch (_typeOfTheReportingObject)
-            {
-                case TypeOfTheReportingObject.COMMENTBYTHEUSER:
-                    if (_reportedObjectByThePlayer == "-")
-                    {
-                        TeamIdsWithReportData[reportingTeam.TeamId].CommentsByTheTeamMembers.
-                    }
-                    else
-                    {
-                        TeamIdsWithReportData[reportingTeam.TeamId].CommentsByTheTeamMembers.SetObjectValueAndFieldBool(
-                          _reportedObjectByThePlayer, EmojiName.WHITECHECKMARK);
-                    }
-                    break;
-                default:
-                    Log.WriteLine("Unknown type! (not implemented yet)", LogLevel.CRITICAL);
-                    response = "Unknown type: " + _reportedObjectByThePlayer + "(not implemented yet)";
-                    break;
-            }*/
         }
 
         InterfaceChannel interfaceChannel = 
