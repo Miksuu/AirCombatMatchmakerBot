@@ -6,8 +6,8 @@ public class TACVIEWLINK : BaseReportingObject
 {
     public TACVIEWLINK()
     {
-        thisReportingObject.TypeOfTheReportingObject = TypeOfTheReportingObject.REPORTEDSCORE;
-        thisReportingObject.CachedDefaultStatus = EmojiName.YELLOWSQUARE;
+        thisReportingObject.TypeOfTheReportingObject = TypeOfTheReportingObject.TACVIEWLINK;
+        thisReportingObject.CachedDefaultStatus = EmojiName.REDSQUARE;
         thisReportingObject.CurrentStatus = thisReportingObject.CachedDefaultStatus;
 
         thisReportingObject.AllowedMatchStatesToProcessOn = new ConcurrentBag<MatchState> {

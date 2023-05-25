@@ -84,10 +84,9 @@ public class PLANESELECTIONBUTTON : BaseButton
                         return Task.FromResult(new Response(nameof(playerIdSelectedPlane.Value) + " was null!", false));
                     }*/
 
-                    var test = (InterfaceUnit)EnumExtensions.GetInstance(playerSelectedPlane);
+                    var unitNameInstance = (InterfaceUnit)EnumExtensions.GetInstance(playerSelectedPlane);
 
-                    Log.WriteLine("TEST:" + test, LogLevel.DEBUG);
-
+                    Log.WriteLine("unitNameInstance:" + unitNameInstance, LogLevel.VERBOSE);
 
                     if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
                     {
@@ -95,10 +94,10 @@ public class PLANESELECTIONBUTTON : BaseButton
                         continue;
                     }
 
-                    planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] = test.UnitName;
+                    planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] = unitNameInstance.UnitName;
 
-                    Log.WriteLine("test", LogLevel.VERBOSE);
-                    Log.WriteLine("Done modifying: " + playerId + " with plane: " + planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.VERBOSE);
+                    Log.WriteLine("Done modifying: " + playerId + " with plane: " +
+                        planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.DEBUG);
                 }
 
                 _interfaceMessage.GenerateAndModifyTheMessage();

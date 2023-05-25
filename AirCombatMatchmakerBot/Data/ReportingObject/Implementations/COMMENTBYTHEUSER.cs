@@ -6,8 +6,8 @@ public class COMMENTBYTHEUSER : BaseReportingObject
 {
     public COMMENTBYTHEUSER()
     {
-        thisReportingObject.TypeOfTheReportingObject = TypeOfTheReportingObject.REPORTEDSCORE;
-        thisReportingObject.CachedDefaultStatus = EmojiName.REDSQUARE;
+        thisReportingObject.TypeOfTheReportingObject = TypeOfTheReportingObject.COMMENTBYTHEUSER;
+        thisReportingObject.CachedDefaultStatus = EmojiName.YELLOWSQUARE;
         thisReportingObject.CurrentStatus = thisReportingObject.CachedDefaultStatus;
 
         thisReportingObject.AllowedMatchStatesToProcessOn = new ConcurrentBag<MatchState> {
