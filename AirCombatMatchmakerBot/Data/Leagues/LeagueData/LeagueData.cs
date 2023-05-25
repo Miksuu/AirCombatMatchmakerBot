@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Discord;
+using System.Runtime.Serialization;
 
 [DataContract]
 public class LeagueData : logClass<LeagueData>, InterfaceLoggableClass
@@ -32,21 +33,23 @@ public class LeagueData : logClass<LeagueData>, InterfaceLoggableClass
 
     public Team FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)
     {
-        Log.WriteLine("Starting to find a active team by player id: " + _playerId, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to find a active team by player id: " + _playerId +
+            " with team count: " + Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
+
+        foreach (var item in Teams.TeamsConcurrentBag)
+        {
+            Log.WriteLine(item.TeamName + "|" + item.TeamId + "|" + item.TeamActive, LogLevel.DEBUG);
+        }
 
         foreach (Team team in Teams.TeamsConcurrentBag)
         {
-            try
+            var foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
+
+            if (foundTeam.Item1 != null && foundTeam.Item2)
             {
-                Team foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
-                Log.WriteLine("Found team: " + foundTeam.TeamName +
-                    " with id: " + foundTeam.TeamId, LogLevel.DEBUG);
-                return foundTeam;
-            }
-            catch(Exception ex)
-            {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                continue;
+                Log.WriteLine("Found team: " + foundTeam.Item1.TeamName +
+                    " with id: " + foundTeam.Item1.TeamId, LogLevel.DEBUG);
+                return foundTeam.Item1;
             }
         }
 
@@ -78,12 +81,12 @@ public class LeagueData : logClass<LeagueData>, InterfaceLoggableClass
 
         foreach (Team team in Teams.TeamsConcurrentBag)
         {
-            Team foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
+            var foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
 
-            if (foundTeam != null)
+            if (foundTeam.Item1 != null && foundTeam.Item2)
             {
-                Log.WriteLine("Found team: " + foundTeam.TeamName +
-                    " with id: " + foundTeam.TeamId, LogLevel.DEBUG);
+                Log.WriteLine("Found team: " + foundTeam.Item1.TeamName +
+                    " with id: " + foundTeam.Item1.TeamId, LogLevel.DEBUG);
                 return true;
             }
 

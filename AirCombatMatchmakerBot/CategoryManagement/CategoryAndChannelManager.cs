@@ -210,13 +210,6 @@ public static class CategoryAndChannelManager
                 socketCategoryChannel.Id, interfaceCategory);
         }
 
-        /*
-        Log.WriteLine(interfaceCategory.InterfaceChannels.Count.ToString(), LogLevel.DEBUG);
-        foreach (var item in interfaceCategory.InterfaceChannels)
-        {
-            Log.WriteLine(item.ToString(), LogLevel.VERBOSE);
-        }*/
-
         // Handle channel checking/creation
         await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _client, role);
     }
