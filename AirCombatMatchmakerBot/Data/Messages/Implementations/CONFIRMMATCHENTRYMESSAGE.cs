@@ -5,7 +5,7 @@ using Discord;
 [DataContract]
 public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 {
-    MatchChannelComponents mcc = new MatchChannelComponents();
+    MatchChannelComponents mcc;
 
     public CONFIRMMATCHENTRYMESSAGE()
     {

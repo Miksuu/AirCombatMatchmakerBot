@@ -88,6 +88,8 @@ public abstract class BaseCategory : InterfaceCategory
 
         thisInterfaceCategory.SocketCategoryChannelId = _socketCategoryChannelId;
 
+        Log.WriteLine(_socketCategoryChannelId.ToString(), LogLevel.DEBUG);
+
         foreach (ChannelType channelType in thisInterfaceCategory.ChannelTypes)
         {
             // Checks for missing match channels from the league category
@@ -109,8 +111,6 @@ public abstract class BaseCategory : InterfaceCategory
                 Log.WriteLine(ex.Message, LogLevel.ERROR);
                 continue;
             }
-
-
         }
     }
 
@@ -137,6 +137,11 @@ public abstract class BaseCategory : InterfaceCategory
 
         interfaceChannel.ChannelName =
             GetChannelNameFromOverridenString(_overrideChannelName, _channelType);
+
+        foreach (var item in InterfaceChannels)
+        {
+            Log.WriteLine(item.Value.ChannelName.ToString(), LogLevel.DEBUG);
+        }
 
         // Channel found from the basecategory (it exists)
         if (InterfaceChannels.Any(
@@ -170,12 +175,6 @@ public abstract class BaseCategory : InterfaceCategory
                 " for category: " + thisInterfaceCategory.CategoryType + " (" +
                 _socketCategoryChannelId + ")" + " with name: " +
                 interfaceChannel.ChannelName, LogLevel.DEBUG);
-
-            /*
-            ulong categoryId =
-                Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
-            thisInterfaceCategory.CategoryType).Key;
-            */
 
             await interfaceChannel.CreateAChannelForTheCategory(guild, _role, _allowedUsersIdsArray);
 

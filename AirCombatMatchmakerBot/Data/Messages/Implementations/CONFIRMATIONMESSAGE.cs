@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 [DataContract]
 public class CONFIRMATIONMESSAGE : BaseMessage
 {
-    MatchChannelComponents mcc = new MatchChannelComponents();
+    MatchChannelComponents mcc;
     public CONFIRMATIONMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.CONFIRMATIONMESSAGE;

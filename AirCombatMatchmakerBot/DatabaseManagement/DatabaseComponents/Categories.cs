@@ -1,7 +1,5 @@
-﻿using Discord.WebSocket;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
-using System.Text.Json.Serialization;
 
 [DataContract]
 public class Categories : logClass<Categories>, InterfaceLoggableClass
@@ -63,23 +61,6 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
         return interfaceCategory;
     }
 
-    /*
-    public InterfaceChannel FindInterfaceChannelInsideACategoryWithIds(
-        ulong _categoryIdToFind, ulong _channelIdToFind)
-    {
-        return FindInterfaceCategoryWithId(_categoryIdToFind).
-            FindInterfaceChannelWithIdInTheCategory(_channelIdToFind);
-    }*7
-
-
-    /*
-    public InterfaceChannel FindInterfaceChannelInsideACategoryWithIdAndName(
-        ulong _categoryIdToFind, ChannelType _channelTypeToFind)
-    {
-        return FindInterfaceCategoryWithId(_categoryIdToFind).
-            FindInterfaceChannelWithNameInTheCategory(_channelTypeToFind);
-    }*/
-
     public InterfaceChannel FindInterfaceChannelInsideACategoryWithNames(
         CategoryType _categoryTypeToFind, ChannelType _channelTypeToFind)
     {
@@ -98,28 +79,6 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
             throw new InvalidOperationException(ex.Message);
         }
     }
-
-    
-    /*
-    public InterfaceMessage FidAMessageInAnInterfaceChannelInsideACategoryWithIdAndNames(
-        ulong _categoryIdToFind, ChannelType _channelTypeToFind, MessageName _messageNameToFind)
-    {
-        var foundChannel = FindInterfaceChannelInsideACategoryWithIdAndName(_categoryIdToFind, _channelTypeToFind);
-        if (foundChannel == null)
-        {
-            Log.WriteLine(nameof(foundChannel) + " was null!", LogLevel.CRITICAL);
-            return null;
-        }
-
-        var foundMessage = foundChannel.FindInterfaceMessageWithNameInTheChannel(_messageNameToFind);
-        if (foundMessage == null)
-        {
-            Log.WriteLine(nameof(foundMessage) + " was null!", LogLevel.CRITICAL);
-            return null;
-        }
-
-        return foundMessage;
-    }*/
 
     public InterfaceMessage FindInterfaceMessageWithComponentChannelIdAndMessageId(
         ulong _componentChannelId, ulong _componentMessageId)

@@ -1,3 +1,4 @@
+using Discord;
 using Discord.WebSocket;
 using System.Collections.Concurrent;
 
@@ -149,6 +150,8 @@ public static class CategoryAndChannelManager
                 Log.WriteLine("Found " + nameof(dbCategory) + " named: " +
                     dbCategory.CategoryType, LogLevel.VERBOSE);
 
+                interfaceCategory = dbCategory as InterfaceCategory;
+
                 socketCategoryChannel = guild.GetCategoryChannel(dbCategory.SocketCategoryChannelId);
 
                 // Insert a fix here if the category is still in DB but does not exist
@@ -206,13 +209,6 @@ public static class CategoryAndChannelManager
             Database.Instance.Categories.AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(
                 socketCategoryChannel.Id, interfaceCategory);
         }
-
-        /*
-        if (role == null)
-        {
-            Log.WriteLine(nameof(role) + " was null!", LogLevel.CRITICAL);
-            return;
-        }*/
 
         // Handle channel checking/creation
         await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _client, role);

@@ -58,7 +58,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Getting ConcurrentBag " + _memberName + " with count: " +
+        Log.WriteLine("Getting ConcurrentDictionary " + _memberName + " with count: " +
             _values.Count + " that has members of: " + GetLoggingClassParameters(),
             LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
         return _values;
@@ -69,7 +69,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Setting ConcurrentBag " + _memberName + " with count: " +_values.Count +
+        Log.WriteLine("Setting ConcurrentDictionary " + _memberName + " with count: " +_values.Count +
             " that has members of: " + GetLoggingClassParameters()+ " TO: " + " with count: " +
             values.Count + " that has members of: " + GetLoggingClassParameters(),
             LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
@@ -81,7 +81,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Adding item to ConcurrentBag " + _memberName + ": " + _itemKvp +
+        Log.WriteLine("Adding item to ConcurrentDictionary " + _memberName + ": " + _itemKvp +
             " with count: " + _values.Count + " that has members of: " + GetLoggingClassParameters(),
             LogLevel.ADD_VERBOSE, _filePath, "", _lineNumber);
 

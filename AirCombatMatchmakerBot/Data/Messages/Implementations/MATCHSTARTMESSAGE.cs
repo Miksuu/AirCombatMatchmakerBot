@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 [DataContract]
 public class MATCHSTARTMESSAGE : BaseMessage
 {
-    MatchChannelComponents mcc = new MatchChannelComponents();
+    MatchChannelComponents mcc;
     public MATCHSTARTMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.MATCHSTARTMESSAGE;

@@ -115,7 +115,7 @@ public class Team
         return contains;
     }
 
-    public Team CheckIfTeamIsActiveAndContainsAPlayer(ulong _playerId)
+    public (Team?, bool) CheckIfTeamIsActiveAndContainsAPlayer(ulong _playerId)
     {
         bool teamContainsPlayer = CheckIfATeamContainsAPlayerById(_playerId);
 
@@ -127,10 +127,11 @@ public class Team
         {
             Log.WriteLine("Found: " + _playerId + " in team: " + TeamName +
                 " (" + TeamId + ")" + " that has SR of: " + SkillRating, LogLevel.DEBUG);
-            return this;
+            return (this, true);
         }
 
-        Log.WriteLine("Team was not found!", LogLevel.CRITICAL);
-        throw new InvalidOperationException("Team was not found!");
+        Log.WriteLine("Team was not found!", LogLevel.VERBOSE);
+        return (null, false);
+        //throw new InvalidOperationException("Team was not found!");
     }
 }
