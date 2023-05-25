@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 [DataContract]
 public class REPORTINGSTATUSMESSAGE : BaseMessage
 {
-    MatchChannelComponents mcc = new MatchChannelComponents();
+    MatchChannelComponents mcc;
 
     public REPORTINGSTATUSMESSAGE()
     {

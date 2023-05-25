@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 [DataContract]
 public class PLANESELECTIONBUTTON : BaseButton
 {
-    MatchChannelComponents mcc = new MatchChannelComponents();
+    MatchChannelComponents mcc;
     public PLANESELECTIONBUTTON()
     {
         buttonName = ButtonName.PLANESELECTIONBUTTON;

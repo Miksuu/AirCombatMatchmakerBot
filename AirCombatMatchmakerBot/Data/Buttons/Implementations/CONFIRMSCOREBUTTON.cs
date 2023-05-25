@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 [DataContract]
 public class CONFIRMSCOREBUTTON : BaseButton
 {
-    MatchChannelComponents mcc = new MatchChannelComponents();
+    MatchChannelComponents mcc;
     public CONFIRMSCOREBUTTON()
     {
         buttonName = ButtonName.CONFIRMSCOREBUTTON;

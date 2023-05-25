@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 [DataContract]
 public class REPORTSCOREBUTTON : BaseButton
 {
-    MatchChannelComponents mcc = new MatchChannelComponents();
+    MatchChannelComponents mcc;
     public REPORTSCOREBUTTON()
     {
         buttonName = ButtonName.REPORTSCOREBUTTON;
