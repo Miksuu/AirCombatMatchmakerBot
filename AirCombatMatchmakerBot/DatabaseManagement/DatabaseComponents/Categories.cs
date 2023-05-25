@@ -32,13 +32,84 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
             matchChannelsIdWithCategoryId.GetLoggingClassParameters() };
     }
 
-    public KeyValuePair<ulong, InterfaceCategory> FindCreatedCategoryWithChannelKvpWithId(
+    public InterfaceCategory? FindInterfaceCategoryWithId(
         ulong _idToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
-        var FoundCategoryKvp = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Key == _idToSearchWith);
-        Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
-        return FoundCategoryKvp;
+        var interfaceCategory = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Key == _idToSearchWith).Value;
+        Log.WriteLine("Found: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
+        return interfaceCategory;
+    }
+
+    public InterfaceCategory? FindInterfaceCategoryByCategoryName(
+        CategoryType? _categoryType)
+    {
+        Log.WriteLine("Getting CategoryKvp by category name: " + _categoryType, LogLevel.VERBOSE);
+        var interfaceCategory = CreatedCategoriesWithChannels.FirstOrDefault(
+                x => x.Value.CategoryType == _categoryType).Value;
+        if (interfaceCategory == null)
+        {
+            Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
+            return interfaceCategory;
+        }
+
+        Log.WriteLine("Found: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
+        return interfaceCategory;
+    }
+
+    public InterfaceChannel? FindInterfaceChannelInsideACategoryWithIds(
+        ulong _categoryIdToFind, ulong _channelIdToFind)
+    {
+        return FindInterfaceCategoryWithId(_categoryIdToFind).
+            FindInterfaceChannelWithIdInTheCategory(_channelIdToFind);
+    }
+
+    public InterfaceChannel? FindInterfaceChannelInsideACategoryWithIdAndName(
+        ulong _categoryIdToFind, ChannelType _channelTypeToFind)
+    {
+        return FindInterfaceCategoryWithId(_categoryIdToFind).
+            FindInterfaceChannelWithNameInTheCategory(_channelTypeToFind);
+    }
+
+    public InterfaceChannel? FindInterfaceChannelInsideACategoryWithNames(
+        CategoryType _categoryTypeToFind, ChannelType _channelTypeToFind)
+    {
+        InterfaceCategory? interfaceCategory =
+            FindInterfaceCategoryByCategoryName(_categoryTypeToFind);
+        if (interfaceCategory == null)
+        {
+            Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        InterfaceChannel? interfaceChannel = interfaceCategory.FindInterfaceChannelWithNameInTheCategory(_channelTypeToFind);
+        if (interfaceCategory == null)
+        {
+            Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        return interfaceChannel;
+    }
+
+    public InterfaceMessage? FindAMessageInAnInterfaceChannelInsideACategoryWithIdAndNames(
+        ulong _categoryIdToFind, ChannelType _channelTypeToFind, MessageName _messageNameToFind)
+    {
+        var foundChannel = FindInterfaceChannelInsideACategoryWithIdAndName(_categoryIdToFind, _channelTypeToFind);
+        if (foundChannel == null)
+        {
+            Log.WriteLine(nameof(foundChannel) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        var foundMessage = foundChannel.FindInterfaceMessageWithNameInTheChannel(_messageNameToFind);
+        if (foundMessage == null)
+        {
+            Log.WriteLine(nameof(foundMessage) + " was null!", LogLevel.CRITICAL);
+            return null;
+        }
+
+        return foundMessage;
     }
 
     public InterfaceMessage? FindInterfaceMessageWithComponentChannelIdAndMessageId(
@@ -76,16 +147,6 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
         }
 
         return null;
-    }
-
-    public KeyValuePair<ulong, InterfaceCategory> FindCreatedCategoryWithChannelKvpByCategoryName(
-        CategoryType? _categoryType)
-    {
-        Log.WriteLine("Getting CategoryKvp by category name: " + _categoryType, LogLevel.VERBOSE);
-        var FoundCategoryKvp = CreatedCategoriesWithChannels.FirstOrDefault(
-                x => x.Value.CategoryType == _categoryType);
-        Log.WriteLine("Found: " + FoundCategoryKvp.Value.CategoryType, LogLevel.VERBOSE);
-        return FoundCategoryKvp;
     }
 
     public void AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(

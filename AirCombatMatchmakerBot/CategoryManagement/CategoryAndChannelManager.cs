@@ -139,24 +139,21 @@ public static class CategoryAndChannelManager
             Log.WriteLine("Category: " + finalCategoryName +
                 " found, checking it's channels", LogLevel.VERBOSE);
 
-            var dbCategory =
-                Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
+            InterfaceCategory? dbCategory =
+                Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
                     interfaceCategory.CategoryType);
 
-            interfaceCategory = dbCategory.Value;
-
             ////InterfaceCategory databaseInterfaceCategory = GetCategoryInstance(buttonName);
-            if (dbCategory.Key == 0 || dbCategory.Value == null)
+            if (dbCategory == null)
             {
                 Log.WriteLine(nameof(dbCategory) + " was null!", LogLevel.CRITICAL);
                 return;
             }
 
-            Log.WriteLine("Found " + nameof(dbCategory) + " with id: " +
-                dbCategory.Key + " named: " +
-                dbCategory.Value.CategoryType, LogLevel.VERBOSE);
+            Log.WriteLine("Found " + nameof(dbCategory) + " named: " +
+                dbCategory.CategoryType, LogLevel.VERBOSE);
 
-            socketCategoryChannel = guild.GetCategoryChannel(dbCategory.Key);
+            socketCategoryChannel = guild.GetCategoryChannel(dbCategory.SocketCategoryChannelId);
 
             // Insert a fix here if the category is still in DB but does not exist
 

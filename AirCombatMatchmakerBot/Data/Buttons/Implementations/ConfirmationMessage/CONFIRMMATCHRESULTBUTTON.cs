@@ -69,8 +69,8 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
         }
 
         InterfaceMessage? confirmationMessage =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(
+            Database.Instance.Categories.FindInterfaceCategoryWithId(
+                _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
                     _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
                         MessageName.CONFIRMATIONMESSAGE);
 

@@ -96,8 +96,8 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Finding interfaceCategory in: " + thisInterfaceLeague.LeagueCategoryName +
             " with id: " + LeagueCategoryId, LogLevel.VERBOSE);
 
-        InterfaceCategory interfaceCategory = 
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(LeagueCategoryId).Value;
+        InterfaceCategory? interfaceCategory = 
+            Database.Instance.Categories.FindInterfaceCategoryWithId(LeagueCategoryId);
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
@@ -112,12 +112,22 @@ public abstract class BaseLeague : InterfaceLeague
     public async Task PostMatchReport(string _finalResultMessage, string _finalResultTitle,
         AttachmentData[] _attachmentDatas)
     {
-        InterfaceCategory leagueCategory =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                LeagueCategoryId).Value;
+        InterfaceCategory? leagueCategory =
+            Database.Instance.Categories.FindInterfaceCategoryWithId(LeagueCategoryId);
+        if (leagueCategory == null)
+        {
+            Log.WriteLine(nameof(leagueCategory) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
 
-        InterfaceChannel matchReportsChannelInterface =
+        InterfaceChannel? matchReportsChannelInterface =
             leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
+        if (matchReportsChannelInterface == null)
+        {
+            Log.WriteLine(nameof(matchReportsChannelInterface) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
 
         var client = BotReference.GetClientRef();
         if (client == null)
@@ -141,10 +151,9 @@ public abstract class BaseLeague : InterfaceLeague
     {
         Log.WriteLine("Updating leaderboard on: " + thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
-        var leagueStatusMessage = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
-                ChannelType.LEAGUESTATUS).FindInterfaceMessageWithNameInTheChannel(
-                    MessageName.LEAGUESTATUSMESSAGE);
+        InterfaceMessage? leagueStatusMessage = 
+            Database.Instance.Categories.FindAMessageInAnInterfaceChannelInsideACategoryWithIdAndNames(
+                LeagueCategoryId, ChannelType.LEAGUESTATUS, MessageName.LEAGUESTATUSMESSAGE);
 
         if (leagueStatusMessage == null)
         {
@@ -164,9 +173,15 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Registering user to league: " +
             thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
-        ulong challengeChannelId = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
-            ChannelType.CHALLENGE).ChannelId;
+        var foundChannel = Database.Instance.Categories.FindInterfaceChannelInsideACategoryWithIdAndName(
+            LeagueCategoryId, ChannelType.CHALLENGE);
+        if (foundChannel == null)
+        {
+            Log.WriteLine(nameof(foundChannel) + " was null!", LogLevel.CRITICAL);
+            return Task.FromResult(new Response(nameof(foundChannel) + " was null!", false));
+        }
+
+        ulong challengeChannelId = foundChannel.ChannelId;
 
         // Check that the player is in the PlayerData
         // (should be, he doesn't see this button before, except if hes admin)

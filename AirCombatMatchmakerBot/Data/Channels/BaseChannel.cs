@@ -353,15 +353,15 @@ public abstract class BaseChannel : InterfaceChannel
         Log.WriteLine("Getting MessageName with name: " + _messageName, LogLevel.VERBOSE);
 
         var foundInterfaceMessage = thisInterfaceChannel.InterfaceMessagesWithIds.FirstOrDefault(
-            x => x.Value.MessageName == _messageName);
-        if (foundInterfaceMessage.Value == null)
+            x => x.Value.MessageName == _messageName).Value;
+        if (foundInterfaceMessage == null)
         {
             Log.WriteLine(nameof(foundInterfaceMessage) + " was null!", LogLevel.CRITICAL);
             return null;
         }
 
-        Log.WriteLine("Found: " + foundInterfaceMessage.Value.MessageName, LogLevel.VERBOSE);
-        return foundInterfaceMessage.Value;
+        Log.WriteLine("Found: " + foundInterfaceMessage.MessageName, LogLevel.VERBOSE);
+        return foundInterfaceMessage;
     }
 
     // Finds all messages with that messageName

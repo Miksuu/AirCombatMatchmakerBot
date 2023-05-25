@@ -64,8 +64,8 @@ public static class LeagueManager
                 if (interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Count > 0)
                 {
                     interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Clear();
-                    var message = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                        interfaceLeague.LeagueCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
+                    var message = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                        interfaceLeague.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
                             ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
                     if (message == null) 
                     {

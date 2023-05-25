@@ -175,9 +175,11 @@ public abstract class BaseCategory : InterfaceCategory
                 _socketCategoryChannelId + ")" + " with name: " +
                 interfaceChannel.ChannelName, LogLevel.DEBUG);
 
+            /*
             ulong categoryId =
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
             thisInterfaceCategory.CategoryType).Key;
+            */
 
             await interfaceChannel.CreateAChannelForTheCategory(guild, _role, _allowedUsersIdsArray);
 
@@ -261,9 +263,11 @@ public abstract class BaseCategory : InterfaceCategory
                 _socketCategoryChannelId + ")" + " with name: " +
                 interfaceChannel.ChannelName, LogLevel.DEBUG);
 
-            ulong categoryId =
+            /*
+            InterfaceCategory? interfaceCategory=
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
-            thisInterfaceCategory.CategoryType).Key;
+            thisInterfaceCategory.CategoryType);
+            */
 
             await interfaceChannel.CreateAChannelForTheCategoryWithoutRole(guild, _allowedUsersIdsArray);
 
@@ -348,23 +352,48 @@ public abstract class BaseCategory : InterfaceCategory
         }
     }
 
-    public InterfaceChannel FindInterfaceChannelWithIdInTheCategory(
+    public bool FindIfInterfaceChannelExistsWithIdInTheCategory(
+        ulong _idToSearchWith)
+    {
+        Log.WriteLine("Getting to see if CategoryKvp exists with id: " + _idToSearchWith, LogLevel.VERBOSE);
+
+        var foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Key == _idToSearchWith);
+        if (foundInterfaceChannel.Value == null)
+        {
+            return false;
+        }
+
+        Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName, LogLevel.VERBOSE);
+        return true;
+    }
+
+    public InterfaceChannel? FindInterfaceChannelWithIdInTheCategory(
         ulong _idToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
 
-        var foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Key == _idToSearchWith);
-        Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName, LogLevel.VERBOSE);
-        return foundInterfaceChannel.Value;
+        InterfaceChannel? foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Key == _idToSearchWith).Value;
+        if (foundInterfaceChannel == null)
+        {
+            Log.WriteLine(nameof(foundInterfaceChannel) + " was null! with id: " + _idToSearchWith, LogLevel.CRITICAL);
+            return foundInterfaceChannel;
+        }
+        Log.WriteLine("Found: " + foundInterfaceChannel.ChannelName, LogLevel.VERBOSE);
+        return foundInterfaceChannel;
     }
 
-    public InterfaceChannel FindInterfaceChannelWithNameInTheCategory(
+    public InterfaceChannel? FindInterfaceChannelWithNameInTheCategory(
         ChannelType _nameToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with name: " + _nameToSearchWith, LogLevel.VERBOSE);
 
-        var foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Value.ChannelType == _nameToSearchWith);
-        Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName, LogLevel.VERBOSE);
-        return foundInterfaceChannel.Value;
+        InterfaceChannel? foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Value.ChannelType == _nameToSearchWith).Value;
+        if (foundInterfaceChannel == null)
+        {
+            Log.WriteLine(nameof(foundInterfaceChannel) + " was null! with name: " + _nameToSearchWith, LogLevel.CRITICAL);
+            return foundInterfaceChannel;
+        }
+        Log.WriteLine("Found: " + foundInterfaceChannel.ChannelName, LogLevel.VERBOSE);
+        return foundInterfaceChannel;
     }
 }

@@ -29,8 +29,8 @@ public class REGISTRATIONBUTTON : BaseButton
         string registrationChannelCheck = string.Empty;
         bool serialize = true;
 
-        var registrationChannel = Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-            _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithNameInTheCategory(
+        var registrationChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithNameInTheCategory(
         ChannelType.LEAGUEREGISTRATION);
 
         if (registrationChannel == null)

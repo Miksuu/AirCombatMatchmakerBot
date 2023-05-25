@@ -33,11 +33,12 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
 
     public EventScheduler() { }
 
-    public Task CheckCurrentTimeAndExecuteScheduledEvents()
+    public Task CheckCurrentTimeAndExecuteScheduledEvents(bool _clearEventOnTheStartup = false)
     {
         ulong currentUnixTime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
 
-        Log.WriteLine("Time: " + currentUnixTime, LogLevel.VERBOSE);
+        Log.WriteLine("Time: " + currentUnixTime + " with: " +
+            nameof(_clearEventOnTheStartup) + ": " +_clearEventOnTheStartup, LogLevel.VERBOSE);
 
         // Might get caused by the daylight savings
         if (currentUnixTime < LastUnixTimeCheckedOn)
@@ -53,7 +54,7 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
 
             if (currentUnixTime >= scheduledEvent.TimeToExecuteTheEventOn)
             {
-                if (scheduledEvent.EventIsBeingExecuted)
+                if (scheduledEvent.EventIsBeingExecuted && !_clearEventOnTheStartup)
                 {
                     Log.WriteLine("Event: " + scheduledEvent.EventId + " was being executed already, continuing.", LogLevel.VERBOSE);
                     continue;
@@ -61,15 +62,51 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
 
                 scheduledEvent.EventIsBeingExecuted = true;
 
+                Log.WriteLine("Executing event: " + scheduledEvent.EventId, LogLevel.DEBUG);
+
                 InterfaceEventType interfaceEventType = (InterfaceEventType)scheduledEvent;
                 interfaceEventType.ExecuteTheScheduledEvent();
 
+                var itemsToRemove = ScheduledEvents.Where(e => e.EventId == scheduledEvent.EventId).ToList();
+
+                foreach (var item in itemsToRemove)
+                {
+                    bool removed = ScheduledEvents.TryTake(out ScheduledEvent? removedItem);
+                    if (removed)
+                    {
+                        if (removedItem == null)
+                        {
+                            Log.WriteLine(nameof(removedItem) + " was null! with eventId: " + item.EventId, LogLevel.CRITICAL);
+                            return Task.CompletedTask;
+                        }
+                        Log.WriteLine("Removed id: " + removedItem.EventId, LogLevel.DEBUG);
+                    }
+                    else
+                    {
+                        Log.WriteLine("Failed to remove: " + item.EventId, LogLevel.ERROR);
+                    }
+                }
+
+                /*
                 foreach (var item in ScheduledEvents.Where(
                     e=> e.EventId == scheduledEvent.EventId))
                 {
-                    ScheduledEvents.TryTake(out ScheduledEvent? _result);
-                    Log.WriteLine("Removed id: " + _result.EventId, LogLevel.DEBUG);
-                }
+                    Log.WriteLine("Trying to remove: " + item.EventId, LogLevel.VERBOSE);
+
+                    if (ScheduledEvents.TryTake(out ScheduledEvent? _result))
+                    {
+                        if (_result == null)
+                        {
+                            Log.WriteLine(nameof(_result) + " was null! with eventId: " + scheduledEvent.EventId, LogLevel.CRITICAL);
+                            return Task.CompletedTask;
+                        }
+                        Log.WriteLine("Removed id: " + _result.EventId, LogLevel.DEBUG);
+                    }
+                    else
+                    {
+                        Log.WriteLine("Failed to remove: " + item.EventId, LogLevel.ERROR);
+                    }
+                }*/
             }
         }
 

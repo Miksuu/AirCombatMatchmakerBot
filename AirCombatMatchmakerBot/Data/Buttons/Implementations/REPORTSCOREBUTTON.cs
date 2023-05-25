@@ -31,8 +31,8 @@ public class REPORTSCOREBUTTON : BaseButton
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         InterfaceMessage? reportingStatusMessage =
-            Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
-                _interfaceMessage.MessageCategoryId).Value.FindInterfaceChannelWithIdInTheCategory(_interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
+            Database.Instance.Categories.FindInterfaceCategoryWithId(
+                _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(_interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
                         MessageName.REPORTINGSTATUSMESSAGE);
         if (reportingStatusMessage == null)
         {
