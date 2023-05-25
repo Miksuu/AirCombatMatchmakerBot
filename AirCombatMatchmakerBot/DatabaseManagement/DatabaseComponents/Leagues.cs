@@ -86,7 +86,6 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
         return FoundLeague;
     }
 
-
     public void AddToStoredLeagues(InterfaceLeague _ILeague)
     {
         Log.WriteLine("Adding ILeague: " + _ILeague.LeagueCategoryName +
