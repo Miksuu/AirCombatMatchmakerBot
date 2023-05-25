@@ -52,12 +52,6 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 continue;
             }
 
-            FieldInfo[] fields = typeof(ReportData).GetFields(
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
-
-            Log.WriteLine("fields count: " + fields.Length, LogLevel.DEBUG);
-
-
             foreach (var item in teamReportData.ReportingObjects)
             {
                 string finalCheckMark = string.Empty;
