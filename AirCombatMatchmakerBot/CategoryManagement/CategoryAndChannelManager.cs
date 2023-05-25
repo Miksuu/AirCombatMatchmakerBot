@@ -211,17 +211,11 @@ public static class CategoryAndChannelManager
         }
 
         /*
-        if (role == null)
-        {
-            Log.WriteLine(nameof(role) + " was null!", LogLevel.CRITICAL);
-            return;
-        }*/
-
         Log.WriteLine(interfaceCategory.InterfaceChannels.Count.ToString(), LogLevel.DEBUG);
         foreach (var item in interfaceCategory.InterfaceChannels)
         {
             Log.WriteLine(item.ToString(), LogLevel.VERBOSE);
-        }
+        }*/
 
         // Handle channel checking/creation
         await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _client, role);
