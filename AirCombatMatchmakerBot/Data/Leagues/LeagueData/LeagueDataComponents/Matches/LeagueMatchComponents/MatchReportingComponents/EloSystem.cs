@@ -106,12 +106,19 @@ public static class EloSystem
         return 1 / (1 + Math.Pow(10, (_playerTwoRating - _playerOneRating) / 400.0));
     }
 
+    private static InterfaceReportingObject GetInterfaceReportingObjectByIndex(Dictionary<int, ReportData> _teamIdsWithReportData, int _index)
+    {
+        var baseReportingObject = _teamIdsWithReportData.ElementAt(_index).Value.ReportingObjects.FirstOrDefault(
+            x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.REPORTEDSCORE) as BaseReportingObject;
+
+        return (InterfaceReportingObject)baseReportingObject;
+    }
+
     public static int DecideWinnerIndex(Dictionary<int, ReportData> _teamIdsWithReportData)
     {
         int winnerIndex = 0;
-
-        string teamOneObjectValue = _teamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue;
-        string teamTwoObjectValue = _teamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue;
+        string teamOneObjectValue = GetInterfaceReportingObjectByIndex(_teamIdsWithReportData, 0).ObjectValue;
+        string teamTwoObjectValue = GetInterfaceReportingObjectByIndex(_teamIdsWithReportData, 1).ObjectValue;
 
         Log.WriteLine("object values: " + teamOneObjectValue + " | " + teamTwoObjectValue, LogLevel.DEBUG);
 

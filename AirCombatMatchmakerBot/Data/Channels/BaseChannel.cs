@@ -283,7 +283,7 @@ public abstract class BaseChannel : InterfaceChannel
                 if (leagueNameString == null)
                 {
                     Log.WriteLine(nameof(leagueNameString) + " was null!", LogLevel.CRITICAL);
-                    return;
+                    continue;
                 }
 
                 try

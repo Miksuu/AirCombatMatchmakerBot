@@ -5,6 +5,9 @@ using System.Runtime.Serialization;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum UnitName
 {
+    [EnumMember(Value = "Plane not selected")]
+    NOTSELECTED,
+
     [EnumMember(Value = "F-5E-3")]
     F5E3,
 

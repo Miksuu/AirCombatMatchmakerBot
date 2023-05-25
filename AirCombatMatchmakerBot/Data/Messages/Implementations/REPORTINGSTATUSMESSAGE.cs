@@ -57,6 +57,36 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
             Log.WriteLine("fields count: " + fields.Length, LogLevel.DEBUG);
 
+
+            foreach (var item in teamReportData.ReportingObjects)
+            {
+                string finalCheckMark = string.Empty;
+
+                var interfaceItem = (InterfaceReportingObject)item;
+
+                if (interfaceItem.CurrentStatus == EmojiName.WHITECHECKMARK)
+                {
+                    finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
+                }
+                else if (interfaceItem.CurrentStatus == EmojiName.YELLOWSQUARE)
+                {
+                    finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.YELLOWSQUARE);
+                }
+                else
+                {
+                    finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(interfaceItem.CachedDefaultStatus);
+                }
+
+                Log.WriteLine("Found: " + nameof(interfaceItem) + " with values: " +
+                    interfaceItem.TypeOfTheReportingObject + ", " + interfaceItem.ObjectValue + ", " +
+                    interfaceItem.CurrentStatus + ", " + interfaceItem.CachedDefaultStatus.ToString() + ", with" +
+                    finalCheckMark, LogLevel.DEBUG);
+
+                reportingStatusPerTeam += finalCheckMark + " " + interfaceItem.TypeOfTheReportingObject + ": " +
+                    interfaceItem.ObjectValue + "\n";
+            }
+
+            /*
             foreach (FieldInfo field in fields)
             {
                 string finalCheckMark = string.Empty;
@@ -96,7 +126,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
                 reportingStatusPerTeam += finalCheckMark + " " + reportObject.FieldNameDisplay + ": " +
                     reportObject.ObjectValue + "\n";
-            }
+            }*/
 
             Log.WriteLine("Done looping through team: " + teamKvp.Key + " (" + teamKvp.Value +
                 ")" + "with message: " + reportingStatusPerTeam, LogLevel.VERBOSE);

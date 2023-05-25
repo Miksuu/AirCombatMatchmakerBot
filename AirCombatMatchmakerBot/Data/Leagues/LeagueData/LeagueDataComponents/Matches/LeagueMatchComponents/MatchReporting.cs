@@ -67,9 +67,17 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
             try
             {
-                TeamIdsWithReportData.TryAdd(teamKvp.Key, new ReportData(teamKvp.Value,
-                _interfaceLeague.LeagueData.Teams.FindTeamById(
-                    _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key).Players));
+                Log.WriteLine("before toAdd", LogLevel.DEBUG);
+
+                var toAdd = (teamKvp.Key, new ReportData(teamKvp.Value,
+                    _interfaceLeague.LeagueData.Teams.FindTeamById(
+                        _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key).Players));
+
+                Log.WriteLine("after toAdd", LogLevel.DEBUG);
+
+                TeamIdsWithReportData.TryAdd(toAdd.Key, toAdd.Item2);
+
+                Log.WriteLine("after adding with toAdd", LogLevel.DEBUG);
             }
 
             catch(Exception ex)
@@ -91,6 +99,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
             _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
 
+        /*
         if (MatchState == MatchState.MATCHDONE)
         {
             Log.WriteLine(_playerId + " requested to report the match," +
@@ -111,7 +120,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             Log.WriteLine(_playerId + " requested to report the match," +
                 " when it was already in confirmation.", LogLevel.VERBOSE);
             return Task.FromResult(new Response("Match is in confirmation already! Finish that first, ", false)).Result;
-        }
+        }*/
 
         try
         {
@@ -135,37 +144,28 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         {
             Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
 
+            var reportingObject = TeamIdsWithReportData[reportingTeam.TeamId].ReportingObjects.FirstOrDefault(x 
+                 => x.GetTypeOfTheReportingObject() == _typeOfTheReportingObject) as BaseReportingObject;
+
+           
+
+            if (_reportedObjectByThePlayer == "-")
+            {
+                reportingObject.CancelTheReportingObjectAction();
+            }
+            else
+            {
+                reportingObject.ProcessTheReportingObjectAction(_reportedObjectByThePlayer);
+            }
+
+
+            /*
             switch (_typeOfTheReportingObject)
             {
-                case TypeOfTheReportingObject.REPORTEDSCORE:
-                    TeamIdsWithReportData[reportingTeam.TeamId].ReportedScore.SetObjectValueAndFieldBool(
-                        _reportedObjectByThePlayer, EmojiName.WHITECHECKMARK);
-                    response = "You reported score of: " + _reportedObjectByThePlayer;
-                    break;
-                case TypeOfTheReportingObject.TACVIEWLINK:
-                    TeamIdsWithReportData[reportingTeam.TeamId].TacviewLink.SetObjectValueAndFieldBool(
-                        _reportedObjectByThePlayer, EmojiName.WHITECHECKMARK);
-
-                    // Makes the other tacview submission to be optional
-                    foreach (var item in TeamIdsWithReportData)
-                    {
-                        if (item.Key != reportingTeam.TeamId)
-                        {
-                            if (item.Value.TacviewLink.CurrentStatus == EmojiName.REDSQUARE)
-                            {
-                                item.Value.TacviewLink.SetObjectValueAndFieldBool(
-                                    item.Value.TacviewLink.ObjectValue, EmojiName.YELLOWSQUARE);
-                            }
-                        } 
-                    }
-
-                    response = "You posted tacview link: " + _reportedObjectByThePlayer;
-                    break;
                 case TypeOfTheReportingObject.COMMENTBYTHEUSER:
                     if (_reportedObjectByThePlayer == "-")
                     {
-                        TeamIdsWithReportData[reportingTeam.TeamId].CommentsByTheTeamMembers.SetObjectValueAndFieldBool(
-                            "", EmojiName.YELLOWSQUARE);
+                        TeamIdsWithReportData[reportingTeam.TeamId].CommentsByTheTeamMembers.
                     }
                     else
                     {
@@ -177,7 +177,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
                     Log.WriteLine("Unknown type! (not implemented yet)", LogLevel.CRITICAL);
                     response = "Unknown type: " + _reportedObjectByThePlayer + "(not implemented yet)";
                     break;
-            }
+            }*/
         }
 
         InterfaceChannel interfaceChannel = 
@@ -360,6 +360,40 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             Log.WriteLine("Got field infos, length: " + fieldInfos.Length + " for team: " +
                 teamKvp.Value.TeamName, LogLevel.VERBOSE);
 
+
+            foreach (var item in teamKvp.Value.ReportingObjects)
+            {
+                //Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
+
+                // Only process the ReportObject fields (ignore TeamName)
+                //if (field.FieldType != typeof(ReportObject)) continue;
+
+                //Log.WriteLine("This is " + nameof(ReportObject) + " field: " +
+                //    field.FieldType, LogLevel.VERBOSE);
+
+                /*
+                ReportObject? reportObject = (ReportObject?)field.GetValue(teamKvp.Value);
+                if (reportObject == null)
+                {
+                    Log.WriteLine(nameof(reportObject) + " was null!", LogLevel.CRITICAL);
+                    continue;
+                }*/
+
+                var interfaceItem = (InterfaceReportingObject)item;
+
+
+                // Skips optional fields
+                if (interfaceItem.CurrentStatus == EmojiName.YELLOWSQUARE) continue;
+
+                if (interfaceItem.CurrentStatus != EmojiName.WHITECHECKMARK)
+                {
+                    Log.WriteLine("Team: " + teamKvp.Value.TeamName + "'s " + interfaceItem.TypeOfTheReportingObject +
+                        " was " + interfaceItem.CurrentStatus + " with value: " + interfaceItem.ObjectValue, LogLevel.DEBUG);
+                    return false;
+                }
+            }
+
+            /*
             foreach (FieldInfo field in fieldInfos)
             {
                 Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
@@ -378,15 +412,15 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
                 }
 
                 // Skips optional fields
-                if (reportObject.CurrentStatus == EmojiName.YELLOWSQUARE) continue;
+                if (reportObject == EmojiName.YELLOWSQUARE) continue;
 
                 if (reportObject.CurrentStatus != EmojiName.WHITECHECKMARK)
                 {
                     Log.WriteLine("Team: " + teamKvp.Value.TeamName + "'s " + reportObject.FieldNameDisplay +
                         " was " + reportObject.CurrentStatus + " with value: " + reportObject.ObjectValue, LogLevel.DEBUG);
                     return false;
-                }
-            }
+                } 
+            }*/
         }
 
         Log.WriteLine("All fields were true, proceeding to show the confirmation message", LogLevel.DEBUG);

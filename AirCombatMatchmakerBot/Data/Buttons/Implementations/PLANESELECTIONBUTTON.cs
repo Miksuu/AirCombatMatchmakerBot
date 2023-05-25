@@ -63,7 +63,10 @@ public class PLANESELECTIONBUTTON : BaseButton
                 Log.WriteLine("Found team: " + teamKvp.Key + " with name: " + teamKvp.Value.TeamName +
                     " with playerId: " + playerId, LogLevel.VERBOSE);
 
-                if (!teamKvp.Value.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
+                var planeReportObject = teamKvp.Value.ReportingObjects.FirstOrDefault(
+                    x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+
+                if (planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
                 {
                     Log.WriteLine("Does not contain: " + playerId, LogLevel.CRITICAL);
                     continue;
@@ -71,14 +74,15 @@ public class PLANESELECTIONBUTTON : BaseButton
                 else
                 {
                     Log.WriteLine("Contains: " + playerId, LogLevel.VERBOSE);
-                    var playerIdSelectedPlane = teamKvp.Value.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(x => x.Key == playerId);
+                    var playerIdSelectedPlane = planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(x => x.Key == playerId);
+                    /*
                     if (playerIdSelectedPlane.Value == null)
                     {
                         Log.WriteLine(nameof(playerIdSelectedPlane.Value) + " was null!", LogLevel.CRITICAL);
                         return Task.FromResult(new Response(nameof(playerIdSelectedPlane.Value) + " was null!", false));
-                    }
+                    }*/
 
-                    playerIdSelectedPlane.Value.SetObjectValueAndFieldBool(playerSelectedPlane, EmojiName.WHITECHECKMARK);
+                    planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] = playerIdSelectedPlane.Value;
 
                     Log.WriteLine("Done modifying: " + playerId + " with plane: " + playerSelectedPlane, LogLevel.VERBOSE);
                 }
