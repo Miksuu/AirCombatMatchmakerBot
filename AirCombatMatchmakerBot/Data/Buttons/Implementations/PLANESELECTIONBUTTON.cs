@@ -66,7 +66,9 @@ public class PLANESELECTIONBUTTON : BaseButton
                 var planeReportObject = teamKvp.Value.ReportingObjects.FirstOrDefault(
                     x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
 
-                if (planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
+                Log.WriteLine(planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.Count.ToString(), LogLevel.DEBUG);
+
+                if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
                 {
                     Log.WriteLine("Does not contain: " + playerId, LogLevel.CRITICAL);
                     continue;
@@ -82,9 +84,21 @@ public class PLANESELECTIONBUTTON : BaseButton
                         return Task.FromResult(new Response(nameof(playerIdSelectedPlane.Value) + " was null!", false));
                     }*/
 
-                    planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] = playerIdSelectedPlane.Value;
+                    var test = (InterfaceUnit)EnumExtensions.GetInstance(playerSelectedPlane);
 
-                    Log.WriteLine("Done modifying: " + playerId + " with plane: " + playerSelectedPlane, LogLevel.VERBOSE);
+                    Log.WriteLine("TEST:" + test, LogLevel.DEBUG);
+
+
+                    if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
+                    {
+                        Log.WriteLine("does not contain", LogLevel.ERROR);
+                        continue;
+                    }
+
+                    planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] = test.UnitName;
+
+                    Log.WriteLine("test", LogLevel.VERBOSE);
+                    Log.WriteLine("Done modifying: " + playerId + " with plane: " + planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.VERBOSE);
                 }
 
                 _interfaceMessage.GenerateAndModifyTheMessage();

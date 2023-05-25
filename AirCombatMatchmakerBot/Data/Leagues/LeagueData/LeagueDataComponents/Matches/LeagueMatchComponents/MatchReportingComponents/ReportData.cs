@@ -58,10 +58,13 @@ public class ReportData
                 Log.WriteLine(nameof(typeOfTheReportingObjectString) + " was null!", LogLevel.CRITICAL);
                 continue;
             }*/
-
-            var reportingObjectInstance = TypeOfTheReportingObject)EnumExtensions.GetInstance(typeOfTheReportingObject.ToString());
-
+            Log.WriteLine(typeOfTheReportingObject.ToString(), LogLevel.DEBUG);
+            var reportingObjectInstance = EnumExtensions.GetInstance(typeOfTheReportingObject.ToString());
             Log.WriteLine(reportingObjectInstance.ToString(), LogLevel.DEBUG);
+            var re = (InterfaceReportingObject)reportingObjectInstance;
+
+            Log.WriteLine(re.ToString(), LogLevel.DEBUG);
+            ReportingObjects.Add(re as BaseReportingObject);
 
             /*
             Log.WriteLine("Starting to create a league join button for: " + leagueNameString, LogLevel.VERBOSE);
