@@ -325,6 +325,11 @@ public abstract class BaseChannel : InterfaceChannel
         }
         else
         {
+            foreach (var item in thisInterfaceChannel.ChannelMessages)
+            {
+                Log.WriteLine(item.Key.ToString(), LogLevel.WARNING);
+            }
+
             for (int m = 0; m < thisInterfaceChannel.ChannelMessages.Count; ++m)
             {
                 // Skip the messages that have been generated already

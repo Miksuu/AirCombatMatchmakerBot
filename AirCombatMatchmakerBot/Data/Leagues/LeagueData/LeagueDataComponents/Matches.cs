@@ -1,8 +1,6 @@
 ﻿using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
-using Discord;
-using System.Text.RegularExpressions;
 
 [DataContract]
 public class Matches : logClass<Matches>, InterfaceLoggableClass
