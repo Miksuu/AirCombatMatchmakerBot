@@ -98,6 +98,13 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             return Task.FromResult(new Response("Match is already done!", false)).Result;
         }
 
+        if (MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
+            _typeOfTheReportingObject == TypeOfTheReportingObject.TACVIEWLINK)
+        {
+            Log.WriteLine(_playerId + " tried to enter tacview on " + MatchState, LogLevel.VERBOSE);
+            return Task.FromResult(new Response("You can not upload tacview on this stage!", false)).Result;
+        }
+
         // Can receive comments still even though the the confirmation is under way
         if (MatchState == MatchState.CONFIRMATIONPHASE && _typeOfTheReportingObject == TypeOfTheReportingObject.REPORTEDSCORE)
         {
