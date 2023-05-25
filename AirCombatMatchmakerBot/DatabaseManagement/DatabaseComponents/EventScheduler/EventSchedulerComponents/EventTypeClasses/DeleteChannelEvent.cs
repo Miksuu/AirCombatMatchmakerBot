@@ -65,21 +65,29 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass, Interf
         Log.WriteLine("Starting to execute event: " + nameof(DeleteChannelEvent) + " with: " +
             categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.VERBOSE);
 
-        InterfaceCategory? interfaceCategory =
-            Database.Instance.Categories.FindInterfaceCategoryWithId(categoryId);
-        if (interfaceCategory == null)
+        InterfaceCategory interfaceCategory;
+
+        try
         {
-            Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
+            interfaceCategory =
+                Database.Instance.Categories.FindInterfaceCategoryWithId(categoryId);
+        }
+        catch(Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
         }
 
         if (interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory(channelId))
-        {
-            InterfaceChannel? interfaceChannel =
-                interfaceCategory.FindInterfaceChannelWithIdInTheCategory(channelId);
-            if (interfaceChannel == null)
+        {      
+            InterfaceChannel interfaceChannel;
+            try
             {
-                Log.WriteLine(nameof(interfaceChannel) + " was null! with id: " + channelId, LogLevel.CRITICAL);
+                interfaceChannel = interfaceCategory.FindInterfaceChannelWithIdInTheCategory(channelId);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 return;
             }
 

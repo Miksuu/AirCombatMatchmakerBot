@@ -42,7 +42,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
             Log.WriteLine("item: " + item, LogLevel.VERBOSE);
         }
 
-        InterfaceLeague? interfaceLeague =
+        InterfaceLeague interfaceLeague =
             Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(ulong.Parse(splitStrings[0]));
         if (interfaceLeague == null)
         {

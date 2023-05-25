@@ -64,45 +64,45 @@ public class PlayerData : logClass<PlayerData>, InterfaceLoggableClass
         Log.WriteLine("Checking if nickname is empty and return username with ID: " +
             _id, LogLevel.VERBOSE);
 
-        var SocketGuildUser = GetSocketGuildUserById(_id);
-
-        if (SocketGuildUser == null)
+        try
         {
-            Log.WriteLine("SocketGuildUser by ID: " + _id + " is null!", LogLevel.ERROR);
-            return "null";
+            var SocketGuildUser = GetSocketGuildUserById(_id);
+
+            Log.WriteLine("SocketGuildUser " + _id + " is not null", LogLevel.VERBOSE);
+
+            string userName = SocketGuildUser.Username;
+            string nickName = SocketGuildUser.Nickname;
+
+            Log.WriteLine("Checking if " + userName + "'s (" + _id + ")" +
+                " nickName: " + nickName + " | " + " is the same", LogLevel.VERBOSE);
+
+            if (nickName == "" || nickName == userName || nickName == null)
+            {
+                Log.WriteLine("returning userName: " + userName, LogLevel.VERBOSE);
+                return userName;
+            }
+            else
+            {
+                Log.WriteLine("returning nickName " + nickName, LogLevel.VERBOSE);
+                return nickName;
+            }
         }
-
-        Log.WriteLine("SocketGuildUser " + _id + " is not null", LogLevel.VERBOSE);
-
-        string userName = SocketGuildUser.Username;
-        string nickName = SocketGuildUser.Nickname;
-
-        Log.WriteLine("Checking if " + userName + "'s (" + _id + ")" +
-            " nickName: " + nickName + " | " + " is the same", LogLevel.VERBOSE);
-
-        if (nickName == "" || nickName == userName || nickName == null)
+        catch (Exception ex)
         {
-            Log.WriteLine("returning userName: " + userName, LogLevel.VERBOSE);
-            return userName;
-        }
-        else
-        {
-            Log.WriteLine("returning nickName " + nickName, LogLevel.VERBOSE);
-            return nickName;
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return ex.Message;
         }
     }
 
     // Gets the user by the discord UserId. This may not be present in the Database.
-    public SocketGuildUser? GetSocketGuildUserById(ulong _id)
+    public SocketGuildUser GetSocketGuildUserById(ulong _id)
     {
         Log.WriteLine("Getting SocketGuildUser by id: " + _id, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
-
         if (guild == null)
-        {
-            Exceptions.BotClientRefNull();
-            return null;
+        {        
+            throw new InvalidOperationException(Exceptions.BotGuildRefNull());
         }
 
         return guild.GetUser(_id);
@@ -153,7 +153,7 @@ public class PlayerData : logClass<PlayerData>, InterfaceLoggableClass
         if (playerValue == null)
         {
             Log.WriteLine("Trying to update " + _socketGuildUserAfter.Username +
-            "'s profile, no valid player found (not registered?) ", LogLevel.DEBUG);
+            "'s profile, no valid player found (not registered probably) ", LogLevel.DEBUG);
             return;
         }
 
@@ -184,12 +184,11 @@ public class PlayerData : logClass<PlayerData>, InterfaceLoggableClass
         Database.Instance.PlayerData.PlayerIDs.TryRemove(_playerDiscordId, out Player? _player);
 
         var user = GetSocketGuildUserById(_playerDiscordId);
-
         // If the user is in the server
         if (user == null)
         {
             Log.WriteLine("User with id: " + _playerDiscordId + " was null!!" +
-                " Was not found in the server?", LogLevel.DEBUG);
+                " Was not found in the server probably", LogLevel.DEBUG);
             return Task.CompletedTask;
         }
 

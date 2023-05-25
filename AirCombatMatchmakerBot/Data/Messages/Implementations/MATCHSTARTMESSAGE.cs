@@ -26,7 +26,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
             thisInterfaceMessage.MessageChannelId + " under category ID: " +
             thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
 
-        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+        mcc = new MatchChannelComponents(this);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
@@ -35,16 +35,24 @@ public class MATCHSTARTMESSAGE : BaseMessage
 
         foreach (var teamKvp in mcc.leagueMatchCached.TeamsInTheMatch)
         {
-            Team team = mcc.interfaceLeagueCached.LeagueData.Teams.FindTeamById(
-                mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam, teamKvp.Key);
+            try
+            {
+                Team team = mcc.interfaceLeagueCached.LeagueData.Teams.FindTeamById(
+                    mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam, teamKvp.Key);
 
-            string teamMembers =
-                team.GetTeamInAString(
-                    true, mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam);
+                string teamMembers =
+                    team.GetTeamInAString(
+                        true, mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam);
 
-            generatedMessage += teamMembers;
+                generatedMessage += teamMembers;
 
-            if (firstTeam) { generatedMessage += " vs "; firstTeam = false; }
+                if (firstTeam) { generatedMessage += " vs "; firstTeam = false; }
+            }
+            catch(Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                continue;
+            }
         }
 
         return generatedMessage;

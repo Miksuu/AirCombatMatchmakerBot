@@ -19,7 +19,7 @@ public class TacviewManager
         return Task.CompletedTask;
     }
 
-    public async static Task<AttachmentData[]> FindTacviewAttachmentsForACertainMatch(
+    public static Task<AttachmentData[]> FindTacviewAttachmentsForACertainMatch(
         int _matchId, InterfaceLeague _interfaceLeague)
     {
         Log.WriteLine("Getting tacview from user upload on league: " +
@@ -31,7 +31,7 @@ public class TacviewManager
         if (!Directory.Exists(pathToLookFor))
         {
             Log.WriteLine("Path doesn't exists: " + pathToLookFor, LogLevel.CRITICAL);
-            return Array.Empty<AttachmentData>();
+            throw new InvalidOperationException("Path doesn't exists: " + pathToLookFor);
         }
 
         List<string> files = Directory.GetFiles(pathToLookFor).ToList();
@@ -45,23 +45,22 @@ public class TacviewManager
         foreach (string fileIndex in files)
         {
             string[] finalFiles = new string[1];
+            Discord.IUserMessage cachedUserMessage;
 
-            InterfaceChannel? interfaceChannel =
+            try
+            {
+                InterfaceChannel interfaceChannel =
                 Database.Instance.Categories.FindInterfaceChannelInsideACategoryWithNames(
                     CategoryType.BOTSTUFF, ChannelType.TACVIEWSTORAGE);
-            if (interfaceChannel == null)
-            {
-                Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-                return Array.Empty<AttachmentData>();
-            }
 
-            Discord.IUserMessage? cachedUserMessage =
-                interfaceChannel.CreateARawMessageForTheChannelFromMessageName(
-                    "", "Match " + _matchId + "'s tacviews", true, null, false, finalFiles[0] = fileIndex).Result;
-            if (cachedUserMessage == null)
+                cachedUserMessage =
+                    interfaceChannel.CreateARawMessageForTheChannelFromMessageName(
+                        "", "Match " + _matchId + "'s tacviews", true, null, false, finalFiles[0] = fileIndex).Result;
+            }
+            catch (Exception ex)
             {
-                Log.WriteLine(nameof(cachedUserMessage) + " was null!", LogLevel.CRITICAL);
-                return Array.Empty<AttachmentData>();
+                Log.WriteLine(ex.Message, LogLevel.ERROR);
+                continue;
             }
 
             foreach (var file in cachedUserMessage.Attachments)
@@ -84,6 +83,6 @@ public class TacviewManager
                 ", on matchId:" + _matchId + ", with count: " + finalFiles.Length, LogLevel.VERBOSE);
         }
 
-        return tacviewResults;
+        return Task.FromResult(tacviewResults);
     }
 }

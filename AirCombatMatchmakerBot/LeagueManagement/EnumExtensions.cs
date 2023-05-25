@@ -8,22 +8,20 @@ public static class EnumExtensions
 
         Type? t = Type.GetType(_string.ToUpper());
 
-        Log.WriteLine("Generated type: " + t, LogLevel.VERBOSE);
         if (t == null)
         {
             Log.WriteLine("type was null for: " + _string.ToUpper(), LogLevel.CRITICAL);
             return new object();
         }
+        Log.WriteLine("Generated type: " + t, LogLevel.VERBOSE);
 
         var instance = Activator.CreateInstance(t);
-
-        Log.WriteLine("Generated instance: " + instance, LogLevel.VERBOSE);
-
         if (instance == null)
         {
             Log.WriteLine("instance was null for: " + _string.ToUpper(), LogLevel.CRITICAL);
             return t;
         }
+        Log.WriteLine("Generated instance: " + instance, LogLevel.VERBOSE);
 
         return instance;
     }
@@ -31,13 +29,12 @@ public static class EnumExtensions
     public static string GetEnumMemberAttrValue(object _enumVal)
     {
         string? enumValString = _enumVal.ToString();
-
-        Log.WriteLine("enumValString: " + enumValString, LogLevel.VERBOSE);
-
         if (enumValString == null)
         {
             return "null";
         }
+
+        Log.WriteLine("enumValString: " + enumValString, LogLevel.VERBOSE);
 
         var type = _enumVal.GetType();
         if (type == typeof(string))

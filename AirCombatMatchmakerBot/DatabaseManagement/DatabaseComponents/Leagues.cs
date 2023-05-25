@@ -1,3 +1,4 @@
+using Discord.WebSocket;
 using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
@@ -35,15 +36,33 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
     }
 
     // Might want to add a check that it exists, use the method above
-    public InterfaceLeague? GetILeagueByCategoryName(CategoryType? _leagueCategoryName)
+    public InterfaceLeague GetILeagueByCategoryName(CategoryType _leagueCategoryName)
     {
         Log.WriteLine("Getting ILeague by category name: " + _leagueCategoryName, LogLevel.VERBOSE);
-        InterfaceLeague? FoundLeague = StoredLeagues.FirstOrDefault(x => x.LeagueCategoryName == _leagueCategoryName);
 
+        InterfaceLeague? FoundLeague = 
+            StoredLeagues.FirstOrDefault(x => x.LeagueCategoryName == _leagueCategoryName);
         if (FoundLeague == null)
         {
             Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.CRITICAL);
-            return null;
+            throw new InvalidOperationException(nameof(FoundLeague) + " was null!");
+        }
+
+        Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
+        return FoundLeague;
+    }
+
+    public InterfaceLeague GetILeagueByCategoryId(ulong _leagueCategoryId)
+    {
+        Log.WriteLine("Getting ILeague by ID: " + _leagueCategoryId + " with " + nameof(StoredLeagues) +
+            " count: " + StoredLeagues.Count, LogLevel.DEBUG);
+
+        InterfaceLeague? FoundLeague = StoredLeagues.FirstOrDefault(
+            x => x.LeagueCategoryId == _leagueCategoryId);
+        if (FoundLeague == null)
+        {
+            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.CRITICAL);
+            throw new InvalidOperationException(nameof(FoundLeague) + " was null!");
         }
 
         Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
@@ -51,46 +70,22 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
     }
 
     // Maybe unnecessary to get it by string
-    public InterfaceLeague? GetILeagueByString(string _leagueCategoryNameString)
+    public InterfaceLeague GetILeagueByString(string _leagueCategoryNameString)
     {
         Log.WriteLine("Getting ILeague by string: " + _leagueCategoryNameString, LogLevel.VERBOSE);
+
         InterfaceLeague? FoundLeague = StoredLeagues.FirstOrDefault(
             x => x.LeagueCategoryName.ToString() == _leagueCategoryNameString);
-
         if (FoundLeague == null)
         {
             Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.CRITICAL);
-            return null;
+            throw new InvalidOperationException(nameof(FoundLeague) + " was null!");
         }
 
         Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
         return FoundLeague;
     }
 
-    public InterfaceLeague? GetILeagueByCategoryId(ulong _leagueCategoryId)
-    {
-        Log.WriteLine("Getting ILeague by ID: " + _leagueCategoryId + " with " + nameof(StoredLeagues) +
-            " count: "+ StoredLeagues.Count, LogLevel.DEBUG);
-
-        foreach (var item in StoredLeagues)
-        {
-            Log.WriteLine("storedLeagueCategoryId: " + item.LeagueRoleId.ToString(), LogLevel.DEBUG);
-            Log.WriteLine("storedLeagueCategoryId: " +
-                item.LeagueCategoryId.ToString(), LogLevel.DEBUG);
-        }
-
-        InterfaceLeague? FoundLeague = StoredLeagues.FirstOrDefault(
-            x => x.LeagueCategoryId == _leagueCategoryId);
-
-        if (FoundLeague == null)
-        {
-            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.CRITICAL);
-            return null;
-        }
-
-        Log.WriteLine("Found: " + FoundLeague.LeagueCategoryName, LogLevel.VERBOSE);
-        return FoundLeague;
-    }
 
     public void AddToStoredLeagues(InterfaceLeague _ILeague)
     {
@@ -118,6 +113,12 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
             }
 
             string? storedLeagueString = storedLeague.ToString();
+            if (storedLeagueString == null)
+            {
+                Log.WriteLine("storedLeagueString was null!", LogLevel.CRITICAL);
+                return;
+            }
+
 
             foreach (Team team in storedLeague.LeagueData.Teams.TeamsConcurrentBag)
             {
@@ -137,23 +138,21 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
                                 storedLeague.LeagueCategoryName + " because " + player.PlayerNickName +
                                 " left", LogLevel.DEBUG);
 
-                            if (storedLeagueString == null)
+                            InterfaceLeague findLeagueCategoryType;
+                            InterfaceChannel interfaceChannel;
+                            try
                             {
-                                Log.WriteLine("storedLeagueString was null!", LogLevel.CRITICAL);
-                                continue;
+                                findLeagueCategoryType = GetILeagueByString(storedLeagueString);
+
+                                interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
+                                    CategoryType.REGISTRATIONCATEGORY).FindInterfaceChannelWithNameInTheCategory(
+                                        ChannelType.LEAGUEREGISTRATION);
                             }
-
-                            InterfaceLeague? findLeagueCategoryType = GetILeagueByString(storedLeagueString);
-
-                            if (findLeagueCategoryType == null)
+                            catch (Exception ex)
                             {
-                                Log.WriteLine(nameof(findLeagueCategoryType) + " was null!", LogLevel.CRITICAL);
+                                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                                 return;
                             }
-
-                            var interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
-                                CategoryType.REGISTRATIONCATEGORY).FindInterfaceChannelWithNameInTheCategory(
-                                ChannelType.LEAGUEREGISTRATION);
 
                             var leagueRegistrationMessages = interfaceChannel.InterfaceMessagesWithIds.Where(
                                 m => m.Value.MessageName == MessageName.LEAGUEREGISTRATIONMESSAGE);
@@ -172,15 +171,10 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
                                 Log.WriteLine("Found " + nameof(leagueInterface) + ": " +
                                     leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-                                InterfaceLeague? dbLeagueInstance =
+                                InterfaceLeague dbLeagueInstance =
                                     Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(
                                         leagueInterface);
-
-                                if (dbLeagueInstance == null)
-                                {
-                                    Log.WriteLine("dbLeagueInstance was null!", LogLevel.CRITICAL);
-                                    continue;
-                                }*/
+                                    */
 
                                 //dbLeagueInstance.ModifyLeagueRegisterationChannelMessage();
 
@@ -198,14 +192,8 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
         }
     }
 
-    public InterfaceLeague? GetInterfaceLeagueCategoryFromTheDatabase(InterfaceLeague _leagueInterface)
+    public InterfaceLeague GetInterfaceLeagueCategoryFromTheDatabase(InterfaceLeague _leagueInterface)
     {
-        if (_leagueInterface == null)
-        {
-            Log.WriteLine("_leagueInterface was null!", LogLevel.CRITICAL);
-            return null;
-        }
-
         Log.WriteLine("Checking if " + _leagueInterface.LeagueCategoryName +
             " has _leagueInterface in the database", LogLevel.VERBOSE);
 
@@ -214,17 +202,20 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
             Log.WriteLine(_leagueInterface.LeagueCategoryName +
                 " exists in the database!", LogLevel.DEBUG);
 
-            var newInterfaceLeagueCategory = GetILeagueByCategoryName(_leagueInterface.LeagueCategoryName);
-
-            if (newInterfaceLeagueCategory == null)
+            InterfaceLeague? interfaceLeague = null;
+            try
             {
-                Log.WriteLine(nameof(newInterfaceLeagueCategory) + " was null!", LogLevel.CRITICAL);
-                return null;
-            }
+                interfaceLeague = GetILeagueByCategoryName(_leagueInterface.LeagueCategoryName);
 
-            Log.WriteLine("found result: " +
-                newInterfaceLeagueCategory.LeagueCategoryName, LogLevel.DEBUG);
-            return newInterfaceLeagueCategory;
+                Log.WriteLine("found result: " +
+                    interfaceLeague.LeagueCategoryName, LogLevel.DEBUG);
+                return interfaceLeague;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                return interfaceLeague ?? _leagueInterface;
+            }
         }
         else
         {
@@ -236,7 +227,7 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
             return _leagueInterface;
         }
     }
-    public InterfaceLeague? FindLeagueInterfaceWithLeagueCategoryId(
+    public InterfaceLeague FindLeagueInterfaceWithLeagueCategoryId(
         ulong _leagueCategoryId)
     {
         Log.WriteLine("Starting to find Ileague from db with: " +
@@ -256,22 +247,15 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
             "Found interface " + nameof(leagueInterface) + ": " +
             leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-        InterfaceLeague? dbLeagueInstance =
+        InterfaceLeague dbLeagueInstance =
             Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
-
-        if (dbLeagueInstance == null)
-        {
-            Log.WriteLine(nameof(dbLeagueInstance) +
-                " was null! Could not find the league.", LogLevel.CRITICAL);
-            return null;
-        }
 
         Log.WriteLine(nameof(dbLeagueInstance) + " db: " +
             dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
         return dbLeagueInstance;
     }
 
-    public InterfaceLeague? FindLeagueInterfaceWithLeagueCategoryName(
+    public InterfaceLeague FindLeagueInterfaceWithLeagueCategoryName(
         string _categoryName)
     {
         Log.WriteLine("Starting to find Ileague from db with: " +
@@ -289,15 +273,8 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
             "Found interface " + nameof(leagueInterface) + ": " +
             leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
-        InterfaceLeague? dbLeagueInstance =
+        InterfaceLeague dbLeagueInstance =
             Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
-
-        if (dbLeagueInstance == null)
-        {
-            Log.WriteLine(nameof(dbLeagueInstance) +
-                " was null! Could not find the league.", LogLevel.CRITICAL);
-            return null;
-        }
 
         Log.WriteLine(nameof(dbLeagueInstance) + " db: " +
             dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
@@ -309,26 +286,21 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
         Log.WriteLine("Trying to find the league interface with the league match with channel id: " +
             _channelId, LogLevel.VERBOSE);
 
-        // Find the league with the cached category ID
-        InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.GetILeagueByCategoryId(
-                Database.Instance.Categories.MatchChannelsIdWithCategoryId[_channelId]);
-        if (interfaceLeague == null)
+        LeagueMatch? foundMatch = null;
+        InterfaceLeague? interfaceLeague = null;
+        try
         {
-            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
-            return (null, null);
+            // Find the league with the cached category ID
+            interfaceLeague =
+                Database.Instance.Leagues.GetILeagueByCategoryId(
+                    Database.Instance.Categories.MatchChannelsIdWithCategoryId[_channelId]);
+            foundMatch = interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_channelId);
         }
-
-        LeagueMatch? foundMatch =
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(
-                _channelId);
-        if (foundMatch == null)
+        catch (Exception ex)
         {
-            Log.WriteLine("Match with: " + _channelId +
-                " was not found.", LogLevel.CRITICAL);
-            return (interfaceLeague, null);
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return (interfaceLeague, foundMatch);
         }
-
         Log.WriteLine("Returning: " + interfaceLeague.LeagueCategoryName +
             " | " + foundMatch.MatchId, LogLevel.DEBUG);
 
@@ -341,23 +313,17 @@ public class Leagues : logClass<Leagues>, InterfaceLoggableClass
         Log.WriteLine("Finding the match and its interface league with category: " + _messageCategoryId +
             " and channel id:" + _messageChannelId, LogLevel.VERBOSE);
 
-        InterfaceLeague? interfaceLeague = FindLeagueInterfaceWithLeagueCategoryId(_messageCategoryId);
+        InterfaceLeague interfaceLeague = FindLeagueInterfaceWithLeagueCategoryId(_messageCategoryId);
 
-        if (interfaceLeague == null)
+        LeagueMatch? leagueMatch = null;
+        try
         {
-            Log.WriteLine(nameof(interfaceLeague) +
-                " was null! Could not find the league.", LogLevel.CRITICAL);
-            return (null, null);
+            leagueMatch = interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId);
         }
-
-        LeagueMatch? leagueMatch =
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId);
-
-        if (leagueMatch == null)
+        catch (Exception ex)
         {
-            Log.WriteLine(nameof(leagueMatch) +
-                " was null! Could not find the match.", LogLevel.CRITICAL);
-            return (interfaceLeague, null);
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return (interfaceLeague, leagueMatch);
         }
 
         return (interfaceLeague, leagueMatch);

@@ -8,8 +8,12 @@ public class MatchChannelComponents
     public InterfaceLeague? interfaceLeagueCached { get; set; }
     public LeagueMatch? leagueMatchCached { get; set; }
 
-    public string FindMatchAndItsLeagueAndInsertItToTheCache(
-        InterfaceMessage _interfaceMessage)
+    public MatchChannelComponents()
+    {
+        Log.WriteLine("Default constructor!", LogLevel.CRITICAL);
+    }
+
+    public MatchChannelComponents(InterfaceMessage _interfaceMessage)
     {
         Log.WriteLine("Starting to find with: " + _interfaceMessage.MessageId +
             " and with category id: " + _interfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
@@ -17,30 +21,25 @@ public class MatchChannelComponents
         if (interfaceLeagueCached != null || leagueMatchCached != null)
         {
             Log.WriteLine("Already cached, returning", LogLevel.VERBOSE);
-            return "";
+            return;
         }
 
-        interfaceLeagueCached =
-            Database.Instance.Leagues.GetILeagueByCategoryId(_interfaceMessage.MessageCategoryId);
-        if (interfaceLeagueCached == null)
+        try
         {
-            Log.WriteLine(nameof(interfaceLeagueCached) + " was null!", LogLevel.CRITICAL);
-            return "Could not find the interface league!";
-        }
-
-        leagueMatchCached =
-            interfaceLeagueCached.LeagueData.Matches.FindLeagueMatchByTheChannelId(
+            interfaceLeagueCached =
+                Database.Instance.Leagues.GetILeagueByCategoryId(_interfaceMessage.MessageCategoryId);
+            leagueMatchCached = interfaceLeagueCached.LeagueData.Matches.FindLeagueMatchByTheChannelId(
                 _interfaceMessage.MessageChannelId);
-        if (leagueMatchCached == null)
+        }
+        catch (Exception ex)
         {
-            Log.WriteLine("Match with: " + _interfaceMessage.MessageChannelId +
-                " was not found.", LogLevel.CRITICAL);
-            return "Could not find the LeagueMatch!";
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
         }
 
         Log.WriteLine("Set: " + interfaceLeagueCached + " | " +
             leagueMatchCached, LogLevel.VERBOSE);
 
-        return "";
+        return;
     }
 }

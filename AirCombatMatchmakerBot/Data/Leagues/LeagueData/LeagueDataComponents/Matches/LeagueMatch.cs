@@ -100,23 +100,26 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         foreach (var teamKvp in TeamsInTheMatch)
         {
             Log.WriteLine("Looping on team id: " + teamKvp.Key, LogLevel.VERBOSE);
-            Team foundTeam = _interfaceLeague.LeagueData.Teams.FindTeamById(
-                _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key);
 
-            if (foundTeam == null)
+            try 
             {
-                Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.ERROR);
-                continue;
+                Team foundTeam = _interfaceLeague.LeagueData.Teams.FindTeamById(
+                    _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key);
+
+                foreach (Player player in foundTeam.Players)
+                {
+                    allowedUserIds[playerCounter] = player.PlayerDiscordId;
+                    Log.WriteLine("Added " + allowedUserIds[playerCounter] + " to: " +
+                        nameof(allowedUserIds) + ". " + nameof(playerCounter) + " is now: " +
+                        playerCounter + 1 + " out of: " + (allowedUserIds.Length - 1).ToString(), LogLevel.VERBOSE);
+
+                    playerCounter++;
+                }
             }
-
-            foreach (Player player in foundTeam.Players)
+            catch(Exception ex)
             {
-                allowedUserIds[playerCounter] = player.PlayerDiscordId;
-                Log.WriteLine("Added " + allowedUserIds[playerCounter] + " to: " +
-                    nameof(allowedUserIds) + ". " + nameof(playerCounter) + " is now: " +
-                    playerCounter + 1 + " out of: " + (allowedUserIds.Length - 1).ToString(), LogLevel.VERBOSE);
-
-                playerCounter++;
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                continue;
             }
         }
 
@@ -127,16 +130,27 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
     {
         Log.WriteLine("Starting the match on second thread on channel: " + _interfaceChannel.ChannelId, LogLevel.VERBOSE);
 
-        await _interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMMATCHENTRYMESSAGE);
+        try
+        {
+            await _interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMMATCHENTRYMESSAGE);
 
-        await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-            MessageName.REPORTINGMESSAGE, true);
-        await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-            MessageName.REPORTINGSTATUSMESSAGE, true);
+            await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                MessageName.REPORTINGMESSAGE, true);
+            await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                MessageName.REPORTINGSTATUSMESSAGE, true);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
+        }
     }
 
     public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
     {
+        AttachmentData[] attachmentDatas;
+        InterfaceMessage interfaceMessage;
+
         MatchReporting.MatchState = MatchState.MATCHDONE;
 
         Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
@@ -146,19 +160,18 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 
         Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 
-        InterfaceChannel? interfaceChannel = Database.Instance.Categories.FindInterfaceChannelInsideACategoryWithIds(
-            _interfaceLeague.LeagueCategoryId, MatchChannelId);
-        if (interfaceChannel == null)
-        {
-            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-            return;
-        }
+        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            _interfaceLeague.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                MatchChannelId);
 
-        var interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                MessageName.MATCHFINALRESULTMESSAGE, false);
-        if (interfaceMessage == null)
+        try
         {
-            Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.ERROR);
+            interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                MessageName.MATCHFINALRESULTMESSAGE, false);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
         }
 
@@ -175,76 +188,68 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         MatchReporting.FinalMessageForMatchReportingChannel = matchFinalResultMessage.AlternativeMessage;
         MatchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
-        AttachmentData[] attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
-            MatchId, _interfaceLeague).Result;
-
-        /*
-        foreach (var item in attachmentDatas)
+        try
         {
-            Log.WriteLine("attachmentData: " + item.attachmentName + " | " + item.attachmentLink, LogLevel.DEBUG);
-        }*/
+             attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
+                MatchId, _interfaceLeague).Result;
 
-        if (MatchReporting.FinalMessageForMatchReportingChannel == null)
-        {
-            Log.WriteLine(nameof(MatchReporting) + " FinalMessageForMatchReportingChannel was null!", LogLevel.ERROR);
-            return;
-        }
+            if (MatchReporting.FinalMessageForMatchReportingChannel == null)
+            {
+                Log.WriteLine(nameof(MatchReporting) + " FinalMessageForMatchReportingChannel was null!", LogLevel.ERROR);
+                return;
+            }
 
-        if (MatchReporting.FinalResultTitleForConfirmation == null)
-        {
-            Log.WriteLine(nameof(MatchReporting) + " matchReporting.FinalResultTitleForConfirmation was null!", LogLevel.ERROR);
-            return;
-        }
+            if (MatchReporting.FinalResultTitleForConfirmation == null)
+            {
+                Log.WriteLine(nameof(MatchReporting) + " matchReporting.FinalResultTitleForConfirmation was null!", LogLevel.ERROR);
+                return;
+            }
 
-        Log.WriteLine("finalMsg: " + MatchReporting.FinalMessageForMatchReportingChannel, LogLevel.DEBUG);
+            Log.WriteLine("finalMsg: " + MatchReporting.FinalMessageForMatchReportingChannel, LogLevel.DEBUG);
 
-        await _interfaceLeague.PostMatchReport(
-            MatchReporting.FinalMessageForMatchReportingChannel, MatchReporting.FinalResultTitleForConfirmation, attachmentDatas);
+            await _interfaceLeague.PostMatchReport(
+                MatchReporting.FinalMessageForMatchReportingChannel, MatchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
-        int matchChannelDeleteDelay = 45;
+            int matchChannelDeleteDelay = 45;
 
-        var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
-        if (messageToModify == null)
-        {
-            Log.WriteLine(nameof(messageToModify) + " was null!", LogLevel.ERROR);
-            return;
-        }
+            var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
 
-        await messageToModify.AddContentToTheEndOfTheMessage(
-            "Match is done. Deleting this channel in " + matchChannelDeleteDelay + " seconds!");
+            await messageToModify.AddContentToTheEndOfTheMessage(
+                "Match is done. Deleting this channel in " + matchChannelDeleteDelay + " seconds!");
 
-        // Schedule an event to delete the channel later
-        Database.Instance.EventScheduler.ScheduledEvents.Add(
-            new DeleteChannelEvent(matchChannelDeleteDelay, _interfaceLeague.LeagueCategoryId, MatchChannelId, "match"));
+            // Schedule an event to delete the channel later
+            Database.Instance.EventScheduler.ScheduledEvents.Add(
+                new DeleteChannelEvent(matchChannelDeleteDelay, _interfaceLeague.LeagueCategoryId, MatchChannelId, "match"));
 
-        //await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
+            //await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
 
-        LeagueMatch? tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(MatchChannelId);
-        if (tempMatch == null)
-        {
-            Log.WriteLine(nameof(tempMatch) + " was null!", LogLevel.ERROR);
-            return;
-        }
+            LeagueMatch tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(MatchChannelId);
 
-        int matchIdTemp = MatchId;
+            int matchIdTemp = MatchId;
 
-        Database.Instance.ArchivedLeagueMatches.Add(tempMatch);
-        Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
-            Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
+            Database.Instance.ArchivedLeagueMatches.Add(tempMatch);
+            Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
+                Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
 
-        foreach (var item in _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Where(
-            m => m.MatchId == tempMatch.MatchId))
-        {
-            _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? _leagueMatch);
-            Log.WriteLine("Removed match " + item.MatchId, LogLevel.DEBUG);
-        }
+            foreach (var item in _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Where(
+                m => m.MatchId == tempMatch.MatchId))
+            {
+                _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? _leagueMatch);
+                Log.WriteLine("Removed match " + item.MatchId, LogLevel.DEBUG);
+            }
 
-        // When removing the player from the database, no need for this because it's done after he is gone from the league
-        //if (!_removingPlayerFromDatabase)
-        //{
+            // When removing the player from the database, no need for this because it's done after he is gone from the league
+            //if (!_removingPlayerFromDatabase)
+            //{
             _interfaceLeague.UpdateLeagueLeaderboard();
-        //}
+            //}
 
-        await SerializationManager.SerializeDB();
+            await SerializationManager.SerializeDB();
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
+        }
     }
 }

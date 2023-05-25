@@ -7,32 +7,32 @@ public static class ButtonHandler
     {
         Log.WriteLine("Button press detected by: " + _component.User.Id, LogLevel.VERBOSE);
 
+        InterfaceButton databaseButton;
+        InterfaceMessage interfaceMessage;
+
         ulong componentChannelId = _component.Channel.Id;
         ulong componentMessageId = _component.Message.Id;
 
-        InterfaceMessage? interfaceMessage = Database.Instance.Categories.FindInterfaceMessageWithComponentChannelIdAndMessageId(
+        try
+        {
+            interfaceMessage = Database.Instance.Categories.FindInterfaceMessageWithComponentChannelIdAndMessageId(
             componentChannelId, componentMessageId);
-        if (interfaceMessage == null)
-        {
-            Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.CRITICAL);
-            return;
+
+            Log.WriteLine("Found: " + interfaceMessage.MessageChannelId + " | " +
+                interfaceMessage.MessageId + " | " + interfaceMessage.MessageDescription, LogLevel.DEBUG);
+
+            if (interfaceMessage.MessageCategoryId == 0 || interfaceMessage.MessageChannelId == 0 ||
+                interfaceMessage.MessageId == 0 || interfaceMessage.MessageDescription == "")
+            {
+                Log.WriteLine("Channel id, msg or it's id was null!", LogLevel.ERROR);
+            }
+
+            databaseButton = FindInterfaceButtonFromTheDatabase(
+                _component, interfaceMessage.MessageCategoryId);
         }
-
-        Log.WriteLine("Found: " + interfaceMessage.MessageChannelId + " | " +
-            interfaceMessage.MessageId + " | " + interfaceMessage.MessageDescription, LogLevel.DEBUG);
-
-        if (interfaceMessage.MessageCategoryId == 0 || interfaceMessage.MessageChannelId == 0 ||
-            interfaceMessage.MessageId == 0 || interfaceMessage.MessageDescription == "")
+        catch (Exception ex) 
         {
-            Log.WriteLine("Channel id, msg or it's id was null!", LogLevel.ERROR);
-        }
-
-        InterfaceButton? databaseButton = FindInterfaceButtonFromTheDatabase(
-            _component, interfaceMessage.MessageCategoryId);
-
-        if (databaseButton == null)
-        {
-            Log.WriteLine(nameof(databaseButton) + " was null", LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
         }
 
@@ -51,7 +51,7 @@ public static class ButtonHandler
         //else { Log.WriteLine("the response was: " + responseTuple.Item1, LogLevel.CRITICAL); }
     }
 
-    private static InterfaceButton? FindInterfaceButtonFromTheDatabase(
+    private static InterfaceButton FindInterfaceButtonFromTheDatabase(
         SocketMessageComponent _component, ulong _categoryId)
     {
         // Find the category by id
@@ -60,7 +60,7 @@ public static class ButtonHandler
         if (databaseCategory.Value == null)
         {
             Log.WriteLine(nameof(databaseCategory.Value) + " was null!", LogLevel.CRITICAL);
-            return null;
+            throw new InvalidOperationException(nameof(databaseCategory.Value) + " was null!");
         }
 
         Log.WriteLine("Found category: " + databaseCategory.Value.CategoryType, LogLevel.VERBOSE);
@@ -71,7 +71,7 @@ public static class ButtonHandler
         if (databaseChannel.Value == null)
         {
             Log.WriteLine(nameof(databaseChannel) + " was null!", LogLevel.CRITICAL);
-            return null;
+            throw new InvalidOperationException(nameof(databaseChannel) + " was null!");
         }
 
         Log.WriteLine("Found channel: " + databaseChannel.Value.ChannelType, LogLevel.VERBOSE);
@@ -82,7 +82,7 @@ public static class ButtonHandler
         if (databaseMessage.Value == null)
         {
             Log.WriteLine(nameof(databaseMessage) + " was null!", LogLevel.CRITICAL);
-            return null;
+            throw new InvalidOperationException(nameof(databaseMessage) + " was null!");
         }
 
         Log.WriteLine("Found channel: " + databaseMessage.Value.MessageName, LogLevel.VERBOSE);
@@ -93,7 +93,7 @@ public static class ButtonHandler
         if (foundButton == null)
         {
             Log.WriteLine(nameof(foundButton) + " was null", LogLevel.CRITICAL);
-            return null;
+            throw new InvalidOperationException(nameof(foundButton) + " was null!");
         }
 
         Log.WriteLine("Found the specific button: " + foundButton.ButtonName +

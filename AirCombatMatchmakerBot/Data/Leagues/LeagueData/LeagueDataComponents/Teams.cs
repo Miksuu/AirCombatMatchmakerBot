@@ -119,19 +119,11 @@ public class Teams : logClass<Teams>, InterfaceLoggableClass
     {
         Log.WriteLine("Finding team by id: " + _id, LogLevel.VERBOSE);
 
-        if (!TeamsConcurrentBag.Any(x => x.TeamId == _id))
-        {
-            Log.WriteLine("Trying to get a team by id: + " + _id +
-                " that is nonexistent!", LogLevel.CRITICAL);
-            return new Team();
-        }
-
         Team? foundTeam = TeamsConcurrentBag.FirstOrDefault(x => x.TeamId == _id);
-
         if (foundTeam == null)
         {
             Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
-            return new Team();
+            throw new InvalidOperationException(nameof(foundTeam) + " was null!");
         }
 
         Log.WriteLine("Found team: " + foundTeam.GetTeamName(

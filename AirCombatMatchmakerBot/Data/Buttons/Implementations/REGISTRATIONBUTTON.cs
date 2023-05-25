@@ -24,46 +24,41 @@ public class REGISTRATIONBUTTON : BaseButton
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         Log.WriteLine("Starting player registration", LogLevel.DEBUG);
+        InterfaceChannel registrationChannel;
 
-        string response = string.Empty;
-        string registrationChannelCheck = string.Empty;
-        bool serialize = true;
+        string registrationChannelCheck;
 
-        var registrationChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
-            _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithNameInTheCategory(
-        ChannelType.LEAGUEREGISTRATION);
-
-        if (registrationChannel == null)
+        try
         {
-            Log.WriteLine(nameof(registrationChannel) + " was null", LogLevel.ERROR);
-            registrationChannelCheck = nameof(registrationChannel) + " was null!";
-        }
-        else
-        {
+            registrationChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithNameInTheCategory(
+                    ChannelType.LEAGUEREGISTRATION);
             registrationChannelCheck = "\n\n Check <#" + registrationChannel.ChannelId + "> for all the available leagues!";
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
+            return Task.FromResult(new Response(ex.Message, false));
         }
 
         // Checks that the player does not exist in the database already, true if this is not the case
         if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
         {
             Database.Instance.CachedUsers.AddUserIdToCachedConcurrentBag(_component.User.Id);
-
-            response = _component.User.Mention + ", " +
+            return Task.FromResult(new Response(_component.User.Mention + ", " +
                 BotMessaging.GetMessageResponse(
                     _component.Data.CustomId,
                     " registration complete, welcome!" + registrationChannelCheck,
-                    _component.Channel.Name);
+                    _component.Channel.Name), false));
+
         }
         else
         {
-            serialize = false;
-            response = _component.User.Mention + ", " +
+            return Task.FromResult(new Response(_component.User.Mention + ", " +
                 BotMessaging.GetMessageResponse(
                     _component.Data.CustomId,
                     " You are already registered!" + registrationChannelCheck,
-                    _component.Channel.Name);
+                    _component.Channel.Name), false));
         }
-
-        return Task.FromResult(new Response(response, serialize));
     }
 }

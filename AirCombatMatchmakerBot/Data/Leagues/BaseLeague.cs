@@ -91,17 +91,17 @@ public abstract class BaseLeague : InterfaceLeague
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 
-    public InterfaceCategory? FindLeaguesInterfaceCategory()
+    public InterfaceCategory FindLeaguesInterfaceCategory()
     {
         Log.WriteLine("Finding interfaceCategory in: " + thisInterfaceLeague.LeagueCategoryName +
             " with id: " + LeagueCategoryId, LogLevel.VERBOSE);
 
-        InterfaceCategory? interfaceCategory = 
+        InterfaceCategory interfaceCategory = 
             Database.Instance.Categories.FindInterfaceCategoryWithId(LeagueCategoryId);
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
-            return interfaceCategory;
+            throw new InvalidOperationException(nameof(interfaceCategory) + " was null!");
         }
 
         Log.WriteLine("Found: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
@@ -112,56 +112,59 @@ public abstract class BaseLeague : InterfaceLeague
     public async Task PostMatchReport(string _finalResultMessage, string _finalResultTitle,
         AttachmentData[] _attachmentDatas)
     {
-        InterfaceCategory? leagueCategory =
-            Database.Instance.Categories.FindInterfaceCategoryWithId(LeagueCategoryId);
-        if (leagueCategory == null)
+        try
         {
-            Log.WriteLine(nameof(leagueCategory) + " was null!", LogLevel.CRITICAL);
+            InterfaceCategory leagueCategory =
+                Database.Instance.Categories.FindInterfaceCategoryWithId(LeagueCategoryId);
+
+            InterfaceChannel matchReportsChannelInterface =
+                leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
+
+            var client = BotReference.GetClientRef();
+            if (client == null)
+            {
+                Exceptions.BotClientRefNull();
+                return;
+            }
+
+            var textChannel = await client.GetChannelAsync(matchReportsChannelInterface.ChannelId) as ITextChannel;
+            if (textChannel == null)
+            {
+                Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.ERROR);
+                return;
+            }
+
+            await matchReportsChannelInterface.CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
+                _finalResultMessage, _attachmentDatas, _finalResultTitle);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
         }
-
-        InterfaceChannel? matchReportsChannelInterface =
-            leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
-        if (matchReportsChannelInterface == null)
-        {
-            Log.WriteLine(nameof(matchReportsChannelInterface) + " was null!", LogLevel.CRITICAL);
-            return;
-        }
-
-
-        var client = BotReference.GetClientRef();
-        if (client == null)
-        {
-            Exceptions.BotClientRefNull();
-            return;
-        }
-
-        var textChannel = await client.GetChannelAsync(matchReportsChannelInterface.ChannelId) as ITextChannel;
-        if (textChannel == null)
-        {
-            Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.ERROR);
-            return;
-        }
-
-        await matchReportsChannelInterface.CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
-            _finalResultMessage, _attachmentDatas, _finalResultTitle);
     }
 
     public void UpdateLeagueLeaderboard()
     {
         Log.WriteLine("Updating leaderboard on: " + thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
-        InterfaceMessage? leagueStatusMessage = 
-            Database.Instance.Categories.FindAMessageInAnInterfaceChannelInsideACategoryWithIdAndNames(
-                LeagueCategoryId, ChannelType.LEAGUESTATUS, MessageName.LEAGUESTATUSMESSAGE);
-
-        if (leagueStatusMessage == null)
+        try
         {
-            Log.WriteLine(nameof(leagueStatusMessage) + " was null!", LogLevel.ERROR);
+            InterfaceMessage leagueStatusMessage =
+                Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(ChannelType.LEAGUESTATUS).
+                        FindInterfaceMessageWithNameInTheChannel(
+                            MessageName.LEAGUESTATUSMESSAGE);
+
+            leagueStatusMessage.GenerateAndModifyTheMessage();
+        }
+        catch (Exception ex) 
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
         }
 
-        leagueStatusMessage.GenerateAndModifyTheMessage();
+
 
         Log.WriteLine("Done updating leaderboard on: " + thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
     }
@@ -173,12 +176,18 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Registering user to league: " +
             thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
-        var foundChannel = Database.Instance.Categories.FindInterfaceChannelInsideACategoryWithIdAndName(
-            LeagueCategoryId, ChannelType.CHALLENGE);
-        if (foundChannel == null)
+        InterfaceChannel foundChannel;
+
+        try
         {
-            Log.WriteLine(nameof(foundChannel) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(new Response(nameof(foundChannel) + " was null!", false));
+            foundChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
+                    ChannelType.CHALLENGE);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return Task.FromResult(new Response(ex.Message, false));
         }
 
         ulong challengeChannelId = foundChannel.ChannelId;

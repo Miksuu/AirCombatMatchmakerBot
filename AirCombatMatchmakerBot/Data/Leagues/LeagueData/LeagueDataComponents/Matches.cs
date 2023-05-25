@@ -50,42 +50,44 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
     public void CreateAMatchChannel(
         LeagueMatch _leagueMatch, InterfaceLeague _interfaceLeague, DiscordSocketClient _client)
     {
-        // Get the category by the league category name passed in the method
-        var categoryKvp =
-            Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
-                _interfaceLeague.LeagueCategoryName);
-
-        string leagueMatchIdString = _leagueMatch.MatchId.ToString();
-
-        // Prep the channel name with match id
-        string overriddenMatchName = "match-" + leagueMatchIdString;
-
-        Log.WriteLine("Starting to create a new match channel: " +
-            overriddenMatchName, LogLevel.VERBOSE);
-
-        // Prepare the match with the ID of the current new match
-        InterfaceChannel? interfaceChannel = categoryKvp.CreateSpecificChannelFromChannelTypeWithoutRole(
-                ChannelType.MATCHCHANNEL, categoryKvp.SocketCategoryChannelId,
-                overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
-                _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague)).Result;
-
-        if (interfaceChannel == null)
+        try
         {
-            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.ERROR);
+            // Get the category by the league category name passed in the method
+            var categoryKvp =
+                Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
+                    _interfaceLeague.LeagueCategoryName);
+
+            string leagueMatchIdString = _leagueMatch.MatchId.ToString();
+
+            // Prep the channel name with match id
+            string overriddenMatchName = "match-" + leagueMatchIdString;
+
+            Log.WriteLine("Starting to create a new match channel: " +
+                overriddenMatchName, LogLevel.VERBOSE);
+
+            // Prepare the match with the ID of the current new match
+            InterfaceChannel interfaceChannel = categoryKvp.CreateSpecificChannelFromChannelTypeWithoutRole(
+                    ChannelType.MATCHCHANNEL, categoryKvp.SocketCategoryChannelId,
+                    overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
+                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague)).Result;
+
+            _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
+
+            if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
+                interfaceChannel.ChannelId))
+            {
+                Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryAdd(
+                    interfaceChannel.ChannelId, categoryKvp.SocketCategoryChannelId);
+            }
+
+            Thread secondThread = new Thread(() => InitChannelOnSecondThread(_client, interfaceChannel));
+            secondThread.Start();
+        }
+        catch (Exception ex) 
+        {
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
-
-        _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
-
-        if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
-            interfaceChannel.ChannelId))
-        {
-            Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryAdd(
-                interfaceChannel.ChannelId, categoryKvp.SocketCategoryChannelId);
-        }
-
-        Thread secondThread = new Thread(() => InitChannelOnSecondThread(_client, interfaceChannel));
-        secondThread.Start();
     }
 
     public void InitChannelOnSecondThread(
@@ -96,16 +98,15 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
     }
 
-    public LeagueMatch? FindLeagueMatchByTheChannelId(ulong _channelId)
+    public LeagueMatch FindLeagueMatchByTheChannelId(ulong _channelId)
     {
         Log.WriteLine("Getting match by channelId: " + _channelId, LogLevel.VERBOSE);
 
         LeagueMatch? foundMatch = MatchesConcurrentBag.FirstOrDefault(x => x.MatchChannelId == _channelId);
-
         if (foundMatch == null) 
         {
             Log.WriteLine(nameof(foundMatch) + " was null!", LogLevel.ERROR);
-            return null;
+            throw new InvalidOperationException(nameof(foundMatch) + " was null!");
         }
 
         Log.WriteLine("Found Match: " + foundMatch.MatchId + " with channelId: " +

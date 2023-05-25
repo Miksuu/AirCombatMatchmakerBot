@@ -35,7 +35,7 @@ public class CONFIRMSCOREBUTTON : BaseButton
             " with label int: " + playerReportedResult + " in category: " +
             thisInterfaceButton.ButtonCategoryId, LogLevel.DEBUG);
 
-        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
+        mcc = new MatchChannelComponents(_interfaceMessage);
 
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {

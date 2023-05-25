@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 [DataContract]
 public class logString
 {
-    [DataMember] private string? _value;
+    [DataMember] private string _value;
 
     public logString() { }
     public logString(string value)

@@ -24,12 +24,6 @@ public static class ChannelRestore
             Database.Instance.Categories.FindInterfaceCategoryWithId(
                 _categoryId);
 
-        if (dbKeyValue == null)
-        {
-            Log.WriteLine(nameof(dbKeyValue) + " was null!", LogLevel.CRITICAL);
-            return false;
-        }
-
         var dbFinal = dbKeyValue.InterfaceChannels.FirstOrDefault(
             ic => ic.Value.ChannelId == _interfaceChannel.ChannelId);
 

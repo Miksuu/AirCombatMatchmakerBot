@@ -17,12 +17,16 @@ public class LeagueCategoryComponents
             Log.WriteLine("Already cached, returning", LogLevel.VERBOSE);
             return "";
         }
-        interfaceLeagueCached =
-            Database.Instance.Leagues.GetILeagueByCategoryId(_messageCategoryId);
-        if (interfaceLeagueCached == null)
+
+        try
         {
-            Log.WriteLine(nameof(interfaceLeagueCached) + " was null!", LogLevel.CRITICAL);
-            return "Could not find the interface league!";
+            interfaceLeagueCached =
+                Database.Instance.Leagues.GetILeagueByCategoryId(_messageCategoryId);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return ex.Message;
         }
 
         Log.WriteLine("Set: " + interfaceLeagueCached, LogLevel.VERBOSE);

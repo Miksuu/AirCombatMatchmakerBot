@@ -30,38 +30,41 @@ public class LeagueData : logClass<LeagueData>, InterfaceLoggableClass
         return new List<string> { teams.GetParameter(), challengeStatus.GetParameter(), matches.GetParameter() };
     }
 
-    public Team? FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)
+    public Team FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)
     {
         Log.WriteLine("Starting to find a active team by player id: " + _playerId, LogLevel.VERBOSE);
 
         foreach (Team team in Teams.TeamsConcurrentBag)
         {
-            Team? foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
-
-            if (foundTeam != null)
+            try
             {
+                Team foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
                 Log.WriteLine("Found team: " + foundTeam.TeamName +
                     " with id: " + foundTeam.TeamId, LogLevel.DEBUG);
                 return foundTeam;
+            }
+            catch(Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                continue;
             }
         }
 
         Log.WriteLine("Team not found! Admin trying to access challenge" +
             " of a league that he's not registered to?", LogLevel.WARNING);
 
-        return null;
+        throw new InvalidOperationException("Team not found!");
     }
 
-    public Team? FindActiveTeamWithTeamId(int _teamId)
+    public Team FindActiveTeamWithTeamId(int _teamId)
     {
         Log.WriteLine("Starting to find team with id: " + _teamId, LogLevel.VERBOSE);
 
         Team? foundTeam = Teams.TeamsConcurrentBag.FirstOrDefault(t => t.TeamId == _teamId && t.TeamActive);
-
         if (foundTeam == null)
         {
             Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
-            return foundTeam;
+            throw new InvalidOperationException(nameof(foundTeam) + " was null!");
         }
 
         Log.WriteLine("Found team: " + foundTeam.TeamName + " with id: " + _teamId, LogLevel.VERBOSE);
@@ -75,7 +78,7 @@ public class LeagueData : logClass<LeagueData>, InterfaceLoggableClass
 
         foreach (Team team in Teams.TeamsConcurrentBag)
         {
-            Team? foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
+            Team foundTeam = team.CheckIfTeamIsActiveAndContainsAPlayer(_playerId);
 
             if (foundTeam != null)
             {

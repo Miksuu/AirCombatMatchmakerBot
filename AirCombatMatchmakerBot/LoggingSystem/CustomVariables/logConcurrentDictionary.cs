@@ -13,7 +13,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
 
     public logConcurrentDictionary(IEnumerable<KeyValuePair<TKey, TValue>> collection)
     {
-        _values = new ConcurrentDictionary<TKey, TValue>(collection); //?? Enumerable.Empty<KeyValuePair<TKey, TValue>>());
+        _values = new ConcurrentDictionary<TKey, TValue>(collection);
     }
 
     public string GetLoggingClassParameters()

@@ -69,14 +69,16 @@ public class CHALLENGEMESSAGE : BaseMessage
 
                     foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
                     {
-                        var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
-                        if (team == null)
+                        try
                         {
-                            Log.WriteLine(nameof(team) + " was null!", LogLevel.ERROR);
-                            return "";
+                            var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
+                            challengeMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
                         }
-
-                        challengeMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
+                        catch(Exception ex)
+                        {
+                            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                            continue;
+                        }
                     }
 
                     Log.WriteLine("Challenge message generated: " + challengeMessage, LogLevel.VERBOSE);

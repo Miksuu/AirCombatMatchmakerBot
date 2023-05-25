@@ -4,19 +4,18 @@ using Discord.WebSocket;
 // Reference to the bot's client/guild reference variable
 public static class BotReference
 {
-    private static DiscordSocketClient? clientRef;
+    private static DiscordSocketClient clientRef;
     // Use guild ref to get the guild specific things, such as channels in a category
-    private static SocketGuild? guildRef;
+    private static SocketGuild guildRef;
     // Hardcoded to work only on one discord server (so enter it's ID here)
     private readonly static ulong GuildID = 1047140922950942760;
     private static bool connectionState = false;
 
-    public static DiscordSocketClient? GetClientRef()
+    public static DiscordSocketClient GetClientRef()
     {
         if (clientRef == null)
         {
-            Exceptions.BotClientRefNull();
-            return null;
+            throw new InvalidOperationException(Exceptions.BotClientRefNull());
         }
         return clientRef;
     }

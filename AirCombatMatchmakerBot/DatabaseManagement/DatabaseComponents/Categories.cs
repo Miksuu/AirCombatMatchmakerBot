@@ -32,17 +32,23 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
             matchChannelsIdWithCategoryId.GetLoggingClassParameters() };
     }
 
-    public InterfaceCategory? FindInterfaceCategoryWithId(
+    public InterfaceCategory FindInterfaceCategoryWithId(
         ulong _idToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
-        var interfaceCategory = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Key == _idToSearchWith).Value;
+        InterfaceCategory interfaceCategory = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Key == _idToSearchWith).Value;
+        if (interfaceCategory == null)
+        {
+            string errorMsg = nameof(interfaceCategory) + " was null! with id: " + _idToSearchWith;
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            throw new InvalidOperationException(errorMsg);
+        }
         Log.WriteLine("Found: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
         return interfaceCategory;
     }
 
-    public InterfaceCategory? FindInterfaceCategoryByCategoryName(
-        CategoryType? _categoryType)
+    public InterfaceCategory FindInterfaceCategoryByCategoryName(
+        CategoryType _categoryType)
     {
         Log.WriteLine("Getting CategoryKvp by category name: " + _categoryType, LogLevel.VERBOSE);
         var interfaceCategory = CreatedCategoriesWithChannels.FirstOrDefault(
@@ -50,49 +56,52 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
-            return interfaceCategory;
+            throw new InvalidOperationException("InterfaceCategory not found for the given id.");
         }
 
         Log.WriteLine("Found: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
         return interfaceCategory;
     }
 
-    public InterfaceChannel? FindInterfaceChannelInsideACategoryWithIds(
+    /*
+    public InterfaceChannel FindInterfaceChannelInsideACategoryWithIds(
         ulong _categoryIdToFind, ulong _channelIdToFind)
     {
         return FindInterfaceCategoryWithId(_categoryIdToFind).
             FindInterfaceChannelWithIdInTheCategory(_channelIdToFind);
-    }
+    }*7
 
-    public InterfaceChannel? FindInterfaceChannelInsideACategoryWithIdAndName(
+
+    /*
+    public InterfaceChannel FindInterfaceChannelInsideACategoryWithIdAndName(
         ulong _categoryIdToFind, ChannelType _channelTypeToFind)
     {
         return FindInterfaceCategoryWithId(_categoryIdToFind).
             FindInterfaceChannelWithNameInTheCategory(_channelTypeToFind);
-    }
+    }*/
 
-    public InterfaceChannel? FindInterfaceChannelInsideACategoryWithNames(
+    public InterfaceChannel FindInterfaceChannelInsideACategoryWithNames(
         CategoryType _categoryTypeToFind, ChannelType _channelTypeToFind)
     {
-        InterfaceCategory? interfaceCategory =
-            FindInterfaceCategoryByCategoryName(_categoryTypeToFind);
-        if (interfaceCategory == null)
+        try
         {
-            Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
-            return null;
-        }
+            InterfaceCategory interfaceCategory =
+                FindInterfaceCategoryByCategoryName(_categoryTypeToFind);
 
-        InterfaceChannel? interfaceChannel = interfaceCategory.FindInterfaceChannelWithNameInTheCategory(_channelTypeToFind);
-        if (interfaceCategory == null)
+            InterfaceChannel interfaceChannel = interfaceCategory.FindInterfaceChannelWithNameInTheCategory(_channelTypeToFind);
+
+            return interfaceChannel;
+        }
+        catch (Exception ex)
         {
-            Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
-            return null;
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            throw new InvalidOperationException(ex.Message);
         }
-
-        return interfaceChannel;
     }
 
-    public InterfaceMessage? FindAMessageInAnInterfaceChannelInsideACategoryWithIdAndNames(
+    
+    /*
+    public InterfaceMessage FidAMessageInAnInterfaceChannelInsideACategoryWithIdAndNames(
         ulong _categoryIdToFind, ChannelType _channelTypeToFind, MessageName _messageNameToFind)
     {
         var foundChannel = FindInterfaceChannelInsideACategoryWithIdAndName(_categoryIdToFind, _channelTypeToFind);
@@ -110,9 +119,9 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
         }
 
         return foundMessage;
-    }
+    }*/
 
-    public InterfaceMessage? FindInterfaceMessageWithComponentChannelIdAndMessageId(
+    public InterfaceMessage FindInterfaceMessageWithComponentChannelIdAndMessageId(
         ulong _componentChannelId, ulong _componentMessageId)
     {
         Log.WriteLine("Getting CategoryKvp with channel id: " + _componentChannelId, LogLevel.VERBOSE);
@@ -145,8 +154,8 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
 
             return interfaceMessageKvp.Value;
         }
-
-        return null;
+        
+        throw new InvalidOperationException("null FindInterfaceMessageWithComponentChannelIdAndMessageId");
     }
 
     public void AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(

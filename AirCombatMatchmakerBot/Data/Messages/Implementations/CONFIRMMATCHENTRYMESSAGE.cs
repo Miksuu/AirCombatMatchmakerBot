@@ -29,7 +29,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
         Dictionary<string, string> buttonsToGenerate = new Dictionary<string, string>();
 
-        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+        mcc = new MatchChannelComponents(this);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
@@ -55,7 +55,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
     {
         Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
 
-        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+        mcc = new MatchChannelComponents(this);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
@@ -91,9 +91,19 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         {
             mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.REPORTINGPHASE;
 
-            var interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
-               thisInterfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                thisInterfaceMessage.MessageChannelId);
+            InterfaceChannel interfaceChannel;
+            try
+            {
+                interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    thisInterfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                        thisInterfaceMessage.MessageChannelId);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                return ex.Message;
+            }
+
             new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
         }
 

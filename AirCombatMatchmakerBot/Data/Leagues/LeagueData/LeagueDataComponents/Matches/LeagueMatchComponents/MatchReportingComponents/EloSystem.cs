@@ -16,7 +16,7 @@ public static class EloSystem
 
         if (winnerIndex == 2)
         {
-            // Handle this ?
+            // Handle this
             return "The match cannot be a draw!";
         }
 
@@ -59,7 +59,7 @@ public static class EloSystem
 
         if (_teamsInTheMatch[0].TeamId == _losingTeamId) winningTeamIndex++;
 
-        // Duplicate code to the above method; refactor?
+        // Duplicate code to the above method perhaps refactor
         float eloDelta = (int)(32 * (1 - winningTeamIndex - ExpectationToWin(
             firstTeamSkillRating, secondTeamSkillRating)));
 
@@ -86,16 +86,18 @@ public static class EloSystem
     {
         for (int t = 0; t < _teamsInTheMatch.Length; ++t)
         {
-            Team? databaseTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[t].TeamId);
-            if (databaseTeam == null)
+            try
             {
-                Log.WriteLine(nameof(databaseTeam) + " was null!", LogLevel.CRITICAL);
-                return;
+                Team databaseTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[t].TeamId);
+                Log.WriteLine(databaseTeam.TeamId + " SR before: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
+                databaseTeam.SkillRating += _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta;
+                Log.WriteLine(databaseTeam.TeamId + " SR after: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
             }
-
-            Log.WriteLine(databaseTeam.TeamId + " SR before: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
-            databaseTeam.SkillRating += _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta;
-            Log.WriteLine(databaseTeam.TeamId + " SR after: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
+            catch (Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                continue;
+            }
         }        
     }
 
@@ -108,8 +110,8 @@ public static class EloSystem
     {
         int winnerIndex = 0;
 
-        string? teamOneObjectValue = _teamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue;
-        string? teamTwoObjectValue = _teamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue;
+        string teamOneObjectValue = _teamIdsWithReportData.ElementAt(0).Value.ReportedScore.ObjectValue;
+        string teamTwoObjectValue = _teamIdsWithReportData.ElementAt(1).Value.ReportedScore.ObjectValue;
 
         Log.WriteLine("object values: " + teamOneObjectValue + " | " + teamTwoObjectValue, LogLevel.DEBUG);
 

@@ -20,20 +20,20 @@ public interface InterfaceChannel
         SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray);
     public Task CreateAChannelForTheCategoryWithoutRole(
     SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
-    public Task<InterfaceMessage?> CreateAMessageForTheChannelFromMessageName(
+    public Task<InterfaceMessage> CreateAMessageForTheChannelFromMessageName(
         MessageName _MessageName, bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
-    public Task<Discord.IUserMessage?> CreateARawMessageForTheChannelFromMessageName(
+    public Task<Discord.IUserMessage> CreateARawMessageForTheChannelFromMessageName(
         string _input, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true, params string[] _files);
-    public Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
+    public Task<InterfaceMessage> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
         string _input, AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
 
     public Task PostChannelMessages(DiscordSocketClient _client);
-    public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
+    public InterfaceMessage FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName);
-    public Task<IMessageChannel?> GetMessageChannelById(DiscordSocketClient _client);
+    public Task<IMessageChannel> GetMessageChannelById(DiscordSocketClient _client);
     public Task<string> DeleteMessagesInAChannelWithMessageName(MessageName _messageNameToDelete);
     public Task DeleteThisChannel(InterfaceCategory _interfaceCategory, InterfaceChannel _interfaceChannel, string _nameMustContain);
 }

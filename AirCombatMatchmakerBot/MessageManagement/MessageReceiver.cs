@@ -101,6 +101,7 @@ public static class MessageReceiver
         {
             Log.WriteLine("acmiUrl detected: " + acmiUrl, LogLevel.DEBUG);
 
+            // Maybe use MatchChannel component here?
             var interfaceLeagueWithLeagueMatch =
                 Database.Instance.Leagues.FindLeagueInterfaceAndLeagueMatchWithChannelId(_socketMessage.Channel.Id);
 

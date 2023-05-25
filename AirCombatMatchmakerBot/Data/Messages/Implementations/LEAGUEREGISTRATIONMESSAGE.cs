@@ -41,13 +41,8 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         Log.WriteLine("Starting to generate the league registration message with: " +
             belongsToLeagueCategoryId, LogLevel.DEBUG);
 
-        InterfaceLeague? interfaceLeague =
+        InterfaceLeague interfaceLeague =
             Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(belongsToLeagueCategoryId);
-        if (interfaceLeague == null)
-        {
-            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
-            return nameof(interfaceLeague) + " was null!";
-        }
 
         thisInterfaceMessage.MessageEmbedTitle = EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName);
 

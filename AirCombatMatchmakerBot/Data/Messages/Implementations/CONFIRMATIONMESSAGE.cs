@@ -36,7 +36,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
     {
         Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
 
-        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+        mcc = new MatchChannelComponents(this);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);

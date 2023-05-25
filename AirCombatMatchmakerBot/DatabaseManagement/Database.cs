@@ -62,7 +62,7 @@ public class Database
     }
 
     // Singleton stuff
-    private static Database? instance = null;
+    private static Database? instance;
     private static readonly object padlock = new object();
 
     // The Database components
@@ -81,9 +81,18 @@ public class Database
         await PlayerData.DeletePlayerProfile(_playerDiscordId);
         CachedUsers.RemoveUserFromTheCachedConcurrentBag(_playerDiscordId);
 
-        var interfaceChannel = Categories.FindInterfaceCategoryByCategoryName(
-            CategoryType.REGISTRATIONCATEGORY).FindInterfaceChannelWithNameInTheCategory(
-                ChannelType.LEAGUEREGISTRATION);
+        InterfaceChannel interfaceChannel;
+        try
+        {
+            interfaceChannel = Categories.FindInterfaceCategoryByCategoryName(
+                CategoryType.REGISTRATIONCATEGORY).FindInterfaceChannelWithNameInTheCategory(
+                    ChannelType.LEAGUEREGISTRATION);
+        }
+        catch (Exception ex) 
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
+        }
 
         Log.WriteLine("leagues count: " + Leagues.StoredLeagues.Count, LogLevel.VERBOSE);
 
@@ -140,19 +149,21 @@ public class Database
                 Log.WriteLine("Found and removed" + _playerDiscordId + " in team with id: " + teamId, LogLevel.DEBUG);
             }
 
-            var challengeMessage = Categories.FindInterfaceCategoryWithId(
-                interfaceLeague.LeagueCategoryId).
-                    FindInterfaceChannelWithNameInTheCategory(
-                        ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
-                            MessageName.CHALLENGEMESSAGE);
-            if (challengeMessage == null)
+            try
             {
-                Log.WriteLine(nameof(challengeMessage) + " was null!", LogLevel.ERROR);
+                var challengeMessage = Categories.FindInterfaceCategoryWithId(
+                    interfaceLeague.LeagueCategoryId).
+                        FindInterfaceChannelWithNameInTheCategory(
+                            ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
+                                MessageName.CHALLENGEMESSAGE);
+
+                await challengeMessage.GenerateAndModifyTheMessage();
+            }
+            catch (Exception ex) 
+            {
+                Log.WriteLine(ex.Message, LogLevel.ERROR);
                 continue;
             }
-
-            await challengeMessage.GenerateAndModifyTheMessage();
-
 
             // Re-implement the player removal from here
 

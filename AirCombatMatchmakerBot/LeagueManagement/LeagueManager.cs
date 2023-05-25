@@ -34,14 +34,6 @@ public static class LeagueManager
             if (enumValue > 100) continue;
 
             InterfaceLeague interfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
-            Log.WriteLine("after setting interface", LogLevel.VERBOSE);
-            if (interfaceLeagueCategory == null)
-            {
-                Log.WriteLine(nameof(interfaceLeagueCategory).ToString() +
-                    " was null!", LogLevel.CRITICAL);
-                return;
-            }
-
             Log.WriteLine(nameof(LeagueManager) + " with: " + Database.Instance.PlayerData, LogLevel.VERBOSE);
 
             // Add the new newly from the interface implementations added units here
@@ -52,36 +44,35 @@ public static class LeagueManager
                     " already contains: " + interfaceLeagueCategory.ToString() +
                     " adding new units to the league", LogLevel.VERBOSE);
 
-                // Update the units and to the database (before interfaceLeagueCategory is replaced by it)
-                var interfaceLeague = Database.Instance.Leagues.GetILeagueByCategoryName(
-                    interfaceLeagueCategory.LeagueCategoryName);
-                if (interfaceLeague == null)
+                try
                 {
-                    Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
-                    return;
-                }
-                // Clears the queue on the startup
-                if (interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Count > 0)
-                {
-                    interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Clear();
-                    var message = Database.Instance.Categories.FindInterfaceCategoryWithId(
-                        interfaceLeague.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
-                            ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
-                    if (message == null) 
+                    // Update the units and to the database (before interfaceLeagueCategory is replaced by it)
+                    InterfaceLeague interfaceLeague = Database.Instance.Leagues.GetILeagueByCategoryName(
+                        interfaceLeagueCategory.LeagueCategoryName);
+
+                    // Clears the queue on the startup
+                    if (interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Count > 0)
                     {
-                        Log.WriteLine(nameof(message) + " was null!", LogLevel.DEBUG);
-                        continue;
+                        interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Clear();
+                        var message = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                            interfaceLeague.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
+                                ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
+
+                        await message.GenerateAndModifyTheMessage();
                     }
 
-                    await message.GenerateAndModifyTheMessage();
+                    interfaceLeague.LeagueUnits = interfaceLeagueCategory.LeagueUnits;
                 }
-
-                interfaceLeague.LeagueUnits = interfaceLeagueCategory.LeagueUnits;
+                catch (Exception ex) 
+                {
+                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                    continue;
+                }
 
                 continue;
             }
 
-            string? leagueCategoryNameString = EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName);
+            string leagueCategoryNameString = EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName);
 
             // Get the role and create it if it already doesn't exist
             SocketRole role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(

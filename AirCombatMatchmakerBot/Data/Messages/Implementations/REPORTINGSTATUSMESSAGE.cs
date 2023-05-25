@@ -6,6 +6,8 @@ using System.Collections.Concurrent;
 [DataContract]
 public class REPORTINGSTATUSMESSAGE : BaseMessage
 {
+    MatchChannelComponents mcc = new MatchChannelComponents();
+
     public REPORTINGSTATUSMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.REPORTINGSTATUSMESSAGE;
@@ -23,34 +25,27 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
     {
         string reportingStatusMessage = string.Empty;
 
-        InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
-        if (interfaceLeague == null)
+        mcc = new MatchChannelComponents(this);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.ERROR);
-            return "";
+            string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
+                nameof(mcc.leagueMatchCached) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return errorMsg;
         }
 
-        LeagueMatch? foundMatch =
-            interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(thisInterfaceMessage.MessageChannelId);
-        if (foundMatch == null)
-        {
-            Log.WriteLine(nameof(foundMatch) + " was null!", LogLevel.ERROR);
-            return "";
-        }
-
-        foreach (var teamKvp in foundMatch.TeamsInTheMatch)
+        foreach (var teamKvp in mcc.leagueMatchCached.TeamsInTheMatch)
         {
             string reportingStatusPerTeam = teamKvp.Value + ":\n";
 
-            if (!foundMatch.MatchReporting.TeamIdsWithReportData.ContainsKey(teamKvp.Key))
+            if (!mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData.ContainsKey(teamKvp.Key))
             {
                 Log.WriteLine("Does not contain reporting data on: " + teamKvp.Key + " named: " +
                     teamKvp.Value, LogLevel.CRITICAL);
                 continue;
             }
 
-            var teamReportData = foundMatch.MatchReporting.TeamIdsWithReportData[teamKvp.Key];
+            var teamReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData[teamKvp.Key];
             if (teamReportData == null)
             {
                 Log.WriteLine(nameof(teamReportData) + " was null!", LogLevel.CRITICAL);

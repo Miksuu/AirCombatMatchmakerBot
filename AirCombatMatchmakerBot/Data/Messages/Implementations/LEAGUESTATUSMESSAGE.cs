@@ -26,14 +26,8 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         string finalMessage = string.Empty;
         List<Team> sortedTeamListgByElo = new List<Team>();
 
-        InterfaceLeague? interfaceLeague = 
+        InterfaceLeague interfaceLeague = 
             Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(thisInterfaceMessage.MessageCategoryId);
-
-        if (interfaceLeague == null)
-        {
-            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.ERROR);
-            return nameof(interfaceLeague) + " was null!";
-        }
 
         sortedTeamListgByElo =
             new List<Team>(interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.OrderBy(

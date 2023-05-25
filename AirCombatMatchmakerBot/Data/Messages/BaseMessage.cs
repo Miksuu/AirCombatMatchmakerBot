@@ -72,7 +72,7 @@ public abstract class BaseMessage : InterfaceMessage
         set => buttonsInTheMessage.SetValue(value);
     }
 
-    Discord.IUserMessage? InterfaceMessage.CachedUserMessage
+    Discord.IUserMessage InterfaceMessage.CachedUserMessage
     {
         get
         {
@@ -89,7 +89,8 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     [DataMember] protected logClass<MessageName> messageName = new logClass<MessageName>(new MessageName());
-    [DataMember] protected logConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount = new logConcurrentDictionary<ButtonName, int>();
+    [DataMember] protected logConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount =
+        new logConcurrentDictionary<ButtonName, int>();
 
     // Embed properties
     [DataMember] protected logString messageEmbedTitle = new logString();
@@ -102,7 +103,7 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected logConcurrentBag<InterfaceButton> buttonsInTheMessage = new logConcurrentBag<InterfaceButton>();
 
     protected bool mentionMatchPlayers { get; set; }
-    protected Discord.IUserMessage? cachedUserMessage { get; set; }
+    protected Discord.IUserMessage cachedUserMessage { get; set; }
 
     protected InterfaceMessage thisInterfaceMessage;
 
@@ -112,7 +113,7 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     // If the component is not null, this is a reply
-    public async Task<InterfaceMessage?> CreateTheMessageAndItsButtonsOnTheBaseClass(
+    public async Task<InterfaceMessage> CreateTheMessageAndItsButtonsOnTheBaseClass(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, bool _embed, 
         bool _displayMessage = true, ulong _leagueCategoryId = 0, 
         SocketMessageComponent? _component = null, bool _ephemeral = true,
@@ -131,8 +132,7 @@ public abstract class BaseMessage : InterfaceMessage
         if (textChannel == null)
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
-            InterfaceMessage? interfaceMessage = null;
-            return interfaceMessage;
+            throw new InvalidOperationException(nameof(textChannel) + " was null!");
         }
 
         Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
@@ -150,7 +150,7 @@ public abstract class BaseMessage : InterfaceMessage
             if (leagueRegistrationMessage == null)
             {
                 Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
-                return leagueRegistrationMessage;
+                throw new InvalidOperationException(nameof(LEAGUEREGISTRATIONMESSAGE) + " was null!");
             }
 
             // Pass league id as parameter here
@@ -173,12 +173,11 @@ public abstract class BaseMessage : InterfaceMessage
                 string finalMentionMessage = "";
                 if (mentionMatchPlayers)
                 {
-                    MatchChannelComponents mcc = new MatchChannelComponents();
-                    mcc.FindMatchAndItsLeagueAndInsertItToTheCache(this);
+                    MatchChannelComponents mcc = new MatchChannelComponents(this);
                     if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
                     {
                         Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
-                        return null;
+                        throw new InvalidOperationException(nameof(mcc) + " was null!");
                     }
 
                     if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
@@ -222,12 +221,17 @@ public abstract class BaseMessage : InterfaceMessage
                     }
                     else
                     {
-                        var iMessageChannel = await _interfaceChannel.GetMessageChannelById(_client);
-                        if (iMessageChannel == null)
+                        try
                         {
-                            Log.WriteLine(nameof(iMessageChannel) + " was null!", LogLevel.CRITICAL);
+
+                        }
+                        catch(Exception ex)
+                        {
+                            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                             return this;
                         }
+                        var iMessageChannel = await _interfaceChannel.GetMessageChannelById(_client);
+
                         List<FileAttachment> attachments = new List<FileAttachment>();
                         for (int i = 0; i < _files.Length; i++)
                         {
@@ -264,7 +268,7 @@ public abstract class BaseMessage : InterfaceMessage
         return this;
     }
 
-    public async Task<InterfaceMessage?> CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
+    public async Task<InterfaceMessage> CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, AttachmentData[] _attachmentDatas,
         bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true)
@@ -282,12 +286,10 @@ public abstract class BaseMessage : InterfaceMessage
         if (textChannel == null)
         {
             Log.WriteLine(nameof(textChannel) + " was null!", LogLevel.CRITICAL);
-            InterfaceMessage? interfaceMessage = null;
-            return interfaceMessage;
+            return this;
         }
 
         Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
-
 
         for (int a = 0; a < _attachmentDatas.Length; a++)
         {
@@ -310,7 +312,7 @@ public abstract class BaseMessage : InterfaceMessage
             if (linkButton == null)
             {
                 Log.WriteLine(nameof(linkButton) + " was null!", LogLevel.CRITICAL);
-                return null;
+                throw new InvalidOperationException(nameof(linkButton) + " was null!");
             }
 
             component.WithButton(linkButton.CreateALinkButton(_attachmentDatas[a]));
@@ -476,7 +478,7 @@ public abstract class BaseMessage : InterfaceMessage
 
     public abstract string GenerateMessage();
 
-    public async Task<Discord.IMessage?> GetMessageById(IMessageChannel _channel)
+    public async Task<Discord.IMessage> GetMessageById(IMessageChannel _channel)
     {
         Log.WriteLine("Getting IMessageChannel with id: " + thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
 
@@ -484,7 +486,7 @@ public abstract class BaseMessage : InterfaceMessage
         if (message == null)
         {
             Log.WriteLine(nameof(message) + " was null!", LogLevel.ERROR);
-            return null;
+            throw new InvalidOperationException(nameof(message) + " was null!");
         }
 
         Log.WriteLine("Found: " + message.Id, LogLevel.VERBOSE);

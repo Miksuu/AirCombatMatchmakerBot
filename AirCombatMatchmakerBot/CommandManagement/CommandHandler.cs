@@ -26,7 +26,7 @@ public static class CommandHandler
     {
         Log.WriteLine("Start of SlashCommandHandler", LogLevel.VERBOSE);
 
-        string? firstOptionString = null;
+        string? firstOptionString = string.Empty;
 
         Log.WriteLine("OptionsCount: " + _command.Data.Options.Count, LogLevel.VERBOSE);
 

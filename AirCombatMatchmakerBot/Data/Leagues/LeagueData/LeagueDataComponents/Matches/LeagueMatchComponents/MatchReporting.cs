@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
+using Discord.Rest;
 
 [DataContract]
 public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
@@ -64,9 +65,18 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
             Log.WriteLine("Adding team: " + teamKvp.Key + " | " + teamKvp.Value, LogLevel.VERBOSE);
 
-            TeamIdsWithReportData.TryAdd(teamKvp.Key, new ReportData(teamKvp.Value,
+            try
+            {
+                TeamIdsWithReportData.TryAdd(teamKvp.Key, new ReportData(teamKvp.Value,
                 _interfaceLeague.LeagueData.Teams.FindTeamById(
                     _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key).Players));
+            }
+
+            catch(Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                continue;
+            }
         }
     }
 
@@ -75,6 +85,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         TypeOfTheReportingObject _typeOfTheReportingObject, ulong _leagueCategoryId, ulong _messageChannelId)
     {
         string response = string.Empty;
+        Team reportingTeam;
 
         Log.WriteLine("Processing player's sent " + nameof(ReportObject) + " in league: " +
             _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
@@ -95,13 +106,15 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             return Task.FromResult(new Response("Match is in confirmation already! Finish that first, ", false)).Result;
         }
 
-        Team? reportingTeam =
-            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
-                _playerId);
-        if (reportingTeam == null)
+        try
         {
-            Log.WriteLine(nameof(reportingTeam) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
-            return Task.FromResult(new Response(response, false)).Result;
+            reportingTeam = _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
+                _playerId);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return new Response(ex.Message, false);
         }
 
         // First time pressing the report button for the team
@@ -154,19 +167,16 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
                     }
                     break;
                 default:
-                    Log.WriteLine("Unknown type! (not implemented?)", LogLevel.CRITICAL);
-                    response = "Unknown type: " + _reportedObjectByThePlayer + "(not implemented?)";
+                    Log.WriteLine("Unknown type! (not implemented yet)", LogLevel.CRITICAL);
+                    response = "Unknown type: " + _reportedObjectByThePlayer + "(not implemented yet)";
                     break;
             }
         }
 
-        InterfaceChannel? interfaceChannel = Database.Instance.Categories.FindInterfaceChannelInsideACategoryWithIds(
-            _leagueCategoryId, _messageChannelId);
-        if (interfaceChannel == null)
-        {
-            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-            return new Response(nameof(interfaceChannel) + " was null!", false);
-        }
+        InterfaceChannel interfaceChannel = 
+            Database.Instance.Categories.FindInterfaceCategoryWithId(
+                _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                    _messageChannelId);
 
         // If the match is on the confirmation phase,
         // edit that MessageDescription instead of the reporting status MessageDescription which would be null
@@ -175,27 +185,34 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         {
             messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
 
-            var interfaceMessage = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
-                MessageName.MATCHFINALRESULTMESSAGE);
-            if (interfaceMessage == null)
+            try 
             {
-                Log.WriteLine(nameof(interfaceMessage) + " was null!", LogLevel.CRITICAL);
-                return new Response(nameof(interfaceMessage) + " was null!", false);
+                var interfaceMessage = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
+                    MessageName.MATCHFINALRESULTMESSAGE);
+
+                FinalResultForConfirmation = interfaceMessage.GenerateMessage();
+                // Must be called after GenerateMessage() since it's defined there
+                FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
             }
-            FinalResultForConfirmation = interfaceMessage.GenerateMessage();
-            // Must be called after GenerateMessage() since it's defined there
-            FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
+            catch(Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                return new Response(ex.Message, false);
+            }
         }
 
-        InterfaceMessage? messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
-                        messageNameToEdit);
-        if (messageToEdit == null)
+        try
         {
-            string errorMsg = nameof(messageToEdit) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return new Response(errorMsg, false);
+            InterfaceMessage messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
+                            messageNameToEdit);
+            await messageToEdit.GenerateAndModifyTheMessage();
         }
-        await messageToEdit.GenerateAndModifyTheMessage();
+        catch(Exception ex) 
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return new Response(ex.Message, false);
+        }
+
 
         foreach (var reportedTeamKvp in TeamIdsWithReportData)
         {
@@ -221,9 +238,9 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
     public async Task<Response> PrepareFinalMatchResult(
         InterfaceLeague _interfaceLeague, ulong _playerId, ulong _leagueCategoryId, ulong _messageChannelId)
     {
-        string? response = string.Empty;
+        string response = string.Empty;
 
-        (string?, bool, InterfaceChannel?) responseTuple =
+        (string, bool, InterfaceChannel) responseTuple =
             CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId);
         if (responseTuple.Item3 == null)
         {
@@ -241,14 +258,17 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
             Log.WriteLine("Creating new messages from: " + _playerId, LogLevel.DEBUG);
 
-            var interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                MessageName.MATCHFINALRESULTMESSAGE);
-            if (interfaceMessage == null)
+            InterfaceMessage interfaceMessage;
+            try
             {
-                string errorMsg = nameof(interfaceMessage) + " was null!";
-                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                return new Response(errorMsg, false);
+                interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                    MessageName.MATCHFINALRESULTMESSAGE);
             }
+            catch (Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                return new Response(ex.Message, false);
+            }   
 
             MATCHFINALRESULTMESSAGE? finalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
             if (finalResultMessage == null)
@@ -262,33 +282,30 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             FinalMessageForMatchReportingChannel = finalResultMessage.AlternativeMessage;
             FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
-            await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                MessageName.CONFIRMATIONMESSAGE);
-
-            var interfaceCategory = _interfaceLeague.FindLeaguesInterfaceCategory();
-            if (interfaceCategory == null)
+            InterfaceCategory interfaceCategory;
+            InterfaceChannel interfaceChannelToDeleteTheMessageIn;
+            try
             {
-                string errorMsg = nameof(interfaceCategory) + " was null!";
-                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                return new Response(errorMsg, false);
-            }
+                await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                    MessageName.CONFIRMATIONMESSAGE);
+                interfaceCategory = _interfaceLeague.FindLeaguesInterfaceCategory();
 
-            // Copypasted to MODIFYMATCHBUTTON.CS, maybe replace to method
-            InterfaceChannel? interfaceChannelToDeleteTheMessageIn =
-                interfaceCategory.FindInterfaceChannelWithIdInTheCategory(
-                    _messageChannelId);
-            if (interfaceChannelToDeleteTheMessageIn == null)
+                // Copypasted to MODIFYMATCHBUTTON.CS, maybe replace to method
+                interfaceChannelToDeleteTheMessageIn =
+                    interfaceCategory.FindInterfaceChannelWithIdInTheCategory(
+                        _messageChannelId);
+
+                // Delete the messages which aren't useful for confirmation phase anymore
+                await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(
+                    MessageName.REPORTINGMESSAGE);
+                await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(
+                    MessageName.REPORTINGSTATUSMESSAGE);
+            }
+            catch (Exception ex)
             {
-                Log.WriteLine(nameof(interfaceChannelToDeleteTheMessageIn) + " was null, with: " +
-                    _messageChannelId, LogLevel.CRITICAL);
-                return new Response(nameof(interfaceChannelToDeleteTheMessageIn) + " was null", false);
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                return new Response(ex.Message, false);
             }
-
-            // Delete the messages which aren't useful for confirmation phase anymore
-            await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(
-                MessageName.REPORTINGMESSAGE);
-            await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(
-                MessageName.REPORTINGSTATUSMESSAGE);
         }
 
         Log.WriteLine("returning response: " + response, LogLevel.VERBOSE);
@@ -296,16 +313,21 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         return new Response(response?.ToString() ?? "[null]", true);
     }
 
-    private (string?, bool, InterfaceChannel?) CheckIfMatchCanBeSentToConfirmation(
+    private (string, bool, InterfaceChannel?) CheckIfMatchCanBeSentToConfirmation(
         ulong _leagueCategoryId, ulong _messageChannelId)
     {
         bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
 
-        InterfaceChannel? interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(_leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
-        if (interfaceChannel == null)
+        InterfaceChannel interfaceChannel;
+        try
         {
-            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-            return (null, false, null);
+            interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return new (ex.Message, false, null);
         }
 
         Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
@@ -380,23 +402,25 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         Team[] teamsInTheMatch = new Team[2];
         for (int t = 0; t < TeamIdsWithReportData.Count; t++)
         {
-            var foundTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(TeamIdsWithReportData.ElementAt(t).Key);
-
-            if (foundTeam == null)
+            try
             {
-                Log.WriteLine("Found team was null!", LogLevel.CRITICAL);
-                return Array.Empty<Team>();
+                var foundTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(TeamIdsWithReportData.ElementAt(t).Key);
+                teamsInTheMatch[t] = foundTeam;
             }
-
-            teamsInTheMatch[t] = foundTeam;
+            catch(Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                continue;
+            }
         }
 
         return teamsInTheMatch;
     }
 
-    public (List<ReportData>?, string) GetTeamReportDatasOfTheMatchWithPlayerId(
+    public List<ReportData> GetTeamReportDatasOfTheMatchWithPlayerId(
         InterfaceLeague _interfaceLeague, LeagueMatch _leagueMatch, ulong _playerId)
     {
+        Team foundTeam;
         List<Team> foundTeams = new List<Team>();
         List<ReportData> reportDatas = new List<ReportData>();
 
@@ -408,30 +432,24 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         {
             Log.WriteLine("Error, match: " + _leagueMatch.MatchId +
                 " does not contain: " + _playerId, LogLevel.CRITICAL);
-            return (null, "That's not your match to confirm! by " + _playerId);
+            throw new InvalidOperationException("That's not your match to confirm! by " + _playerId);
         }
 
-        Team? foundTeam =
-            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
-
-        if (foundTeam == null)
+        try
         {
-            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
-            return (null, "Could not find: " + nameof(foundTeam));
+            foundTeam = _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+            foundTeams.Add(foundTeam);
+
+            int otherTeamId = _leagueMatch.TeamsInTheMatch.FirstOrDefault(t => t.Key != foundTeam.TeamId).Key;
+            Team otherTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(otherTeamId);
+
+            foundTeams.Add(otherTeam);
         }
-
-        foundTeams.Add(foundTeam);
-
-        int otherTeamId = _leagueMatch.TeamsInTheMatch.FirstOrDefault(t => t.Key != foundTeam.TeamId).Key;
-        Team? otherTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(otherTeamId);
-
-        if (otherTeam == null)
+        catch (Exception ex)
         {
-            Log.WriteLine(nameof(otherTeam) + " was null!", LogLevel.CRITICAL);
-            return (null, "Could not find: " + nameof(otherTeam));
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            throw new InvalidOperationException(ex.Message);
         }
-
-        foundTeams.Add(otherTeam);
 
         foreach (Team team in foundTeams)
         {
@@ -439,6 +457,6 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
                 t => t.Key == team.TeamId).Value);
         }
 
-        return (reportDatas, "");
+        return reportDatas;
     }
 }

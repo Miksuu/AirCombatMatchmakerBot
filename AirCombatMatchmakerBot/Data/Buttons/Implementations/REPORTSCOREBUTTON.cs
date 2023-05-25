@@ -30,15 +30,19 @@ public class REPORTSCOREBUTTON : BaseButton
     public async override Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        InterfaceMessage? reportingStatusMessage =
-            Database.Instance.Categories.FindInterfaceCategoryWithId(
-                _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(_interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
-                        MessageName.REPORTINGSTATUSMESSAGE);
-        if (reportingStatusMessage == null)
+        InterfaceMessage reportingStatusMessage;
+        try
         {
-            string errorMsg = nameof(reportingStatusMessage) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return new Response (errorMsg, false);
+            reportingStatusMessage =
+                Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                        _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
+                            MessageName.REPORTINGSTATUSMESSAGE);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return new Response(ex.Message, false);
         }
 
         string[] splitStrings = thisInterfaceButton.ButtonCustomId.Split('_');
@@ -49,7 +53,7 @@ public class REPORTSCOREBUTTON : BaseButton
             " with label int: " + playerReportedResult + " in category: " +
             thisInterfaceButton.ButtonCategoryId, LogLevel.DEBUG);
 
-        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
+        mcc = new MatchChannelComponents(_interfaceMessage);
 
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {

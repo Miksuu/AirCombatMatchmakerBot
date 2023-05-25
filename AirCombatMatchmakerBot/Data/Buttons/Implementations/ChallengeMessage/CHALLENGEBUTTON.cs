@@ -27,7 +27,9 @@ public class CHALLENGEBUTTON : BaseButton
     {
         ulong playerId = _component.User.Id;
         ulong channelId = _component.Channel.Id;
-        
+        Team playerTeam;
+
+
         Log.WriteLine("Starting processing a challenge by: " +
             playerId + " in channel: " + channelId, LogLevel.VERBOSE);
 
@@ -44,13 +46,15 @@ public class CHALLENGEBUTTON : BaseButton
         var challengeStatusOfTheCurrentLeague = lcc.interfaceLeagueCached.LeagueData.ChallengeStatus;
         Log.WriteLine(nameof(challengeStatusOfTheCurrentLeague) + challengeStatusOfTheCurrentLeague, LogLevel.DEBUG);
 
-        Team? playerTeam =
-            lcc.interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
-        if (playerTeam == null)
+        try 
         {
-            Log.WriteLine(nameof(playerTeam) +
-                " was null! Could not find the team.", LogLevel.CRITICAL);
-            return new Response("Error! Team not found", false);
+            playerTeam =
+                lcc.interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
+        }
+        catch (Exception ex) 
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return new Response(ex.Message, false);
         }
 
         Log.WriteLine("Team found: " + playerTeam.GetTeamName(lcc.interfaceLeagueCached.LeaguePlayerCountPerTeam) +
@@ -59,6 +63,8 @@ public class CHALLENGEBUTTON : BaseButton
         // Add to method
         foreach (InterfaceLeague league in Database.Instance.Leagues.StoredLeagues)
         {
+            Team teamToSearchFor;
+
             var challengeStatusOfTheTempLeague = league.LeagueData.ChallengeStatus;
 
             Log.WriteLine("Loop on " + nameof(league) + ": " + league.LeagueCategoryName +
@@ -80,12 +86,15 @@ public class CHALLENGEBUTTON : BaseButton
 
             Log.WriteLine(playerId + " is parcipiating in this league: " + league.LeagueCategoryName, LogLevel.VERBOSE);
 
-            Team? teamToSearchFor = league.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
-            if (teamToSearchFor == null)
+            try
             {
-                Log.WriteLine(nameof(teamToSearchFor) +
-                    " was null! Could not find the team.", LogLevel.CRITICAL);
-                return new Response("Error! Team null!", false);
+                teamToSearchFor = league.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                continue;
+                //return new Response(ex.Message, false);
             }
 
             if (challengeStatusOfTheTempLeague.CheckIfPlayerTeamIsAlreadyInQueue(teamToSearchFor))

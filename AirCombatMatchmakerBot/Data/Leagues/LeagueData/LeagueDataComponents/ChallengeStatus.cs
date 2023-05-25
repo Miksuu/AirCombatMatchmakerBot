@@ -49,9 +49,17 @@ public class ChallengeStatus : logClass<ChallengeStatus>, InterfaceLoggableClass
         string teamsString = string.Empty;
         foreach (int teamInt in TeamsInTheQueue)
         {
-            Team team = _leagueData.Teams.FindTeamById(_leagueTeamSize, teamInt);
-            teamsString += team.GetTeamInAString(true, _leagueTeamSize);
-            teamsString += "\n";
+            try
+            {
+                Team team = _leagueData.Teams.FindTeamById(_leagueTeamSize, teamInt);
+                teamsString += team.GetTeamInAString(true, _leagueTeamSize);
+                teamsString += "\n";
+            }
+            catch(Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                continue;
+            }
         }
         return teamsString;
     }
@@ -82,15 +90,17 @@ public class ChallengeStatus : logClass<ChallengeStatus>, InterfaceLoggableClass
     public string RemoveChallengeFromThisLeague(
         ulong _playerId, int _leaguePlayerCountPerTeam, InterfaceLeague _interfaceLeague)
     {
-        Team? team =
-            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
-
-        if (team == null)
+        Team team;
+        try
         {
-            Log.WriteLine(nameof(team) +
-                " was null! Could not find the team.", LogLevel.CRITICAL);
-            return "Error! Team not found";
+            team =
+                _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
         }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return ex.Message;
+        }            
 
         Log.WriteLine("Team found: " + team.GetTeamName(_leaguePlayerCountPerTeam) +
             " (" + team.TeamId + ")" + " adding it to the challenge queue: " +

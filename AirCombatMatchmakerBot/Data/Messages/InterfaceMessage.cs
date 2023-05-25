@@ -18,15 +18,15 @@ public interface InterfaceMessage
     public ulong MessageCategoryId { get; set; }
     public ConcurrentBag<InterfaceButton> ButtonsInTheMessage { get; set; }
 
-    public Discord.IUserMessage? CachedUserMessage { get; set; }
+    public Discord.IUserMessage CachedUserMessage { get; set; }
 
-    public Task<InterfaceMessage?> CreateTheMessageAndItsButtonsOnTheBaseClass(
+    public Task<InterfaceMessage> CreateTheMessageAndItsButtonsOnTheBaseClass(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, bool _embed,
         bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true,
         params string[] _files);
 
-    public Task<InterfaceMessage?> CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
+    public Task<InterfaceMessage> CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, AttachmentData[] _attachmentDatas,
         bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
@@ -34,5 +34,5 @@ public interface InterfaceMessage
     public Task AddContentToTheEndOfTheMessage(string _content);
     public abstract string GenerateMessage();
     public Task GenerateAndModifyTheMessage();
-    public Task<Discord.IMessage?> GetMessageById(IMessageChannel _channel);
+    public Task<Discord.IMessage> GetMessageById(IMessageChannel _channel);
 }

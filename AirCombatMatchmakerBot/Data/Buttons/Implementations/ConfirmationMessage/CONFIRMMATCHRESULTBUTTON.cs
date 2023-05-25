@@ -5,7 +5,7 @@ using Discord.WebSocket;
 [DataContract]
 public class CONFIRMMATCHRESULTBUTTON : BaseButton
 {
-    MatchChannelComponents mcc = new MatchChannelComponents();
+    MatchChannelComponents mcc;
     public CONFIRMMATCHRESULTBUTTON()
     {
         buttonName = ButtonName.CONFIRMMATCHRESULTBUTTON;
@@ -22,8 +22,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
     public override async Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
-        
+        mcc = new MatchChannelComponents(_interfaceMessage);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
@@ -39,49 +38,51 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
         Log.WriteLine("Activating button function: " + buttonName.ToString() + " by: " +
             componentPlayerId + " in msg: " + _interfaceMessage.MessageId, LogLevel.VERBOSE);
 
-        var reportDataTupleWithString =
-            mcc.leagueMatchCached.MatchReporting.GetTeamReportDatasOfTheMatchWithPlayerId(
-            mcc.interfaceLeagueCached, mcc.leagueMatchCached, componentPlayerId);
-        if (reportDataTupleWithString.Item1 == null)
+        List<ReportData> reportDataTupleWithString;
+
+        try
         {
-            Log.WriteLine(nameof(reportDataTupleWithString) + " was null!", LogLevel.CRITICAL);
-            return new Response(reportDataTupleWithString.Item2, false);
+            reportDataTupleWithString =
+                mcc.leagueMatchCached.MatchReporting.GetTeamReportDatasOfTheMatchWithPlayerId(
+                    mcc.interfaceLeagueCached, mcc.leagueMatchCached, componentPlayerId);
         }
-        if (reportDataTupleWithString.Item2 != "")
+        catch (Exception ex)
         {
-            Log.WriteLine("User: " + componentPlayerId + " confirm a match on channel: " +
-                _component.Channel.Id + "!", LogLevel.WARNING);
-            return new Response(reportDataTupleWithString.Item2, false);
+            return new Response(ex.Message, false);
         }
 
-        if (reportDataTupleWithString.Item1.ElementAt(0).ConfirmedMatch)
+        if (reportDataTupleWithString.ElementAt(0).ConfirmedMatch)
         {
             return new Response("You have already confirmed the match!", false);
         }
 
-        reportDataTupleWithString.Item1.ElementAt(0).ConfirmedMatch = true;
+        reportDataTupleWithString.ElementAt(0).ConfirmedMatch = true;
 
-        if (reportDataTupleWithString.Item1.ElementAt(1).ConfirmedMatch == true)
+        if (reportDataTupleWithString.ElementAt(1).ConfirmedMatch == true)
         {
             mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.MATCHDONE;
             Log.WriteLine("Both teams are done with the reporting on match: " +
                 mcc.leagueMatchCached.MatchId, LogLevel.DEBUG);
         }
 
-        InterfaceMessage? confirmationMessage =
-            Database.Instance.Categories.FindInterfaceCategoryWithId(
-                _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                    _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
-                        MessageName.CONFIRMATIONMESSAGE);
 
-        if (confirmationMessage == null)
+        InterfaceMessage confirmationMessage;
+        try
         {
-            string errorMsg = nameof(confirmationMessage) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return new Response(errorMsg, false);
+            confirmationMessage =
+                Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                        _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
+                            MessageName.CONFIRMATIONMESSAGE);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return new Response(ex.Message, false);
         }
 
-        Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " + confirmationMessage.MessageDescription, LogLevel.DEBUG);
+        Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " + 
+            confirmationMessage.MessageDescription, LogLevel.DEBUG);
 
         await confirmationMessage.GenerateAndModifyTheMessage();
 

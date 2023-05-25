@@ -25,8 +25,10 @@ public class PLANESELECTIONBUTTON : BaseButton
 
     public override Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
-    {   
-        mcc.FindMatchAndItsLeagueAndInsertItToTheCache(_interfaceMessage);
+    {
+        Team playerTeam;
+
+        mcc = new MatchChannelComponents(_interfaceMessage);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
@@ -40,11 +42,14 @@ public class PLANESELECTIONBUTTON : BaseButton
         Log.WriteLine("Starting to find team with playerId: " + playerId +
             " with selected plane: " + playerSelectedPlane, LogLevel.VERBOSE);
 
-        Team? playerTeam = mcc.interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
-        if (playerTeam == null)
+        try
         {
-            Log.WriteLine(nameof(playerTeam) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(new Response(nameof(playerTeam) + " was null!", false));
+            playerTeam = mcc.interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return Task.FromResult(new Response(ex.Message, false));
         }
 
         Log.WriteLine("Finding with " + nameof(playerTeam) + ": " + playerTeam.TeamName + " with id: " + playerTeam.TeamId +

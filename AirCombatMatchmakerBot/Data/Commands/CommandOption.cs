@@ -2,7 +2,7 @@
 
 public class CommandOption
 {
-    public string? OptionName
+    public string OptionName
     {
         get
         {
@@ -17,7 +17,7 @@ public class CommandOption
         }
     }
 
-    public string? OptionDescription
+    public string OptionDescription
     {
         get
         {
@@ -32,8 +32,8 @@ public class CommandOption
         }
     }
 
-    private string? optionName = "";
-    private string? optionDescription = "";
+    private string optionName = "";
+    private string optionDescription = "";
 
     public CommandOption()
     {

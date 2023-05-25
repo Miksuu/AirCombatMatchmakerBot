@@ -47,7 +47,7 @@ public abstract class BaseCategory : InterfaceCategory
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
 
-    public async Task<SocketCategoryChannel?> CreateANewSocketCategoryChannelAndReturnIt(
+    public async Task<SocketCategoryChannel> CreateANewSocketCategoryChannelAndReturnIt(
         SocketGuild _guild, string _categoryName, SocketRole _role)
     {
         Log.WriteLine("Starting to create a new category with name: " +
@@ -58,7 +58,7 @@ public abstract class BaseCategory : InterfaceCategory
         if (newCategory == null)
         {
             Log.WriteLine(nameof(newCategory) + " was null!", LogLevel.CRITICAL);
-            return null;
+            throw new InvalidOperationException(nameof(newCategory) + " was null!");
         }
 
         Log.WriteLine("Created a new RestCategoryChannel with ID: " +
@@ -66,11 +66,10 @@ public abstract class BaseCategory : InterfaceCategory
 
         SocketCategoryChannel socketCategoryChannel =
             _guild.GetCategoryChannel(newCategory.Id);
-
         if (socketCategoryChannel == null)
         {
             Log.WriteLine(nameof(socketCategoryChannel) + " was null!", LogLevel.CRITICAL);
-            return null;
+            throw new InvalidOperationException(nameof(newCategory) + " was null!");
         }
 
         Log.WriteLine("Created a new socketCategoryChannel :" +
@@ -98,20 +97,24 @@ public abstract class BaseCategory : InterfaceCategory
                 continue;
             }
 
-            InterfaceChannel? interfaceChannel = 
-                await CreateSpecificChannelFromChannelType(channelType, _socketCategoryChannelId, _role);
-
-            if (interfaceChannel == null)
+            try
             {
-                Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
+                InterfaceChannel interfaceChannel =
+                    await CreateSpecificChannelFromChannelType(channelType, _socketCategoryChannelId, _role);
+
+                await interfaceChannel.PostChannelMessages(_client);
+            }
+            catch(Exception ex) 
+            { 
+                Log.WriteLine(ex.Message, LogLevel.ERROR);
                 continue;
             }
 
-            await interfaceChannel.PostChannelMessages(_client);
+
         }
     }
 
-    public async Task<InterfaceChannel?> CreateSpecificChannelFromChannelType(
+    public async Task<InterfaceChannel> CreateSpecificChannelFromChannelType(
         ChannelType _channelType, ulong _socketCategoryChannelId, SocketRole _role,
         string _overrideChannelName = "",// Keeps the functionality, but overrides the channel name
                                          // It is used for creating matches with correct name ID right now.
@@ -124,20 +127,13 @@ public abstract class BaseCategory : InterfaceCategory
         var guild = BotReference.GetGuildRef();
         if (guild == null)
         {
-            Exceptions.BotGuildRefNull();
-            return null;
+            throw new InvalidOperationException(Exceptions.BotGuildRefNull());
         }
 
-        InterfaceChannel? interfaceChannel = GetChannelInstance(_channelType.ToString());
+        InterfaceChannel interfaceChannel = GetChannelInstance(_channelType.ToString());
 
         Log.WriteLine("interfaceChannel initialsetup: " +
             interfaceChannel.ChannelType.ToString(), LogLevel.DEBUG);
-
-        if (interfaceChannel == null)
-        {
-            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-            return null;
-        }
 
         interfaceChannel.ChannelName =
             GetChannelNameFromOverridenString(_overrideChannelName, _channelType);
@@ -199,7 +195,7 @@ public abstract class BaseCategory : InterfaceCategory
         return interfaceChannel;
     }
 
-    public async Task<InterfaceChannel?> CreateSpecificChannelFromChannelTypeWithoutRole(
+    public async Task<InterfaceChannel> CreateSpecificChannelFromChannelTypeWithoutRole(
     ChannelType _channelType, ulong _socketCategoryChannelId,
     string _overrideChannelName = "",// Keeps the functionality, but overrides the channel name
                                      // It is used for creating matches with correct name ID right now.
@@ -212,20 +208,13 @@ public abstract class BaseCategory : InterfaceCategory
         var guild = BotReference.GetGuildRef();
         if (guild == null)
         {
-            Exceptions.BotGuildRefNull();
-            return null;
+            throw new InvalidOperationException(Exceptions.BotGuildRefNull());
         }
 
-        InterfaceChannel? interfaceChannel = GetChannelInstance(_channelType.ToString());
+        InterfaceChannel interfaceChannel = GetChannelInstance(_channelType.ToString());
 
         Log.WriteLine("interfaceChannel initialsetup: " +
             interfaceChannel.ChannelType.ToString(), LogLevel.DEBUG);
-
-        if (interfaceChannel == null)
-        {
-            Log.WriteLine(nameof(interfaceChannel) + " was null!", LogLevel.CRITICAL);
-            return null;
-        }
 
         interfaceChannel.ChannelName =
             GetChannelNameFromOverridenString(_overrideChannelName, _channelType);
@@ -264,7 +253,7 @@ public abstract class BaseCategory : InterfaceCategory
                 interfaceChannel.ChannelName, LogLevel.DEBUG);
 
             /*
-            InterfaceCategory? interfaceCategory=
+            InterfaceCategory interfaceCategory=
                 Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
             thisInterfaceCategory.CategoryType);
             */
@@ -295,14 +284,18 @@ public abstract class BaseCategory : InterfaceCategory
     private static Task CreateTheMissingMatchChannels(
         DiscordSocketClient _client, ulong _socketCategoryChannelId)
     {
+        InterfaceLeague interfaceLeague;
+
         Log.WriteLine("Checking for missing matches in: " + _socketCategoryChannelId, LogLevel.VERBOSE);
 
-        InterfaceLeague? interfaceLeague =
-            Database.Instance.Leagues.GetILeagueByCategoryId(_socketCategoryChannelId);
-
-        if (interfaceLeague == null) 
+        try
         {
-            Log.WriteLine(nameof(interfaceLeague) + " was null!", LogLevel.CRITICAL);
+            interfaceLeague =
+                Database.Instance.Leagues.GetILeagueByCategoryId(_socketCategoryChannelId);
+        }
+        catch (Exception ex) 
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return Task.CompletedTask;
         }
 
@@ -367,33 +360,37 @@ public abstract class BaseCategory : InterfaceCategory
         return true;
     }
 
-    public InterfaceChannel? FindInterfaceChannelWithIdInTheCategory(
+    public InterfaceChannel FindInterfaceChannelWithIdInTheCategory(
         ulong _idToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
 
-        InterfaceChannel? foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Key == _idToSearchWith).Value;
-        if (foundInterfaceChannel == null)
+        InterfaceChannel interfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Key == _idToSearchWith).Value;
+        if (interfaceChannel == null)
         {
-            Log.WriteLine(nameof(foundInterfaceChannel) + " was null! with id: " + _idToSearchWith, LogLevel.CRITICAL);
-            return foundInterfaceChannel;
+            string errorMsg = nameof(interfaceChannel) + " was null! with id: " + _idToSearchWith;
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            throw new InvalidOperationException(errorMsg);
         }
-        Log.WriteLine("Found: " + foundInterfaceChannel.ChannelName, LogLevel.VERBOSE);
-        return foundInterfaceChannel;
+
+        Log.WriteLine("Found: " + interfaceChannel.ChannelName, LogLevel.VERBOSE);
+
+        return interfaceChannel;
     }
 
-    public InterfaceChannel? FindInterfaceChannelWithNameInTheCategory(
+    public InterfaceChannel FindInterfaceChannelWithNameInTheCategory(
         ChannelType _nameToSearchWith)
     {
         Log.WriteLine("Getting CategoryKvp with name: " + _nameToSearchWith, LogLevel.VERBOSE);
 
-        InterfaceChannel? foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Value.ChannelType == _nameToSearchWith).Value;
-        if (foundInterfaceChannel == null)
+        InterfaceChannel interfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Value.ChannelType == _nameToSearchWith).Value;
+        if (interfaceChannel == null)
         {
-            Log.WriteLine(nameof(foundInterfaceChannel) + " was null! with name: " + _nameToSearchWith, LogLevel.CRITICAL);
-            return foundInterfaceChannel;
+            string errorMsg = nameof(interfaceChannel) + " was null! with name: " + _nameToSearchWith;
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            throw new InvalidOperationException(errorMsg);
         }
-        Log.WriteLine("Found: " + foundInterfaceChannel.ChannelName, LogLevel.VERBOSE);
-        return foundInterfaceChannel;
+        Log.WriteLine("Found: " + interfaceChannel.ChannelName, LogLevel.VERBOSE);
+        return interfaceChannel;
     }
 }

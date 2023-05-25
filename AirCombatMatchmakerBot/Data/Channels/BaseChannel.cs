@@ -141,7 +141,7 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.DEBUG);
     }
 
-    public async Task<InterfaceMessage?> CreateAMessageForTheChannelFromMessageName(
+    public async Task<InterfaceMessage> CreateAMessageForTheChannelFromMessageName(
         MessageName _MessageName, bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
@@ -154,16 +154,16 @@ public abstract class BaseChannel : InterfaceChannel
         if (client == null)
         {
             Exceptions.BotClientRefNull();
-            return interfaceMessage;
+            throw new InvalidOperationException("Client ref was not found!");
         }
 
-        var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+        InterfaceMessage newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
             client, this, true, _displayMessage, 0, _component, _ephemeral);
 
-        return newMessageTuple;
+        return newInterfaceMessage;
     }
 
-    public async Task<Discord.IUserMessage?>CreateARawMessageForTheChannelFromMessageName(
+    public async Task<Discord.IUserMessage> CreateARawMessageForTheChannelFromMessageName(
         string _input, string _embedTitle, bool _displayMessage,
         SocketMessageComponent? _component, bool _ephemeral, params string[] _files)
     {
@@ -176,7 +176,7 @@ public abstract class BaseChannel : InterfaceChannel
         if (rawMessageInput == null)
         {
             Log.WriteLine(nameof(rawMessageInput) + " was null!", LogLevel.CRITICAL);
-            return null;
+            throw new InvalidOperationException(nameof(rawMessageInput) + " was null!");
         }
 
         rawMessageInput.GenerateRawMessage(_input, _embedTitle);
@@ -184,22 +184,25 @@ public abstract class BaseChannel : InterfaceChannel
         var client = BotReference.GetClientRef();
         if (client == null)
         {
-            Exceptions.BotClientRefNull();
-            return null;
+            throw new InvalidOperationException(Exceptions.BotClientRefNull());
         }
 
-        var createdInterfaceMessage = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, true, _displayMessage, 0, _component, _ephemeral, _files);
-        if (createdInterfaceMessage == null)
+        try
         {
-            Log.WriteLine(nameof(createdInterfaceMessage) + " was null!", LogLevel.CRITICAL);
-            return null;
+            var createdInterfaceMessage = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
+                client, this, true, _displayMessage, 0, _component, _ephemeral, _files);
+
+            return createdInterfaceMessage.CachedUserMessage;
         }
 
-        return createdInterfaceMessage.CachedUserMessage;
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException(nameof(InterfaceMessage) + " was null!");
+        }
+
     }
 
-    public async Task<InterfaceMessage?> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
+    public async Task<InterfaceMessage> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
         string _input, AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
@@ -227,10 +230,10 @@ public abstract class BaseChannel : InterfaceChannel
 
         interfaceMessage = rawMessageInput;
 
-        var newMessageTuple = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
+        var newMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
             client, this, _attachmentDatas, _displayMessage, 0, _component, _ephemeral);
 
-        return newMessageTuple;
+        return newMessage;
     }
 
 
@@ -275,7 +278,7 @@ public abstract class BaseChannel : InterfaceChannel
                 int enumValue = (int)leagueName;
                 if (enumValue > 100) continue;
 
-                string? leagueNameString = EnumExtensions.GetEnumMemberAttrValue(leagueName);
+                string leagueNameString = EnumExtensions.GetEnumMemberAttrValue(leagueName);
                 Log.WriteLine("leagueNameString after enumValueCheck: " + leagueNameString, LogLevel.VERBOSE);
                 if (leagueNameString == null)
                 {
@@ -283,45 +286,41 @@ public abstract class BaseChannel : InterfaceChannel
                     return;
                 }
 
-                var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
-                if (leagueInterface == null)
+                try
                 {
-                    Log.WriteLine("leagueInterface was null!", LogLevel.CRITICAL);
-                    return;
+                    var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
+                    var leagueInterfaceFromDatabase =
+                        Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
+
+                    Log.WriteLine("Starting to create a league join button for: " + leagueNameString, LogLevel.VERBOSE);
+
+                    Log.WriteLine(nameof(leagueInterfaceFromDatabase) + " before creating leagueButtonRegisterationCustomId: "
+                        + leagueInterfaceFromDatabase.ToString(), LogLevel.VERBOSE);
+
+                    if (leagueInterfaceFromDatabase.LeagueRegistrationMessageId != 0) continue;
+
+                    InterfaceMessage interfaceMessage =
+                        (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
+
+                    var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+                            _client, this, true, true, leagueInterfaceFromDatabase.LeagueCategoryId);
+
+                    leagueInterfaceFromDatabase.LeagueRegistrationMessageId = interfaceMessage.MessageId;
+
+                    thisInterfaceChannel.InterfaceMessagesWithIds.TryAdd(
+                        leagueInterfaceFromDatabase.LeagueCategoryId,
+                            (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString()));
+
+                    Log.WriteLine("Added to the ConcurrentDictionary, count is now: " +
+                        thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+
+                    Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
                 }
-
-                var leagueInterfaceFromDatabase =
-                    Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
-
-                Log.WriteLine("Starting to create a league join button for: " + leagueNameString, LogLevel.VERBOSE);
-
-                if (leagueInterfaceFromDatabase == null)
+                catch (Exception ex)
                 {
-                    Log.WriteLine("_leagueInterface was null!", LogLevel.CRITICAL);
-                    return;
+                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                    continue;
                 }
-
-                Log.WriteLine(nameof(leagueInterfaceFromDatabase) + " before creating leagueButtonRegisterationCustomId: "
-                    + leagueInterfaceFromDatabase.ToString(), LogLevel.VERBOSE);
-
-                if (leagueInterfaceFromDatabase.LeagueRegistrationMessageId != 0) continue;
-
-                InterfaceMessage interfaceMessage =
-                    (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
-
-                var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                        _client, this, true, true, leagueInterfaceFromDatabase.LeagueCategoryId);
-
-                leagueInterfaceFromDatabase.LeagueRegistrationMessageId = interfaceMessage.MessageId;
-
-                thisInterfaceChannel.InterfaceMessagesWithIds.TryAdd(
-                    leagueInterfaceFromDatabase.LeagueCategoryId,
-                        (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString()));
-
-                Log.WriteLine("Added to the ConcurrentDictionary, count is now: " +
-                    thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
-
-                Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
             }
         }
         else
@@ -347,25 +346,26 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     // Finds ANY MessageDescription with that MessageDescription name (there can be multiple of same messages now)
-    public InterfaceMessage? FindInterfaceMessageWithNameInTheChannel(
+    public InterfaceMessage FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName)
     {
         Log.WriteLine("Getting MessageName with name: " + _messageName, LogLevel.VERBOSE);
 
-        var foundInterfaceMessage = thisInterfaceChannel.InterfaceMessagesWithIds.FirstOrDefault(
+        var interfaceMessage = thisInterfaceChannel.InterfaceMessagesWithIds.FirstOrDefault(
             x => x.Value.MessageName == _messageName).Value;
-        if (foundInterfaceMessage == null)
+        if (interfaceMessage == null)
         {
-            Log.WriteLine(nameof(foundInterfaceMessage) + " was null!", LogLevel.CRITICAL);
-            return null;
+            string errorMsg = nameof(interfaceMessage) + " was null! with name: " + _messageName;
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            throw new InvalidOperationException(errorMsg);
         }
 
-        Log.WriteLine("Found: " + foundInterfaceMessage.MessageName, LogLevel.VERBOSE);
-        return foundInterfaceMessage;
+        Log.WriteLine("Found: " + interfaceMessage.MessageName, LogLevel.VERBOSE);
+        return interfaceMessage;
     }
 
     // Finds all messages with that messageName
-    public List<InterfaceMessage>? FindAllInterfaceMessagesWithNameInTheChannel(
+    public List<InterfaceMessage> FindAllInterfaceMessagesWithNameInTheChannel(
         MessageName _messageName)
     {
         List<InterfaceMessage> interfaceMessageValues = new();
@@ -377,7 +377,7 @@ public abstract class BaseChannel : InterfaceChannel
         if (foundInterfaceMessages == null)
         {
             Log.WriteLine(nameof(foundInterfaceMessages) + " was null!", LogLevel.CRITICAL);
-            return null;
+            throw new InvalidOperationException(nameof(foundInterfaceMessages) + " was null!");
         }
 
         foreach (var message in foundInterfaceMessages)
@@ -391,7 +391,7 @@ public abstract class BaseChannel : InterfaceChannel
         return interfaceMessageValues;
     }
 
-    public async Task<IMessageChannel?> GetMessageChannelById(DiscordSocketClient _client)
+    public async Task<IMessageChannel> GetMessageChannelById(DiscordSocketClient _client)
     {
         Log.WriteLine("Getting IMessageChannel with id: " + thisInterfaceChannel.ChannelId, LogLevel.VERBOSE);
 
@@ -399,7 +399,7 @@ public abstract class BaseChannel : InterfaceChannel
         if (channel == null)
         {
             Log.WriteLine(nameof(channel) + " was null!", LogLevel.ERROR);
-            return null;
+            throw new InvalidOperationException(nameof(channel) + " was null!");
         }
 
         Log.WriteLine("Found: " + channel.Id, LogLevel.VERBOSE);
@@ -407,57 +407,55 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     // Deletes all messages in a channel defined by enum MessageName
+    // Maybe do this a bit better with the trycatch
     public async Task<string> DeleteMessagesInAChannelWithMessageName(
         MessageName _messageNameToDelete)
     {
-        var client = BotReference.GetClientRef();
-        if (client == null)
+        try
         {
-            return Exceptions.BotClientRefNull();
-        }
+            var client = BotReference.GetClientRef();
 
-        List<InterfaceMessage>? interfaceMessages =
-            FindAllInterfaceMessagesWithNameInTheChannel(_messageNameToDelete);
-        if (interfaceMessages == null)
-        {
-            Log.WriteLine(nameof(interfaceMessages) + " was null, with: " +
-                _messageNameToDelete, LogLevel.CRITICAL);
-            return nameof(interfaceMessages) + " was null";
-        }
+            List<InterfaceMessage> interfaceMessages =
+                FindAllInterfaceMessagesWithNameInTheChannel(_messageNameToDelete);
+            var iMessageChannel = await GetMessageChannelById(client);
 
-        var iMessageChannel = await GetMessageChannelById(client);
-        if (iMessageChannel == null)
-        {
-            Log.WriteLine(nameof(iMessageChannel) + " was null!", LogLevel.CRITICAL);
-            return nameof(iMessageChannel) + " was null";
-        }
-
-        foreach (var interfaceMessage in interfaceMessages)
-        {
-            Log.WriteLine("Looping on: " + interfaceMessage.MessageId, LogLevel.VERBOSE);
-
-            var message = await interfaceMessage.GetMessageById(iMessageChannel);
-            if (message == null)
+            foreach (var interfaceMessage in interfaceMessages)
             {
-                Log.WriteLine(nameof(message) + " was null!", LogLevel.CRITICAL);
-                continue;
+                Log.WriteLine("Looping on: " + interfaceMessage.MessageId, LogLevel.VERBOSE);
+
+                Discord.IMessage message;
+
+                try
+                {
+                    message = await interfaceMessage.GetMessageById(iMessageChannel);
+                    await message.DeleteAsync();
+
+                    Log.WriteLine("Deleted the message: " + message.Id +
+                        " deleting it from DB count: " + thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+                }
+                catch (Exception ex) 
+                {
+                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                    continue;
+                }
+
+                if (!thisInterfaceChannel.InterfaceMessagesWithIds.Any(msg => msg.Value.MessageId == message.Id))
+                {
+                    Log.WriteLine("Did not contain: " + message.Id, LogLevel.WARNING);
+                    continue;
+                }
+
+                thisInterfaceChannel.InterfaceMessagesWithIds.TryRemove(message.Id, out InterfaceMessage? im);
+                Log.WriteLine("Deleted the message: " + message.Id + " from DB. count now:" +
+                    thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
             }
-
-            await message.DeleteAsync();
-            Log.WriteLine("Deleted the message: " + message.Id +
-                " deleting it from DB count: " + thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
-
-            if (!thisInterfaceChannel.InterfaceMessagesWithIds.Any(msg => msg.Value.MessageId == message.Id))
-            {
-                Log.WriteLine("Did not contain: " + message.Id, LogLevel.WARNING);
-                continue;
-            }
-
-            thisInterfaceChannel.InterfaceMessagesWithIds.TryRemove(message.Id, out InterfaceMessage? im);
-            Log.WriteLine("Deleted the message: " + message.Id + " from DB. count now:" +
-                thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
         }
-
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return ex.Message;
+        }
+        
         return "";
     }
 
@@ -500,7 +498,7 @@ public abstract class BaseChannel : InterfaceChannel
         /*
         Database.Instance.Categories.FindCreatedCategoryWithChannelKvpWithId(
             _categoryId).Value.InterfaceChannels.TryRemove(
-                channelId, out InterfaceChannel? _ic);
+                channelId, out InterfaceChannel _ic);
         Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(channelId, out ulong _id);*/
 
         _interfaceCategory.InterfaceChannels.TryRemove(

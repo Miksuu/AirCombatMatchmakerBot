@@ -35,7 +35,7 @@ public abstract class BaseCommand : InterfaceCommand
         }
     }
 
-    CommandOption? InterfaceCommand.CommandOption
+    CommandOption InterfaceCommand.CommandOption
     {
         get
         {
@@ -53,7 +53,7 @@ public abstract class BaseCommand : InterfaceCommand
 
     protected CommandName commandName;
     protected string commandDescription = "";
-    protected CommandOption? commandOption;
+    protected CommandOption commandOption;
     protected bool isAdminCommand = false;
 
     public async Task<Response> ReceiveCommandAndCheckForAdminRights(
