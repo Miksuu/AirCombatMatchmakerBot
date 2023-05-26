@@ -88,6 +88,20 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         }
     }
 
+    public InterfaceReportingObject GetInterfaceReportingObjectWithTypeOfTheReportingObject(
+        TypeOfTheReportingObject _typeOfTheReportingObject, int _reportingTeamTeamId)
+    {
+        var reportingObject = TeamIdsWithReportData[_reportingTeamTeamId].ReportingObjects.FirstOrDefault(x
+            => x.GetTypeOfTheReportingObject() == _typeOfTheReportingObject);
+        if (reportingObject == null)
+        {
+            Log.WriteLine(nameof(reportingObject) + " was null!", LogLevel.CRITICAL);
+            throw new InvalidOperationException(nameof(reportingObject) + " was null!");
+        }
+
+        return reportingObject.thisReportingObject;
+    }
+
     public async Task<Response> ProcessPlayersSentReportObject(
         InterfaceLeague _interfaceLeague, ulong _playerId, string _reportedObjectByThePlayer,
         TypeOfTheReportingObject _typeOfTheReportingObject, ulong _leagueCategoryId, ulong _messageChannelId)
@@ -121,10 +135,8 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         {
             Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
 
-            var reportingObject = TeamIdsWithReportData[reportingTeam.TeamId].ReportingObjects.FirstOrDefault(x
-                 => x.GetTypeOfTheReportingObject() == _typeOfTheReportingObject);
-
-            var interfaceReportingObject = (InterfaceReportingObject)reportingObject;
+            var interfaceReportingObject =
+                GetInterfaceReportingObjectWithTypeOfTheReportingObject(_typeOfTheReportingObject, reportingTeam.TeamId);
 
             if (!interfaceReportingObject.AllowedMatchStatesToProcessOn.Contains(MatchState))
             {
@@ -133,11 +145,11 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 
             if (_reportedObjectByThePlayer == "-")
             {
-                reportingObject.CancelTheReportingObjectAction();
+                interfaceReportingObject.CancelTheReportingObjectAction();
             }
             else
             {
-                reportingObject.ProcessTheReportingObjectAction(
+                interfaceReportingObject.ProcessTheReportingObjectAction(
                     _reportedObjectByThePlayer, TeamIdsWithReportData, reportingTeam.TeamId);
             }
         }

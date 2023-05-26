@@ -48,7 +48,7 @@ public abstract class BaseReportingObject : InterfaceReportingObject
     [DataMember] private logString objectValue = new logString();
     logConcurrentBag<MatchState> allowedMatchStatesToProcessOn = new logConcurrentBag<MatchState>(); // This could be just a logList
 
-    protected InterfaceReportingObject thisReportingObject;
+    public InterfaceReportingObject thisReportingObject;
 
     public BaseReportingObject()
     {
