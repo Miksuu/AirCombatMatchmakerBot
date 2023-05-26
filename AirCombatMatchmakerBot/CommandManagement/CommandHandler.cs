@@ -51,25 +51,33 @@ public static class CommandHandler
             Log.WriteLine("The command " + _command.Data.Name + " does not have any options in it.", LogLevel.DEBUG);
         }
 
-        InterfaceCommand interfaceCommand = GetCommandInstance(_command.CommandName.ToUpper().ToString());
-
         if (firstOptionString == null)
         {
             Log.WriteLine("firstOptionString was null! ", LogLevel.ERROR);
             return;
         }
 
-        var responseTuple = await interfaceCommand.ReceiveCommandAndCheckForAdminRights(_command, firstOptionString);
-
-        if (responseTuple.serialize)
+        try
         {
-            await SerializationManager.SerializeDB();
+            InterfaceCommand interfaceCommand = GetCommandInstance(_command.CommandName.ToUpper().ToString());
+
+            var responseTuple = await interfaceCommand.ReceiveCommandAndCheckForAdminRights(_command, firstOptionString);
+
+            if (responseTuple.serialize)
+            {
+                await SerializationManager.SerializeDB();
+            }
+
+            await _command.RespondAsync(BotMessaging.GetMessageResponse(
+                _command.Data.Name, responseTuple.responseString, _command.Channel.Name), ephemeral: true);
+
+            Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
         }
-        
-        await _command.RespondAsync(BotMessaging.GetMessageResponse(
-            _command.Data.Name, responseTuple.responseString, _command.Channel.Name), ephemeral: true);
-        
-        Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
+        }
     }
 
     public static async Task PrepareCommands()
@@ -91,17 +99,18 @@ public static class CommandHandler
         {
             Log.WriteLine("Looping on cmd" + nameof(commandName), LogLevel.VERBOSE);
 
-            InterfaceCommand interfaceCommand = GetCommandInstance(commandName.ToString());
-            Log.WriteLine("after getting command interface", LogLevel.VERBOSE);
-            if (interfaceCommand == null)
+            try
             {
-                Log.WriteLine(nameof(interfaceCommand).ToString() +
-                    " was null!", LogLevel.CRITICAL);
-                return;
-            }
+                InterfaceCommand interfaceCommand = GetCommandInstance(commandName.ToString());
 
-            // For commands without option, need to implement it with null check
-            await interfaceCommand.AddNewCommandWithOption(client);
+                // For commands without option, need to implement it with null check
+                await interfaceCommand.AddNewCommandWithOption(client);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                continue;
+            }
         }
 
         /*
@@ -128,6 +137,14 @@ public static class CommandHandler
 
     public static InterfaceCommand GetCommandInstance(string _commandName)
     {
-        return (InterfaceCommand)EnumExtensions.GetInstance(_commandName.ToString());
+        try
+        {
+            return (InterfaceCommand)EnumExtensions.GetInstance(_commandName.ToString());
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            throw new InvalidOperationException(ex.Message);
+        }
     }
 }

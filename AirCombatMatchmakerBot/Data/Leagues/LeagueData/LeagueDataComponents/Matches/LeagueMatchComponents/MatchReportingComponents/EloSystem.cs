@@ -109,7 +109,12 @@ public static class EloSystem
     private static InterfaceReportingObject GetInterfaceReportingObjectByIndex(Dictionary<int, ReportData> _teamIdsWithReportData, int _index)
     {
         var baseReportingObject = _teamIdsWithReportData.ElementAt(_index).Value.ReportingObjects.FirstOrDefault(
-            x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.REPORTEDSCORE) as BaseReportingObject;
+            x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.REPORTEDSCORE);
+        if (baseReportingObject == null)
+        {
+            Log.WriteLine(nameof(baseReportingObject) + " was null!", LogLevel.CRITICAL);
+            throw new InvalidOperationException(nameof(baseReportingObject) + " was null!");
+        }
 
         return (InterfaceReportingObject)baseReportingObject;
     }
@@ -117,46 +122,53 @@ public static class EloSystem
     public static int DecideWinnerIndex(Dictionary<int, ReportData> _teamIdsWithReportData)
     {
         int winnerIndex = 0;
-        string teamOneObjectValue = GetInterfaceReportingObjectByIndex(_teamIdsWithReportData, 0).ObjectValue;
-        string teamTwoObjectValue = GetInterfaceReportingObjectByIndex(_teamIdsWithReportData, 1).ObjectValue;
-
-        Log.WriteLine("object values: " + teamOneObjectValue + " | " + teamTwoObjectValue, LogLevel.DEBUG);
-
-        int teamOneOutput = 0;
-        if (int.TryParse(teamOneObjectValue, out int output))
+        try
         {
-            teamOneOutput = output;
-        }
-        else
-        {
-            Log.WriteLine("Parse failed for value (team one): " + teamOneObjectValue, LogLevel.CRITICAL);
-            return 3;
-        }
+            string teamOneObjectValue = GetInterfaceReportingObjectByIndex(_teamIdsWithReportData, 0).ObjectValue;
+            string teamTwoObjectValue = GetInterfaceReportingObjectByIndex(_teamIdsWithReportData, 1).ObjectValue;
+            Log.WriteLine("object values: " + teamOneObjectValue + " | " + teamTwoObjectValue, LogLevel.DEBUG);
 
-        int teamTwoOutput = 0;
-        if (int.TryParse(teamTwoObjectValue, out int outputTwo))
-        {
-            teamTwoOutput = outputTwo;
-        }
-        else
-        {
-            Log.WriteLine("Parse failed for value (team two): " + teamTwoObjectValue, LogLevel.CRITICAL);
-            return 3;
-        }
+            int teamOneOutput = 0;
+            if (int.TryParse(teamOneObjectValue, out int output))
+            {
+                teamOneOutput = output;
+            }
+            else
+            {
+                Log.WriteLine("Parse failed for value (team one): " + teamOneObjectValue, LogLevel.CRITICAL);
+                return 3;
+            }
 
-        Log.WriteLine("outputs: " + teamOneOutput + " | " + teamTwoOutput, LogLevel.DEBUG);
+            int teamTwoOutput = 0;
+            if (int.TryParse(teamTwoObjectValue, out int outputTwo))
+            {
+                teamTwoOutput = outputTwo;
+            }
+            else
+            {
+                Log.WriteLine("Parse failed for value (team two): " + teamTwoObjectValue, LogLevel.CRITICAL);
+                return 3;
+            }
 
-        if (teamTwoOutput > teamOneOutput)
-        {
-            winnerIndex = 1;
+            Log.WriteLine("outputs: " + teamOneOutput + " | " + teamTwoOutput, LogLevel.DEBUG);
+
+            if (teamTwoOutput > teamOneOutput)
+            {
+                winnerIndex = 1;
+            }
+            else if (teamTwoOutput == teamOneOutput)
+            {
+                winnerIndex = 2;
+            }
+
+            Log.WriteLine("winnerIndex is = " + winnerIndex, LogLevel.VERBOSE);
+
+            return winnerIndex;
         }
-        else if (teamTwoOutput == teamOneOutput)
+        catch (Exception ex) 
         {
-            winnerIndex = 2;
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            throw new InvalidOperationException(nameof(InterfaceReportingObject) + " was null!");
         }
-
-        Log.WriteLine("winnerIndex is = " + winnerIndex, LogLevel.VERBOSE);
-
-        return winnerIndex;
     }
 }

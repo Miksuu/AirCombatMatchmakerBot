@@ -88,7 +88,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         }
     }
 
-    public InterfaceReportingObject GetInterfaceReportingObjectWithTypeOfTheReportingObject(
+    public BaseReportingObject GetInterfaceReportingObjectWithTypeOfTheReportingObject(
         TypeOfTheReportingObject _typeOfTheReportingObject, int _reportingTeamTeamId)
     {
         var reportingObject = TeamIdsWithReportData[_reportingTeamTeamId].ReportingObjects.FirstOrDefault(x
@@ -99,7 +99,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             throw new InvalidOperationException(nameof(reportingObject) + " was null!");
         }
 
-        return reportingObject.thisReportingObject;
+        return reportingObject;
     }
 
     public async Task<Response> ProcessPlayersSentReportObject(
@@ -117,41 +117,41 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         {
             reportingTeam = _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
                 _playerId);
+
+            // First time pressing the report button for the team
+            if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
+            {
+                Log.WriteLine("Key wasn't found! by player:" + _playerId, LogLevel.WARNING);
+                return new Response("", false);
+            }
+            // Replacing the result
+            else
+            {
+                Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
+
+                var interfaceReportingObject =
+                    GetInterfaceReportingObjectWithTypeOfTheReportingObject(_typeOfTheReportingObject, reportingTeam.TeamId).thisReportingObject;
+
+                if (!interfaceReportingObject.AllowedMatchStatesToProcessOn.Contains(MatchState))
+                {
+                    return new Response("That's not allowed at this stage of the reporting!", false);
+                }
+
+                if (_reportedObjectByThePlayer == "-")
+                {
+                    interfaceReportingObject.CancelTheReportingObjectAction();
+                }
+                else
+                {
+                    interfaceReportingObject.ProcessTheReportingObjectAction(
+                        _reportedObjectByThePlayer, TeamIdsWithReportData, reportingTeam.TeamId);
+                }
+            }
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return new Response(ex.Message, false);
-        }
-
-        // First time pressing the report button for the team
-        if (!TeamIdsWithReportData.ContainsKey(reportingTeam.TeamId))
-        {
-            Log.WriteLine("Key wasn't found! by player:" + _playerId, LogLevel.WARNING);
-            return new Response("", false);
-        }
-        // Replacing the result
-        else
-        {
-            Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
-
-            var interfaceReportingObject =
-                GetInterfaceReportingObjectWithTypeOfTheReportingObject(_typeOfTheReportingObject, reportingTeam.TeamId);
-
-            if (!interfaceReportingObject.AllowedMatchStatesToProcessOn.Contains(MatchState))
-            {
-                return new Response("That's not allowed at this stage of the reporting!", false);
-            }
-
-            if (_reportedObjectByThePlayer == "-")
-            {
-                interfaceReportingObject.CancelTheReportingObjectAction();
-            }
-            else
-            {
-                interfaceReportingObject.ProcessTheReportingObjectAction(
-                    _reportedObjectByThePlayer, TeamIdsWithReportData, reportingTeam.TeamId);
-            }
         }
 
         InterfaceChannel interfaceChannel = 

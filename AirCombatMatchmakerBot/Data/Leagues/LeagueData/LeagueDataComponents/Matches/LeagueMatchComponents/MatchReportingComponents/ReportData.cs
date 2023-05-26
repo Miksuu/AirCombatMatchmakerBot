@@ -15,7 +15,6 @@ public class ReportData
         set => teamName.SetValue(value);
     }
 
-    
     public ConcurrentBag<BaseReportingObject> ReportingObjects
     {
         get => reportingObjects.GetValue();
@@ -35,9 +34,6 @@ public class ReportData
     }
 
     [DataMember] private logString teamName = new logString();
-    /*
-    [DataMember] private logConcurrentDictionary<ulong, ReportObject> teamMemberIdsWithSelectedPlanesByTheTeam = 
-        new logConcurrentDictionary<ulong, ReportObject>();*/
     [DataMember] private logConcurrentBag<BaseReportingObject> reportingObjects = new logConcurrentBag<BaseReportingObject>();
     [DataMember] private logClass<float> finalEloDelta = new logClass<float>();
     [DataMember] private logClass<bool> confirmedMatch = new logClass<bool>();

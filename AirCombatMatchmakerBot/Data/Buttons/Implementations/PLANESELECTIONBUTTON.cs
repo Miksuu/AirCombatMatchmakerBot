@@ -63,46 +63,65 @@ public class PLANESELECTIONBUTTON : BaseButton
                 Log.WriteLine("Found team: " + teamKvp.Key + " with name: " + teamKvp.Value.TeamName +
                     " with playerId: " + playerId, LogLevel.VERBOSE);
 
-                var planeReportObject = teamKvp.Value.ReportingObjects.FirstOrDefault(
-                    x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
-
-                Log.WriteLine(planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.Count.ToString(), LogLevel.DEBUG);
-
-                if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
+                try
                 {
-                    Log.WriteLine("Does not contain: " + playerId, LogLevel.CRITICAL);
-                    continue;
-                }
-                else
-                {
-                    Log.WriteLine("Contains: " + playerId, LogLevel.VERBOSE);
-                    var playerIdSelectedPlane = planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(x => x.Key == playerId);
-                    /*
-                    if (playerIdSelectedPlane.Value == null)
+                    var planeReportObject =
+                        mcc.leagueMatchCached.MatchReporting.GetInterfaceReportingObjectWithTypeOfTheReportingObject(
+                            TypeOfTheReportingObject.PLAYERPLANE, playerTeam.TeamId) as PLAYERPLANE;
+
+                    if (planeReportObject == null)
                     {
-                        Log.WriteLine(nameof(playerIdSelectedPlane.Value) + " was null!", LogLevel.CRITICAL);
-                        return Task.FromResult(new Response(nameof(playerIdSelectedPlane.Value) + " was null!", false));
-                    }*/
-
-                    var unitNameInstance = (InterfaceUnit)EnumExtensions.GetInstance(playerSelectedPlane);
-
-                    Log.WriteLine("unitNameInstance:" + unitNameInstance, LogLevel.VERBOSE);
-
-                    if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
-                    {
-                        Log.WriteLine("does not contain", LogLevel.ERROR);
+                        Log.WriteLine(nameof(planeReportObject) + " was null!", LogLevel.CRITICAL);
                         continue;
                     }
 
-                    planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] = unitNameInstance.UnitName;
+                    Log.WriteLine(planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.Count.ToString(), LogLevel.DEBUG);
 
-                    Log.WriteLine("Done modifying: " + playerId + " with plane: " +
-                        planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.DEBUG);
+                    if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
+                    {
+                        Log.WriteLine("Does not contain: " + playerId, LogLevel.CRITICAL);
+                        continue;
+                    }
+                    else
+                    {
+                        Log.WriteLine("Contains: " + playerId, LogLevel.VERBOSE);
+
+                        try
+                        {
+                            var playerIdSelectedPlane = planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(x => x.Key == playerId);
+
+                            var unitNameInstance = (InterfaceUnit)EnumExtensions.GetInstance(playerSelectedPlane);
+
+                            Log.WriteLine("unitNameInstance:" + unitNameInstance, LogLevel.VERBOSE);
+
+                            if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
+                            {
+                                Log.WriteLine("does not contain", LogLevel.ERROR);
+                                continue;
+                            }
+
+                            planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] = unitNameInstance.UnitName;
+
+                            Log.WriteLine("Done modifying: " + playerId + " with plane: " +
+                                planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.DEBUG);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                            continue;
+                        }
+
+                    }
+
+                    _interfaceMessage.GenerateAndModifyTheMessage();
+
+                    return Task.FromResult(new Response("", true));
                 }
-
-                _interfaceMessage.GenerateAndModifyTheMessage();
-
-                return Task.FromResult(new Response("", true));
+                catch(Exception ex)
+                {
+                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                    continue;
+                }
             }
         }
 

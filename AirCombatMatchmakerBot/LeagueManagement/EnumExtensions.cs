@@ -11,7 +11,7 @@ public static class EnumExtensions
         if (t == null)
         {
             Log.WriteLine("type was null for: " + _string.ToUpper(), LogLevel.CRITICAL);
-            return new object();
+            throw new InvalidOperationException("type was null for: " + _string.ToUpper());
         }
         Log.WriteLine("Generated type: " + t, LogLevel.VERBOSE);
 
@@ -19,7 +19,7 @@ public static class EnumExtensions
         if (instance == null)
         {
             Log.WriteLine("instance was null for: " + _string.ToUpper(), LogLevel.CRITICAL);
-            return t;
+            throw new InvalidOperationException("instance was null for: " + _string.ToUpper());
         }
         Log.WriteLine("Generated instance: " + instance, LogLevel.VERBOSE);
 

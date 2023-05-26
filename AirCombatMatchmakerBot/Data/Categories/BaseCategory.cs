@@ -251,12 +251,6 @@ public abstract class BaseCategory : InterfaceCategory
                 _socketCategoryChannelId + ")" + " with name: " +
                 interfaceChannel.ChannelName, LogLevel.DEBUG);
 
-            /*
-            InterfaceCategory interfaceCategory=
-                Database.Instance.Categories.FindCreatedCategoryWithChannelKvpByCategoryName(
-            thisInterfaceCategory.CategoryType);
-            */
-
             await interfaceChannel.CreateAChannelForTheCategoryWithoutRole(guild, _allowedUsersIdsArray);
 
             interfaceChannel.InterfaceMessagesWithIds.Clear();
