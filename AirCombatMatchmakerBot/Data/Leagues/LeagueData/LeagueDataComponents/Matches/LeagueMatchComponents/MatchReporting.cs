@@ -321,27 +321,9 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             Log.WriteLine("Got field infos, length: " + fieldInfos.Length + " for team: " +
                 teamKvp.Value.TeamName, LogLevel.VERBOSE);
 
-
             foreach (var item in teamKvp.Value.ReportingObjects)
             {
-                //Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
-
-                // Only process the ReportObject fields (ignore TeamName)
-                //if (field.FieldType != typeof(ReportObject)) continue;
-
-                //Log.WriteLine("This is " + nameof(ReportObject) + " field: " +
-                //    field.FieldType, LogLevel.VERBOSE);
-
-                /*
-                ReportObject? reportObject = (ReportObject?)field.GetValue(teamKvp.Value);
-                if (reportObject == null)
-                {
-                    Log.WriteLine(nameof(reportObject) + " was null!", LogLevel.CRITICAL);
-                    continue;
-                }*/
-
                 var interfaceItem = (InterfaceReportingObject)item;
-
 
                 // Skips optional fields
                 if (interfaceItem.CurrentStatus == EmojiName.YELLOWSQUARE) continue;
@@ -353,35 +335,6 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
                     return false;
                 }
             }
-
-            /*
-            foreach (FieldInfo field in fieldInfos)
-            {
-                Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
-
-                // Only process the ReportObject fields (ignore TeamName)
-                if (field.FieldType != typeof(ReportObject)) continue;
-
-                Log.WriteLine("This is " + nameof(ReportObject) + " field: " +
-                    field.FieldType, LogLevel.VERBOSE);
-
-                ReportObject? reportObject = (ReportObject?)field.GetValue(teamKvp.Value);
-                if (reportObject == null)
-                {
-                    Log.WriteLine(nameof(reportObject) + " was null!", LogLevel.CRITICAL);
-                    continue;
-                }
-
-                // Skips optional fields
-                if (reportObject == EmojiName.YELLOWSQUARE) continue;
-
-                if (reportObject.CurrentStatus != EmojiName.WHITECHECKMARK)
-                {
-                    Log.WriteLine("Team: " + teamKvp.Value.TeamName + "'s " + reportObject.FieldNameDisplay +
-                        " was " + reportObject.CurrentStatus + " with value: " + reportObject.ObjectValue, LogLevel.DEBUG);
-                    return false;
-                } 
-            }*/
         }
 
         Log.WriteLine("All fields were true, proceeding to show the confirmation message", LogLevel.DEBUG);
