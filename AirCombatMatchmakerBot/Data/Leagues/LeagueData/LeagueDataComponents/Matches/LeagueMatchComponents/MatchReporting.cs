@@ -95,7 +95,7 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         string response = string.Empty;
         Team reportingTeam;
 
-        Log.WriteLine("Processing player's sent " + nameof(ReportObject) + " in league: " +
+        Log.WriteLine("Processing player's sent " + nameof(BaseReportingObject) + " in league: " +
             _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
             _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
 
@@ -121,8 +121,15 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
         {
             Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
 
-            var reportingObject = TeamIdsWithReportData[reportingTeam.TeamId].ReportingObjects.FirstOrDefault(x 
-                 => x.GetTypeOfTheReportingObject() == _typeOfTheReportingObject) as BaseReportingObject;
+            var reportingObject = TeamIdsWithReportData[reportingTeam.TeamId].ReportingObjects.FirstOrDefault(x
+                 => x.GetTypeOfTheReportingObject() == _typeOfTheReportingObject);
+
+            var interfaceReportingObject = (InterfaceReportingObject)reportingObject;
+
+            if (!interfaceReportingObject.AllowedMatchStatesToProcessOn.Contains(MatchState))
+            {
+                return new Response("That's not allowed at this stage of the reporting!", false);
+            }
 
             if (_reportedObjectByThePlayer == "-")
             {

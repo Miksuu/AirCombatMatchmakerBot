@@ -57,7 +57,7 @@ public abstract class BaseReportingObject : InterfaceReportingObject
 
     public void SetObjectValue(string _value)
     {
-        Log.WriteLine("Setting " + nameof(ReportObject) + "'s value to: " + _value, LogLevel.VERBOSE);
+        Log.WriteLine("Setting " + nameof(BaseReportingObject) + "'s value to: " + _value, LogLevel.VERBOSE);
 
         thisReportingObject.ObjectValue = _value;
         thisReportingObject.CurrentStatus = EmojiName.WHITECHECKMARK;

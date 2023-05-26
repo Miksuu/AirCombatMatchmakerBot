@@ -101,14 +101,24 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         Log.WriteLine("Getting match by channelId: " + _channelId, LogLevel.VERBOSE);
 
         LeagueMatch? foundMatch = MatchesConcurrentBag.FirstOrDefault(x => x.MatchChannelId == _channelId);
-        if (foundMatch == null) 
+        if (foundMatch == null)
         {
-            Log.WriteLine(nameof(foundMatch) + " was null!", LogLevel.ERROR);
-            throw new InvalidOperationException(nameof(foundMatch) + " was null!");
+            Log.WriteLine(nameof(foundMatch) + " was null! (user tried to comment after the match has been done)", LogLevel.DEBUG);
+            LeagueMatch? foundArchivedMatch = Database.Instance.ArchivedLeagueMatches.FirstOrDefault(
+                x => x.MatchChannelId == _channelId);
+
+            if (foundArchivedMatch != null)
+            {
+                Log.WriteLine("Returning archived match: " + foundArchivedMatch.MatchId, LogLevel.VERBOSE);
+                return foundArchivedMatch;
+            }
+
+            Log.WriteLine(nameof(foundArchivedMatch) + " was null! (not found on active or archived matches)", LogLevel.CRITICAL);
+            throw new InvalidOperationException(nameof(foundArchivedMatch) + " was null!");
         }
 
         Log.WriteLine("Found Match: " + foundMatch.MatchId + " with channelId: " +
-            _channelId, LogLevel.VERBOSE);
+            _channelId, LogLevel.DEBUG);
 
         return foundMatch;
     }
