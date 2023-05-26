@@ -52,50 +52,39 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
                 continue;
             }
 
-            FieldInfo[] fields = typeof(ReportData).GetFields(
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
-
-            Log.WriteLine("fields count: " + fields.Length, LogLevel.DEBUG);
-
-            foreach (FieldInfo field in fields)
+            foreach (var item in teamReportData.ReportingObjects)
             {
                 string finalCheckMark = string.Empty;
 
-                Log.WriteLine("field type: " + field.FieldType, LogLevel.DEBUG);
+                var interfaceItem = (InterfaceReportingObject)item;
 
-                // Only process the ReportObject fields (ignore TeamName)
-                if (field.FieldType != typeof(ReportObject)) continue;
-
-                Log.WriteLine("This is " + nameof(ReportObject) + " field: " +
-                    field.FieldType, LogLevel.VERBOSE);
-
-                ReportObject? reportObject = (ReportObject?)field.GetValue(teamReportData);
-                if (reportObject == null)
+                if (interfaceItem.HiddenBeforeConfirmation)
                 {
-                    Log.WriteLine(nameof(reportObject) + " was null!", LogLevel.CRITICAL);
+                    Log.WriteLine(interfaceItem.TypeOfTheReportingObject + " was hidden before confirmation", LogLevel.VERBOSE);
                     continue;
                 }
 
-                if (reportObject.CurrentStatus == EmojiName.WHITECHECKMARK)
+                if (interfaceItem.CurrentStatus == EmojiName.WHITECHECKMARK)
                 {
                     finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
                 }
-                else if (reportObject.CurrentStatus == EmojiName.YELLOWSQUARE)
+                else if (interfaceItem.CurrentStatus == EmojiName.YELLOWSQUARE)
                 {
                     finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.YELLOWSQUARE);
                 }
                 else
                 {
-                    finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(reportObject.CachedDefaultStatus);
+                    finalCheckMark = EnumExtensions.GetEnumMemberAttrValue(interfaceItem.CachedDefaultStatus);
                 }
 
-                Log.WriteLine("Found: " + nameof(reportObject) + " with values: " +
-                    reportObject.FieldNameDisplay + ", " + reportObject.ObjectValue + ", " +
-                    reportObject.CurrentStatus + ", " + reportObject.CachedDefaultStatus.ToString() + ", with" +
+                Log.WriteLine("Found: " + nameof(interfaceItem) + " with values: " +
+                    interfaceItem.TypeOfTheReportingObject + ", " + interfaceItem.ObjectValue + ", " +
+                    interfaceItem.CurrentStatus + ", " + interfaceItem.CachedDefaultStatus.ToString() + ", with" +
                     finalCheckMark, LogLevel.DEBUG);
 
-                reportingStatusPerTeam += finalCheckMark + " " + reportObject.FieldNameDisplay + ": " +
-                    reportObject.ObjectValue + "\n";
+                reportingStatusPerTeam += finalCheckMark + " " +
+                    EnumExtensions.GetEnumMemberAttrValue(interfaceItem.TypeOfTheReportingObject) + ": " +
+                    interfaceItem.ObjectValue + "\n";
             }
 
             Log.WriteLine("Done looping through team: " + teamKvp.Key + " (" + teamKvp.Value +

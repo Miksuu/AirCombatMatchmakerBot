@@ -69,11 +69,14 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         int playersThatAreReady = 0;
         foreach (var teamKvp in matchReportData)
         {
-            foreach (var item in teamKvp.Value.TeamMemberIdsWithSelectedPlanesByTheTeam)
+            var playerPlaneReportObject = teamKvp.Value.ReportingObjects.FirstOrDefault(
+                    x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+
+            foreach (var item in playerPlaneReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam)
             {
                 string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
 
-                if (item.Value.CurrentStatus == EmojiName.WHITECHECKMARK)
+                if (item.Value != UnitName.NOTSELECTED)
                 {
                     checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
                     playersThatAreReady++;

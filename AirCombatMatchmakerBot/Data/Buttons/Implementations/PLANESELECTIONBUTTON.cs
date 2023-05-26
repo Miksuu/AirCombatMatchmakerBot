@@ -63,7 +63,12 @@ public class PLANESELECTIONBUTTON : BaseButton
                 Log.WriteLine("Found team: " + teamKvp.Key + " with name: " + teamKvp.Value.TeamName +
                     " with playerId: " + playerId, LogLevel.VERBOSE);
 
-                if (!teamKvp.Value.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
+                var planeReportObject = teamKvp.Value.ReportingObjects.FirstOrDefault(
+                    x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+
+                Log.WriteLine(planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.Count.ToString(), LogLevel.DEBUG);
+
+                if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
                 {
                     Log.WriteLine("Does not contain: " + playerId, LogLevel.CRITICAL);
                     continue;
@@ -71,16 +76,28 @@ public class PLANESELECTIONBUTTON : BaseButton
                 else
                 {
                     Log.WriteLine("Contains: " + playerId, LogLevel.VERBOSE);
-                    var playerIdSelectedPlane = teamKvp.Value.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(x => x.Key == playerId);
+                    var playerIdSelectedPlane = planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(x => x.Key == playerId);
+                    /*
                     if (playerIdSelectedPlane.Value == null)
                     {
                         Log.WriteLine(nameof(playerIdSelectedPlane.Value) + " was null!", LogLevel.CRITICAL);
                         return Task.FromResult(new Response(nameof(playerIdSelectedPlane.Value) + " was null!", false));
+                    }*/
+
+                    var unitNameInstance = (InterfaceUnit)EnumExtensions.GetInstance(playerSelectedPlane);
+
+                    Log.WriteLine("unitNameInstance:" + unitNameInstance, LogLevel.VERBOSE);
+
+                    if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
+                    {
+                        Log.WriteLine("does not contain", LogLevel.ERROR);
+                        continue;
                     }
 
-                    playerIdSelectedPlane.Value.SetObjectValueAndFieldBool(playerSelectedPlane, EmojiName.WHITECHECKMARK);
+                    planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] = unitNameInstance.UnitName;
 
-                    Log.WriteLine("Done modifying: " + playerId + " with plane: " + playerSelectedPlane, LogLevel.VERBOSE);
+                    Log.WriteLine("Done modifying: " + playerId + " with plane: " +
+                        planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.DEBUG);
                 }
 
                 _interfaceMessage.GenerateAndModifyTheMessage();

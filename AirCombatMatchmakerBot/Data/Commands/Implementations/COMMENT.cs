@@ -30,11 +30,17 @@ public class COMMENT : BaseCommand
 
         var leagueInterfaceWithTheMatch =
             Database.Instance.Leagues.FindLeagueInterfaceAndLeagueMatchWithChannelId(commandChannelId);
-
         if (leagueInterfaceWithTheMatch.Item1 == null || leagueInterfaceWithTheMatch.Item2 == null)
         {
             Log.WriteLine(nameof(leagueInterfaceWithTheMatch) + " was null!", LogLevel.ERROR);
             return new Response("Error while processing your command!", false);
+        }
+
+        if (leagueInterfaceWithTheMatch.Item2.MatchReporting.MatchState == MatchState.MATCHDONE)
+        {
+            Log.WriteLine("Match " + leagueInterfaceWithTheMatch.Item2.MatchId + 
+                " was already done, returning", LogLevel.VERBOSE);
+            return new Response("That match is already done, your comment was not posted", false);
         }
 
         if (!leagueInterfaceWithTheMatch.Item2.GetIdsOfThePlayersInTheMatchAsArray(

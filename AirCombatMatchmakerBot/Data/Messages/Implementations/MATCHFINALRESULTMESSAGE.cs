@@ -54,8 +54,11 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         int pIndex = 0;
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
+            var planeReportObject = reportDataKvp.Value.ReportingObjects.FirstOrDefault(
+                x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+
             //Log.WriteLine("Before getting team planes", LogLevel.DEBUG);
-            finalMessage += reportDataKvp.Value.TeamName + " (" + reportDataKvp.Value.GetTeamPlanes() + ")";
+            finalMessage += reportDataKvp.Value.TeamName + " (" + planeReportObject.GetTeamPlanes() + ")";
             //Log.WriteLine("After getting team planes", LogLevel.DEBUG);
             if (pIndex == 0) finalMessage += " vs ";
             pIndex++;
@@ -67,7 +70,12 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         int sIndex = 0;
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
-            finalMessage += reportDataKvp.Value.ReportedScore.ObjectValue;
+            var baseReportingObject = reportDataKvp.Value.ReportingObjects.FirstOrDefault(
+                x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.REPORTEDSCORE) as BaseReportingObject;
+
+            var interfaceObject = (InterfaceReportingObject) baseReportingObject;
+
+            finalMessage += interfaceObject.ObjectValue;
             if (sIndex == 0) finalMessage += " - ";
             sIndex++;
         }
@@ -105,13 +113,18 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
-            if (reportDataKvp.Value.CommentsByTheTeamMembers.CurrentStatus == EmojiName.YELLOWSQUARE)
+            var baseReportingObject = reportDataKvp.Value.ReportingObjects.FirstOrDefault(
+                x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.COMMENTBYTHEUSER) as BaseReportingObject;
+
+            var interfaceObject = (InterfaceReportingObject)baseReportingObject;
+
+            if (interfaceObject.CurrentStatus == EmojiName.YELLOWSQUARE)
             {
                 Log.WriteLine(reportDataKvp.Value.TeamName + " did not comment.", LogLevel.VERBOSE);
                 continue;
             }
 
-            finalMessage += reportDataKvp.Value.TeamName + " commented: " + reportDataKvp.Value.CommentsByTheTeamMembers.ObjectValue + "\n";
+            finalMessage += reportDataKvp.Value.TeamName + " commented: " + interfaceObject.ObjectValue + "\n";
         }
 
         // Cache the finalMessage on to the alternativeMessage form for match results page where tacviews have link buttons
@@ -121,7 +134,12 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
         {
-            finalMessage += reportDataKvp.Value.TacviewLink.ObjectValue + "\n";
+            var baseReportingObject = reportDataKvp.Value.ReportingObjects.FirstOrDefault(
+                x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.TACVIEWLINK) as BaseReportingObject;
+
+            var interfaceObject = (InterfaceReportingObject)baseReportingObject;
+
+            finalMessage += interfaceObject.ObjectValue + "\n";
         }
 
         Log.WriteLine("Returning: " + finalMessage, LogLevel.DEBUG);
