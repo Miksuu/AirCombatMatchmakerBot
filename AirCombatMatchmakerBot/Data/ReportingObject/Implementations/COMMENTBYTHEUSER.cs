@@ -15,7 +15,8 @@ public class COMMENTBYTHEUSER : BaseReportingObject
             MatchState.CONFIRMATIONPHASE,
         };
     }
-    public override string ProcessTheReportingObjectAction(string _reportedObjectByThePlayer)
+    public override string ProcessTheReportingObjectAction(
+        string _reportedObjectByThePlayer, ConcurrentDictionary<int, ReportData>? _TeamIdsWithReportData = null, int _reportingTeamId = 0)
     {
         base.SetObjectValue(_reportedObjectByThePlayer);
         return "You posted comment: " + _reportedObjectByThePlayer;

@@ -137,7 +137,8 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             }
             else
             {
-                reportingObject.ProcessTheReportingObjectAction(_reportedObjectByThePlayer);
+                reportingObject.ProcessTheReportingObjectAction(
+                    _reportedObjectByThePlayer, TeamIdsWithReportData, reportingTeam.TeamId);
             }
         }
 

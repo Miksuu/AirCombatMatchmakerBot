@@ -55,12 +55,12 @@ public abstract class BaseReportingObject : InterfaceReportingObject
         thisReportingObject = this;
     }
 
-    public void SetObjectValue(string _value)
+    public void SetObjectValue(string _value, EmojiName _optionalEmojiName = EmojiName.WHITECHECKMARK)
     {
         Log.WriteLine("Setting " + nameof(BaseReportingObject) + "'s value to: " + _value, LogLevel.VERBOSE);
 
         thisReportingObject.ObjectValue = _value;
-        thisReportingObject.CurrentStatus = EmojiName.WHITECHECKMARK;
+        thisReportingObject.CurrentStatus = _optionalEmojiName;
     }
 
     // Perhaps temp
@@ -69,6 +69,7 @@ public abstract class BaseReportingObject : InterfaceReportingObject
         return thisReportingObject.TypeOfTheReportingObject;
     }
 
-    public abstract string ProcessTheReportingObjectAction(string _reportedObjectByThePlayer);
+    public abstract string ProcessTheReportingObjectAction(
+        string _reportedObjectByThePlayer, ConcurrentDictionary<int, ReportData>? _TeamIdsWithReportData = null, int _reportingTeamId = 0);
     public abstract void CancelTheReportingObjectAction();
 }

@@ -12,6 +12,7 @@ public interface InterfaceReportingObject
     public string ObjectValue { get; set; }
     public ConcurrentBag<MatchState> AllowedMatchStatesToProcessOn { get; set; }
 
-    public abstract string ProcessTheReportingObjectAction(string _reportedObjectByThePlayer);
+    public abstract string ProcessTheReportingObjectAction(
+        string _reportedObjectByThePlayer, ConcurrentDictionary<int, ReportData>? _TeamIdsWithReportData = null, int _reportingTeamId = 0);
     public abstract void CancelTheReportingObjectAction();
 }

@@ -14,7 +14,8 @@ public class REPORTEDSCORE : BaseReportingObject
             MatchState.REPORTINGPHASE,
         };
     }
-    public override string ProcessTheReportingObjectAction(string _reportedObjectByThePlayer)
+    public override string ProcessTheReportingObjectAction(
+        string _reportedObjectByThePlayer, ConcurrentDictionary<int, ReportData>? _TeamIdsWithReportData = null, int _reportingTeamId = 0)
     {
         base.SetObjectValue(_reportedObjectByThePlayer);
         return "You reported score of: " + _reportedObjectByThePlayer;

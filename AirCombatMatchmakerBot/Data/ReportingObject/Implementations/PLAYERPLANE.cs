@@ -45,7 +45,8 @@ public class PLAYERPLANE : BaseReportingObject
         return membersBuilder.ToString().TrimEnd(',', ' ');
     }
 
-    public override string ProcessTheReportingObjectAction(string _reportedObjectByThePlayer)
+    public override string ProcessTheReportingObjectAction(
+        string _reportedObjectByThePlayer, ConcurrentDictionary<int, ReportData>? _TeamIdsWithReportData = null, int _reportingTeamId = 0)
     {
         base.SetObjectValue(_reportedObjectByThePlayer);
         return "You selected plane: " + _reportedObjectByThePlayer;
