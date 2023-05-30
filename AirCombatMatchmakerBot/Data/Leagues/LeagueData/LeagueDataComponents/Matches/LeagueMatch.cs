@@ -58,6 +58,10 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         Log.WriteLine("Teams to from the match on: " + _teamsToFormMatchOn[0] +
             ", " + _teamsToFormMatchOn[1], LogLevel.DEBUG);
 
+        // Schedule the match queue timeout (if the players don't accept it in the time)
+        Database.Instance.EventScheduler.ScheduledEvents.Add(
+            new MatchQueueAcceptEvent(60, _interfaceLeague.LeagueCategoryId, MatchChannelId));
+
         // Add the team's name to the ConcurrentDictionary as a value
         foreach (int teamId in _teamsToFormMatchOn)
         {

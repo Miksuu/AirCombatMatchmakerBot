@@ -42,4 +42,36 @@ public class MatchChannelComponents
 
         return;
     }
+
+    public MatchChannelComponents(ulong _leagueCategoryIdCached, ulong _matchChannelIdCached)
+    {
+        {
+            Log.WriteLine("Starting to find with: " +
+                " and with category id: " + _leagueCategoryIdCached, LogLevel.VERBOSE);
+
+            if (interfaceLeagueCached != null || leagueMatchCached != null)
+            {
+                Log.WriteLine("Already cached, returning", LogLevel.VERBOSE);
+                return;
+            }
+
+            try
+            {
+                interfaceLeagueCached =
+                    Database.Instance.Leagues.GetILeagueByCategoryId(_leagueCategoryIdCached);
+                leagueMatchCached = interfaceLeagueCached.LeagueData.Matches.FindLeagueMatchByTheChannelId(
+                    _matchChannelIdCached);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                return;
+            }
+
+            Log.WriteLine("Set: " + interfaceLeagueCached + " | " +
+                leagueMatchCached, LogLevel.VERBOSE);
+
+            return;
+        }
+    }
 }
