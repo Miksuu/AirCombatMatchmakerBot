@@ -69,6 +69,10 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
                     overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
                     _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague)).Result;
 
+            // Schedule the match queue timeout (if the players don't accept it in the time)
+            Database.Instance.EventScheduler.ScheduledEvents.Add(
+                new MatchQueueAcceptEvent(60, _interfaceLeague.LeagueCategoryId, interfaceChannel.ChannelId));
+
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
             if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
@@ -121,5 +125,24 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
             _channelId, LogLevel.DEBUG);
 
         return foundMatch;
+    }
+
+    public LeagueMatch FindMatchAndRemoveItFromConcurrentBag(InterfaceLeague _interfaceLeague, ulong _matchChannelId)
+    {
+        Log.WriteLine("Removing: " + _matchChannelId + " on: " + _interfaceLeague.LeagueCategoryName,LogLevel.VERBOSE);
+
+        LeagueMatch tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_matchChannelId);
+
+        foreach (var item in _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Where(
+            m => m.MatchId == tempMatch.MatchId))
+        {
+            _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? _leagueMatch);
+            Log.WriteLine("Removed match " + item.MatchId, LogLevel.DEBUG);
+        }
+
+        Log.WriteLine("Removed matchId: " + tempMatch.MatchId + " on ch: " + _matchChannelId +
+            " on league: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+
+        return tempMatch;
     }
 }

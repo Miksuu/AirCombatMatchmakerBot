@@ -10,21 +10,11 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
     public CONFIRMMATCHENTRYMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.CONFIRMMATCHENTRYMESSAGE;
-
-        /*
-        messageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
-            new ConcurrentBag<KeyValuePair<ButtonName, int>>()
-            {
-                new KeyValuePair<ButtonName, int>(ButtonName.PLANESELECTIONBUTTON, 0),
-            });
-        */
         thisInterfaceMessage.MessageEmbedTitle = "This message confirms the match entry [add more detailed message here]";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
     {
-        //base.GenerateRegularButtons(_component, _leagueCategoryId);
-
         Log.WriteLine("Generating buttons with: " + _leagueCategoryId, LogLevel.VERBOSE);
 
         Dictionary<string, string> buttonsToGenerate = new Dictionary<string, string>();
@@ -92,6 +82,23 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
             mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
         {
+            // Perhaps make this an abstract method to remove each of the event type from the queue with each of derived classes having their own conditions
+            List<ScheduledEvent> scheduledEventsToRemove = new List<ScheduledEvent>();
+            foreach (var item in Database.Instance.EventScheduler.ScheduledEvents)
+            {
+                if (item.GetType() == typeof(MatchQueueAcceptEvent))
+                {
+                    MatchQueueAcceptEvent matchQueueAcceptEvent = (MatchQueueAcceptEvent)item;
+                    if (matchQueueAcceptEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId && 
+                        matchQueueAcceptEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
+                    {
+                        scheduledEventsToRemove.Add(matchQueueAcceptEvent);
+                    }
+                }
+            }
+
+            Database.Instance.EventScheduler.RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
+
             mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.REPORTINGPHASE;
 
             InterfaceChannel interfaceChannel;

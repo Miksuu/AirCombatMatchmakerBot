@@ -42,7 +42,7 @@ public static class CommandHandler
             firstOptionString = firstOption.Value.ToString();
 
             Log.WriteLine("The command " + _command.Data.Name + " had " + _command.Data.Options.Count + " options in it." +
-    "            The first command had an argument: " + firstOptionString, LogLevel.DEBUG);
+                " The first command had an argument: " + firstOptionString, LogLevel.DEBUG);
 
             // Add a for loop here to print the command arguments, if multiple later on.
         }

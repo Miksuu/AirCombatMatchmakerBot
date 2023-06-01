@@ -67,25 +67,8 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
                 InterfaceEventType interfaceEventType = (InterfaceEventType)scheduledEvent;
                 interfaceEventType.ExecuteTheScheduledEvent();
 
-                var itemsToRemove = ScheduledEvents.Where(e => e.EventId == scheduledEvent.EventId).ToList();
-
-                foreach (var item in itemsToRemove)
-                {
-                    bool removed = ScheduledEvents.TryTake(out ScheduledEvent? removedItem);
-                    if (removed)
-                    {
-                        if (removedItem == null)
-                        {
-                            Log.WriteLine(nameof(removedItem) + " was null! with eventId: " + item.EventId, LogLevel.CRITICAL);
-                            return Task.CompletedTask;
-                        }
-                        Log.WriteLine("Removed id: " + removedItem.EventId, LogLevel.DEBUG);
-                    }
-                    else
-                    {
-                        Log.WriteLine("Failed to remove: " + item.EventId, LogLevel.ERROR);
-                    }
-                }
+                var scheduledEventsToRemove = ScheduledEvents.Where(e => e.EventId == scheduledEvent.EventId).ToList();
+                RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
 
                 /*
                 foreach (var item in ScheduledEvents.Where(
@@ -130,6 +113,27 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
             Thread.Sleep(waitTimeInMs);
 
             Log.WriteLine("Wait done.", LogLevel.VERBOSE);
+        }
+    }
+
+    public void RemoveEventsFromTheScheduledEventsBag(List<ScheduledEvent> _scheduledEventsToRemove)
+    {
+        foreach (var item in _scheduledEventsToRemove)
+        {
+            bool removed = ScheduledEvents.TryTake(out ScheduledEvent? removedItem);
+            if (removed)
+            {
+                if (removedItem == null)
+                {
+                    Log.WriteLine(nameof(removedItem) + " was null! with eventId: " + item.EventId, LogLevel.CRITICAL);
+                    return;
+                }
+                Log.WriteLine("Removed id: " + removedItem.EventId, LogLevel.DEBUG);
+            }
+            else
+            {
+                Log.WriteLine("Failed to remove: " + item.EventId, LogLevel.ERROR);
+            }
         }
     }
 }
