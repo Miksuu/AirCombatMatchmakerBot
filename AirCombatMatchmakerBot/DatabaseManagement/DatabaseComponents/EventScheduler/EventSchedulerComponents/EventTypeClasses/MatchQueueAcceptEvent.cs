@@ -70,58 +70,6 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
         mcc.interfaceLeagueCached.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(
             mcc.interfaceLeagueCached, matchChannelId);
 
-
-        //ulong categoryId = CategoryIdToDeleteChannelOn;
-        //ulong channelId = ChannelIdToDelete;
-        //string nameMustContain = NameMustContain;
-
-        /*
-        Log.WriteLine("Starting to execute event: " + nameof(DeleteChannelEvent) + " with: " +
-            categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.VERBOSE);
-
-        */
-
-
-
-        /*
-         * 
-         *         InterfaceCategory interfaceCategory;
-        try
-        {
-            interfaceCategory =
-                Database.Instance.Categories.FindInterfaceCategoryWithId(categoryId);
-        }
-        catch(Exception ex)
-        {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-            return;
-        }
-
-        if (interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory(channelId))
-        {      
-            InterfaceChannel interfaceChannel;
-            try
-            {
-                interfaceChannel = interfaceCategory.FindInterfaceChannelWithIdInTheCategory(channelId);
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                return;
-            }
-
-            //await interfaceChannel.DeleteThisChannel(interfaceCategory, interfaceChannel, nameMustContain);
-        }
-        else
-        {
-            Log.WriteLine("Finished an event without deleting the channel, because it didn't exist!", LogLevel.WARNING);
-        }
-
-        /*
-        Log.WriteLine("Done executing event: " + nameof(DeleteChannelEvent) + " with: " +
-            categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.DEBUG);
-        */
-
         await SerializationManager.SerializeDB();
     }
 }

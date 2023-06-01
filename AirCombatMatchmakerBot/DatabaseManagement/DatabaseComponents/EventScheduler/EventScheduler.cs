@@ -69,27 +69,6 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
 
                 var scheduledEventsToRemove = ScheduledEvents.Where(e => e.EventId == scheduledEvent.EventId).ToList();
                 RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
-
-                /*
-                foreach (var item in ScheduledEvents.Where(
-                    e=> e.EventId == scheduledEvent.EventId))
-                {
-                    Log.WriteLine("Trying to remove: " + item.EventId, LogLevel.VERBOSE);
-
-                    if (ScheduledEvents.TryTake(out ScheduledEvent? _result))
-                    {
-                        if (_result == null)
-                        {
-                            Log.WriteLine(nameof(_result) + " was null! with eventId: " + scheduledEvent.EventId, LogLevel.CRITICAL);
-                            return Task.CompletedTask;
-                        }
-                        Log.WriteLine("Removed id: " + _result.EventId, LogLevel.DEBUG);
-                    }
-                    else
-                    {
-                        Log.WriteLine("Failed to remove: " + item.EventId, LogLevel.ERROR);
-                    }
-                }*/
             }
         }
 
