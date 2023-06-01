@@ -41,6 +41,6 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
             TimeToExecuteTheEventOn + " with id: " + EventId, LogLevel.VERBOSE);
     }
 
-    public abstract void ExecuteTheScheduledEvent();
+    public abstract Task ExecuteTheScheduledEvent();
     public abstract void CheckTheScheduledEventStatus();
 }

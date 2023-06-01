@@ -1,5 +1,5 @@
 ﻿public interface InterfaceEventType
 {
-    public abstract void ExecuteTheScheduledEvent();
+    public abstract Task ExecuteTheScheduledEvent();
     public abstract void CheckTheScheduledEventStatus();
 }

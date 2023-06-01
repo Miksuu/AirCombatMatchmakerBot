@@ -50,7 +50,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
             _timeFromNowToExecuteOn + "|" + _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.DEBUG);
     }
 
-    public override async void ExecuteTheScheduledEvent()
+    public override async Task ExecuteTheScheduledEvent()
     {
         mcc = new MatchChannelComponents(LeagueCategoryIdCached, MatchChannelIdCached);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
@@ -59,16 +59,25 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
             return;
         }
 
+        Log.WriteLine("event: " + EventId + " before setting matchChannelId", LogLevel.VERBOSE);
+
         ulong matchChannelId = mcc.leagueMatchCached.MatchChannelId;
+
+        Log.WriteLine("event: " + EventId + " after setting matchChannelId", LogLevel.VERBOSE);
 
         // Create the event and execute it instantly
         var newEvent = new DeleteChannelEvent(0, mcc.interfaceLeagueCached.LeagueCategoryId, matchChannelId, "match");
-        newEvent.ExecuteTheScheduledEvent();
+        Log.WriteLine("event: " + EventId + " created newEvent", LogLevel.VERBOSE);
+        await newEvent.ExecuteTheScheduledEvent();
+        Log.WriteLine("event: " + EventId + " after newEvent executed", LogLevel.VERBOSE);
 
         mcc.interfaceLeagueCached.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(
             mcc.interfaceLeagueCached, matchChannelId);
 
+        Log.WriteLine("event: " + EventId + " after removed from bag", LogLevel.VERBOSE);
+
         await SerializationManager.SerializeDB();
+        Log.WriteLine("event: " + EventId + " after serialization", LogLevel.VERBOSE);
     }
 
     public async override void CheckTheScheduledEventStatus()

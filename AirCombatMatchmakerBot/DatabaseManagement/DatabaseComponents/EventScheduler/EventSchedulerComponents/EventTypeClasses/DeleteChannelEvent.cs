@@ -56,7 +56,7 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
             _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.DEBUG);
     }
 
-    public override async void ExecuteTheScheduledEvent()//bool _clearEventOnTheStartup = false)
+    public override async Task ExecuteTheScheduledEvent()
     {
         ulong categoryId = CategoryIdToDeleteChannelOn;
         ulong channelId = ChannelIdToDelete;

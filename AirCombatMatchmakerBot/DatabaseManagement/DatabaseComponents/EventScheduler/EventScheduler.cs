@@ -33,7 +33,7 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
 
     public EventScheduler() { }
 
-    public Task CheckCurrentTimeAndExecuteScheduledEvents(bool _clearEventOnTheStartup = false)
+    public async Task CheckCurrentTimeAndExecuteScheduledEvents(bool _clearEventOnTheStartup = false)
     {
         ulong currentUnixTime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
 
@@ -65,9 +65,16 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
                 Log.WriteLine("Executing event: " + scheduledEvent.EventId, LogLevel.DEBUG);
 
                 InterfaceEventType interfaceEventType = (InterfaceEventType)scheduledEvent;
-                interfaceEventType.ExecuteTheScheduledEvent();
+                Log.WriteLine("event: " + scheduledEvent.EventId + " cast", LogLevel.VERBOSE);
+                await interfaceEventType.ExecuteTheScheduledEvent();
+                Log.WriteLine("event: " + scheduledEvent.EventId + " after execute await", LogLevel.VERBOSE);
 
                 var scheduledEventsToRemove = ScheduledEvents.Where(e => e.EventId == scheduledEvent.EventId).ToList();
+                foreach (var item in scheduledEventsToRemove)
+                {
+                    Log.WriteLine("event: " + scheduledEvent.EventId + " scheduledEventsToRemove: " + item.EventId, LogLevel.VERBOSE);
+                }
+
                 RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
             }
             else if (currentUnixTime % 5 == 0)
@@ -75,11 +82,9 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
                 scheduledEvent.CheckTheScheduledEventStatus();
             }
         }
-
-        return Task.CompletedTask;
     }
 
-    public void EventSchedulerLoop()
+    public async void EventSchedulerLoop()
     {
         int waitTimeInMs = 1000;
 
@@ -89,7 +94,7 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
         {
             Log.WriteLine("Executing " + nameof(CheckCurrentTimeAndExecuteScheduledEvents), LogLevel.VERBOSE);
 
-            CheckCurrentTimeAndExecuteScheduledEvents();
+            await CheckCurrentTimeAndExecuteScheduledEvents();
             Log.WriteLine("Done executing " + nameof(CheckCurrentTimeAndExecuteScheduledEvents) +
                 ", waiting " + waitTimeInMs + "ms", LogLevel.VERBOSE);
 
@@ -111,11 +116,11 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
                     Log.WriteLine(nameof(removedItem) + " was null! with eventId: " + item.EventId, LogLevel.CRITICAL);
                     return;
                 }
-                Log.WriteLine("Removed id: " + removedItem.EventId, LogLevel.DEBUG);
+                Log.WriteLine("event: " + removedItem.EventId + " removed", LogLevel.DEBUG);
             }
             else
             {
-                Log.WriteLine("Failed to remove: " + item.EventId, LogLevel.ERROR);
+                Log.WriteLine("event: " + item.EventId + ", failed to remove", LogLevel.ERROR);
             }
         }
     }
