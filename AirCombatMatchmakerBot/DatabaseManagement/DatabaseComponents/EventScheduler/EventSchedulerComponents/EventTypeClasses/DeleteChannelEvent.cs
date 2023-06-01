@@ -106,6 +106,6 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
 
     public override void CheckTheScheduledEventStatus()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }

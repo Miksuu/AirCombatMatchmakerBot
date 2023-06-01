@@ -70,6 +70,10 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
                 var scheduledEventsToRemove = ScheduledEvents.Where(e => e.EventId == scheduledEvent.EventId).ToList();
                 RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
             }
+            else if (currentUnixTime % 5 == 0)
+            {
+                scheduledEvent.CheckTheScheduledEventStatus();
+            }
         }
 
         return Task.CompletedTask;

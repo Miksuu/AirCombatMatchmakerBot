@@ -10,7 +10,8 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
     public CONFIRMMATCHENTRYMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.CONFIRMMATCHENTRYMESSAGE;
-        thisInterfaceMessage.MessageEmbedTitle = "This message confirms the match entry [add more detailed message here]";
+        thisInterfaceMessage.MessageEmbedTitle = "Select your plane. If you do not select your plane in a minute," +
+            " the match will be timed out.";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
@@ -52,7 +53,24 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             return nameof(mcc) + " was null!";
         }
 
-        string finalMessage = "Selected plane:\n";
+        string finalMessage = string.Empty;
+
+        foreach (var item in Database.Instance.EventScheduler.ScheduledEvents)
+        {
+            if (item.GetType() == typeof(MatchQueueAcceptEvent))
+            {
+                MatchQueueAcceptEvent matchQueueAcceptEvent = (MatchQueueAcceptEvent)item;
+                if (matchQueueAcceptEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
+                    matchQueueAcceptEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
+                {
+                    var timeLeft = matchQueueAcceptEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+
+                    finalMessage += "Time left: " + timeLeft + " seconds.\n";
+                }
+            }
+        }
+
+        finalMessage += "Selected plane:\n";
 
         var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
 
@@ -82,7 +100,8 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
             mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
         {
-            // Perhaps make this an abstract method to remove each of the event type from the queue with each of derived classes having their own conditions
+            // Perhaps make this an abstract method to remove each of the event type from the queue
+            // with each of derived classes having their own conditions
             List<ScheduledEvent> scheduledEventsToRemove = new List<ScheduledEvent>();
             foreach (var item in Database.Instance.EventScheduler.ScheduledEvents)
             {

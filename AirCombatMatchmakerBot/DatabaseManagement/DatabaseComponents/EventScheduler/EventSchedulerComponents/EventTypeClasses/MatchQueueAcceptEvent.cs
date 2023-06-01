@@ -35,15 +35,6 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
         Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
             _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.VERBOSE);
 
-        /*
-        mcc = new MatchChannelComponents(_leagueCategoryIdCached, _matchChannelIdCached);
-        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
-        {
-            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
-            return; //Task.FromResult(new Response(nameof(mcc) + " was null!", false));
-        }*/
-
-
         base.SetupScheduledEvent(_timeFromNowToExecuteOn);
         LeagueCategoryIdCached = _leagueCategoryIdCached;
         MatchChannelIdCached = _matchChannelIdCached;
@@ -73,8 +64,32 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
         await SerializationManager.SerializeDB();
     }
 
-    public override void CheckTheScheduledEventStatus()
+    public async override void CheckTheScheduledEventStatus()
     {
-        throw new NotImplementedException();
+        mcc = new MatchChannelComponents(LeagueCategoryIdCached, MatchChannelIdCached);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
+        {
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        try
+        {
+            InterfaceMessage confirmMatchEntryMessage =
+                Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
+                        MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannel(
+                            MessageName.CONFIRMMATCHENTRYMESSAGE);
+
+            Log.WriteLine("Found: " + confirmMatchEntryMessage.MessageId + " with content: " +
+                confirmMatchEntryMessage.MessageDescription, LogLevel.DEBUG);
+
+            await confirmMatchEntryMessage.GenerateAndModifyTheMessage();
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
+        }
     }
 }
