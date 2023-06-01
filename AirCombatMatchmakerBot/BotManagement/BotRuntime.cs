@@ -58,10 +58,7 @@ public class BotRuntimeManager
 
                 // Delete db here
 
-
                 await SerializationManager.HandleDatabaseCreationOrLoading("0");
-
-                
                 
                 // Delete roles here
                 foreach (var item in guild.Roles)

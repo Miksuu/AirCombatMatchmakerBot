@@ -56,7 +56,7 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
             _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.DEBUG);
     }
 
-    public override async Task ExecuteTheScheduledEvent()
+    public override async Task ExecuteTheScheduledEvent(bool _serialize = true)
     {
         ulong categoryId = CategoryIdToDeleteChannelOn;
         ulong channelId = ChannelIdToDelete;
@@ -100,6 +100,8 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
 
         Log.WriteLine("Done executing event: " + nameof(DeleteChannelEvent) + " with: " +
             categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.DEBUG);
+
+        if (!_serialize) return;
 
         await SerializationManager.SerializeDB();
     }
