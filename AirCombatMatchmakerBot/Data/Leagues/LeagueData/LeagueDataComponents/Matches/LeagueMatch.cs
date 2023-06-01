@@ -231,16 +231,16 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 
             int matchIdTemp = MatchId;
 
-            Database.Instance.ArchivedLeagueMatches.Add(tempMatch);
-            Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
-                Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
-
             foreach (var item in _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Where(
                 m => m.MatchId == tempMatch.MatchId))
             {
                 _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? _leagueMatch);
                 Log.WriteLine("Removed match " + item.MatchId, LogLevel.DEBUG);
             }
+
+            Database.Instance.ArchivedLeagueMatches.Add(tempMatch);
+            Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
+                Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
 
             // When removing the player from the database, no need for this because it's done after he is gone from the league
             //if (!_removingPlayerFromDatabase)
