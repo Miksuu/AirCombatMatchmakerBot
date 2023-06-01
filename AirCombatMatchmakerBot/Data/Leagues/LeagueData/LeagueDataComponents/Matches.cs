@@ -122,4 +122,23 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
 
         return foundMatch;
     }
+
+    public LeagueMatch FindMatchAndRemoveItFromConcurrentBag(InterfaceLeague _interfaceLeague, ulong _matchChannelId)
+    {
+        Log.WriteLine("Removing: " + _matchChannelId + " on: " + _interfaceLeague.LeagueCategoryName,LogLevel.VERBOSE);
+
+        LeagueMatch tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_matchChannelId);
+
+        foreach (var item in _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Where(
+            m => m.MatchId == tempMatch.MatchId))
+        {
+            _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? _leagueMatch);
+            Log.WriteLine("Removed match " + item.MatchId, LogLevel.DEBUG);
+        }
+
+        Log.WriteLine("Removed matchId: " + tempMatch.MatchId + " on ch: " + _matchChannelId +
+            " on league: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+
+        return tempMatch;
+    }
 }
