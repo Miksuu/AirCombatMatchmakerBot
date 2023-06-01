@@ -70,8 +70,8 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
                     _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague)).Result;
 
             // Schedule the match queue timeout (if the players don't accept it in the time)
-            Database.Instance.EventScheduler.ScheduledEvents.Add(
-                new MatchQueueAcceptEvent(60, _interfaceLeague.LeagueCategoryId, interfaceChannel.ChannelId));
+            var newEvent = new MatchQueueAcceptEvent(60, _interfaceLeague.LeagueCategoryId, interfaceChannel.ChannelId);
+            Database.Instance.EventScheduler.ScheduledEvents.Add(newEvent);
 
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
@@ -82,7 +82,7 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
                     interfaceChannel.ChannelId, categoryKvp.SocketCategoryChannelId);
             }
 
-            Thread secondThread = new Thread(() => InitChannelOnSecondThread(_client, interfaceChannel));
+            Thread secondThread = new Thread(() => InitChannelOnSecondThread(_client, interfaceChannel, newEvent));
             secondThread.Start();
         }
         catch (Exception ex) 
@@ -93,9 +93,12 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
     }
 
     public void InitChannelOnSecondThread(
-        DiscordSocketClient _client, InterfaceChannel _interfaceChannel)
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, MatchQueueAcceptEvent _createdMatchQueueAcceptEvent)
     {
         _interfaceChannel.PostChannelMessages(_client);
+
+        // The event can be checked only after the messages have been posted
+        _createdMatchQueueAcceptEvent.ChannelIsReady = true;
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
     }

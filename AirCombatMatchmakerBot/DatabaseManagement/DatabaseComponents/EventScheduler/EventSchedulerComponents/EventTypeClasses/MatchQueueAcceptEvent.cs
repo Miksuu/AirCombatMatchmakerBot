@@ -16,8 +16,15 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
         set => matchChannelIdCached.SetValue(value);
     }
 
+    public bool ChannelIsReady
+    {
+        get => channelIsReady.GetValue();
+        set => channelIsReady.SetValue(value);
+    }
+
     [DataMember] private logClass<ulong> leagueCategoryIdCached = new logClass<ulong>();
     [DataMember] private logClass<ulong> matchChannelIdCached = new logClass<ulong>();
+    [DataMember] private logClass<bool> channelIsReady = new logClass<bool>();
 
     public List<string> GetClassParameters()
     {
@@ -66,6 +73,12 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
 
     public async override void CheckTheScheduledEventStatus()
     {
+        if (!ChannelIsReady)
+        {
+            Log.WriteLine("Channel was not ready yet!", LogLevel.VERBOSE);
+            return;
+        }
+
         mcc = new MatchChannelComponents(LeagueCategoryIdCached, MatchChannelIdCached);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
