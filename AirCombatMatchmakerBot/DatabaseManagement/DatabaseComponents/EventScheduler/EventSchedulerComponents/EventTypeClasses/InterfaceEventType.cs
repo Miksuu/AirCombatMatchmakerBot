@@ -1,4 +1,5 @@
 ﻿public interface InterfaceEventType
 {
-    public void ExecuteTheScheduledEvent();//bool _clearEventOnTheStartup = false);
+    public abstract void ExecuteTheScheduledEvent();
+    public abstract void CheckTheScheduledEventStatus();
 }

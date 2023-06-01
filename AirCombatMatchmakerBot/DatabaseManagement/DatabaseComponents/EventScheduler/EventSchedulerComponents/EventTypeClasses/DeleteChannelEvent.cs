@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass, InterfaceEventType
+public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
 {
     public ulong CategoryIdToDeleteChannelOn
     {
@@ -56,7 +56,7 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass, Interf
             _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.DEBUG);
     }
 
-    public async void ExecuteTheScheduledEvent()//bool _clearEventOnTheStartup = false)
+    public override async void ExecuteTheScheduledEvent()//bool _clearEventOnTheStartup = false)
     {
         ulong categoryId = CategoryIdToDeleteChannelOn;
         ulong channelId = ChannelIdToDelete;
@@ -102,5 +102,10 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass, Interf
             categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.DEBUG);
 
         await SerializationManager.SerializeDB();
+    }
+
+    public override void CheckTheScheduledEventStatus()
+    {
+        throw new NotImplementedException();
     }
 }

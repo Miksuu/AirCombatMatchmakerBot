@@ -52,7 +52,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
             _timeFromNowToExecuteOn + "|" + _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.DEBUG);
     }
 
-    public async void ExecuteTheScheduledEvent()
+    public override async void ExecuteTheScheduledEvent()
     {
         mcc = new MatchChannelComponents(LeagueCategoryIdCached, MatchChannelIdCached);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
@@ -71,5 +71,10 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
             mcc.interfaceLeagueCached, matchChannelId);
 
         await SerializationManager.SerializeDB();
+    }
+
+    public override void CheckTheScheduledEventStatus()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class ScheduledEvent : logClass<ScheduledEvent>
+public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventType
 {
     public ulong TimeToExecuteTheEventOn
     {
@@ -40,4 +40,7 @@ public class ScheduledEvent : logClass<ScheduledEvent>
         Log.WriteLine(typeof(ScheduledEvent) + "' TimeToExecuteTheEventOn is now: " +
             TimeToExecuteTheEventOn + " with id: " + EventId, LogLevel.VERBOSE);
     }
+
+    public abstract void ExecuteTheScheduledEvent();
+    public abstract void CheckTheScheduledEventStatus();
 }
