@@ -73,5 +73,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         }
 
         await _interfaceMessage.ModifyMessage(leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
+
+        await SerializationManager.SerializeDB();
     }
 }

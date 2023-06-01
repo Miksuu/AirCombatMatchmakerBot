@@ -144,6 +144,8 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
         }
+
+        await SerializationManager.SerializeDB();
     }
 
     public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
