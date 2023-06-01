@@ -3,7 +3,7 @@
 [DataContract]
 public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, InterfaceEventType
 {
-    MatchChannelComponents mcc = new MatchChannelComponents();
+    MatchChannelComponents mcc;
     public ulong LeagueCategoryIdCached
     {
         get => leagueCategoryIdCached.GetValue();
@@ -27,7 +27,6 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
             leagueCategoryIdCached.GetParameter(), matchChannelIdCached.GetParameter() };
     }
 
-    // Perhaps need to insert mmc get here too
     public MatchQueueAcceptEvent() { }
 
     public MatchQueueAcceptEvent(
@@ -36,12 +35,13 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
         Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
             _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.VERBOSE);
 
+        /*
         mcc = new MatchChannelComponents(_leagueCategoryIdCached, _matchChannelIdCached);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
             return; //Task.FromResult(new Response(nameof(mcc) + " was null!", false));
-        }
+        }*/
 
 
         base.SetupScheduledEvent(_timeFromNowToExecuteOn);
@@ -52,8 +52,25 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
             _timeFromNowToExecuteOn + "|" + _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.DEBUG);
     }
 
-    public async void ExecuteTheScheduledEvent()//bool _clearEventOnTheStartup = false)
+    public async void ExecuteTheScheduledEvent()
     {
+        mcc = new MatchChannelComponents(LeagueCategoryIdCached, MatchChannelIdCached);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
+        {
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        ulong matchChannelId = mcc.leagueMatchCached.MatchChannelId;
+
+        // Create the event and execute it instantly
+        var newEvent = new DeleteChannelEvent(0, mcc.interfaceLeagueCached.LeagueCategoryId, matchChannelId, "match");
+        newEvent.ExecuteTheScheduledEvent();
+
+        mcc.interfaceLeagueCached.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(
+            mcc.interfaceLeagueCached, matchChannelId);
+
+
         //ulong categoryId = CategoryIdToDeleteChannelOn;
         //ulong channelId = ChannelIdToDelete;
         //string nameMustContain = NameMustContain;
@@ -64,9 +81,11 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
 
         */
 
-        InterfaceCategory interfaceCategory;
+
 
         /*
+         * 
+         *         InterfaceCategory interfaceCategory;
         try
         {
             interfaceCategory =

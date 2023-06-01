@@ -69,6 +69,10 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
                     overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
                     _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague)).Result;
 
+            // Schedule the match queue timeout (if the players don't accept it in the time)
+            Database.Instance.EventScheduler.ScheduledEvents.Add(
+                new MatchQueueAcceptEvent(60, _interfaceLeague.LeagueCategoryId, interfaceChannel.ChannelId));
+
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
             if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(

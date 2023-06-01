@@ -117,8 +117,7 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
     }
 
     public void RemoveEventsFromTheScheduledEventsBag(List<ScheduledEvent> _scheduledEventsToRemove)
-    {     
-
+    {
         foreach (var item in _scheduledEventsToRemove)
         {
             bool removed = ScheduledEvents.TryTake(out ScheduledEvent? removedItem);
