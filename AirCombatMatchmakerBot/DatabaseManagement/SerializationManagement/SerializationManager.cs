@@ -10,33 +10,50 @@ public static class SerializationManager
     static string dbPath = @"C:\AirCombatMatchmakerBot\Data";
     static string dbFileName = "database.json";
     static string dbPathWithFileName = dbPath + @"\" + dbFileName;
+    static bool serializationInProgress = false;
+    static SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
     public static async Task SerializeDB(bool _circularDependency = false)
     {
-        Log.WriteLine("SERIALIZING DB", LogLevel.SERIALIZATION);
-
-        if (!_circularDependency)
+        if (!serializationInProgress)
         {
-            await SerializeUsersOnTheServer();
+            await semaphore.WaitAsync();
+            try
+            {
+                if (!serializationInProgress)
+                {
+                    serializationInProgress = true;
+                    Log.WriteLine("SERIALIZING DB", LogLevel.SERIALIZATION);
+
+                    if (!_circularDependency)
+                    {
+                        await SerializeUsersOnTheServer();
+                    }
+
+                    Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
+                    serializer.Converters.Add(new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter());
+                    serializer.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
+                    serializer.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
+                    serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                    serializer.ObjectCreationHandling = ObjectCreationHandling.Replace;
+                    serializer.ContractResolver = new DataMemberContractResolver();
+
+                    using (StreamWriter sw = new StreamWriter(dbPathWithFileName))
+                    using (JsonWriter writer = new JsonTextWriter(sw))
+                    {
+                        serializer.Serialize(writer, Database.Instance, typeof(Database));
+                        writer.Close();
+                        sw.Close();
+                    }
+
+                    serializationInProgress = false;
+                }
+            }
+            finally
+            {
+                semaphore.Release();
+            }
         }
-
-        Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
-        serializer.Converters.Add(new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter());
-        serializer.NullValueHandling = Newtonsoft.Json.NullValueHandling.Include;
-        serializer.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.All;
-        serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
-        serializer.ObjectCreationHandling = ObjectCreationHandling.Replace;
-        serializer.ContractResolver = new DataMemberContractResolver();
-
-        using (StreamWriter sw = new StreamWriter(dbPathWithFileName))
-        using (JsonWriter writer = new JsonTextWriter(sw))
-        {
-            serializer.Serialize(writer, Database.Instance, typeof(Database));
-            writer.Close();
-            sw.Close();
-        };
-
-        Log.WriteLine("DB SERIALIZATION DONE!", LogLevel.SERIALIZATION);
     }
 
     public class DataMemberContractResolver : DefaultContractResolver
