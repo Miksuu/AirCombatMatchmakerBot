@@ -97,6 +97,8 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         // Schedule the match queue timeout (if the players don't accept it in the time)
         new MatchQueueAcceptEvent(60, _leagueCategoryId, _interfaceChannel.ChannelId);
 
+        await SerializationManager.SerializeDB();
+
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
     }
 
