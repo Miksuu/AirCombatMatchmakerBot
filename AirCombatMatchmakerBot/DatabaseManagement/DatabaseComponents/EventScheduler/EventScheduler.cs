@@ -85,7 +85,7 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
             else if (currentUnixTime % 5 == 0 && currentUnixTime <= scheduledEvent.TimeToExecuteTheEventOn)
             {
                 Log.WriteLine("event: " + scheduledEvent.EventId + " going to check the event status", LogLevel.VERBOSE);
-                //scheduledEvent.CheckTheScheduledEventStatus();
+                scheduledEvent.CheckTheScheduledEventStatus();
             }
             else
             {
