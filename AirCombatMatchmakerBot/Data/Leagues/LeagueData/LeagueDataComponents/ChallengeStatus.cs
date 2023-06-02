@@ -176,7 +176,5 @@ public class ChallengeStatus : logClass<ChallengeStatus>, InterfaceLoggableClass
         Log.WriteLine("Done looping.", LogLevel.VERBOSE);
 
         await _interfaceLeague.LeagueData.Matches.CreateAMatch(_interfaceLeague, teamsToFormMatchOn);
-
-        return;
     }
 }
