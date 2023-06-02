@@ -131,15 +131,24 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
 
     public LeagueMatch FindMatchAndRemoveItFromConcurrentBag(InterfaceLeague _interfaceLeague, ulong _matchChannelId)
     {
-        Log.WriteLine("Removing: " + _matchChannelId + " on: " + _interfaceLeague.LeagueCategoryName,LogLevel.VERBOSE);
+        Log.WriteLine("Removing: " + _matchChannelId + " on: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
         LeagueMatch tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_matchChannelId);
+        List<LeagueMatch> matchesToRemove = _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag
+            .Where(m => m.MatchId == tempMatch.MatchId)
+                .ToList();
 
-        foreach (var item in _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.Where(
-            m => m.MatchId == tempMatch.MatchId))
+        foreach (var item in matchesToRemove)
         {
-            _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? _leagueMatch);
-            Log.WriteLine("Removed match " + item.MatchId, LogLevel.DEBUG);
+            bool removed = _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? _leagueMatch);
+            if (removed)
+            {
+                Log.WriteLine("Removed match " + item.MatchId, LogLevel.DEBUG);
+            }
+            else
+            {
+                Log.WriteLine("Failed to remove match " + item.MatchId, LogLevel.ERROR);
+            }
         }
 
         Log.WriteLine("Removed matchId: " + tempMatch.MatchId + " on ch: " + _matchChannelId +
