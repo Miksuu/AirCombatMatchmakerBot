@@ -268,6 +268,9 @@ public abstract class BaseLeague : InterfaceLeague
             }
             else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
             {
+                // Temp fix
+                UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+
                 Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + thisInterfaceLeague.LeagueCategoryName +
                     ", had a team already active", LogLevel.VERBOSE);
                 responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) +
