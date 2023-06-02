@@ -296,7 +296,8 @@ public abstract class BaseCategory : InterfaceCategory
 
         Matches matches = interfaceLeague.LeagueData.Matches;
 
-        foreach (LeagueMatch match in matches.MatchesConcurrentBag)
+        /*
+        foreach (LeagueMatch match in matches. atchesConcurrentBag)
         {
             Log.WriteLine("Looping on match id: " + match.MatchId +
                 " with channelId: " + match.MatchChannelId, LogLevel.VERBOSE);
@@ -313,7 +314,7 @@ public abstract class BaseCategory : InterfaceCategory
                 " Expected to find a channel with match id: " + match.MatchId, LogLevel.WARNING);
 
             matches.CreateAMatchChannel(match, interfaceLeague, _client);
-        }
+        }*/
 
         return Task.CompletedTask;
     }

@@ -1,6 +1,7 @@
 ﻿using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using Discord;
 
 [DataContract]
 public class Matches : logClass<Matches>, InterfaceLoggableClass
@@ -37,16 +38,13 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
 
         LeagueMatch newMatch = new(_interfaceLeague, _teamsToFormMatchOn);
 
-        InterfaceChannel newChannel =await CreateAMatchChannel(newMatch, _interfaceLeague, client);
+        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, _interfaceLeague, client);
 
         MatchesConcurrentBag.Add(newMatch);
-        Log.WriteLine("Added to the MatchesConcurrentBag, count is now: " +
+        Log.WriteLine("Added match channel id: " + newChannel.ChannelId + " to the MatchesConcurrentBag, count is now: " +
             MatchesConcurrentBag.Count, LogLevel.VERBOSE);
 
-        // Schedule the match queue timeout (if the players don't accept it in the time)
-        var newEvent = new MatchQueueAcceptEvent(60, _interfaceLeague.LeagueCategoryId, newChannel.ChannelId);
-
-        Thread secondThread = new Thread(() => InitChannelOnSecondThread(client, newChannel, newEvent));
+        Thread secondThread = new Thread(() => InitChannelOnSecondThread(client, newChannel, _interfaceLeague.LeagueCategoryId));
         secondThread.Start();
     }
 
@@ -92,12 +90,12 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
     }
 
     public async void InitChannelOnSecondThread(
-        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, MatchQueueAcceptEvent _createdMatchQueueAcceptEvent)
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, ulong _leagueCategoryId)
     {
         await _interfaceChannel.PostChannelMessages(_client);
 
-        // The event can be checked only after the messages have been posted
-        _createdMatchQueueAcceptEvent.ChannelIsReady = true;
+        // Schedule the match queue timeout (if the players don't accept it in the time)
+        new MatchQueueAcceptEvent(60, _leagueCategoryId, _interfaceChannel.ChannelId);
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
     }
