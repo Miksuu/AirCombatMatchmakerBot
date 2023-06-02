@@ -71,7 +71,6 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
 
             // Schedule the match queue timeout (if the players don't accept it in the time)
             var newEvent = new MatchQueueAcceptEvent(60, _interfaceLeague.LeagueCategoryId, interfaceChannel.ChannelId);
-            
 
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
