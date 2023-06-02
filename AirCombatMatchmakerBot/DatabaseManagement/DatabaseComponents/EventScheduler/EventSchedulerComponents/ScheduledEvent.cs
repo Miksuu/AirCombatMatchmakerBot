@@ -38,9 +38,9 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
         EventId = ++Database.Instance.EventScheduler.EventCounter;
 
         Log.WriteLine(typeof(ScheduledEvent) + "' TimeToExecuteTheEventOn is now: " +
-            TimeToExecuteTheEventOn + " with id: " + EventId, LogLevel.VERBOSE);
+            TimeToExecuteTheEventOn + " with id event: " + EventId, LogLevel.VERBOSE);
     }
 
-    public abstract Task ExecuteTheScheduledEvent(bool _serialize = true);
+    public abstract Task ExecuteTheScheduledEvent(bool _serialize = true, int _eventIdFrom = 0);
     public abstract void CheckTheScheduledEventStatus();
 }

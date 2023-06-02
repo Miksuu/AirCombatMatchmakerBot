@@ -1,4 +1,4 @@
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 [DataContract]
 public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
@@ -56,13 +56,13 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
             _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.DEBUG);
     }
 
-    public override async Task ExecuteTheScheduledEvent(bool _serialize = true)
+    public override async Task ExecuteTheScheduledEvent(bool _serialize = true, int _eventIdFrom = 0)
     {
         ulong categoryId = CategoryIdToDeleteChannelOn;
         ulong channelId = ChannelIdToDelete;
         string nameMustContain = NameMustContain;
 
-        Log.WriteLine("Starting to execute event: " + nameof(DeleteChannelEvent) + " with: " +
+        Log.WriteLine("Starting to execute event: " + _eventIdFrom + " named " + nameof(DeleteChannelEvent) + " with: " +
             categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.VERBOSE);
 
         InterfaceCategory interfaceCategory;
@@ -72,12 +72,23 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
             interfaceCategory =
                 Database.Instance.Categories.FindInterfaceCategoryWithId(categoryId);
 
+            Log.WriteLine("Event: " + _eventIdFrom + " before " +
+                nameof(interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory), LogLevel.VERBOSE);
+
             if (interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory(channelId))
             {
                 InterfaceChannel interfaceChannel;
 
+
+                Log.WriteLine("Event: " + _eventIdFrom + " inside " +
+                    nameof(interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory), LogLevel.VERBOSE);
+
                 interfaceChannel = interfaceCategory.FindInterfaceChannelWithIdInTheCategory(channelId);
-                await interfaceChannel.DeleteThisChannel(interfaceCategory, interfaceChannel, nameMustContain);
+
+
+                Log.WriteLine("Event: " + _eventIdFrom + " found: " + interfaceChannel.ChannelName, LogLevel.VERBOSE);
+                await interfaceChannel.DeleteThisChannel(interfaceCategory, interfaceChannel, nameMustContain, _eventIdFrom);
+                Log.WriteLine("Event: " + _eventIdFrom + " after deletion of: " + interfaceChannel.ChannelName, LogLevel.VERBOSE);
             }
             else
             {

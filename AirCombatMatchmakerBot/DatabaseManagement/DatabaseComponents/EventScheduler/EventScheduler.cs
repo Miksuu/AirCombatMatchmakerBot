@@ -50,10 +50,13 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
 
         foreach (ScheduledEvent scheduledEvent in ScheduledEvents)
         {
-            Log.WriteLine("Loop on event: " + scheduledEvent.EventId, LogLevel.VERBOSE);
+            Log.WriteLine("Loop on event: " + scheduledEvent.EventId + " type: " + scheduledEvent.GetType() + " with times: " +
+                currentUnixTime + " >= " + scheduledEvent.TimeToExecuteTheEventOn, LogLevel.VERBOSE);
 
             if (currentUnixTime >= scheduledEvent.TimeToExecuteTheEventOn)
             {
+                Log.WriteLine("Attempting to execute event: " + scheduledEvent.EventId, LogLevel.VERBOSE);
+
                 if (scheduledEvent.EventIsBeingExecuted && !_clearEventOnTheStartup)
                 {
                     Log.WriteLine("Event: " + scheduledEvent.EventId + " was being executed already, continuing.", LogLevel.VERBOSE);
@@ -79,8 +82,12 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
             }
             else if (currentUnixTime % 5 == 0)
             {
-                scheduledEvent.CheckTheScheduledEventStatus();
+                //scheduledEvent.CheckTheScheduledEventStatus();
             }
+
+
+            Log.WriteLine("Loop on event: " + scheduledEvent.EventId + " type: " + scheduledEvent.GetType() + " with times: " +
+                currentUnixTime + " >= " + scheduledEvent.TimeToExecuteTheEventOn, LogLevel.VERBOSE);
         }
     }
 
