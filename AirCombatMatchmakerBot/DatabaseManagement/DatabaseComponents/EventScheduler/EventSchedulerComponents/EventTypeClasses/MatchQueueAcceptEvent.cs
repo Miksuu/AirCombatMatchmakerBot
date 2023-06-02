@@ -77,13 +77,6 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
 
     public async override void CheckTheScheduledEventStatus()
     {
-        /*
-        if (!ChannelIsReady)
-        {
-            Log.WriteLine("Channel was not ready yet!", LogLevel.VERBOSE);
-            return;
-        }*/
-
         mcc = new MatchChannelComponents(LeagueCategoryIdCached, MatchChannelIdCached);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
