@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
@@ -5,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 
 [DataContract]
-public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
+public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass where T : notnull
 {
     [DataMember] private ConcurrentBag<T> _values = new ConcurrentBag<T>();
 
@@ -23,29 +24,25 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass
         {
             string? finalValueForTheProperty = string.Empty;
 
-            if (concurrentBag != null)
-            {
-                List<Type> regularVariableTypes = new List<Type>
+            List<Type> regularVariableTypes = new List<Type>
                 {
                     typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
                 };
 
-                if (regularVariableTypes.Contains(concurrentBag.GetType()))
+            if (regularVariableTypes.Contains(concurrentBag.GetType()))
+            {
+                finalValueForTheProperty = concurrentBag.ToString();
+            }
+            else
+            {
+                if (concurrentBag is logClass<T>)
                 {
-                    finalValueForTheProperty = concurrentBag.ToString();
-                }
-                else
-                {
-                    if (concurrentBag is logClass<T>)
-                    {
-                        finalValueForTheProperty = ((logClass<T>)(object)concurrentBag).GetParameter();
-                    }
+                    finalValueForTheProperty = ((logClass<T>)(object)concurrentBag).GetParameter();
                 }
             }
 
             membersBuilder.Append(finalValueForTheProperty).Append(", ");
         }
-
 
         return membersBuilder.ToString().TrimEnd(',', ' ');
     }
