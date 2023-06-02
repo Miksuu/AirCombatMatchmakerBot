@@ -1,4 +1,4 @@
-﻿using Discord.WebSocket;
+using Discord.WebSocket;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using Discord;
@@ -127,30 +127,28 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         return foundMatch;
     }
 
-    public Task<LeagueMatch> FindMatchAndRemoveItFromConcurrentBag(InterfaceLeague _interfaceLeague, ulong _matchChannelId)
+    public Task<LeagueMatch?> FindMatchAndRemoveItFromConcurrentBag(InterfaceLeague _interfaceLeague, ulong _matchChannelId)
     {
         Log.WriteLine("Removing: " + _matchChannelId + " on: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
-        LeagueMatch tempMatch = _interfaceLeague.LeagueData.Matches.FindLeagueMatchByTheChannelId(_matchChannelId);
-        List<LeagueMatch> matchesToRemove = _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag
-            .Where(m => m.MatchId == tempMatch.MatchId)
-                .ToList();
+        LeagueMatch tempMatch = null;
+        ConcurrentBag<LeagueMatch> updatedMatchesConcurrentBag = new ConcurrentBag<LeagueMatch>();
 
-        foreach (var item in matchesToRemove)
+        while (_interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? match))
         {
-            bool removed = _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? _leagueMatch);
-            if (removed)
+            if (match.MatchChannelId == _matchChannelId)
             {
-                Log.WriteLine("Removed match " + item.MatchId, LogLevel.DEBUG);
+                Log.WriteLine("Removed matchId: " + match.MatchId + " on ch: " + _matchChannelId +
+                    " on league: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+                tempMatch = match;
             }
             else
             {
-                Log.WriteLine("Failed to remove match " + item.MatchId, LogLevel.ERROR);
+                updatedMatchesConcurrentBag.Add(match);
             }
         }
 
-        Log.WriteLine("Removed matchId: " + tempMatch.MatchId + " on ch: " + _matchChannelId +
-            " on league: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+        _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag = updatedMatchesConcurrentBag;
 
         return Task.FromResult(tempMatch);
     }
