@@ -84,14 +84,13 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
             try
             {
                 interfaceChannel = interfaceCategory.FindInterfaceChannelWithIdInTheCategory(channelId);
+                await interfaceChannel.DeleteThisChannel(interfaceCategory, interfaceChannel, nameMustContain);
             }
             catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 return;
             }
-
-            await interfaceChannel.DeleteThisChannel(interfaceCategory, interfaceChannel, nameMustContain);
         }
         else
         {
