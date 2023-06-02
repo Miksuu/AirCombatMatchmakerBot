@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using Discord;
 
 [DataContract]
-public class ChallengeStatus : logClass, InterfaceLoggableClass
+public class ChallengeStatus : logClass<ChallengeStatus>, InterfaceLoggableClass
 {
     public ConcurrentBag<int> TeamsInTheQueue
     {

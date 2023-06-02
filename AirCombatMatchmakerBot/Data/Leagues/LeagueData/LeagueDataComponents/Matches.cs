@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using Discord;
 
 [DataContract]
-public class Matches : logClass, InterfaceLoggableClass
+public class Matches : logClass<Matches>, InterfaceLoggableClass
 {
     public ConcurrentBag<LeagueMatch> MatchesConcurrentBag
     {

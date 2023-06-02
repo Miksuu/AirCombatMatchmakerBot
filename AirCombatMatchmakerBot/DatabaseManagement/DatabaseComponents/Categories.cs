@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 
 [DataContract]
-public class Categories : logClass, InterfaceLoggableClass
+public class Categories : logClass<Categories>, InterfaceLoggableClass
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels

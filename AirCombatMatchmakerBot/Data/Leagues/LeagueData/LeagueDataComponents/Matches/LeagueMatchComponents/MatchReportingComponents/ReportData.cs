@@ -35,8 +35,8 @@ public class ReportData
 
     [DataMember] private logString teamName = new logString();
     [DataMember] private logConcurrentBag<BaseReportingObject> reportingObjects = new logConcurrentBag<BaseReportingObject>();
-    [DataMember] private logVar<float> finalEloDelta = new logVar<float>();
-    [DataMember] private logVar<bool> confirmedMatch = new logVar<bool>();
+    [DataMember] private logClass<float> finalEloDelta = new logClass<float>();
+    [DataMember] private logClass<bool> confirmedMatch = new logClass<bool>();
 
     public ReportData() { }
 

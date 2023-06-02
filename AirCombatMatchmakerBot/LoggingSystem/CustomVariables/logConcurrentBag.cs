@@ -37,7 +37,7 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass where T
             {
                 finalValueForTheProperty = concurrentBag.ToString();
             }
-            else if (concurrentBag is logVar<T> logClass)
+            else if (concurrentBag is logClass<T> logClass)
             {
                 finalValueForTheProperty = logClass.GetParameter();
             }

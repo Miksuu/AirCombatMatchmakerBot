@@ -66,12 +66,12 @@ public class Database
     private static readonly object padlock = new object();
 
     // The Database components
-    [DataMember] private logVar<PlayerData> playerData = new logVar<PlayerData>(new PlayerData());
-    [DataMember] private logVar<Admins> admins = new logVar<Admins>(new Admins());
-    [DataMember] private logVar<CachedUsers> cachedUsers = new logVar<CachedUsers>(new CachedUsers());
-    [DataMember] private logVar<Categories> categories = new logVar<Categories>(new Categories());
-    [DataMember] private logVar<Leagues> leagues = new logVar<Leagues>(new Leagues());
-    [DataMember] private logVar<EventScheduler> eventScheduler = new logVar<EventScheduler>(new EventScheduler());
+    [DataMember] private logClass<PlayerData> playerData = new logClass<PlayerData>(new PlayerData());
+    [DataMember] private logClass<Admins> admins = new logClass<Admins>(new Admins());
+    [DataMember] private logClass<CachedUsers> cachedUsers = new logClass<CachedUsers>(new CachedUsers());
+    [DataMember] private logClass<Categories> categories = new logClass<Categories>(new Categories());
+    [DataMember] private logClass<Leagues> leagues = new logClass<Leagues>(new Leagues());
+    [DataMember] private logClass<EventScheduler> eventScheduler = new logClass<EventScheduler>(new EventScheduler());
     [DataMember] private logConcurrentBag<LeagueMatch> archivedLeagueMatches = new logConcurrentBag<LeagueMatch>();
 
     public async Task RemovePlayerFromTheDatabase(ulong _playerDiscordId)

@@ -40,11 +40,11 @@ public abstract class BaseReportingObject : InterfaceReportingObject
         set => allowedMatchStatesToProcessOn.SetValue(value);
     }
 
-    [DataMember] private logVar<TypeOfTheReportingObject> typeOfTheReportingObject =
-        new logVar<TypeOfTheReportingObject>(new TypeOfTheReportingObject());
-    [DataMember] private logVar<EmojiName> currentStatus = new logVar<EmojiName>(new EmojiName());
-    [DataMember] private logVar<EmojiName> cachedDefaultStatus = new logVar<EmojiName>(new EmojiName());
-    [DataMember] private logVar<bool> hiddenBeforeConfirmation = new logVar<bool>();
+    [DataMember] private logClass<TypeOfTheReportingObject> typeOfTheReportingObject =
+        new logClass<TypeOfTheReportingObject>(new TypeOfTheReportingObject());
+    [DataMember] private logClass<EmojiName> currentStatus = new logClass<EmojiName>(new EmojiName());
+    [DataMember] private logClass<EmojiName> cachedDefaultStatus = new logClass<EmojiName>(new EmojiName());
+    [DataMember] private logClass<bool> hiddenBeforeConfirmation = new logClass<bool>();
     [DataMember] private logString objectValue = new logString();
     logConcurrentBag<MatchState> allowedMatchStatesToProcessOn = new logConcurrentBag<MatchState>(); // This could be just a logList
 

@@ -1,51 +1,57 @@
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 
 [DataContract]
-public class logClass
+public class logClass<T> 
 {
-    [DataMember]
-    protected object _value;
+    [DataMember] private T? _value;
 
     public logClass()
     {
-        _value = null;
+        _value = default(T);
     }
 
-    public logClass(object _initialValue)
+    public logClass(T?_initialValue = default(T))
     {
-        _value = _initialValue;
+        if (_initialValue == null)
+        {
+            _value = default(T);
+        }
+        else
+        {
+            _value = _initialValue;
+        }
     }
 
-    public object GetValue(
+    public T GetValue(
         [CallerFilePath] string _filePath = "",
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        string finalVal;
+        string? finalVal = string.Empty;
 
-        List<System.Type> regularVariableTypes = new List<System.Type>
-        {
-            typeof(ulong), typeof(System.Int32), typeof(float), typeof(bool)
-        };
+        List<Type> regularVariableTypes = new List<Type>
+            {
+                typeof(ulong), typeof(System.Int32), typeof(float), typeof(bool)
+            };
 
-        if (regularVariableTypes.Contains(_value?.GetType()))
+        if (regularVariableTypes.Contains(typeof(T)))
         {
-            finalVal = _value?.ToString();
+            finalVal = _value != null ? _value.ToString() : null;
         }
         else
         {
             StringBuilder membersBuilder = new StringBuilder();
 
-            var interfaceLoggableClass = _value as InterfaceLoggableClass;
-            MethodInfo getParametersMethod = interfaceLoggableClass?.GetType().GetMethod("GetClassParameters");
+            var interfaceLoggableClass = Activator.CreateInstance(typeof(T)) as InterfaceLoggableClass;
+            //Log.WriteLine(typeof(T).ToString(), LogLevel.VERBOSE);
+            MethodInfo getParametersMethod = interfaceLoggableClass?.GetType()?.GetMethod("GetClassParameters")!;
             if (getParametersMethod != null)
             {
-                List<string> parameters = getParametersMethod.Invoke(interfaceLoggableClass, null) as List<string>;
+                List<string>? parameters = getParametersMethod.Invoke(interfaceLoggableClass, null) as List<string>;
                 if (parameters != null)
                 {
                     foreach (string param in parameters)
@@ -54,13 +60,13 @@ public class logClass
                     }
                 }
             }
-            else if (_value is System.Enum)
+            else if (typeof(T).IsEnum)
             {
-                finalVal = _value?.ToString();
+                finalVal = _value == null ? null : _value.ToString();
             }
             else
             {
-                Log.WriteLine(_value?.GetType() + " does not have the method: " + nameof(interfaceLoggableClass.GetClassParameters), LogLevel.WARNING);
+                Log.WriteLine(typeof(T) + " does not have: " + nameof(interfaceLoggableClass.GetClassParameters), LogLevel.WARNING);
             }
 
             finalVal = membersBuilder.ToString().TrimEnd(',', ' ');
@@ -72,31 +78,32 @@ public class logClass
         return _value;
     }
 
-    public void SetValue(object value,
+    public void SetValue(T value,
         [CallerFilePath] string _filePath = "",
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        string finalVal;
+        string? finalVal = string.Empty;
 
-        List<System.Type> regularVariableTypes = new List<System.Type>
-        {
-            typeof(ulong), typeof(System.Int32), typeof(float), typeof(bool)
-        };
+        List<Type> regularVariableTypes = new List<Type>
+            {
+                typeof(ulong), typeof(System.Int32), typeof(float), typeof(bool)
+            };
 
-        if (regularVariableTypes.Contains(_value?.GetType()))
+        if (regularVariableTypes.Contains(typeof(T)))
         {
-            finalVal = _value?.ToString();
+            finalVal = _value != null ? _value.ToString() : null;
         }
         else
         {
             StringBuilder membersBuilder = new StringBuilder();
 
-            var interfaceLoggableClass = _value as InterfaceLoggableClass;
-            MethodInfo getParametersMethod = interfaceLoggableClass?.GetType().GetMethod("GetClassParameters");
+            var interfaceLoggableClass = Activator.CreateInstance(typeof(T)) as InterfaceLoggableClass;
+            Log.WriteLine(typeof(T).ToString(), LogLevel.VERBOSE);
+            MethodInfo getParametersMethod = interfaceLoggableClass?.GetType()?.GetMethod("GetClassParameters")!;
             if (getParametersMethod != null)
             {
-                List<string> parameters = getParametersMethod.Invoke(interfaceLoggableClass, null) as List<string>;
+                List<string>? parameters = getParametersMethod.Invoke(interfaceLoggableClass, null) as List<string>;
                 if (parameters != null)
                 {
                     foreach (string param in parameters)
@@ -105,13 +112,13 @@ public class logClass
                     }
                 }
             }
-            else if (_value is System.Enum)
+            else if (typeof(T).IsEnum)
             {
-                finalVal = _value?.ToString();
+                finalVal = _value == null ? null : _value.ToString();
             }
             else
             {
-                Log.WriteLine(_value?.GetType() + " does not have the method: " + nameof(interfaceLoggableClass.GetClassParameters), LogLevel.WARNING);
+                Log.WriteLine(typeof(T) + " does not have: " + nameof(interfaceLoggableClass.GetClassParameters), LogLevel.WARNING);
             }
 
             finalVal = membersBuilder.ToString().TrimEnd(',', ' ');

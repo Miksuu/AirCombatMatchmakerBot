@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
 
 [DataContract]
-public class PlayerData : logClass, InterfaceLoggableClass
+public class PlayerData : logClass<PlayerData>, InterfaceLoggableClass
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<ulong, Player> PlayerIDs

@@ -33,10 +33,10 @@ public abstract class BaseCategory : InterfaceCategory
         set => socketCategoryChannelId.SetValue(value);
     }
 
-    [DataMember] protected logVar<CategoryType> categoryType = new logVar<CategoryType>(new CategoryType());
+    [DataMember] protected logClass<CategoryType> categoryType = new logClass<CategoryType>(new CategoryType());
     protected logConcurrentBag<ChannelType> channelTypes = new logConcurrentBag<ChannelType>();
     [DataMember] protected logConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels = new logConcurrentDictionary<ulong, InterfaceChannel>();
-    [DataMember] protected logVar<ulong> socketCategoryChannelId = new logVar<ulong>();
+    [DataMember] protected logClass<ulong> socketCategoryChannelId = new logClass<ulong>();
 
     protected InterfaceCategory thisInterfaceCategory;
 

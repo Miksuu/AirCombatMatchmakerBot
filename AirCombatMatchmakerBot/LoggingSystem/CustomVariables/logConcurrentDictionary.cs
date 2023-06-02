@@ -32,7 +32,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
             {
                 finalValueForTheProperty = kvp.Key.ToString();
             }
-            else if (kvp.Key is logVar<TKey> keyLogClass)
+            else if (kvp.Key is logClass<TKey> keyLogClass)
             {
                 finalValueForTheProperty = keyLogClass.GetParameter();
             }
@@ -41,7 +41,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
             {
                 finalValueForTheProperty = kvp.Value.ToString();
             }
-            else if (kvp.Value is logVar<TValue> valueLogClass)
+            else if (kvp.Value is logClass<TValue> valueLogClass)
             {
                 finalValueForTheProperty = valueLogClass.GetParameter();
             }

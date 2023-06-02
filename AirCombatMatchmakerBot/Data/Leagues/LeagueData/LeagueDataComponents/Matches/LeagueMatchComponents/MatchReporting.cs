@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using Discord.Rest;
 
 [DataContract]
-public class MatchReporting : logClass, InterfaceLoggableClass
+public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<int, ReportData> TeamIdsWithReportData
@@ -39,7 +39,7 @@ public class MatchReporting : logClass, InterfaceLoggableClass
 
     [DataMember] private logConcurrentDictionary<int, ReportData> teamIdsWithReportData =
         new logConcurrentDictionary<int, ReportData>();
-    [DataMember] private logVar<MatchState> matchState = new logVar<MatchState>();
+    [DataMember] private logClass<MatchState> matchState = new logClass<MatchState>();
     [DataMember] private logString finalResultForConfirmation = new logString();
     [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
     [DataMember] private logString finalResultTitleForConfirmation = new logString();

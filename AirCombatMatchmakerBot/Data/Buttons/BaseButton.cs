@@ -76,7 +76,7 @@ public abstract class BaseButton : InterfaceButton
     [DataMember] protected ButtonName buttonName;
     [DataMember] protected logString buttonLabel = new logString();
     [DataMember] protected ButtonStyle buttonStyle;
-    [DataMember] protected logVar<ulong> buttonCategoryId = new logVar<ulong>();
+    [DataMember] protected logClass<ulong> buttonCategoryId = new logClass<ulong>();
     [DataMember] protected logString buttonCustomId = new logString();
     protected bool ephemeralResponse = false;
     protected InterfaceButton thisInterfaceButton;

@@ -21,8 +21,8 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
         set => nameMustContain.SetValue(value);
     }
 
-    [DataMember] private logVar<ulong> categoryIdToDeleteChannelOn = new logVar<ulong>();
-    [DataMember] private logVar<ulong> channelIdToDelete = new logVar<ulong>();
+    [DataMember] private logClass<ulong> categoryIdToDeleteChannelOn = new logClass<ulong>();
+    [DataMember] private logClass<ulong> channelIdToDelete = new logClass<ulong>();
     [DataMember] private logString nameMustContain = new logString();
 
     public List<string> GetClassParameters()
