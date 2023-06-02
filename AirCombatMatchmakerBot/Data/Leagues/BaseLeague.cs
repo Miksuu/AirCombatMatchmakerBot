@@ -268,7 +268,7 @@ public abstract class BaseLeague : InterfaceLeague
             }
             else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
             {
-                // Temp fix
+                // Temp fix for fast clickers of two different leagues they can just press it again to receive the role
                 UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
 
                 Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + thisInterfaceLeague.LeagueCategoryName +
