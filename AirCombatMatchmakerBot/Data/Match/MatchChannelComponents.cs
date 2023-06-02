@@ -58,8 +58,8 @@ public class MatchChannelComponents
         {
             interfaceLeagueCached =
                 Database.Instance.Leagues.GetILeagueByCategoryId(_leagueCategoryIdCached);
-            leagueMatchCached = interfaceLeagueCached.LeagueData.Matches.FindLeagueMatchByTheChannelId(
-                _matchChannelIdCached);
+            leagueMatchCached =
+                interfaceLeagueCached.LeagueData.Matches.FindLeagueMatchByTheChannelId(_matchChannelIdCached);
         }
         catch (Exception ex)
         {

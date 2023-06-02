@@ -25,20 +25,21 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass where T
             string? finalValueForTheProperty = string.Empty;
 
             List<Type> regularVariableTypes = new List<Type>
-                {
-                    typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
-                };
+        {
+            typeof(ulong), typeof(Int32), typeof(float), typeof(bool)
+        };
 
-            if (regularVariableTypes.Contains(concurrentBag.GetType()))
+            if (concurrentBag == null)
+            {
+                finalValueForTheProperty = "null";
+            }
+            else if (regularVariableTypes.Contains(concurrentBag.GetType()))
             {
                 finalValueForTheProperty = concurrentBag.ToString();
             }
-            else
+            else if (concurrentBag is logClass<T> logClass)
             {
-                if (concurrentBag is logClass<T>)
-                {
-                    finalValueForTheProperty = ((logClass<T>)(object)concurrentBag).GetParameter();
-                }
+                finalValueForTheProperty = logClass.GetParameter();
             }
 
             membersBuilder.Append(finalValueForTheProperty).Append(", ");
@@ -46,6 +47,7 @@ public class logConcurrentBag<T> : IEnumerable<T>, InterfaceLoggingClass where T
 
         return membersBuilder.ToString().TrimEnd(',', ' ');
     }
+
 
     public ConcurrentBag<T> GetValue(
         [CallerFilePath] string _filePath = "",

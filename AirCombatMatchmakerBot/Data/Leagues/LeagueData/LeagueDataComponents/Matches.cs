@@ -18,7 +18,7 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         return new List<string> { matchesConcurrentBag.GetLoggingClassParameters() };
     }
 
-    public Task CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
+    public async Task CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1], LogLevel.VERBOSE);
@@ -27,7 +27,7 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         if (client == null)
         {
             Exceptions.BotClientRefNull();
-            return Task.CompletedTask;
+            return;
         }
 
         if (_teamsToFormMatchOn.Length != 2)
@@ -36,16 +36,21 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         }
 
         LeagueMatch newMatch = new(_interfaceLeague, _teamsToFormMatchOn);
+
+        InterfaceChannel newChannel =await CreateAMatchChannel(newMatch, _interfaceLeague, client);
+
         MatchesConcurrentBag.Add(newMatch);
-        Log.WriteLine("Added to the " + nameof(MatchesConcurrentBag) + " count is now: " +
+        Log.WriteLine("Added to the MatchesConcurrentBag, count is now: " +
             MatchesConcurrentBag.Count, LogLevel.VERBOSE);
 
-        CreateAMatchChannel(newMatch, _interfaceLeague, client);
+        // Schedule the match queue timeout (if the players don't accept it in the time)
+        var newEvent = new MatchQueueAcceptEvent(60, _interfaceLeague.LeagueCategoryId, newChannel.ChannelId);
 
-        return Task.CompletedTask;
+        Thread secondThread = new Thread(() => InitChannelOnSecondThread(client, newChannel, newEvent));
+        secondThread.Start();
     }
 
-    public void CreateAMatchChannel(
+    public async Task<InterfaceChannel> CreateAMatchChannel(
         LeagueMatch _leagueMatch, InterfaceLeague _interfaceLeague, DiscordSocketClient _client)
     {
         try
@@ -64,13 +69,10 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
                 overriddenMatchName, LogLevel.VERBOSE);
 
             // Prepare the match with the ID of the current new match
-            InterfaceChannel interfaceChannel = categoryKvp.CreateSpecificChannelFromChannelTypeWithoutRole(
+            InterfaceChannel interfaceChannel = await categoryKvp.CreateSpecificChannelFromChannelTypeWithoutRole(
                     ChannelType.MATCHCHANNEL, categoryKvp.SocketCategoryChannelId,
                     overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
-                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague)).Result;
-
-            // Schedule the match queue timeout (if the players don't accept it in the time)
-            var newEvent = new MatchQueueAcceptEvent(60, _interfaceLeague.LeagueCategoryId, interfaceChannel.ChannelId);
+                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague));
 
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
@@ -80,14 +82,12 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
                 Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryAdd(
                     interfaceChannel.ChannelId, categoryKvp.SocketCategoryChannelId);
             }
-
-            Thread secondThread = new Thread(() => InitChannelOnSecondThread(_client, interfaceChannel, newEvent));
-            secondThread.Start();
+            return interfaceChannel;
         }
         catch (Exception ex) 
         {
             Log.WriteLine(ex.Message, LogLevel.ERROR);
-            return;
+            throw new InvalidOperationException(ex.Message);
         }
     }
 
@@ -129,7 +129,7 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         return foundMatch;
     }
 
-    public LeagueMatch FindMatchAndRemoveItFromConcurrentBag(InterfaceLeague _interfaceLeague, ulong _matchChannelId)
+    public Task<LeagueMatch> FindMatchAndRemoveItFromConcurrentBag(InterfaceLeague _interfaceLeague, ulong _matchChannelId)
     {
         Log.WriteLine("Removing: " + _matchChannelId + " on: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
@@ -154,6 +154,6 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         Log.WriteLine("Removed matchId: " + tempMatch.MatchId + " on ch: " + _matchChannelId +
             " on league: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
 
-        return tempMatch;
+        return Task.FromResult(tempMatch);
     }
 }
