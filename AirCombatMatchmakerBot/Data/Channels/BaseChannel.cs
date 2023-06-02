@@ -35,7 +35,8 @@ public abstract class BaseChannel : InterfaceChannel
     ConcurrentDictionary<MessageName, bool> InterfaceChannel.ChannelMessages
     {
         get => channelMessages.GetValue();
-        set => channelMessages.SetValue(value);
+        set => channelMessages.SetValue(value);
+
     }
 
     [IgnoreDataMember]
@@ -99,8 +100,10 @@ public abstract class BaseChannel : InterfaceChannel
 
         Log.WriteLine("Done creating a channel named: " + thisInterfaceChannel.ChannelType + " with ID: " + channel.Id +
             " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.DEBUG);
-    }
-
+    }
+
+
+
     public async Task CreateAChannelForTheCategoryWithoutRole(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
