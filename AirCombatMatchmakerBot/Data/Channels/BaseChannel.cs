@@ -460,11 +460,11 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public async Task DeleteThisChannel(
-        InterfaceCategory _interfaceCategory, InterfaceChannel _interfaceChannel, string _nameMustContain, int _eventIdFrom)
+        InterfaceCategory _interfaceCategory, InterfaceChannel _interfaceChannel, string _nameMustContain)
     {
         ulong channelId = _interfaceChannel.ChannelId;
 
-        Log.WriteLine("Event: " + _eventIdFrom + ", Starting to delete channel: " + channelId + " with nameMustContain: " +
+        Log.WriteLine(", Starting to delete channel: " + channelId + " with nameMustContain: " +
             _nameMustContain + " on category: " + _interfaceCategory, LogLevel.DEBUG);
 
         var guild = BotReference.GetGuildRef();
@@ -474,7 +474,7 @@ public abstract class BaseChannel : InterfaceChannel
             return;
         }
 
-        Log.WriteLine("Event: " + _eventIdFrom + " found guild.", LogLevel.VERBOSE);
+        Log.WriteLine("found guild.", LogLevel.VERBOSE);
 
         // Perhaps search within category for a faster operation
         var channel = guild.Channels.FirstOrDefault(
@@ -486,17 +486,17 @@ public abstract class BaseChannel : InterfaceChannel
             return;
         }
 
-        Log.WriteLine("Event: " + _eventIdFrom + " Found channel: " + +channel.Id + " named: " + channel.Name +
+        Log.WriteLine("Found channel: " + +channel.Id + " named: " + channel.Name +
             " deleting it.", LogLevel.VERBOSE);
 
         await channel.DeleteAsync();
 
-        Log.WriteLine("Event: " + _eventIdFrom + ", Deleted channel: " + channel.Id + " deleting db entry.", LogLevel.VERBOSE);
+        Log.WriteLine("Deleted channel: " + channel.Id + " deleting db entry.", LogLevel.VERBOSE);
 
         _interfaceCategory.InterfaceChannels.TryRemove(
                 channelId, out InterfaceChannel? _ic);
         Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryRemove(channelId, out ulong _id);
 
-        Log.WriteLine("Event: " + _eventIdFrom + "Deleted channel: " + _id + " from the database.", LogLevel.DEBUG);
+        Log.WriteLine("Deleted channel: " + _id + " from the database.", LogLevel.DEBUG);
     }
 }

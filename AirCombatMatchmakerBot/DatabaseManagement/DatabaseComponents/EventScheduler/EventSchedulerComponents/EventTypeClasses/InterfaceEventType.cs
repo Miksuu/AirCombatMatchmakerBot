@@ -1,5 +1,5 @@
 ﻿public interface InterfaceEventType
 {
-    public abstract Task ExecuteTheScheduledEvent(bool _serialize = true, int _eventIdFrom = 0);
+    public abstract Task ExecuteTheScheduledEvent(bool _serialize = true);
     public abstract void CheckTheScheduledEventStatus();
 }

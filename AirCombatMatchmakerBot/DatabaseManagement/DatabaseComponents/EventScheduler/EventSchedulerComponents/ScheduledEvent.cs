@@ -43,6 +43,6 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
             TimeToExecuteTheEventOn + " with id event: " + EventId, LogLevel.VERBOSE);
     }
 
-    public abstract Task ExecuteTheScheduledEvent(bool _serialize = true, int _eventIdFrom = 0);
+    public abstract Task ExecuteTheScheduledEvent(bool _serialize = true);
     public abstract void CheckTheScheduledEventStatus();
 }
