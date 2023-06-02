@@ -24,22 +24,22 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
     public override string GenerateMessage()
     {
         string finalMessage = string.Empty;
-        List<Team> sortedTeamListgByElo = new List<Team>();
+        List<Team> sortedTeamListByElo = new List<Team>();
 
         InterfaceLeague interfaceLeague = 
             Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(thisInterfaceMessage.MessageCategoryId);
 
-        sortedTeamListgByElo =
+        sortedTeamListByElo =
             new List<Team>(interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.OrderByDescending(
                 x => x.SkillRating));
 
-        foreach (Team team in sortedTeamListgByElo)
+        foreach (Team team in sortedTeamListByElo)
         {
             finalMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
         }
-        if (sortedTeamListgByElo.Count > 0)
+        if (sortedTeamListByElo.Count > 0)
         {
-            Log.WriteLine("Generated the leaderboard (" + sortedTeamListgByElo.Count + "): " + finalMessage, LogLevel.VERBOSE);
+            Log.WriteLine("Generated the leaderboard (" + sortedTeamListByElo.Count + "): " + finalMessage, LogLevel.VERBOSE);
         }
         else
         {
