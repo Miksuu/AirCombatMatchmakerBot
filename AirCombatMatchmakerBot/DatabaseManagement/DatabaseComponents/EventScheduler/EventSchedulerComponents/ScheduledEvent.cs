@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventType
+public abstract class ScheduledEvent : logClass, InterfaceEventType
 {
     public ulong TimeToExecuteTheEventOn
     {
@@ -22,9 +22,9 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
         set => eventIsBeingExecuted.SetValue(value);
     }
 
-    [DataMember] protected logClass<ulong> timeToExecuteTheEventOn = new logClass<ulong>();
-    [DataMember] protected logClass<int> eventId = new logClass<int>();
-    [DataMember] protected logClass<bool> eventIsBeingExecuted = new logClass<bool>();
+    [DataMember] protected logVar<ulong> timeToExecuteTheEventOn = new logVar<ulong>();
+    [DataMember] protected logVar<int> eventId = new logVar<int>();
+    [DataMember] protected logVar<bool> eventIsBeingExecuted = new logVar<bool>();
 
     public ScheduledEvent() { }
 

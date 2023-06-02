@@ -64,23 +64,23 @@ public abstract class BaseLeague : InterfaceLeague
     }
 
     // Generated based on the implementation
-    [DataMember] protected logClass<CategoryType> leagueCategoryName = new logClass<CategoryType>(new CategoryType());
-    [DataMember] protected logClass<Era> leagueEra = new logClass<Era>(new Era());
-    [DataMember] protected logClass<int> leaguePlayerCountPerTeam = new logClass<int>();
+    [DataMember] protected logVar<CategoryType> leagueCategoryName = new logVar<CategoryType>(new CategoryType());
+    [DataMember] protected logVar<Era> leagueEra = new logVar<Era>(new Era());
+    [DataMember] protected logVar<int> leaguePlayerCountPerTeam = new logVar<int>();
     [DataMember] protected logConcurrentBag<UnitName> leagueUnits = new logConcurrentBag<UnitName>();
-    [DataMember] protected logClass<LeagueData> leagueData = new logClass<LeagueData>(new LeagueData());
+    [DataMember] protected logVar<LeagueData> leagueData = new logVar<LeagueData>(new LeagueData());
 
     // The reference to the category created by the system
-    [DataMember] private logClass<ulong> leagueCategoryId = new logClass<ulong>();
+    [DataMember] private logVar<ulong> leagueCategoryId = new logVar<ulong>();
 
     // The references for the channelTypes inside the category
     [DataMember] private logConcurrentDictionary<ChannelType, ulong> leagueChannels = new logConcurrentDictionary<ChannelType, ulong>();
 
     // Id of the role which gives access to the league channelTypes
-    [DataMember] private logClass<ulong> leagueRoleId = new logClass<ulong>();
+    [DataMember] private logVar<ulong> leagueRoleId = new logVar<ulong>();
 
     // Reference to the MessageDescription related to this league on the #league-registration channel
-    [DataMember] private logClass<ulong> leagueRegistrationMessageId = new logClass<ulong>();
+    [DataMember] private logVar<ulong> leagueRegistrationMessageId = new logVar<ulong>();
 
     protected InterfaceLeague thisInterfaceLeague;
 

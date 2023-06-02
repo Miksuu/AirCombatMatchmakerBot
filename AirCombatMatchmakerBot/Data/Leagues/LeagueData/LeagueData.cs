@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class LeagueData : logClass<LeagueData>, InterfaceLoggableClass
+public class LeagueData : logClass, InterfaceLoggableClass
 {
     public Teams Teams
     {
@@ -22,9 +22,9 @@ public class LeagueData : logClass<LeagueData>, InterfaceLoggableClass
         set => matches.SetValue(value);
     }
 
-    [DataMember] private logClass<Teams> teams = new logClass<Teams>(new Teams());
-    [DataMember] private logClass<ChallengeStatus> challengeStatus = new logClass<ChallengeStatus>(new ChallengeStatus());
-    [DataMember] private logClass<Matches> matches = new logClass<Matches>(new Matches());
+    [DataMember] private logVar<Teams> teams = new logVar<Teams>(new Teams());
+    [DataMember] private logVar<ChallengeStatus> challengeStatus = new logVar<ChallengeStatus>(new ChallengeStatus());
+    [DataMember] private logVar<Matches> matches = new logVar<Matches>(new Matches());
 
     public List<string> GetClassParameters()
     {

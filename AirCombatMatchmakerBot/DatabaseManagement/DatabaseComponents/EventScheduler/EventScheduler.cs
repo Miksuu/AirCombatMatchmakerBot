@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.ComponentModel.Design;
 using System.Runtime.Serialization;
 
-public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
+public class EventScheduler : logClass, InterfaceLoggableClass
 {
-    public ConcurrentBag<ScheduledEvent> ScheduledEvents
+    public ConcurrentBag<ScheduledEvent> ScheduledEvents    
     {
         get => scheduledEvents.GetValue();
         set => scheduledEvents.SetValue(value);
@@ -24,8 +24,8 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
     }
 
     [DataMember] private logConcurrentBag<ScheduledEvent> scheduledEvents = new logConcurrentBag<ScheduledEvent>();
-    [DataMember] private logClass<ulong> lastUnixTimeExecutedOn = new logClass<ulong>();
-    [DataMember] private logClass<int> eventCounter = new logClass<int>();
+    [DataMember] private logVar<ulong> lastUnixTimeExecutedOn = new logVar<ulong>();
+    [DataMember] private logVar<int> eventCounter = new logVar<int>();
 
     public List<string> GetClassParameters()
     {

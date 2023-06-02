@@ -16,8 +16,8 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
         set => matchChannelIdCached.SetValue(value);
     }
 
-    [DataMember] private logClass<ulong> leagueCategoryIdCached = new logClass<ulong>();
-    [DataMember] private logClass<ulong> matchChannelIdCached = new logClass<ulong>();
+    [DataMember] private logVar<ulong> leagueCategoryIdCached = new logVar<ulong>();
+    [DataMember] private logVar<ulong> matchChannelIdCached = new logVar<ulong>();
 
     public List<string> GetClassParameters()
     {
