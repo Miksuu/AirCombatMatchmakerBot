@@ -37,11 +37,13 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
         string[] splitStrings = _component.Data.CustomId.Split('_');
 
+        /*
         foreach (var item in splitStrings)
         {
             Log.WriteLine("item: " + item, LogLevel.VERBOSE);
-        }
+        }*/
 
+        // Add try-catch here
         InterfaceLeague interfaceLeague =
             Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(ulong.Parse(splitStrings[0]));
         if (interfaceLeague == null)
@@ -51,15 +53,15 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
             return Task.FromResult(new Response(errorMsg, false));
         }
 
-        var responseTuple = interfaceLeague.RegisterUserToALeague(_component.User.Id).Result;
+        var response = interfaceLeague.RegisterUserToALeague(_component.User.Id).Result;
 
-        if (responseTuple.serialize)
+        if (response.serialize)
         {
             // Improved response time
             new Thread(() => InitMessageModifyOnSecondThread(_interfaceMessage)).Start();
         }
 
-        return Task.FromResult(responseTuple);
+        return Task.FromResult(response);
     }
 
     private async void InitMessageModifyOnSecondThread(InterfaceMessage _interfaceMessage)
