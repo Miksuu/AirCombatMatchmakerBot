@@ -30,7 +30,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
             Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(thisInterfaceMessage.MessageCategoryId);
 
         sortedTeamListgByElo =
-            new List<Team>(interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.OrderBy(
+            new List<Team>(interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.OrderByDescending(
                 x => x.SkillRating));
 
         foreach (Team team in sortedTeamListgByElo)
