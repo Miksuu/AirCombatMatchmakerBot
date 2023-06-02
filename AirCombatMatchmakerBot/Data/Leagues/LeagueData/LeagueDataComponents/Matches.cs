@@ -92,10 +92,10 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         }
     }
 
-    public void InitChannelOnSecondThread(
+    public async void InitChannelOnSecondThread(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, MatchQueueAcceptEvent _createdMatchQueueAcceptEvent)
     {
-        _interfaceChannel.PostChannelMessages(_client);
+        await _interfaceChannel.PostChannelMessages(_client);
 
         // The event can be checked only after the messages have been posted
         _createdMatchQueueAcceptEvent.ChannelIsReady = true;
