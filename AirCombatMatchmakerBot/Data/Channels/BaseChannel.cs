@@ -131,7 +131,7 @@ public abstract class BaseChannel : InterfaceChannel
 
         var channel = await _guild.CreateTextChannelAsync(channelTypeString, x =>
         {
-            //x.PermissionOverwrites = GetGuildPermissions(_guild, _allowedUsersIdsArray);
+            x.PermissionOverwrites = GetGuildPermissions(_guild, null, _allowedUsersIdsArray);
             x.CategoryId = thisInterfaceChannel.ChannelsCategoryId;
         });
 
