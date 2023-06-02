@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 
 [DataContract]
 public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
@@ -71,30 +71,23 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
         {
             interfaceCategory =
                 Database.Instance.Categories.FindInterfaceCategoryWithId(categoryId);
+
+            if (interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory(channelId))
+            {
+                InterfaceChannel interfaceChannel;
+
+                interfaceChannel = interfaceCategory.FindInterfaceChannelWithIdInTheCategory(channelId);
+                await interfaceChannel.DeleteThisChannel(interfaceCategory, interfaceChannel, nameMustContain);
+            }
+            else
+            {
+                Log.WriteLine("Finished an event without deleting the channel, because it didn't exist!", LogLevel.WARNING);
+            }
         }
         catch(Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
-        }
-
-        if (interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory(channelId))
-        {      
-            InterfaceChannel interfaceChannel;
-            try
-            {
-                interfaceChannel = interfaceCategory.FindInterfaceChannelWithIdInTheCategory(channelId);
-                await interfaceChannel.DeleteThisChannel(interfaceCategory, interfaceChannel, nameMustContain);
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                return;
-            }
-        }
-        else
-        {
-            Log.WriteLine("Finished an event without deleting the channel, because it didn't exist!", LogLevel.WARNING);
         }
 
         Log.WriteLine("Done executing event: " + nameof(DeleteChannelEvent) + " with: " +
