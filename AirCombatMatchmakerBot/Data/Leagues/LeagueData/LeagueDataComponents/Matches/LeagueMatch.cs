@@ -220,8 +220,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
                 "Match is done. Deleting this channel in " + matchChannelDeleteDelay + " seconds!");
 
             // Schedule an event to delete the channel later
-            Database.Instance.EventScheduler.ScheduledEvents.Add(
-                new DeleteChannelEvent(matchChannelDeleteDelay, _interfaceLeague.LeagueCategoryId, MatchChannelId, "match"));
+            new DeleteChannelEvent(matchChannelDeleteDelay, _interfaceLeague.LeagueCategoryId, MatchChannelId, "match");
 
             //await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
 

@@ -37,6 +37,8 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
         TimeToExecuteTheEventOn = currentUnixTime + (ulong)_timeFromNowToExecuteOn;
         EventId = ++Database.Instance.EventScheduler.EventCounter;
 
+        Database.Instance.EventScheduler.ScheduledEvents.Add(this);
+
         Log.WriteLine(typeof(ScheduledEvent) + "' TimeToExecuteTheEventOn is now: " +
             TimeToExecuteTheEventOn + " with id event: " + EventId, LogLevel.VERBOSE);
     }

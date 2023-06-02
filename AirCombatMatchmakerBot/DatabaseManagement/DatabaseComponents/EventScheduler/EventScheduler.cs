@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using Discord;
+using System.Collections.Concurrent;
+using System.ComponentModel.Design;
 using System.Runtime.Serialization;
 
 public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
@@ -80,13 +82,17 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
 
                 RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
             }
-            else if (currentUnixTime % 5 == 0)
+            else if (currentUnixTime % 5 == 0 && currentUnixTime <= scheduledEvent.TimeToExecuteTheEventOn)
             {
+                Log.WriteLine("event: " + scheduledEvent.EventId + " going to check the event status", LogLevel.VERBOSE);
                 //scheduledEvent.CheckTheScheduledEventStatus();
             }
+            else
+            {
+                Log.WriteLine("event: " + scheduledEvent.EventId + " ended up in else", LogLevel.VERBOSE);
+            }
 
-
-            Log.WriteLine("Loop on event: " + scheduledEvent.EventId + " type: " + scheduledEvent.GetType() + " with times: " +
+            Log.WriteLine("Done with if statement on event: " + scheduledEvent.EventId + " type: " + scheduledEvent.GetType() + " with times: " +
                 currentUnixTime + " >= " + scheduledEvent.TimeToExecuteTheEventOn, LogLevel.VERBOSE);
         }
     }
@@ -113,17 +119,23 @@ public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
 
     public void RemoveEventsFromTheScheduledEventsBag(List<ScheduledEvent> _scheduledEventsToRemove)
     {
+        var updatedScheduledEvents = new ConcurrentBag<ScheduledEvent>();
+
+        foreach (var item in ScheduledEvents)
+        {
+            if (!_scheduledEventsToRemove.Contains(item))
+            {
+                updatedScheduledEvents.Add(item);
+            }
+        }
+
+        ScheduledEvents = updatedScheduledEvents;
+
         foreach (var item in _scheduledEventsToRemove)
         {
-            bool removed = ScheduledEvents.TryTake(out ScheduledEvent? removedItem);
-            if (removed)
+            if (!ScheduledEvents.Contains(item))
             {
-                if (removedItem == null)
-                {
-                    Log.WriteLine(nameof(removedItem) + " was null! with eventId: " + item.EventId, LogLevel.CRITICAL);
-                    return;
-                }
-                Log.WriteLine("event: " + removedItem.EventId + " removed", LogLevel.DEBUG);
+                Log.WriteLine("event: " + item.EventId + " removed", LogLevel.DEBUG);
             }
             else
             {

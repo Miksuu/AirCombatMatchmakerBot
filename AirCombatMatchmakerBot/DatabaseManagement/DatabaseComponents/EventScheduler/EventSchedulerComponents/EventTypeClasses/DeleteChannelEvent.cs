@@ -56,6 +56,26 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
             _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.DEBUG);
     }
 
+    // Event that will be executed instantly
+    public DeleteChannelEvent(ulong _categoryIdToDeleteChannelOn, ulong _channelIdToDelete, string _nameMustContain)
+    {
+        Log.WriteLine("Creating instantly executable event: " + nameof(DeleteChannelEvent) + " with: " + "|" +
+            _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.VERBOSE);
+
+        //base.SetupScheduledEvent(_timeFromNowToExecuteOn);
+        CategoryIdToDeleteChannelOn = _categoryIdToDeleteChannelOn;
+        ChannelIdToDelete = _channelIdToDelete;
+        if (_nameMustContain == "")
+        {
+            Log.WriteLine("nameMustContain was empty!", LogLevel.ERROR);
+            _nameMustContain = "WontDelete";
+        }
+        NameMustContain = _nameMustContain;
+
+        Log.WriteLine("Done creating instantly executable event: " + nameof(DeleteChannelEvent) + " with: " +
+            _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.DEBUG);
+    }
+
     public override async Task ExecuteTheScheduledEvent(bool _serialize = true, int _eventIdFrom = 0)
     {
         ulong categoryId = CategoryIdToDeleteChannelOn;

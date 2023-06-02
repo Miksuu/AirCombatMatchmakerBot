@@ -66,7 +66,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
         Log.WriteLine("event: " + EventId + " after setting matchChannelId", LogLevel.VERBOSE);
 
         // Create the event and execute it instantly
-        var newEvent = new DeleteChannelEvent(0, mcc.interfaceLeagueCached.LeagueCategoryId, matchChannelId, "match");
+        var newEvent = new DeleteChannelEvent(mcc.interfaceLeagueCached.LeagueCategoryId, matchChannelId, "match");
         Log.WriteLine("event: " + EventId + " created newEvent", LogLevel.VERBOSE);
         await newEvent.ExecuteTheScheduledEvent(false, EventId);
         Log.WriteLine("event: " + EventId + " after newEvent executed", LogLevel.VERBOSE);
