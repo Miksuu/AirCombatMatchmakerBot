@@ -20,7 +20,8 @@ public class ChallengeStatus : logClass<ChallengeStatus>, InterfaceLoggableClass
         return new List<string> { teamsInTheQueue.GetLoggingClassParameters() };
     }
 
-    public Response AddTeamFromPlayerIdToTheQueue(InterfaceLeague _interfaceLeague, ulong _playerId)
+    public Response AddTeamFromPlayerIdToTheQueue(
+        InterfaceLeague _interfaceLeague, ulong _playerId, InterfaceMessage _interfaceMessage)
     {
         Team playerTeam;
         try
@@ -91,6 +92,8 @@ public class ChallengeStatus : logClass<ChallengeStatus>, InterfaceLoggableClass
             return new Response("You are already in the queue!", false);
         }
         Log.WriteLine("response was: " + response, LogLevel.VERBOSE);
+
+        _interfaceMessage.GenerateAndModifyTheMessage();
 
         return new Response(response, true);
     }

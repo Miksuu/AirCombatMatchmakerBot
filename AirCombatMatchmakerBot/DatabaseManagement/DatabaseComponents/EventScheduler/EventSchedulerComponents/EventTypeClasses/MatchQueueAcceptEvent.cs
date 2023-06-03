@@ -49,7 +49,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
-            return;
+            throw new InvalidOperationException(nameof(mcc) + " was null!");
         }
 
         Log.WriteLine("event: " + EventId + " before setting matchChannelId", LogLevel.VERBOSE);
@@ -62,6 +62,48 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
             mcc.interfaceLeagueCached, matchChannelId);
 
         Log.WriteLine("event: " + EventId + " after removed from bag with: " + matchChannelId, LogLevel.VERBOSE);
+
+        // Loop through the ReportData's and put players back to queue who accepted
+        // Later on, add restrictions to players who didn't accept
+        var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
+        foreach (var teamKvp in matchReportData)
+        {
+            // Temporary solution, perhaps add enum when implementing penalties for not accepting the queue
+            bool addTeamBackToTheQueue = false;
+            ulong playerIdToAddBackInToTheQueue = 0;
+
+            PLAYERPLANE? teamPlane = teamKvp.Value.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+            if (teamPlane == null)
+            {
+                Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.CRITICAL);
+                throw new InvalidOperationException(nameof(teamPlane) + " was null!");
+            }
+
+            foreach (var teamMemberKvp in teamPlane.TeamMemberIdsWithSelectedPlanesByTheTeam)
+            {
+                // Add the player back to the queue
+                if (teamMemberKvp.Value != UnitName.NOTSELECTED)
+                {
+                    addTeamBackToTheQueue = true;
+                    playerIdToAddBackInToTheQueue = teamMemberKvp.Key;
+                }
+                // Add restrictions to the players who didn't accept the queue
+                else
+                {
+
+                }
+            }
+
+            if (addTeamBackToTheQueue)
+            {
+                InterfaceMessage interfaceMessage = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    mcc.interfaceLeagueCached.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
+                        ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
+
+                mcc.interfaceLeagueCached.LeagueData.ChallengeStatus.AddTeamFromPlayerIdToTheQueue(
+                    mcc.interfaceLeagueCached, playerIdToAddBackInToTheQueue, interfaceMessage);
+            }
+        }
 
         // Create the event and execute it instantly
         var newEvent = new DeleteChannelEvent(mcc.interfaceLeagueCached.LeagueCategoryId, matchChannelId, "match");
