@@ -150,10 +150,10 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 
     public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
     {
+        MatchReporting.MatchState = MatchState.MATCHDONE;
+
         AttachmentData[] attachmentDatas;
         InterfaceMessage interfaceMessage;
-
-        MatchReporting.MatchState = MatchState.MATCHDONE;
 
         Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
         EloSystem.CalculateFinalStatsAndEloForBothTeams(
@@ -214,10 +214,11 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 
             int matchChannelDeleteDelay = 45;
 
+            /*
             var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
 
             await messageToModify.AddContentToTheEndOfTheMessage(
-                "Match is done. Deleting this channel in " + matchChannelDeleteDelay + " seconds!");
+                "Match is done. Deleting this channel in " + matchChannelDeleteDelay + " seconds!");*/
 
             // Schedule an event to delete the channel later
             new DeleteChannelEvent(matchChannelDeleteDelay, _interfaceLeague.LeagueCategoryId, MatchChannelId, "match");

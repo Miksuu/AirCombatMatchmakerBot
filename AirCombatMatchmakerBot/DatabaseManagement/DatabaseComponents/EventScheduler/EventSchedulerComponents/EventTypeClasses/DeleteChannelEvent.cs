@@ -131,6 +131,25 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
 
     public override void CheckTheScheduledEventStatus()
     {
-        //throw new NotImplementedException();
+        try
+        {
+            InterfaceMessage confirmationMessage =
+                Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    CategoryIdToDeleteChannelOn).FindInterfaceChannelWithIdInTheCategory(
+                        ChannelIdToDelete).FindInterfaceMessageWithNameInTheChannel(
+                            MessageName.CONFIRMATIONMESSAGE);
+
+            Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " +
+                confirmationMessage.MessageDescription, LogLevel.DEBUG);
+
+            //var timeLeft = TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+
+            confirmationMessage.GenerateAndModifyTheMessage();
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
+        }
     }
 }

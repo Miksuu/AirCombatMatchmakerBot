@@ -61,12 +61,34 @@ public class CONFIRMATIONMESSAGE : BaseMessage
             finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
         }
 
-        if (confirmedTeamsCounter > 1) 
-        {
-            mcc.leagueMatchCached.FinishTheMatch(mcc.interfaceLeagueCached);
-        }
 
         finalMessage += "You can either Confirm/Dispute the result below.";
+
+
+        if (confirmedTeamsCounter > 1)
+        {
+            if (mcc.leagueMatchCached.MatchReporting.MatchState != MatchState.MATCHDONE)
+            {
+                mcc.leagueMatchCached.FinishTheMatch(mcc.interfaceLeagueCached);
+            }
+            else
+            {
+                foreach (var item in Database.Instance.EventScheduler.ScheduledEvents)
+                {
+                    if (item.GetType() == typeof(DeleteChannelEvent))
+                    {
+                        DeleteChannelEvent matchQueueAcceptEvent = (DeleteChannelEvent)item;
+                        if (matchQueueAcceptEvent.CategoryIdToDeleteChannelOn == mcc.interfaceLeagueCached.LeagueCategoryId &&
+                            matchQueueAcceptEvent.ChannelIdToDelete == mcc.leagueMatchCached.MatchChannelId)
+                        {
+                            var timeLeft = matchQueueAcceptEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+
+                            finalMessage += "\n\n Match is done. Deleting this channel in " + timeLeft + " seconds!";
+                        }
+                    }
+                }
+            }
+        }
 
         Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 
