@@ -214,14 +214,11 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
 
             int matchChannelDeleteDelay = 45;
 
-            /*
-            var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
-
-            await messageToModify.AddContentToTheEndOfTheMessage(
-                "Match is done. Deleting this channel in " + matchChannelDeleteDelay + " seconds!");*/
-
             // Schedule an event to delete the channel later
             new DeleteChannelEvent(matchChannelDeleteDelay, _interfaceLeague.LeagueCategoryId, MatchChannelId, "match");
+
+            var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
+            await messageToModify.GenerateAndModifyTheMessage();
 
             //await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
 
