@@ -83,6 +83,8 @@ public class StatValues : logClass<StatValues>, InterfaceLoggableClass
             }
         }
 
+        WinLoseRatio *= 100;
+
         if (Deaths != 0)
         {
             KillDeathRatio= (float)Kills / Deaths;

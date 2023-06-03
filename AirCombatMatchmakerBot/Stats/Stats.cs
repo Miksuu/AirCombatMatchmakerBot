@@ -119,7 +119,7 @@ public class Stats : logClass<Stats>, InterfaceLoggableClass
         string totalStatsAsString =
             "W=" + TotalStatValuesCached.Wins +
             " | L=" + TotalStatValuesCached.Losses +
-            " | WR=" + TotalStatValuesCached.WinLoseRatio +
+            " | WR=" + TotalStatValuesCached.WinLoseRatio + "%" +
             " | K=" + TotalStatValuesCached.Kills +
             " | D=" + TotalStatValuesCached.Deaths +
             " | KDR=" + TotalStatValuesCached.KillDeathRatio;
