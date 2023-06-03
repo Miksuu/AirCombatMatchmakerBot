@@ -12,7 +12,7 @@ public class TACVIEWLINK : BaseReportingObject
 
         thisReportingObject.AllowedMatchStatesToProcessOn = new ConcurrentBag<MatchState> {
             MatchState.REPORTINGPHASE,
-            //MatchState.CONFIRMATIONPHASE, probably not necessary
+            MatchState.CONFIRMATIONPHASE,
         };
     }
 
