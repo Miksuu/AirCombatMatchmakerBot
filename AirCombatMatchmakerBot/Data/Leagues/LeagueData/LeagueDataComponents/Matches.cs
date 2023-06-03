@@ -95,7 +95,7 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
         await _interfaceChannel.PostChannelMessages(_client);
 
         // Schedule the match queue timeout (if the players don't accept it in the time)
-        new MatchQueueAcceptEvent(60, _leagueCategoryId, _interfaceChannel.ChannelId);
+        new MatchQueueAcceptEvent(30, _leagueCategoryId, _interfaceChannel.ChannelId);
 
         await SerializationManager.SerializeDB();
 
