@@ -35,11 +35,18 @@ public class Team
         set => teamActive.SetValue(value);
     }
 
+    public Stats TeamStats
+    {
+        get => teamStats.GetValue();
+        set => teamStats.SetValue(value);
+    }
+
     [DataMember] private logClass<int> teamId = new logClass<int>();
     [DataMember] private logString teamName = new logString();
     [DataMember] private logConcurrentBag<Player> players = new logConcurrentBag<Player>();    
     [DataMember] private logClass<float> skillRating = new logClass<float>(1600f);
     [DataMember] private logClass<bool> teamActive = new logClass<bool>();
+    [DataMember] private logClass<Stats> teamStats = new logClass<Stats>(new Stats());
 
     public Team(){ }
 
@@ -133,5 +140,16 @@ public class Team
         Log.WriteLine("Team was not found!", LogLevel.VERBOSE);
         return (null, false);
         //throw new InvalidOperationException("Team was not found!");
+    }
+
+    public void CalculateTeamStatsAfterAMatch(ReportData _thisTeamReportData, ReportData _opponentTeamReportData)
+    {
+        TeamStats.CalculateStatsAfterAMatch(_thisTeamReportData, _opponentTeamReportData);
+    }
+
+    public string GetTeamStats()
+    {
+        Log.WriteLine("Getting team: " + teamName + " with id: " + teamId + " stats.", LogLevel.VERBOSE);
+        return TeamStats.CalculateAndReturnTotalStatValuesAsString();
     }
 }

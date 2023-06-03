@@ -80,7 +80,7 @@ public static class EloSystem
             " | " + _teamIdsWithReportData.ElementAt(1).Value.FinalEloDelta, LogLevel.DEBUG);
     }
 
-    public static void CalculateFinalEloForBothTeams(
+    public static void CalculateFinalStatsAndEloForBothTeams(
         InterfaceLeague _interfaceLeague, Team[] _teamsInTheMatch,
         Dictionary<int, ReportData> _teamIdsWithReportData)
     {
@@ -89,16 +89,19 @@ public static class EloSystem
             try
             {
                 Team databaseTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[t].TeamId);
+                ReportData reportData = _teamIdsWithReportData.ElementAt(t).Value;
                 Log.WriteLine(databaseTeam.TeamId + " SR before: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
-                databaseTeam.SkillRating += _teamIdsWithReportData.ElementAt(t).Value.FinalEloDelta;
+                databaseTeam.SkillRating += reportData.FinalEloDelta;
                 Log.WriteLine(databaseTeam.TeamId + " SR after: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
+
+                databaseTeam.CalculateTeamStatsAfterAMatch(reportData, _teamIdsWithReportData.ElementAt(1-t).Value);
             }
             catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 continue;
             }
-        }        
+        }
     }
 
     private static double ExpectationToWin(float _playerOneRating, float _playerTwoRating)

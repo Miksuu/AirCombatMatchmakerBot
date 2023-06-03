@@ -62,11 +62,19 @@ public class ReportData
             //var newReportObject = new ReportObject("Plane", EmojiName.REDSQUARE, true);
             reportingObject.TeamMemberIdsWithSelectedPlanesByTheTeam.TryAdd(player.PlayerDiscordId, UnitName.NOTSELECTED);
         }
-
-        /*
-        Log.WriteLine("done adding players: " + TeamMemberIdsWithSelectedPlanesByTheTeam.Count +
-            " on team: " + _reportingTeamName, LogLevel.VERBOSE);-*/
     }
 
+    public BaseReportingObject FindBaseReportingObjectOfType(TypeOfTheReportingObject _typeOfTheReportingObject)
+    {
+        Log.WriteLine("Finding: " + _typeOfTheReportingObject, LogLevel.VERBOSE);
+        var result = ReportingObjects.FirstOrDefault(x => x.GetTypeOfTheReportingObject() == _typeOfTheReportingObject);
+        if (result == null)
+        {
+            Log.WriteLine(nameof(_typeOfTheReportingObject) + " was null!", LogLevel.CRITICAL);
+            throw new InvalidOperationException(nameof(_typeOfTheReportingObject) + " was null!");
+        }
+        Log.WriteLine("Found: " + result.GetTypeOfTheReportingObject(), LogLevel.VERBOSE);
+        return result;
+    }
 
 }

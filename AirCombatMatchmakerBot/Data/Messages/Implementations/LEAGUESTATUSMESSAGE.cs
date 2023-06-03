@@ -35,7 +35,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
 
         foreach (Team team in sortedTeamListByElo)
         {
-            finalMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
+            finalMessage += "[" + team.SkillRating + "] " + team.TeamName + " | " + team.GetTeamStats() + "\n";
         }
         if (sortedTeamListByElo.Count > 0)
         {

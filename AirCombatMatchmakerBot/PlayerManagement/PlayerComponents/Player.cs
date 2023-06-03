@@ -15,8 +15,15 @@ public class Player : logClass<Player>, InterfaceLoggableClass
         set => playerNickName.SetValue(value);
     }
 
+    public Stats PlayerStats
+    {
+        get => playerStats.GetValue();
+        set => playerStats.SetValue(value);
+    }
+
     [DataMember] private logClass<ulong> playerDiscordId = new logClass<ulong>();
     [DataMember] private logString playerNickName = new logString();
+    [DataMember] private logClass<Stats> playerStats = new logClass<Stats>(new Stats());
 
     public Player()
     {

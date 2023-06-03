@@ -156,7 +156,7 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
         MatchReporting.MatchState = MatchState.MATCHDONE;
 
         Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
-        EloSystem.CalculateFinalEloForBothTeams(
+        EloSystem.CalculateFinalStatsAndEloForBothTeams(
             _interfaceLeague, MatchReporting.FindTeamsInTheMatch(_interfaceLeague),
             MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
 
