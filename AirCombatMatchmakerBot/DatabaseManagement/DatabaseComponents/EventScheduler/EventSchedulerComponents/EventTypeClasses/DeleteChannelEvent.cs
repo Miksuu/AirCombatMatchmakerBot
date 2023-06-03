@@ -3,26 +3,12 @@
 [DataContract]
 public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
 {
-    public ulong CategoryIdToDeleteChannelOn
-    {
-        get => categoryIdToDeleteChannelOn.GetValue();
-        set => categoryIdToDeleteChannelOn.SetValue(value);
-    }
-
-    public ulong ChannelIdToDelete
-    {
-        get => channelIdToDelete.GetValue();
-        set => channelIdToDelete.SetValue(value);
-    }
-
     public string NameMustContain
     {
         get => nameMustContain.GetValue();
         set => nameMustContain.SetValue(value);
     }
 
-    [DataMember] private logClass<ulong> categoryIdToDeleteChannelOn = new logClass<ulong>();
-    [DataMember] private logClass<ulong> channelIdToDelete = new logClass<ulong>();
     [DataMember] private logString nameMustContain = new logString();
 
     public List<string> GetClassParameters()
@@ -30,7 +16,7 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
         return new List<string> {
             timeToExecuteTheEventOn.GetParameter(), eventId.GetParameter(),
 
-            categoryIdToDeleteChannelOn.GetParameter(), channelIdToDelete.GetParameter(),
+            leagueCategoryIdCached.GetParameter(), matchChannelIdCached.GetParameter(),
             nameMustContain.GetValue() };
     }
 
@@ -43,8 +29,8 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
             _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.VERBOSE);
 
         base.SetupScheduledEvent(_timeFromNowToExecuteOn);
-        CategoryIdToDeleteChannelOn = _categoryIdToDeleteChannelOn;
-        ChannelIdToDelete = _channelIdToDelete;
+        LeagueCategoryIdCached = _categoryIdToDeleteChannelOn;
+        MatchChannelIdCached = _channelIdToDelete;
         if (_nameMustContain == "")
         {
             Log.WriteLine("nameMustContain was empty!", LogLevel.ERROR);
@@ -63,8 +49,8 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
             _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.VERBOSE);
 
         //base.SetupScheduledEvent(_timeFromNowToExecuteOn);
-        CategoryIdToDeleteChannelOn = _categoryIdToDeleteChannelOn;
-        ChannelIdToDelete = _channelIdToDelete;
+        LeagueCategoryIdCached = _categoryIdToDeleteChannelOn;
+        MatchChannelIdCached = _channelIdToDelete;
         if (_nameMustContain == "")
         {
             Log.WriteLine("nameMustContain was empty!", LogLevel.ERROR);
@@ -78,8 +64,8 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
 
     public override async Task ExecuteTheScheduledEvent(bool _serialize = true)
     {
-        ulong categoryId = CategoryIdToDeleteChannelOn;
-        ulong channelId = ChannelIdToDelete;
+        ulong categoryId = LeagueCategoryIdCached;
+        ulong channelId = MatchChannelIdCached;
         string nameMustContain = NameMustContain;
 
         Log.WriteLine("Starting to execute event: " + EventId + " named " + nameof(DeleteChannelEvent) + " with: " +
@@ -135,8 +121,8 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
         {
             InterfaceMessage confirmationMessage =
                 Database.Instance.Categories.FindInterfaceCategoryWithId(
-                    CategoryIdToDeleteChannelOn).FindInterfaceChannelWithIdInTheCategory(
-                        ChannelIdToDelete).FindInterfaceMessageWithNameInTheChannel(
+                    LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
+                        MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannel(
                             MessageName.CONFIRMATIONMESSAGE);
 
             Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " +

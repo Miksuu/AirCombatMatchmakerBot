@@ -55,15 +55,14 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
         string finalMessage = string.Empty;
 
-        foreach (var item in Database.Instance.EventScheduler.ScheduledEvents)
+        foreach (ScheduledEvent scheduledEvent in Database.Instance.EventScheduler.ScheduledEvents)
         {
-            if (item.GetType() == typeof(MatchQueueAcceptEvent))
+            if (scheduledEvent.GetType() == typeof(MatchQueueAcceptEvent))
             {
-                MatchQueueAcceptEvent matchQueueAcceptEvent = (MatchQueueAcceptEvent)item;
-                if (matchQueueAcceptEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
-                    matchQueueAcceptEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
+                if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
+                    scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
                 {
-                    var timeLeft = matchQueueAcceptEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+                    var timeLeft = scheduledEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
 
                     finalMessage += "Time left: " + timeLeft + " seconds.\n";
                 }
@@ -107,15 +106,14 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             // Perhaps make this an abstract method to remove each of the event type from the queue
             // with each of derived classes having their own conditions
             List<ScheduledEvent> scheduledEventsToRemove = new List<ScheduledEvent>();
-            foreach (var item in Database.Instance.EventScheduler.ScheduledEvents)
+            foreach (ScheduledEvent scheduledEvent in Database.Instance.EventScheduler.ScheduledEvents)
             {
-                if (item.GetType() == typeof(MatchQueueAcceptEvent))
+                if (scheduledEvent.GetType() == typeof(MatchQueueAcceptEvent))
                 {
-                    MatchQueueAcceptEvent matchQueueAcceptEvent = (MatchQueueAcceptEvent)item;
-                    if (matchQueueAcceptEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId && 
-                        matchQueueAcceptEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
+                    if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
+                        scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
                     {
-                        scheduledEventsToRemove.Add(matchQueueAcceptEvent);
+                        scheduledEventsToRemove.Add(scheduledEvent);
                     }
                 }
             }

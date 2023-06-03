@@ -64,7 +64,6 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         finalMessage += "You can either Confirm/Dispute the result below.";
 
-
         if (confirmedTeamsCounter > 1)
         {
             if (mcc.leagueMatchCached.MatchReporting.MatchState != MatchState.MATCHDONE)
@@ -73,15 +72,14 @@ public class CONFIRMATIONMESSAGE : BaseMessage
             }
             else
             {
-                foreach (var item in Database.Instance.EventScheduler.ScheduledEvents)
+                foreach (ScheduledEvent scheduledEvent in Database.Instance.EventScheduler.ScheduledEvents)
                 {
-                    if (item.GetType() == typeof(DeleteChannelEvent))
+                    if (scheduledEvent.GetType() == typeof(DeleteChannelEvent))
                     {
-                        DeleteChannelEvent matchQueueAcceptEvent = (DeleteChannelEvent)item;
-                        if (matchQueueAcceptEvent.CategoryIdToDeleteChannelOn == mcc.interfaceLeagueCached.LeagueCategoryId &&
-                            matchQueueAcceptEvent.ChannelIdToDelete == mcc.leagueMatchCached.MatchChannelId)
+                        if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
+                            scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
                         {
-                            var timeLeft = matchQueueAcceptEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+                            var timeLeft = scheduledEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
 
                             finalMessage += "\n\n Match is done. Deleting this channel in " + timeLeft + " seconds!";
                         }

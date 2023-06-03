@@ -4,20 +4,6 @@
 public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, InterfaceEventType
 {
     MatchChannelComponents mcc;
-    public ulong LeagueCategoryIdCached
-    {
-        get => leagueCategoryIdCached.GetValue();
-        set => leagueCategoryIdCached.SetValue(value);
-    }
-
-    public ulong MatchChannelIdCached
-    {
-        get => matchChannelIdCached.GetValue();
-        set => matchChannelIdCached.SetValue(value);
-    }
-
-    [DataMember] private logClass<ulong> leagueCategoryIdCached = new logClass<ulong>();
-    [DataMember] private logClass<ulong> matchChannelIdCached = new logClass<ulong>();
 
     public List<string> GetClassParameters()
     {
