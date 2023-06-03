@@ -77,10 +77,14 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         int playersThatAreReady = 0;
         foreach (var teamKvp in matchReportData)
         {
-            var playerPlaneReportObject = teamKvp.Value.ReportingObjects.FirstOrDefault(
-                    x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+            PLAYERPLANE? teamPlane = teamKvp.Value.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+            if (teamPlane == null)
+            {
+                Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.CRITICAL);
+                return nameof(teamPlane) + " was null!";
+            }
 
-            foreach (var item in playerPlaneReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam)
+            foreach (var item in teamPlane.TeamMemberIdsWithSelectedPlanesByTheTeam)
             {
                 string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
 

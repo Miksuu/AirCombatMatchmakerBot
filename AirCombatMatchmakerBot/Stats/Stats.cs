@@ -39,7 +39,13 @@ public class Stats : logClass<Stats>, InterfaceLoggableClass
         {
             // Make this compatible for 2v2 etc
 
-            PLAYERPLANE teamPlane = _thisTeamReportData.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+            PLAYERPLANE? teamPlane = _thisTeamReportData.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+            if (teamPlane == null)
+            {
+                Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.CRITICAL);
+                throw new InvalidOperationException(nameof(teamPlane) + " was null!");
+            }
+
             var firstUnitPlane = teamPlane.TeamMemberIdsWithSelectedPlanesByTheTeam.First().Value; // Loop through every plane here on 2v2 etc
             //Log.WriteLine("Found teamplanestring: " + teamPlaneString, LogLevel.VERBOSE);
             //UnitName unitName = (UnitName)EnumExtensions.GetInstance(teamPlaneString);
