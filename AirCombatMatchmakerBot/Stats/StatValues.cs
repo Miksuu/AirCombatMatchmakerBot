@@ -58,7 +58,8 @@ public class StatValues : logClass<StatValues>, InterfaceLoggableClass
 
     public List<string> GetClassParameters()
     {
-        return new List<string> { };
+        return new List<string> { wins.GetParameter(), losses.GetParameter(), kills.GetParameter(), deaths.GetParameter(),
+            streak.GetParameter(), winLoseRatio.GetParameter(), killDeathRatio.GetParameter() };
     }
     public StatValues() 
     {
