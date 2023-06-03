@@ -58,16 +58,16 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
 
         Log.WriteLine("event: " + EventId + " after setting matchChannelId", LogLevel.VERBOSE);
 
+        await mcc.interfaceLeagueCached.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(
+            mcc.interfaceLeagueCached, matchChannelId);
+
+        Log.WriteLine("event: " + EventId + " after removed from bag with: " + matchChannelId, LogLevel.VERBOSE);
+
         // Create the event and execute it instantly
         var newEvent = new DeleteChannelEvent(mcc.interfaceLeagueCached.LeagueCategoryId, matchChannelId, "match");
         Log.WriteLine("event: " + EventId + " created newEvent", LogLevel.VERBOSE);
         await newEvent.ExecuteTheScheduledEvent(false);
         Log.WriteLine("event: " + EventId + " after newEvent executed", LogLevel.VERBOSE);
-
-        await mcc.interfaceLeagueCached.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(
-            mcc.interfaceLeagueCached, matchChannelId);
-
-        Log.WriteLine("event: " + EventId + " after removed from bag with: " + matchChannelId, LogLevel.VERBOSE);
 
         if (!_serialize) return;
 
