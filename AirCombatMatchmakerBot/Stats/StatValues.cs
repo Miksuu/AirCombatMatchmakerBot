@@ -69,7 +69,7 @@ public class StatValues : logClass<StatValues>, InterfaceLoggableClass
     {
         if (Losses != 0)
         {
-            WinLoseRatio = (float)Wins / Losses;
+            WinLoseRatio = (float)Wins / (Wins + Losses);
         }
         else
         {
