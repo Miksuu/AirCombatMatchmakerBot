@@ -117,7 +117,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
         Log.WriteLine("event: " + EventId + " after serialization", LogLevel.VERBOSE);
     }
 
-    public async override void CheckTheScheduledEventStatus()
+    public override void CheckTheScheduledEventStatus()
     {
         mcc = new MatchChannelComponents(LeagueCategoryIdCached, MatchChannelIdCached);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
@@ -137,7 +137,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, Int
             Log.WriteLine("Found: " + confirmMatchEntryMessage.MessageId + " with content: " +
                 confirmMatchEntryMessage.MessageDescription, LogLevel.DEBUG);
 
-            await confirmMatchEntryMessage.GenerateAndModifyTheMessage();
+            confirmMatchEntryMessage.GenerateAndModifyTheMessage();
         }
         catch (Exception ex)
         {
