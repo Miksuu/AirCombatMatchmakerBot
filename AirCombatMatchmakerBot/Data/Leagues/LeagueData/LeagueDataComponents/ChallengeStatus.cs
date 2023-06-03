@@ -1,4 +1,4 @@
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using Discord;
 using System.IO;
@@ -156,7 +156,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>, InterfaceLoggableClass
 
         Log.WriteLine("Teams in the queue: " + teamsInTheQueue, LogLevel.VERBOSE);
 
-        return teamsInTheQueue;
+        return "";
     }
 
     public string RemoveChallengeFromThisLeague(
