@@ -116,13 +116,20 @@ public class Stats : logClass<Stats>, InterfaceLoggableClass
         }
         TotalStatValuesCached.CalculateFloats();
 
+        // Inserts infinity symbol to 0 KDR
+        string kdr = TotalStatValuesCached.KillDeathRatio.ToString();
+        if (TotalStatValuesCached.KillDeathRatio == 0)
+        {
+            kdr = "\u221E";
+        }
+
         string totalStatsAsString =
             "W=" + TotalStatValuesCached.Wins +
             " | L=" + TotalStatValuesCached.Losses +
             " | WR=" + TotalStatValuesCached.WinLoseRatio + "%" +
             " | K=" + TotalStatValuesCached.Kills +
             " | D=" + TotalStatValuesCached.Deaths +
-            " | KDR=" + TotalStatValuesCached.KillDeathRatio;
+            " | KDR=" + kdr;
 
         return totalStatsAsString;
     }
