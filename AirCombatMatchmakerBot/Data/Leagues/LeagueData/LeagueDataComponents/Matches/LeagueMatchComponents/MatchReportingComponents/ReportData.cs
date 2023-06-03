@@ -76,5 +76,4 @@ public class ReportData
         Log.WriteLine("Found: " + result.GetTypeOfTheReportingObject(), LogLevel.VERBOSE);
         return result;
     }
-
 }
