@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.ComponentModel.Design;
 using System.Runtime.Serialization;
 
+[DataContract]
 public class EventScheduler : logClass<EventScheduler>, InterfaceLoggableClass
 {
     public ConcurrentBag<ScheduledEvent> ScheduledEvents    
