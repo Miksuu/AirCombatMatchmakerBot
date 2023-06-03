@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using Discord;
 using System.IO;
@@ -135,7 +135,6 @@ public class ChallengeStatus : logClass<ChallengeStatus>, InterfaceLoggableClass
         return teamsString;
     }
 
-    // Remove the _leaguePlayerCountPerTeam param, might be useless
     public string PostChallengeToThisLeague(InterfaceLeague _interfaceLeague, Team _playerTeam)
     {
         if (CheckIfPlayerTeamIsAlreadyInQueue(_playerTeam))
