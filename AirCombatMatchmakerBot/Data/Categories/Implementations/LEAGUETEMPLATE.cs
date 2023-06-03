@@ -12,9 +12,9 @@ public class LEAGUETEMPLATE : BaseCategory
         thisInterfaceCategory.ChannelTypes = new ConcurrentBag<ChannelType>()
         {
             ChannelType.LEAGUESTATUS,
-            ChannelType.CHALLENGE,
             ChannelType.MATCHCHANNEL,
             ChannelType.MATCHREPORTSCHANNEL,
+            ChannelType.CHALLENGE,
         };
     }
 
