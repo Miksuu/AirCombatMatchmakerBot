@@ -98,7 +98,7 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
             }
             else
             {
-                Log.WriteLine("Finished an event without deleting the channel, because it didn't exist!", LogLevel.WARNING);
+                //Log.WriteLine("Finished an event without deleting the channel, because it didn't exist!", LogLevel.WARNING);
             }
         }
         catch(Exception ex)
