@@ -88,7 +88,7 @@ public class StatValues : logClass<StatValues>, InterfaceLoggableClass
 
         if (Deaths != 0)
         {
-            KillDeathRatio= (float)Kills / Deaths;
+            KillDeathRatio = (float)Kills / Deaths;
         }
         else
         {
