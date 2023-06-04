@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Newtonsoft.Json.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Text;
 
 [DataContract]
 public class logString
@@ -11,6 +13,11 @@ public class logString
     {
         Log.WriteLine("Creating " + nameof(logString) + " with value: " + value, LogLevel.SET_VERBOSE);
         _value = value;
+    }
+
+    public string GetParameter()
+    {
+        return _value;
     }
 
     public string GetValue(
