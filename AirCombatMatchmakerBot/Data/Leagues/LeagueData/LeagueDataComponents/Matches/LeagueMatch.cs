@@ -135,9 +135,9 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
             await _interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMMATCHENTRYMESSAGE);
 
             await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                MessageName.REPORTINGMESSAGE, true);
-            await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.REPORTINGSTATUSMESSAGE, true);
+            await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                MessageName.REPORTINGMESSAGE, true);
         }
         catch (Exception ex)
         {
