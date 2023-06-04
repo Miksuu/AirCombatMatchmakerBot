@@ -219,54 +219,45 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
     public async Task<Response> PrepareFinalMatchResult(
         InterfaceLeague _interfaceLeague, ulong _playerId, ulong _leagueCategoryId, ulong _messageChannelId)
     {
-        string response = string.Empty;
-
-        (string, bool, InterfaceChannel) responseTuple =
-            CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId);
-        if (responseTuple.Item3 == null)
+        try
         {
-            Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
-            return new Response(response, false);
-        }
+            string response = string.Empty;
 
-        response = responseTuple.Item1;
-        InterfaceChannel interfaceChannel = responseTuple.Item3;
-
-
-        if (responseTuple.Item2)
-        {
-            CalculateFinalMatchResult(_interfaceLeague);
-
-            Log.WriteLine("Creating new messages from: " + _playerId, LogLevel.DEBUG);
-
-            InterfaceMessage interfaceMessage;
-            try
+            (string, bool, InterfaceChannel?) responseTuple =
+                CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId);
+            if (responseTuple.Item3 == null)
             {
-                interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                    MessageName.MATCHFINALRESULTMESSAGE);
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                return new Response(ex.Message, false);
-            }   
-
-            MATCHFINALRESULTMESSAGE? finalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
-            if (finalResultMessage == null)
-            {
-                string errorMsg = nameof(finalResultMessage) + " was null!";
-                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                return new Response(errorMsg, false);
+                Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
+                return new Response(response, false);
             }
 
-            FinalResultForConfirmation = interfaceMessage.MessageDescription;
-            FinalMessageForMatchReportingChannel = finalResultMessage.AlternativeMessage;
-            FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
+            response = responseTuple.Item1;
+            InterfaceChannel interfaceChannel = responseTuple.Item3;
 
-            InterfaceCategory interfaceCategory;
-            InterfaceChannel interfaceChannelToDeleteTheMessageIn;
-            try
+            if (responseTuple.Item2)
             {
+                CalculateFinalMatchResult(_interfaceLeague);
+
+                Log.WriteLine("Creating new messages from: " + _playerId, LogLevel.DEBUG);
+
+                InterfaceMessage interfaceMessage = interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                    MessageName.MATCHFINALRESULTMESSAGE).Result;
+
+                MATCHFINALRESULTMESSAGE? finalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
+                if (finalResultMessage == null)
+                {
+                    string errorMsg = nameof(finalResultMessage) + " was null!";
+                    Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                    return new Response(errorMsg, false);
+                }
+
+                FinalResultForConfirmation = interfaceMessage.MessageDescription;
+                FinalMessageForMatchReportingChannel = finalResultMessage.AlternativeMessage;
+                FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
+
+                InterfaceCategory interfaceCategory;
+                InterfaceChannel interfaceChannelToDeleteTheMessageIn;
+
                 await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                     MessageName.CONFIRMATIONMESSAGE);
                 interfaceCategory = _interfaceLeague.FindLeaguesInterfaceCategory();
@@ -282,47 +273,48 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
                 await interfaceChannelToDeleteTheMessageIn.DeleteMessagesInAChannelWithMessageName(
                     MessageName.REPORTINGSTATUSMESSAGE);
             }
-            catch (Exception ex)
-            {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                return new Response(ex.Message, false);
-            }
+
+            Log.WriteLine("returning response: " + response, LogLevel.VERBOSE);
+
+            return new Response(response?.ToString() ?? "[null]", true);
         }
-
-        Log.WriteLine("returning response: " + response, LogLevel.VERBOSE);
-
-        return new Response(response?.ToString() ?? "[null]", true);
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return new Response(ex.Message, false);
+        }        
     }
 
     private (string, bool, InterfaceChannel?) CheckIfMatchCanBeSentToConfirmation(
         ulong _leagueCategoryId, ulong _messageChannelId)
     {
-        bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown();
-
         InterfaceChannel interfaceChannel;
         try
         {
             interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
                 _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
+
+            bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown(interfaceChannel);
+
+            Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
+                " state: " + MatchState.ToString(), LogLevel.DEBUG);
+
+            if (confirmationMessageCanBeShown)
+            {
+                MatchState = MatchState.CONFIRMATIONPHASE;
+            }
+
+
+            return ("", confirmationMessageCanBeShown, interfaceChannel);
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return new (ex.Message, false, null);
         }
-
-        Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
-            " state: " + MatchState.ToString(), LogLevel.DEBUG);
-
-        if (confirmationMessageCanBeShown)
-        {
-            MatchState = MatchState.CONFIRMATIONPHASE;
-        }
-
-        return ("", confirmationMessageCanBeShown, interfaceChannel);
     }
 
-    private bool CheckIfConfirmationMessageCanBeShown()
+    private bool CheckIfConfirmationMessageCanBeShown(InterfaceChannel _interfaceChannel)
     {
         Log.WriteLine("Starting to check if the confirmation message can be showed.", LogLevel.VERBOSE);
 
@@ -350,7 +342,30 @@ public class MatchReporting : logClass<MatchReporting>, InterfaceLoggableClass
             }
         }
 
-        Log.WriteLine("All fields were true, proceeding to show the confirmation message", LogLevel.DEBUG);
+        int[] reportedScores = new int[TeamIdsWithReportData.Count];
+        bool[] scoreFound = new bool[TeamIdsWithReportData.Count];
+        for (int i = 0; i < TeamIdsWithReportData.Count; i++)
+        {
+
+            bool found = int.TryParse(
+                TeamIdsWithReportData.ElementAt(i).Value.FindBaseReportingObjectOfType(
+                    TypeOfTheReportingObject.REPORTEDSCORE).thisReportingObject.ObjectValue, out int _foundScore);
+            if (found)
+            {
+                scoreFound[i] = true;
+                reportedScores[i] = _foundScore;
+            }
+        }
+        if (reportedScores[0] == reportedScores[1] && scoreFound[0] && scoreFound[1])
+        {
+            var reportingStatusMessage = _interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
+                MessageName.REPORTINGSTATUSMESSAGE);
+
+            reportingStatusMessage.AddContentToTheEndOfTheMessage("The match can not be a draw!");
+            return false;
+        }
+
+        Log.WriteLine("All fields were true and it's not a draw, proceeding to show the confirmation message", LogLevel.DEBUG);
 
         return true;
     }
