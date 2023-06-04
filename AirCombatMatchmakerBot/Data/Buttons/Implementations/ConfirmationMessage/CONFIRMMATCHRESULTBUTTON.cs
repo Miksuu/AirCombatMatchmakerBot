@@ -40,9 +40,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
             Log.WriteLine("Activating button function: " + buttonName.ToString() + " by: " +
                 componentPlayerId + " in msg: " + _interfaceMessage.MessageId, LogLevel.VERBOSE);
 
-            List<ReportData> reportDataTupleWithString;
-
-            reportDataTupleWithString =
+            List<ReportData> reportDataTupleWithString =
                 mcc.leagueMatchCached.MatchReporting.GetTeamReportDatasOfTheMatchWithPlayerId(
                     mcc.interfaceLeagueCached, mcc.leagueMatchCached, componentPlayerId);
 
@@ -59,17 +57,8 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
                     mcc.leagueMatchCached.MatchId, LogLevel.DEBUG);
             }
 
-            InterfaceMessage confirmationMessage =
-                    Database.Instance.Categories.FindInterfaceCategoryWithId(
-                        _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                            _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
-                                MessageName.CONFIRMATIONMESSAGE);
-
-
-            Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " +
-                confirmationMessage.MessageDescription, LogLevel.DEBUG);
-
-            await confirmationMessage.GenerateAndModifyTheMessage();
+            Thread secondThread = new Thread(() => FindAndGenerateAndModifyConfirmationMessageOnAnotherThread(_interfaceMessage));
+            secondThread.Start();
 
             Log.WriteLine("Reached end before the return with player id: " + componentPlayerId +
                 " with finalResposne: " + finalResponse, LogLevel.DEBUG);
@@ -81,5 +70,20 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return new Response(ex.Message, false);
         }
+    }
+
+    private void FindAndGenerateAndModifyConfirmationMessageOnAnotherThread(InterfaceMessage _interfaceMessage)
+    {
+        InterfaceMessage confirmationMessage =
+        Database.Instance.Categories.FindInterfaceCategoryWithId(
+            _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
+                    MessageName.CONFIRMATIONMESSAGE);
+
+
+        Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " +
+            confirmationMessage.MessageDescription, LogLevel.DEBUG);
+
+       confirmationMessage.GenerateAndModifyTheMessage();
     }
 }
