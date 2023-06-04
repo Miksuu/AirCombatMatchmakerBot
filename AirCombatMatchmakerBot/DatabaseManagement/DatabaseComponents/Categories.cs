@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 
 [DataContract]
-public class Categories : logClass<Categories>, InterfaceLoggableClass
+public class Categories : logClass<Categories>
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels
@@ -23,12 +23,6 @@ public class Categories : logClass<Categories>, InterfaceLoggableClass
         new logConcurrentDictionary<ulong, InterfaceCategory>();
     [DataMember] private logConcurrentDictionary<ulong, ulong> matchChannelsIdWithCategoryId =
         new logConcurrentDictionary<ulong, ulong>();
-
-    public List<string> GetClassParameters()
-    {
-        return new List<string> { createdCategoriesWithChannels.GetLoggingClassParameters(),
-            matchChannelsIdWithCategoryId.GetLoggingClassParameters() };
-    }
 
     public InterfaceCategory FindInterfaceCategoryWithId(
         ulong _idToSearchWith)

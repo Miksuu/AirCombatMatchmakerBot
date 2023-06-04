@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
+public class DeleteChannelEvent : ScheduledEvent
 {
     public string NameMustContain
     {
@@ -10,15 +10,6 @@ public class DeleteChannelEvent : ScheduledEvent, InterfaceLoggableClass
     }
 
     [DataMember] private logString nameMustContain = new logString();
-
-    public List<string> GetClassParameters()
-    {
-        return new List<string> {
-            timeToExecuteTheEventOn.GetParameter(), eventId.GetParameter(),
-
-            leagueCategoryIdCached.GetParameter(), matchChannelIdCached.GetParameter(),
-            nameMustContain.GetValue() };
-    }
 
     public DeleteChannelEvent() { }
 

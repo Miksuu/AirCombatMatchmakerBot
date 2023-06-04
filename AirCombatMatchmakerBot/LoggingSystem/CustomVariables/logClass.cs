@@ -1,5 +1,3 @@
-using Newtonsoft.Json.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
@@ -42,35 +40,54 @@ public class logClass<T>
         {
             finalVal = _value != null ? _value.ToString() : null;
         }
+        /*
         else
         {
             StringBuilder membersBuilder = new StringBuilder();
 
-            var interfaceLoggableClass = Activator.CreateInstance(typeof(T)) as InterfaceLoggableClass;
-            //Log.WriteLine(typeof(T).ToString(), LogLevel.VERBOSE);
-            MethodInfo getParametersMethod = interfaceLoggableClass?.GetType()?.GetMethod("GetClassParameters")!;
-            if (getParametersMethod != null)
+            var fields =
+                typeof(T).GetFields();/*.Where(f => f.FieldType == typeof(logClass<T>) ||
+                f.FieldType == typeof(logConcurrentBag<T>) ||
+                f.FieldType == typeof(logConcurrentDictionary<T, T>) ||
+                f.FieldType == typeof(string));
+
+            if (fields.Count() > 0)
             {
-                List<string>? parameters = getParametersMethod.Invoke(interfaceLoggableClass, null) as List<string>;
-                if (parameters != null)
+
+                foreach (var item in fields)
                 {
-                    foreach (string param in parameters)
+                    Log.WriteLine("fieldtype: " + item.FieldType, LogLevel.DEBUG);
+                }
+
+
+            }
+
+            foreach (var field in fields)
+            {
+                var getParameterMethod = field.FieldType.GetMethod("GetParameter");
+                var fieldValue = field.GetValue(null);
+
+                if (getParameterMethod != null && fieldValue != null)
+                {
+                    var parameters = getParameterMethod.Invoke(fieldValue, null) as List<string>;
+
+                    if (parameters != null)
                     {
-                        membersBuilder.Append(param).Append(", ");
+                        foreach (var param in parameters)
+                        {
+                            membersBuilder.Append(param).Append(", ");
+                        }
                     }
                 }
             }
-            else if (typeof(T).IsEnum)
+
+            if (membersBuilder.Length > 0)
             {
-                finalVal = _value == null ? null : _value.ToString();
-            }
-            else
-            {
-                Log.WriteLine(typeof(T) + " does not have: " + nameof(interfaceLoggableClass.GetClassParameters), LogLevel.WARNING);
+                membersBuilder.Length -= 2;
             }
 
-            finalVal = membersBuilder.ToString().TrimEnd(',', ' ');
-        }
+            finalVal = membersBuilder.ToString();
+        }*/
 
         Log.WriteLine("Getting " + _value?.GetType() + " " + _memberName + ": " +
                     finalVal, LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
@@ -94,35 +111,54 @@ public class logClass<T>
         {
             finalVal = _value != null ? _value.ToString() : null;
         }
+        /*
         else
         {
             StringBuilder membersBuilder = new StringBuilder();
 
-            var interfaceLoggableClass = Activator.CreateInstance(typeof(T)) as InterfaceLoggableClass;
-            Log.WriteLine(typeof(T).ToString(), LogLevel.VERBOSE);
-            MethodInfo getParametersMethod = interfaceLoggableClass?.GetType()?.GetMethod("GetClassParameters")!;
-            if (getParametersMethod != null)
+            var fields =
+                typeof(T).GetFields();/*.Where(f => f.FieldType == typeof(logClass<T>) ||
+                f.FieldType == typeof(logConcurrentBag<T>) ||
+                f.FieldType == typeof(logConcurrentDictionary<T, T>) ||
+                f.FieldType == typeof(string));
+
+            if (fields.Count() > 0)
             {
-                List<string>? parameters = getParametersMethod.Invoke(interfaceLoggableClass, null) as List<string>;
-                if (parameters != null)
+
+                foreach (var item in fields)
                 {
-                    foreach (string param in parameters)
+                    Log.WriteLine("fieldtype: " + item.FieldType, LogLevel.DEBUG);
+                }
+
+
+            }
+
+            foreach (var field in fields)
+            {
+                var getParameterMethod = field.FieldType.GetMethod("GetParameter");
+                var fieldValue = field.GetValue(null);
+
+                if (getParameterMethod != null && fieldValue != null)
+                {
+                    var parameters = getParameterMethod.Invoke(fieldValue, null) as List<string>;
+
+                    if (parameters != null)
                     {
-                        membersBuilder.Append(param).Append(", ");
+                        foreach (var param in parameters)
+                        {
+                            membersBuilder.Append(param).Append(", ");
+                        }
                     }
                 }
             }
-            else if (typeof(T).IsEnum)
+
+            if (membersBuilder.Length > 0)
             {
-                finalVal = _value == null ? null : _value.ToString();
-            }
-            else
-            {
-                Log.WriteLine(typeof(T) + " does not have: " + nameof(interfaceLoggableClass.GetClassParameters), LogLevel.WARNING);
+                membersBuilder.Length -= 2;
             }
 
-            finalVal = membersBuilder.ToString().TrimEnd(',', ' ');
-        }
+            finalVal = membersBuilder.ToString();
+        }*/
 
         Log.WriteLine("Setting " + _value?.GetType() + " " + _memberName + ": " + finalVal +
             " TO: " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);

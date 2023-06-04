@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class Stats : logClass<Stats>, InterfaceLoggableClass
+public class Stats : logClass<Stats>
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<UnitName, StatValues> PlaneSpecificStats
@@ -22,11 +22,6 @@ public class Stats : logClass<Stats>, InterfaceLoggableClass
         new logConcurrentDictionary<UnitName, StatValues>();
 
     private logClass<StatValues> totalStatValuesCached = new logClass<StatValues>(new StatValues());
-
-    public List<string> GetClassParameters()
-    {
-        return new List<string> { };
-    }
 
     public Stats()
     {

@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using Discord;
 
 [DataContract]
-public class CachedUsers : logClass<CachedUsers>, InterfaceLoggableClass
+public class CachedUsers : logClass<CachedUsers>
 {
     public ConcurrentBag<ulong> CachedUserIDs
     {
@@ -12,11 +12,6 @@ public class CachedUsers : logClass<CachedUsers>, InterfaceLoggableClass
     }
 
     [DataMember] private logConcurrentBag<ulong> cachedUserIDs = new logConcurrentBag<ulong>();
-
-    public List<string> GetClassParameters()
-    {
-        return new List<string> { cachedUserIDs.GetLoggingClassParameters() };
-    }
 
     public void AddUserIdToCachedConcurrentBag(ulong _userId)
     {

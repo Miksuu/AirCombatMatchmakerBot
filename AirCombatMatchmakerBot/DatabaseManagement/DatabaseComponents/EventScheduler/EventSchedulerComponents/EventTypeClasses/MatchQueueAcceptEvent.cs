@@ -1,17 +1,9 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceLoggableClass, InterfaceEventType
+public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
 {
     MatchChannelComponents mcc;
-
-    public List<string> GetClassParameters()
-    {
-        return new List<string> {
-            timeToExecuteTheEventOn.GetParameter(), eventId.GetParameter(),
-
-            leagueCategoryIdCached.GetParameter(), matchChannelIdCached.GetParameter() };
-    }
 
     public MatchQueueAcceptEvent() { }
 

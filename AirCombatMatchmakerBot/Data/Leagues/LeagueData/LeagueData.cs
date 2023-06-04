@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class LeagueData : logClass<LeagueData>, InterfaceLoggableClass
+public class LeagueData : logClass<LeagueData>
 {
     public Teams Teams
     {
@@ -25,11 +25,6 @@ public class LeagueData : logClass<LeagueData>, InterfaceLoggableClass
     [DataMember] private logClass<Teams> teams = new logClass<Teams>(new Teams());
     [DataMember] private logClass<ChallengeStatus> challengeStatus = new logClass<ChallengeStatus>(new ChallengeStatus());
     [DataMember] private logClass<Matches> matches = new logClass<Matches>(new Matches());
-
-    public List<string> GetClassParameters()
-    {
-        return new List<string> { teams.GetParameter(), challengeStatus.GetParameter(), matches.GetParameter() };
-    }
 
     public Team FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)
     {

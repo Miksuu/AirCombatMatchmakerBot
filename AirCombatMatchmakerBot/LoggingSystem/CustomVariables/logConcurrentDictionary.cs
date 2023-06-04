@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 
 [DataContract]
-public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, InterfaceLoggingClass where TKey : notnull
+public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>> where TKey : notnull
 {
     [DataMember] private ConcurrentDictionary<TKey, TValue> _values = new ConcurrentDictionary<TKey, TValue>();
 
@@ -16,7 +16,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
         _values = new ConcurrentDictionary<TKey, TValue>(collection);
     }
 
-    public string GetLoggingClassParameters()
+    public string GetParameter()
     {
         StringBuilder membersBuilder = new StringBuilder();
         foreach (KeyValuePair<TKey, TValue> kvp in _values)
@@ -59,7 +59,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
         [CallerLineNumber] int _lineNumber = 0)
     {
         Log.WriteLine("Getting ConcurrentDictionary " + _memberName + " with count: " +
-            _values.Count + " that has members of: " + GetLoggingClassParameters(),
+            _values.Count + " that has members of: " + GetParameter(),
             LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
         return _values;
     }
@@ -70,8 +70,8 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
         [CallerLineNumber] int _lineNumber = 0)
     {
         Log.WriteLine("Setting ConcurrentDictionary " + _memberName + " with count: " +_values.Count +
-            " that has members of: " + GetLoggingClassParameters()+ " TO: " + " with count: " +
-            values.Count + " that has members of: " + GetLoggingClassParameters(),
+            " that has members of: " + GetParameter()+ " TO: " + " with count: " +
+            values.Count + " that has members of: " + GetParameter(),
             LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
         _values = values;
     }
@@ -82,7 +82,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
         [CallerLineNumber] int _lineNumber = 0)
     {
         Log.WriteLine("Adding item to ConcurrentDictionary " + _memberName + ": " + _itemKvp +
-            " with count: " + _values.Count + " that has members of: " + GetLoggingClassParameters(),
+            " with count: " + _values.Count + " that has members of: " + GetParameter(),
             LogLevel.ADD_VERBOSE, _filePath, "", _lineNumber);
 
         var key = _itemKvp.Key;

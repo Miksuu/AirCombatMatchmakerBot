@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading.Channels;
 
 [DataContract]
-public class ChallengeStatus : logClass<ChallengeStatus>, InterfaceLoggableClass
+public class ChallengeStatus : logClass<ChallengeStatus>
 {
     public ConcurrentBag<int> TeamsInTheQueue
     {
@@ -14,11 +14,6 @@ public class ChallengeStatus : logClass<ChallengeStatus>, InterfaceLoggableClass
     }
 
     [DataMember] private logConcurrentBag<int> teamsInTheQueue = new logConcurrentBag<int>();
-
-    public List<string> GetClassParameters()
-    {
-        return new List<string> { teamsInTheQueue.GetLoggingClassParameters() };
-    }
 
     public Response AddTeamFromPlayerIdToTheQueue(
         InterfaceLeague _interfaceLeague, ulong _playerId, InterfaceMessage _interfaceMessage)

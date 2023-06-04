@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class StatValues : logClass<StatValues>, InterfaceLoggableClass
+public class StatValues : logClass<StatValues>
 {
     public int Wins
     {
@@ -56,11 +56,6 @@ public class StatValues : logClass<StatValues>, InterfaceLoggableClass
     private logClass<float> winLoseRatio = new logClass<float>();
     private logClass<float> killDeathRatio = new logClass<float>();
 
-    public List<string> GetClassParameters()
-    {
-        return new List<string> { wins.GetParameter(), losses.GetParameter(), kills.GetParameter(), deaths.GetParameter(),
-            streak.GetParameter(), winLoseRatio.GetParameter(), killDeathRatio.GetParameter() };
-    }
     public StatValues() 
     {
         CalculateFloats();

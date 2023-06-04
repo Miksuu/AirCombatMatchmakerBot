@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using Discord;
 
 [DataContract]
-public class Matches : logClass<Matches>, InterfaceLoggableClass
+public class Matches : logClass<Matches>
 {
     public ConcurrentBag<LeagueMatch> MatchesConcurrentBag
     {
@@ -13,11 +13,6 @@ public class Matches : logClass<Matches>, InterfaceLoggableClass
     }
 
     [DataMember] private logConcurrentBag<LeagueMatch> matchesConcurrentBag = new logConcurrentBag<LeagueMatch>();
-
-    public List<string> GetClassParameters()
-    {
-        return new List<string> { matchesConcurrentBag.GetLoggingClassParameters() };
-    }
 
     public async Task CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {

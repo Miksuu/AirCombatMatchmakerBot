@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 
 [DataContract]
-public class Teams : logClass<Teams>, InterfaceLoggableClass
+public class Teams : logClass<Teams>
 {
     public ConcurrentBag<Team> TeamsConcurrentBag
     {
@@ -17,10 +17,6 @@ public class Teams : logClass<Teams>, InterfaceLoggableClass
 
     [DataMember] private logConcurrentBag<Team> teamsConcurrentBag = new logConcurrentBag<Team>();
     [DataMember] private logClass<int> currentTeamInt = new logClass<int>(1);
-    public List<string> GetClassParameters()
-    {
-        return new List<string> { teamsConcurrentBag.GetLoggingClassParameters(), currentTeamInt.GetParameter() };
-    }
 
     public void AddToConcurrentBagOfTeams(Team _Team)
     {

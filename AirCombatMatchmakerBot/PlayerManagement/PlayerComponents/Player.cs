@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class Player : logClass<Player>, InterfaceLoggableClass
+public class Player : logClass<Player>
 {   
     public ulong PlayerDiscordId
     {
@@ -35,11 +35,6 @@ public class Player : logClass<Player>, InterfaceLoggableClass
     {
         PlayerDiscordId = _playerDiscordID;
         PlayerNickName = _playerNickName;
-    }
-
-    public List<string> GetClassParameters()
-    {
-        return new List<string> { PlayerDiscordId.ToString(), PlayerNickName.ToString() };
     }
 
     public string GetPlayerIdAsMention()

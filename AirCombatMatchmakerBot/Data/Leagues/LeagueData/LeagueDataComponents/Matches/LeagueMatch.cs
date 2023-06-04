@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
 
 [DataContract]
-public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
+public class LeagueMatch : logClass<LeagueMatch>
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<int, string> TeamsInTheMatch
@@ -41,12 +41,6 @@ public class LeagueMatch : logClass<LeagueMatch>, InterfaceLoggableClass
     [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
     [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
     [DataMember] private logClass<CategoryType> matchLeague = new logClass<CategoryType>(new CategoryType());
-
-    public List<string> GetClassParameters()
-    {
-        return new List<string> { teamsInTheMatch.GetLoggingClassParameters(), matchId.GetParameter(),
-            matchChannelId.GetParameter(), matchReporting.GetParameter(), matchLeague.GetParameter() };
-    }
 
     public LeagueMatch() { }
 
