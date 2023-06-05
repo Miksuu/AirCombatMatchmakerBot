@@ -14,7 +14,15 @@ public class Matches : logClass<Matches>
 
     [DataMember] private logConcurrentBag<LeagueMatch> matchesConcurrentBag = new logConcurrentBag<LeagueMatch>();
 
-    public async Task CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
+    public InterfaceLeague interfaceLeagueRef;
+
+    public Matches() { }
+    public Matches(InterfaceLeague _interfaceLeague)
+    {
+        interfaceLeagueRef = _interfaceLeague;
+    }
+
+    public async Task CreateAMatch(int[] _teamsToFormMatchOn)
     {
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1], LogLevel.VERBOSE);
@@ -31,27 +39,27 @@ public class Matches : logClass<Matches>
             Log.WriteLine("Warning! teams Length was not 2!", LogLevel.ERROR);
         }
 
-        LeagueMatch newMatch = new(_interfaceLeague, _teamsToFormMatchOn);
+        LeagueMatch newMatch = new(interfaceLeagueRef, _teamsToFormMatchOn);
 
-        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, _interfaceLeague, client);
+        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, client);
 
         MatchesConcurrentBag.Add(newMatch);
         Log.WriteLine("Added match channel id: " + newChannel.ChannelId + " to the MatchesConcurrentBag, count is now: " +
             MatchesConcurrentBag.Count, LogLevel.VERBOSE);
 
-        Thread secondThread = new Thread(() => InitChannelOnSecondThread(client, newChannel, _interfaceLeague.LeagueCategoryId));
+        Thread secondThread = new Thread(() => InitChannelOnSecondThread(client, newChannel));
         secondThread.Start();
     }
 
     public async Task<InterfaceChannel> CreateAMatchChannel(
-        LeagueMatch _leagueMatch, InterfaceLeague _interfaceLeague, DiscordSocketClient _client)
+        LeagueMatch _leagueMatch, DiscordSocketClient _client)
     {
         try
         {
             // Get the category by the league category name passed in the method
             var categoryKvp =
-                Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
-                    _interfaceLeague.LeagueCategoryName);
+                Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryName(
+                    interfaceLeagueRef.LeagueCategoryName.ToString());
 
             string leagueMatchIdString = _leagueMatch.MatchId.ToString();
 
@@ -61,11 +69,13 @@ public class Matches : logClass<Matches>
             Log.WriteLine("Starting to create a new match channel: " +
                 overriddenMatchName, LogLevel.VERBOSE);
 
+            var dbRegularCategory = Database.Instance.Categories.FindInterfaceCategoryWithId(categoryKvp.LeagueCategoryId);
+
             // Prepare the match with the ID of the current new match
-            InterfaceChannel interfaceChannel = await categoryKvp.CreateSpecificChannelFromChannelTypeWithoutRole(
-                    ChannelType.MATCHCHANNEL, categoryKvp.SocketCategoryChannelId,
+            InterfaceChannel interfaceChannel = await dbRegularCategory.CreateSpecificChannelFromChannelTypeWithoutRole(
+                    ChannelType.MATCHCHANNEL, categoryKvp.LeagueCategoryId,
                     overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
-                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague));
+                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(interfaceLeagueRef));
 
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
@@ -73,7 +83,7 @@ public class Matches : logClass<Matches>
                 interfaceChannel.ChannelId))
             {
                 Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryAdd(
-                    interfaceChannel.ChannelId, categoryKvp.SocketCategoryChannelId);
+                    interfaceChannel.ChannelId, categoryKvp.LeagueCategoryId);
             }
             return interfaceChannel;
         }
@@ -85,12 +95,12 @@ public class Matches : logClass<Matches>
     }
 
     public async void InitChannelOnSecondThread(
-        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, ulong _leagueCategoryId)
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel)
     {
         await _interfaceChannel.PostChannelMessages(_client);
 
         // Schedule the match queue timeout (if the players don't accept it in the time)
-        new MatchQueueAcceptEvent(30, _leagueCategoryId, _interfaceChannel.ChannelId);
+        new MatchQueueAcceptEvent(30, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
 
         await SerializationManager.SerializeDB();
 

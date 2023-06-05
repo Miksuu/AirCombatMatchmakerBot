@@ -10,7 +10,7 @@ public class MATCHSCHEDULERCHANNEL : BaseChannel
 {
     public MATCHSCHEDULERCHANNEL()
     {
-        thisInterfaceChannel.ChannelType = ChannelType.LEAGUESTATUS;
+        thisInterfaceChannel.ChannelType = ChannelType.MATCHSCHEDULERCHANNEL;
         thisInterfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
             new ConcurrentBag<KeyValuePair<MessageName, bool>>()
             {

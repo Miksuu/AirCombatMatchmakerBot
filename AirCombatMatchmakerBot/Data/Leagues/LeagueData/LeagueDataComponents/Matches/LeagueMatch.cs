@@ -30,7 +30,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => matchReporting.SetValue(value);
     }
 
-    public CategoryType MatchLeague
+    public LeagueName MatchLeague
     {
         get => matchLeague.GetValue();
         set => matchLeague.SetValue(value);
@@ -40,10 +40,11 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logClass<int> matchId = new logClass<int>();
     [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
     [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
-    [DataMember] private logClass<CategoryType> matchLeague = new logClass<CategoryType>(new CategoryType());
+    [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>(new LeagueName());
 
     public LeagueMatch() { }
 
+    // TODO: Add interfaceLeague ref on constructor as a reference
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
     {
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
@@ -56,8 +57,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         foreach (int teamId in _teamsToFormMatchOn)
         {
             Team foundTeam =
-                _interfaceLeague.LeagueData.Teams.FindTeamById(
-                    leagueTeamSize, teamId);
+                _interfaceLeague.LeagueData.Teams.FindTeamById(teamId);
 
             Log.WriteLine("Found team: " + foundTeam.TeamId, LogLevel.DEBUG);
 
@@ -97,8 +97,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             try 
             {
-                Team foundTeam = _interfaceLeague.LeagueData.Teams.FindTeamById(
-                    _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key);
+                Team foundTeam = _interfaceLeague.LeagueData.Teams.FindTeamById(teamKvp.Key);
 
                 foreach (Player player in foundTeam.Players)
                 {

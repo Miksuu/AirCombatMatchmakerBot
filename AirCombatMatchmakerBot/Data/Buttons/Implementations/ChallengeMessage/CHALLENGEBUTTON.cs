@@ -42,7 +42,7 @@ public class CHALLENGEBUTTON : BaseButton
         Log.WriteLine(nameof(challengeStatusOfTheCurrentLeague) + challengeStatusOfTheCurrentLeague, LogLevel.DEBUG);
 
         var response = challengeStatusOfTheCurrentLeague.AddTeamFromPlayerIdToTheQueue(
-            lcc.interfaceLeagueCached, playerId, _interfaceMessage);
+            playerId, _interfaceMessage);
 
 
         Log.WriteLine("After modifying message", LogLevel.VERBOSE);

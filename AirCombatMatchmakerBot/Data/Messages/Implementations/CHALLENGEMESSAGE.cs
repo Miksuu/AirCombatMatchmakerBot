@@ -59,6 +59,8 @@ public class CHALLENGEMESSAGE : BaseMessage
                     thisInterfaceMessage.MessageEmbedTitle = leagueName + " challenge.";
                     string challengeMessage = "Players In The Queue: \n";
 
+                    //Log.WriteLine("id: " + thisInterfaceMessage.MessageCategoryId, LogLevel.WARNING);
+
                     var leagueCategory =
                         Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(thisInterfaceMessage.MessageCategoryId);
                     if (leagueCategory == null)

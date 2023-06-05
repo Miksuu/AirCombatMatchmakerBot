@@ -31,7 +31,7 @@ public class BotRuntimeManager
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
-                /*
+                
                 var guild = BotReference.GetGuildRef();
                 foreach (var cat in guild.CategoryChannels)
                 {
@@ -87,13 +87,12 @@ public class BotRuntimeManager
                     Log.WriteLine("Emoji: " + item.Name + " id: " + item.Id, LogLevel.DEBUG);
                 }*/
 
-                // Creates the league references to the database
-                // (must be run before creating the channels)
-                await LeagueManager.CreateLeaguesOnStartupIfNecessary();
-
                 // Creates the categories and the channels from the interfaces
                 // (dependant on the data from CreateLeaguesOnStartupIfNecessary())
                 await CategoryAndChannelManager.CreateCategoriesAndChannelsForTheDiscordServer();
+
+                // Creates the league references to the database
+                //await LeagueManager.CreateLeaguesOnStartupIfNecessary();
 
                 // Checks the users that left during down time and sets their teams active
                 await DowntimeManager.CheckForUsersThatLeftDuringDowntime();

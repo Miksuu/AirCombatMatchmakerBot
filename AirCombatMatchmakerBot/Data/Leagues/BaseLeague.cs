@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 [DataContract]
 public abstract class BaseLeague : InterfaceLeague
 {
-    CategoryType InterfaceLeague.LeagueCategoryName
+    LeagueName InterfaceLeague.LeagueCategoryName
     {
         get => leagueCategoryName.GetValue();
         set => leagueCategoryName.SetValue(value);
@@ -64,7 +64,7 @@ public abstract class BaseLeague : InterfaceLeague
     }
 
     // Generated based on the implementation
-    [DataMember] protected logClass<CategoryType> leagueCategoryName = new logClass<CategoryType>(new CategoryType());
+    [DataMember] protected logClass<LeagueName> leagueCategoryName = new logClass<LeagueName>(new LeagueName());
     [DataMember] protected logClass<Era> leagueEra = new logClass<Era>(new Era());
     [DataMember] protected logClass<int> leaguePlayerCountPerTeam = new logClass<int>();
     [DataMember] protected logConcurrentBag<UnitName> leagueUnits = new logConcurrentBag<UnitName>();
@@ -87,6 +87,8 @@ public abstract class BaseLeague : InterfaceLeague
     public BaseLeague()
     {
         thisInterfaceLeague = this;
+
+        //leagueData = new logClass<LeagueData>(new LeagueData(thisInterfaceLeague));
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);

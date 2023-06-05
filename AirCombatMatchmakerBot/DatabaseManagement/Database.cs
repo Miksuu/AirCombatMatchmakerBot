@@ -223,7 +223,7 @@ public class Database
                     await leagueRegistrationMessage.GenerateAndModifyTheMessage();
                 }
             }
-
+             
             Log.WriteLine("Done looping through " + leagueRegistrationMessages.Count + " messages", LogLevel.VERBOSE);
 
 

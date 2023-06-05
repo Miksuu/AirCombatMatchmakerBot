@@ -63,8 +63,7 @@ public class MatchReporting : logClass<MatchReporting>
                 Log.WriteLine("before toAdd", LogLevel.DEBUG);
 
                 var toAdd = (teamKvp.Key, new ReportData(teamKvp.Value,
-                    _interfaceLeague.LeagueData.Teams.FindTeamById(
-                        _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key).Players));
+                    _interfaceLeague.LeagueData.Teams.FindTeamById(teamKvp.Key).Players));
 
                 Log.WriteLine("after toAdd", LogLevel.DEBUG);
 

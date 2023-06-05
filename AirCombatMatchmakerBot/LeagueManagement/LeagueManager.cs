@@ -11,16 +11,6 @@ public static class LeagueManager
 
     public async static Task CreateLeaguesOnStartupIfNecessary()
     {
-        Log.WriteLine("Starting to create leagues for the discord server", LogLevel.VERBOSE);
-
-        var guild = BotReference.GetGuildRef();
-        Log.WriteLine("guild valid", LogLevel.VERBOSE);
-        if (guild == null)
-        {
-            Exceptions.BotGuildRefNull();
-            return;
-        }
-
         // Get all of the league category names and loop through them to create the database entries
         var categoryEnumValues = Enum.GetValues(typeof(CategoryType));
         Log.WriteLine(nameof(categoryEnumValues) +
@@ -29,64 +19,12 @@ public static class LeagueManager
         {
             Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString(), LogLevel.DEBUG);
 
-            // Skip all the non-leagues
-            int enumValue = (int)leagueCategoryName;
-            if (enumValue > 100) continue;
-
             InterfaceLeague interfaceLeagueCategory = GetCategoryInstance(leagueCategoryName);
             Log.WriteLine(nameof(LeagueManager) + " with: " + Database.Instance.PlayerData, LogLevel.VERBOSE);
-
-            // Add the new newly from the interface implementations added units here
-            if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(
-                interfaceLeagueCategory.LeagueCategoryName))
-            {
-                Log.WriteLine(nameof(Database.Instance.Leagues) +
-                    " already contains: " + interfaceLeagueCategory.ToString() +
-                    " adding new units to the league", LogLevel.VERBOSE);
-
-                try
-                {
-                    // Update the units and to the database (before interfaceLeagueCategory is replaced by it)
-                    InterfaceLeague interfaceLeague = Database.Instance.Leagues.GetILeagueByCategoryName(
-                        interfaceLeagueCategory.LeagueCategoryName);
-
-                    // Clears the queue on the startup
-                    if (interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Count > 0)
-                    {
-                        interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Clear();
-                        var message = Database.Instance.Categories.FindInterfaceCategoryWithId(
-                            interfaceLeague.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
-                                ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
-
-                        await message.GenerateAndModifyTheMessage();
-                    }
-
-                    interfaceLeague.LeagueUnits = interfaceLeagueCategory.LeagueUnits;
-                }
-                catch (Exception ex) 
-                {
-                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                    continue;
-                }
-
-                continue;
-            }
-
-            string leagueCategoryNameString = EnumExtensions.GetEnumMemberAttrValue(leagueCategoryName);
-
-            // Get the role and create it if it already doesn't exist
-            SocketRole role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
-                guild, leagueCategoryNameString).Result;
-
-            Log.WriteLine("Role is named: " + role.Name + " with ID: " + role.Id, LogLevel.VERBOSE);
-
-            interfaceLeagueCategory.LeagueRoleId = role.Id;
-
-            Database.Instance.Leagues.AddToStoredLeagues(interfaceLeagueCategory);
         }
     }
 
-    public static InterfaceLeague GetLeagueInstanceWithLeagueCategoryName(CategoryType _leagueCategoryType)
+    public static InterfaceLeague GetLeagueInstanceWithLeagueCategoryName(LeagueName _leagueCategoryType)
     {
         Log.WriteLine("Getting a league instance with LeagueCategoryName: " +
             _leagueCategoryType, LogLevel.VERBOSE);

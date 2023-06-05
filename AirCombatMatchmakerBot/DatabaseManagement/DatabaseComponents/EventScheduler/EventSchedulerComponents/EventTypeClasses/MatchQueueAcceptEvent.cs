@@ -79,7 +79,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
                         ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
 
                 mcc.interfaceLeagueCached.LeagueData.ChallengeStatus.AddTeamFromPlayerIdToTheQueue(
-                    mcc.interfaceLeagueCached, playerIdToAddBackInToTheQueue, interfaceMessage);
+                    playerIdToAddBackInToTheQueue, interfaceMessage);
             }
         }
 

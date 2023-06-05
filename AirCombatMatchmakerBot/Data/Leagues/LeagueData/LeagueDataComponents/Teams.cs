@@ -18,6 +18,14 @@ public class Teams : logClass<Teams>
     [DataMember] private logConcurrentBag<Team> teamsConcurrentBag = new logConcurrentBag<Team>();
     [DataMember] private logClass<int> currentTeamInt = new logClass<int>(1);
 
+    private InterfaceLeague interfaceLeagueRef;
+
+    public Teams() { }
+    public Teams(InterfaceLeague _interfaceLeague) 
+    {
+        interfaceLeagueRef = _interfaceLeague;
+    }
+
     public void AddToConcurrentBagOfTeams(Team _Team)
     {
         Log.WriteLine(
@@ -109,7 +117,7 @@ public class Teams : logClass<Teams>
         return new Team();
     }
 
-    public Team FindTeamById(int _leagueTeamSize, int _id)
+    public Team FindTeamById( int _id)
     {
         Log.WriteLine("Finding team by id: " + _id, LogLevel.VERBOSE);
 
@@ -121,7 +129,7 @@ public class Teams : logClass<Teams>
         }
 
         Log.WriteLine("Found team: " + foundTeam.GetTeamName(
-            _leagueTeamSize) +" id: " + foundTeam.TeamId + 
+            interfaceLeagueRef.LeaguePlayerCountPerTeam) +" id: " + foundTeam.TeamId + 
             " with members: " + foundTeam.GetTeamMembersInAString(), LogLevel.DEBUG);
 
         return foundTeam;

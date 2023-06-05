@@ -15,7 +15,14 @@ public class MatchScheduler : logClass<MatchScheduler>
     private logConcurrentDictionary<int, TeamMatchmakerData> teamsInTheMatchmaker =
         new logConcurrentDictionary<int, TeamMatchmakerData>();
 
+    // Doesn't need to be serialized, it's gotten from a class that loads the data from it's serialization
+    private InterfaceLeague interfaceLeagueRef;
+
     public MatchScheduler() { }
+    public MatchScheduler(InterfaceLeague _interfaceLeague)
+    {
+        interfaceLeagueRef = _interfaceLeague;
+    }
 
     public Response AddTeamToTheMatchSchedulerWithPlayerId(
         InterfaceLeague _interfaceLeague, ulong _playerId)// InterfaceMessage _interfaceMessage)
@@ -112,7 +119,6 @@ public class MatchScheduler : logClass<MatchScheduler>
         return _teamIds[index];
     }
 
-
     private List<int> GetAvailableTeamsToChallenge(int _teamIdNotToLookFor)
     {
         List<int> availableTeamIdsToChallenge = new List<int>();
@@ -155,5 +161,7 @@ public class MatchScheduler : logClass<MatchScheduler>
         Log.WriteLine("Matching found opponent: " + _foundOpponentTeam + " vs seeker:" + _seekingTeam, LogLevel.DEBUG);
 
         // Continuation: use existing methods to create a match between these two teams
+
+        //interfaceLeagueRef.LeagueData.Matches.CreateAMatch();
     }
 }
