@@ -61,7 +61,6 @@ public class CONFIRMATIONMESSAGE : BaseMessage
             finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
         }
 
-
         finalMessage += "You can either Confirm/Dispute the result below.";
 
         if (confirmedTeamsCounter > 1)
