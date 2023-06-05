@@ -16,7 +16,7 @@ public class MatchScheduler : logClass<MatchScheduler>
         new logConcurrentDictionary<int, TeamMatchmakerData>();
 
     // Doesn't need to be serialized, it's gotten from a class that loads the data from it's serialization
-    private InterfaceLeague interfaceLeagueRef;
+    public InterfaceLeague interfaceLeagueRef;
 
     public MatchScheduler() { }
     public MatchScheduler(InterfaceLeague _interfaceLeague)

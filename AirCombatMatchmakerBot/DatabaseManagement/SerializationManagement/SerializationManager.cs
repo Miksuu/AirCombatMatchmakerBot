@@ -124,6 +124,15 @@ public static class SerializationManager
 
         Log.WriteLine("DB DESERIALIZATION DONE!", LogLevel.SERIALIZATION);
 
+        // Move to method when necessary
+        foreach (var item in Database.Instance.Leagues.StoredLeagues)
+        {
+            Log.WriteLine("Loop on: " + item.LeagueCategoryName, LogLevel.VERBOSE);
+            item.LeagueData.SetReferences(item);
+        }
+
+        Log.WriteLine("DB DESERIALIZATION DONE with setting references", LogLevel.SERIALIZATION);
+
         return Task.CompletedTask;
     }
 

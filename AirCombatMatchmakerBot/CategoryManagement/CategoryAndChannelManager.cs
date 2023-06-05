@@ -120,19 +120,23 @@ public static class CategoryAndChannelManager
 
             bool contains = false;
             Log.WriteLine("searching for categoryname: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
-            foreach (var ct in Database.Instance.Categories.CreatedCategoriesWithChannels)
+            foreach (var storedLeague in Database.Instance.Leagues.StoredLeagues)
             {
-                Log.WriteLine("categoryname:" + ct.Value.CategoryType, LogLevel.VERBOSE);
-                if (ct.Value.CategoryType == interfaceCategory.CategoryType)
+                Log.WriteLine("categoryname:" + storedLeague.LeagueCategoryName, LogLevel.VERBOSE);
+                if (storedLeague.LeagueCategoryName == leagueInterface.LeagueCategoryName)
                 {
                     // Checks if the channel is also in the discord server itself too, not only database
-                    contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(ct, _guild);
+                    contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(storedLeague.LeagueCategoryId, _guild);
                     break;
                 }
             }
 
             SocketRole? role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
                         _guild, finalCategoryName).Result;
+
+            Log.WriteLine("Role is named: " + role.Name + " with ID: " + role.Id, LogLevel.VERBOSE);
+
+
 
             // The category exists,
             // just find it from the database and then get the id of the socketchannel
@@ -174,7 +178,12 @@ public static class CategoryAndChannelManager
 
                 LeagueName categoryTypeNonNullable = (LeagueName)_leagueName;
 
+                // TODO: refactor this mess
+                interfaceLeague.LeagueRoleId = role.Id;
                 interfaceLeague.LeagueCategoryId = socketCategoryChannel.Id;
+                //interfaceLeague.LeagueData.InterfaceLeagueCategoryId = socketCategoryChannel.Id;
+                //interfaceLeague.LeagueData.interfaceLeagueRef = interfaceLeague;
+                interfaceLeague.LeagueData.SetReferences(interfaceLeague);
 
                 Database.Instance.Categories.AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(
                     socketCategoryChannel.Id, interfaceCategory);
@@ -232,7 +241,7 @@ public static class CategoryAndChannelManager
                 if (ct.Value.CategoryType == interfaceCategory.CategoryType)
                 {
                     // Checks if the channel is also in the discord server itself too, not only database
-                    contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(ct, _guild);
+                    contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(ct.Key, _guild);
                     break;
                 }
             }

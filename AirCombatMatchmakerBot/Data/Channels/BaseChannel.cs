@@ -287,9 +287,9 @@ public abstract class BaseChannel : InterfaceChannel
 
                 try
                 {
-                    var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
+                    //var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
                     var leagueInterfaceFromDatabase =
-                        Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
+                        Database.Instance.Leagues.GetILeagueByCategoryName(leagueName);
 
                     Log.WriteLine("Starting to create a league join button for: " + leagueNameString, LogLevel.VERBOSE);
 

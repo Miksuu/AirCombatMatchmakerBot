@@ -28,49 +28,41 @@ public class LeagueData : logClass<LeagueData>
         set => matches.SetValue(value);
     }
 
-    private ulong InterfaceLeagueCategoryId
-    {
-        get => interfaceLeagueCategoryId.GetValue();
-        set => interfaceLeagueCategoryId.SetValue(value);
-    }
+    //public ulong InterfaceLeagueCategoryId
+    //{
+    //    get => interfaceLeagueCategoryId.GetValue();
+    //    set => interfaceLeagueCategoryId.SetValue(value);
+    //}
 
-    [DataMember] private logClass<Teams> teams;// = new logClass<Teams>(new Teams());
-    [DataMember] private logClass<ChallengeStatus> challengeStatus;// = new logClass<ChallengeStatus>(new ChallengeStatus());
-    [DataMember] private logClass<MatchScheduler> matchScheduler;// = new logClass<MatchScheduler>(new MatchScheduler());
-    [DataMember] private logClass<Matches> matches;// = new logClass<Matches>(new Matches());
+    [DataMember] private logClass<Teams> teams = new logClass<Teams>(new Teams());
+    [DataMember] private logClass<ChallengeStatus> challengeStatus = new logClass<ChallengeStatus>(new ChallengeStatus());
+    [DataMember] private logClass<MatchScheduler> matchScheduler = new logClass<MatchScheduler>(new MatchScheduler());
+    [DataMember] private logClass<Matches> matches = new logClass<Matches>(new Matches());
 
     // Just for loading the constructor on serialization to find interfaceLeagueRef
-    [DataMember] private logClass<ulong> interfaceLeagueCategoryId = new logClass<ulong>();
+    //[DataMember] private logClass<ulong> interfaceLeagueCategoryId = new logClass<ulong>();
 
-    private InterfaceLeague interfaceLeagueRef;
+    public InterfaceLeague interfaceLeagueRef;
 
     // Loaded during the serialization
-    public LeagueData()
-    {
-        if (InterfaceLeagueCategoryId == 0)
-        {
-            return;
-        }
-
-        interfaceLeagueRef = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(InterfaceLeagueCategoryId);
-        SetReferences();
-    }
+    public LeagueData(){ }
 
     public LeagueData(InterfaceLeague _interfaceLeague)
     {
-        InterfaceLeagueCategoryId = _interfaceLeague.LeagueCategoryId;
-        interfaceLeagueRef = _interfaceLeague;
-        SetReferences();
-
-        //SerializationManager.SerializeDB();
+        //InterfaceLeagueCategoryId = _interfaceLeague.LeagueCategoryId;
+        SetReferences(_interfaceLeague);
     }
 
-    private void SetReferences()
+    // TODO: Create a method for this where everyclass implementing an interface maybe? does this
+
+    public void SetReferences(InterfaceLeague _interfaceLeague)
     {
-        teams = new logClass<Teams>(new Teams(interfaceLeagueRef));
-        challengeStatus = new logClass<ChallengeStatus>(new ChallengeStatus(interfaceLeagueRef));
-        matchScheduler = new logClass<MatchScheduler>(new MatchScheduler(interfaceLeagueRef));
-        matches = new logClass<Matches>(new Matches(interfaceLeagueRef));
+        //interfaceLeagueRef = Database.Instance.Leagues.GetILeagueByCategoryId(InterfaceLeagueCategoryId);
+        interfaceLeagueRef = _interfaceLeague;
+        Teams.interfaceLeagueRef = _interfaceLeague;
+        ChallengeStatus.interfaceLeagueRef = _interfaceLeague;
+        MatchScheduler.interfaceLeagueRef = _interfaceLeague;
+        Matches.interfaceLeagueRef = _interfaceLeague;
     }
 
     public Team FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)

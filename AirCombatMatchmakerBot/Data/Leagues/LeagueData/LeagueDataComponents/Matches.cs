@@ -58,8 +58,7 @@ public class Matches : logClass<Matches>
         {
             // Get the category by the league category name passed in the method
             var categoryKvp =
-                Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryName(
-                    interfaceLeagueRef.LeagueCategoryName.ToString());
+                Database.Instance.Leagues.GetILeagueByCategoryName(_leagueMatch.MatchLeague);
 
             string leagueMatchIdString = _leagueMatch.MatchId.ToString();
 

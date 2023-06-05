@@ -15,10 +15,10 @@ public class ChallengeStatus : logClass<ChallengeStatus>
 
     [DataMember] private logConcurrentBag<int> teamsInTheQueue = new logConcurrentBag<int>();
 
-    private InterfaceLeague interfaceLeagueRef;
+    public InterfaceLeague interfaceLeagueRef;
 
     public ChallengeStatus() { }
-    public ChallengeStatus(InterfaceLeague _interfaceLeague) 
+    public ChallengeStatus(InterfaceLeague _interfaceLeague)
     {
         interfaceLeagueRef = _interfaceLeague;
     }

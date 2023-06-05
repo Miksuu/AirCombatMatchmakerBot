@@ -6,25 +6,23 @@ using System;
 public static class CategoryRestore
 {
     public static bool CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
-        System.Collections.Generic.KeyValuePair<
-        ulong, InterfaceCategory> _categoryKvp,
-        SocketGuild _guild)
+        ulong _categoryKey, SocketGuild _guild)
     {
-        Log.WriteLine("Checking if categoryId: " + _categoryKvp.Key +
+        Log.WriteLine("Checking if categoryId: " + _categoryKey +
             " has been deleted.", LogLevel.VERBOSE);
 
-        if (_guild.CategoryChannels.Any(x => x.Id == _categoryKvp.Key))
+        if (_guild.CategoryChannels.Any(x => x.Id == _categoryKey))
         {
             Log.WriteLine("Category found, returning. ", LogLevel.VERBOSE);
             return true;
         }
 
-        Log.WriteLine("Category " + _categoryKvp.Value.CategoryType +
-            " not found, regenerating it...", LogLevel.ERROR);
+        Log.WriteLine("Category " + _categoryKey +
+            " not found, regenerating it...", LogLevel.DEBUG);
 
         // Delete the old entry from the database
-        Database.Instance.Categories.RemoveFromCreatedCategoryWithChannelWithKey(
-            _categoryKvp.Key);
+        //Database.Instance.Categories.RemoveFromCreatedCategoryWithChannelWithKey(
+        //    _categoryKey);
 
         return false;
     }

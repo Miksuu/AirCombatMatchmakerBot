@@ -29,6 +29,15 @@ public class Leagues : logClass<Leagues>
         return exists;
     }
 
+    public bool CheckIfILeagueExistsByCategoryId(ulong _categoryId)
+    {
+        bool exists = false;
+        Log.WriteLine("Checking if " + _categoryId + " exists.", LogLevel.VERBOSE);
+        exists = StoredLeagues.Any(x => x.LeagueCategoryId == _categoryId);
+        Log.WriteLine(_categoryId + " exists: " + exists, LogLevel.VERBOSE);
+        return exists;
+    }
+
     // Might want to add a check that it exists, use the method above
     public InterfaceLeague GetILeagueByCategoryName(LeagueName _leagueCategoryName)
     {
@@ -185,73 +194,46 @@ public class Leagues : logClass<Leagues>
         }
     }
 
-    public InterfaceLeague GetInterfaceLeagueCategoryFromTheDatabase(InterfaceLeague _leagueInterface)
+    public InterfaceLeague GetInterfaceLeagueCategoryFromTheDatabaseWithId(InterfaceLeague _leagueInterface, ulong _categoryId)
     {
-        Log.WriteLine("Checking if " + _leagueInterface.LeagueCategoryName +
-            " has _leagueInterface in the database", LogLevel.VERBOSE);
-
-        if (CheckIfILeagueExistsByCategoryName(_leagueInterface.LeagueCategoryName))
+        try
         {
-            Log.WriteLine(_leagueInterface.LeagueCategoryName +
-                " exists in the database!", LogLevel.DEBUG);
+            Log.WriteLine("Checking if " + _leagueInterface.LeagueCategoryName +
+                " has _leagueInterface in the database", LogLevel.VERBOSE);
 
-            InterfaceLeague? interfaceLeague = null;
-            try
+            if (CheckIfILeagueExistsByCategoryId(_categoryId))
             {
-                interfaceLeague = GetILeagueByCategoryName(_leagueInterface.LeagueCategoryName);
+                Log.WriteLine(_leagueInterface.LeagueCategoryName +
+                    " exists in the database!", LogLevel.DEBUG);
+
+                InterfaceLeague? interfaceLeague = null;
+
+                interfaceLeague = GetILeagueByCategoryId(_categoryId);
 
                 Log.WriteLine("found result: " +
                     interfaceLeague.LeagueCategoryName, LogLevel.DEBUG);
                 return interfaceLeague;
+
             }
-            catch (Exception ex)
+            else
             {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                return interfaceLeague ?? _leagueInterface;
+                Log.WriteLine(_leagueInterface.LeagueCategoryName + " does not exist in the database," +
+                    " creating a new LeagueData for it", LogLevel.DEBUG);
+
+                _leagueInterface.LeagueData = new LeagueData(_leagueInterface);
+
+                return _leagueInterface;
             }
         }
-        else
+        catch (Exception ex)
         {
-            Log.WriteLine(_leagueInterface.LeagueCategoryName + " does not exist in the database," +
-                " creating a new LeagueData for it", LogLevel.DEBUG);
-
-            _leagueInterface.LeagueData = new LeagueData(_leagueInterface);
-
-            return _leagueInterface;
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            throw new InvalidOperationException(ex.Message);
         }
-    }
-    public InterfaceLeague FindLeagueInterfaceWithLeagueCategoryId(
-        ulong _leagueCategoryId)
-    {
-        Log.WriteLine("Starting to find Ileague from db with: " +
-            _leagueCategoryId, LogLevel.VERBOSE);
 
-        //var findLeagueCategoryType =
-        //    Database.Instance.Categories.FindInterfaceCategoryWithId(_leagueCategoryId);
-        //LeagueName leagueCategoryName = findLeagueCategoryType.CategoryType;
-
-        /*
-        Log.WriteLine("found: " + nameof(leagueCategoryName) + ": " +
-            leagueCategoryName.ToString(), LogLevel.VERBOSE);
-        */
-
-        var leagueCategoryName = Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(_leagueCategoryId);
-
-        var leagueInterface =
-            LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName.LeagueCategoryName);
-
-        Log.WriteLine(
-            "Found interface " + nameof(leagueInterface) + ": " +
-            leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
-
-        InterfaceLeague dbLeagueInstance =
-            Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
-
-        Log.WriteLine(nameof(dbLeagueInstance) + " db: " +
-            dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
-        return dbLeagueInstance;
     }
 
+    /*
     public InterfaceLeague FindLeagueInterfaceWithLeagueCategoryName(
         string _categoryName)
     {
@@ -271,12 +253,12 @@ public class Leagues : logClass<Leagues>
             leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
 
         InterfaceLeague dbLeagueInstance =
-            Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
+            Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabaseWithId(leagueInterface);
 
         Log.WriteLine(nameof(dbLeagueInstance) + " db: " +
             dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
         return dbLeagueInstance;
-    }
+    }*/
 
     public (InterfaceLeague?, LeagueMatch?) FindLeagueInterfaceAndLeagueMatchWithChannelId(ulong _channelId)
     {
@@ -310,7 +292,7 @@ public class Leagues : logClass<Leagues>
         Log.WriteLine("Finding the match and its interface league with category: " + _messageCategoryId +
             " and channel id:" + _messageChannelId, LogLevel.VERBOSE);
 
-        InterfaceLeague interfaceLeague = FindLeagueInterfaceWithLeagueCategoryId(_messageCategoryId);
+        InterfaceLeague interfaceLeague = GetILeagueByCategoryId(_messageCategoryId);
 
         LeagueMatch? leagueMatch = null;
         try
@@ -325,4 +307,32 @@ public class Leagues : logClass<Leagues>
 
         return (interfaceLeague, leagueMatch);
     }
+    /*
+    public InterfaceLeague FindLeagueInterfaceWithLeagueCategoryId(
+    ulong _leagueCategoryId)
+    {
+        Log.WriteLine("Starting to find Ileague from db with: " +
+            _leagueCategoryId, LogLevel.VERBOSE);
+
+        var findLeagueCategoryType =
+            Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(_leagueCategoryId);
+        CategoryType leagueCategoryName = findLeagueCategoryType.CategoryType;
+
+        Log.WriteLine("found: " + nameof(leagueCategoryName) + ": " +
+            leagueCategoryName.ToString(), LogLevel.VERBOSE);
+
+        var leagueInterface =
+            LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueCategoryName);
+
+        Log.WriteLine(
+            "Found interface " + nameof(leagueInterface) + ": " +
+            leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
+
+        InterfaceLeague dbLeagueInstance =
+            Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabaseWithId(leagueInterface);
+
+        Log.WriteLine(nameof(dbLeagueInstance) + " db: " +
+            dbLeagueInstance.LeagueCategoryName, LogLevel.VERBOSE);
+        return dbLeagueInstance;
+    }*/
 }

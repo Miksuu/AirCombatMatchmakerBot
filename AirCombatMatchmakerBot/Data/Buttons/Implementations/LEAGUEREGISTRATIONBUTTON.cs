@@ -45,7 +45,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
         // Add try-catch here
         InterfaceLeague interfaceLeague =
-            Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(ulong.Parse(splitStrings[0]));
+            Database.Instance.Leagues.GetILeagueByCategoryId(ulong.Parse(splitStrings[0]));
         if (interfaceLeague == null)
         {
             string errorMsg = nameof(interfaceLeague) + " was null! Could not find the league.";

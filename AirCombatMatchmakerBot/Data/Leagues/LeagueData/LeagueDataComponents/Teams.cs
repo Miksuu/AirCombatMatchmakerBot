@@ -18,7 +18,7 @@ public class Teams : logClass<Teams>
     [DataMember] private logConcurrentBag<Team> teamsConcurrentBag = new logConcurrentBag<Team>();
     [DataMember] private logClass<int> currentTeamInt = new logClass<int>(1);
 
-    private InterfaceLeague interfaceLeagueRef;
+    public InterfaceLeague interfaceLeagueRef;
 
     public Teams() { }
     public Teams(InterfaceLeague _interfaceLeague) 
