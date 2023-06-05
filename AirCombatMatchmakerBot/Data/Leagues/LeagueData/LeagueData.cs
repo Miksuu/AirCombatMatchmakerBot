@@ -28,30 +28,15 @@ public class LeagueData : logClass<LeagueData>
         set => matches.SetValue(value);
     }
 
-    //public ulong InterfaceLeagueCategoryId
-    //{
-    //    get => interfaceLeagueCategoryId.GetValue();
-    //    set => interfaceLeagueCategoryId.SetValue(value);
-    //}
-
     [DataMember] private logClass<Teams> teams = new logClass<Teams>(new Teams());
     [DataMember] private logClass<ChallengeStatus> challengeStatus = new logClass<ChallengeStatus>(new ChallengeStatus());
     [DataMember] private logClass<MatchScheduler> matchScheduler = new logClass<MatchScheduler>(new MatchScheduler());
     [DataMember] private logClass<Matches> matches = new logClass<Matches>(new Matches());
 
-    // Just for loading the constructor on serialization to find interfaceLeagueRef
-    //[DataMember] private logClass<ulong> interfaceLeagueCategoryId = new logClass<ulong>();
-
     public InterfaceLeague interfaceLeagueRef;
 
     // Loaded during the serialization
     public LeagueData(){ }
-
-    public LeagueData(InterfaceLeague _interfaceLeague)
-    {
-        //InterfaceLeagueCategoryId = _interfaceLeague.LeagueCategoryId;
-        SetReferences(_interfaceLeague);
-    }
 
     // TODO: Create a method for this where everyclass implementing an interface maybe? does this
 

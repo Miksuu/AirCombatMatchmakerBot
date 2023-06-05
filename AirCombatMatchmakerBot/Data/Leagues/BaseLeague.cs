@@ -87,8 +87,6 @@ public abstract class BaseLeague : InterfaceLeague
     public BaseLeague()
     {
         thisInterfaceLeague = this;
-
-        //leagueData = new logClass<LeagueData>(new LeagueData(thisInterfaceLeague));
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
