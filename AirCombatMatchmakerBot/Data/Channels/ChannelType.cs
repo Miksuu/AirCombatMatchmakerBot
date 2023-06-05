@@ -19,9 +19,11 @@ public enum ChannelType
     [EnumMember(Value = "tacview-storage")]
     TACVIEWSTORAGE,
 
-    // League categories
+    // League channels
     [EnumMember(Value = "league-status")]
     LEAGUESTATUS,
+    [EnumMember(Value = "match-scheduler")]
+    MATCHSCHEDULERCHANNEL,
     [EnumMember(Value = "challenge-channel")]
     CHALLENGE,
     [EnumMember(Value = "match-channel")]

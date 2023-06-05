@@ -37,4 +37,10 @@ public enum ButtonName
 
     [EnumMember(Value = "PLANESELECTIONBUTTON")]
     PLANESELECTIONBUTTON,
+
+    [EnumMember(Value = "JOINMATCHSCHEDULER")]
+    JOINMATCHSCHEDULER,
+
+    [EnumMember(Value = "PLANESELECTIONBUTTON")]
+    LEAVEMATCHSCHEDULER,
 }

@@ -16,6 +16,12 @@ public class LeagueData : logClass<LeagueData>
         set => challengeStatus.SetValue(value);
     }
 
+    public MatchScheduler MatchScheduler
+    {
+        get => matchScheduler.GetValue();
+        set => matchScheduler.SetValue(value);
+    }
+
     public Matches Matches
     {
         get => matches.GetValue();
@@ -24,6 +30,7 @@ public class LeagueData : logClass<LeagueData>
 
     [DataMember] private logClass<Teams> teams = new logClass<Teams>(new Teams());
     [DataMember] private logClass<ChallengeStatus> challengeStatus = new logClass<ChallengeStatus>(new ChallengeStatus());
+    [DataMember] private logClass<MatchScheduler> matchScheduler = new logClass<MatchScheduler>(new MatchScheduler());
     [DataMember] private logClass<Matches> matches = new logClass<Matches>(new Matches());
 
     public Team FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)
