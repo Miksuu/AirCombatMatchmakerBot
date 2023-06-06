@@ -45,7 +45,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     public LeagueMatch() { }
 
     // TODO: Add interfaceLeague ref on constructor as a reference
-    public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
+    public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn, MatchState _matchState)
     {
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
         MatchLeague = _interfaceLeague.LeagueCategoryName;
@@ -74,7 +74,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
-        MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague);
+        MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague, _matchState);
 
         Log.WriteLine("Constructed a new match with teams ids: " + TeamsInTheMatch.ElementAt(0) +
             TeamsInTheMatch.ElementAt(1) + " with matchId of: " + MatchId, LogLevel.DEBUG);

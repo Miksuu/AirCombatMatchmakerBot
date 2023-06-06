@@ -15,8 +15,6 @@ public class MATCHCHANNEL : BaseChannel
             {
                 new KeyValuePair<MessageName, bool>(MessageName.MATCHSTARTMESSAGE, false),
                 new KeyValuePair<MessageName, bool>(MessageName.CONFIRMMATCHENTRYMESSAGE, false),
-                //new KeyValuePair<MessageName, bool>(MessageName.REPORTINGMESSAGE, false),
-                //new KeyValuePair<MessageName, bool>(MessageName.REPORTINGSTATUSMESSAGE, false),
             });
     }
 

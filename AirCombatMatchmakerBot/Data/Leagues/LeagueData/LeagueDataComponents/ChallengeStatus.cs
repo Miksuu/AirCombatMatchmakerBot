@@ -242,6 +242,6 @@ public class ChallengeStatus : logClass<ChallengeStatus>
 
         Log.WriteLine("Done looping.", LogLevel.VERBOSE);
 
-        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teamsToFormMatchOn);
+        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teamsToFormMatchOn, MatchState.PLAYERREADYCONFIRMATIONPHASE);
     }
 }

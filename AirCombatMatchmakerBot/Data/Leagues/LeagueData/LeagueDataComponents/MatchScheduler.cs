@@ -150,12 +150,17 @@ public class MatchScheduler : logClass<MatchScheduler>
         return availableTeamIdsToChallenge;
     }
 
-    private void MatchTwoTeamsTogether(int _foundOpponentTeam, int _seekingTeam)
+    private async void MatchTwoTeamsTogether(int _foundOpponentTeam, int _seekingTeam)
     {
         Log.WriteLine("Matching found opponent: " + _foundOpponentTeam + " vs seeker:" + _seekingTeam, LogLevel.DEBUG);
 
-        // Continuation: use existing methods to create a match between these two teams
+        int[] teams = new int[2]
+        {
+            _foundOpponentTeam,
+            _seekingTeam,
+        };
 
-        //interfaceLeagueRef.LeagueData.Matches.CreateAMatch();
+        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE);
     }
+
 }

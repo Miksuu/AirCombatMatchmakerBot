@@ -18,30 +18,29 @@ public class Matches : logClass<Matches>
 
     public Matches() { }
 
-    public async Task CreateAMatch(int[] _teamsToFormMatchOn)
+    public async Task CreateAMatch(int[] _teamsToFormMatchOn, MatchState _matchState)
     {
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1], LogLevel.VERBOSE);
-
 
         if (_teamsToFormMatchOn.Length != 2)
         {
             Log.WriteLine("Warning! teams Length was not 2!", LogLevel.ERROR);
         }
 
-        LeagueMatch newMatch = new(interfaceLeagueRef, _teamsToFormMatchOn);
+        LeagueMatch newMatch = new(interfaceLeagueRef, _teamsToFormMatchOn, _matchState);
 
         MatchesConcurrentBag.Add(newMatch);
         Log.WriteLine("Added match channel id: " + newMatch.MatchId + " to the MatchesConcurrentBag, count is now: " +
             MatchesConcurrentBag.Count, LogLevel.VERBOSE);
 
-        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch);
+        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, _matchState);
 
         Thread secondThread = new Thread(() => InitChannelOnSecondThread(newChannel));
         secondThread.Start();
     }
 
-    public async Task<InterfaceChannel> CreateAMatchChannel(LeagueMatch _leagueMatch)
+    public async Task<InterfaceChannel> CreateAMatchChannel(LeagueMatch _leagueMatch, MatchState _matchState)
     {
         try
         {
@@ -73,6 +72,17 @@ public class Matches : logClass<Matches>
                 Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryAdd(
                     interfaceChannel.ChannelId, categoryKvp.LeagueCategoryId);
             }
+
+            // Override the default constructor before posting the message if the channel is scheduled one
+            if (_matchState == MatchState.SCHEDULINGPHASE)
+            {
+                interfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
+                    new ConcurrentBag<KeyValuePair<MessageName, bool>>()
+                    {
+                        new KeyValuePair<MessageName, bool>(MessageName.MATCHSCHEDULINGMESSAGE, false),
+                    });
+            }
+
             return interfaceChannel;
         }
         catch (Exception ex) 

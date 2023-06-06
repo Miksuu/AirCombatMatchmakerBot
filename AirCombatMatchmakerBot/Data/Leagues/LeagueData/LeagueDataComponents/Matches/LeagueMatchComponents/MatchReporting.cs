@@ -46,8 +46,11 @@ public class MatchReporting : logClass<MatchReporting>
 
     public MatchReporting() { }
 
-    public MatchReporting(ConcurrentDictionary<int, string> _teamsInTheMatch, InterfaceLeague _interfaceLeague)
+    public MatchReporting(
+        ConcurrentDictionary<int, string> _teamsInTheMatch, InterfaceLeague _interfaceLeague, MatchState _matchState)
     {
+        MatchState = _matchState;
+
         foreach (var teamKvp in _teamsInTheMatch)
         {
             if (TeamIdsWithReportData.ContainsKey(teamKvp.Key))

@@ -43,4 +43,7 @@ public enum MessageName
 
     [EnumMember(Value = "MATCHSCHEDULER STATUS MESSAGE")]
     MATCHSCHEDULERSTATUSMESSAGE,
+
+    [EnumMember(Value = "MATCH SCHEDULING MESSAGE")]
+    MATCHSCHEDULINGMESSAGE,
 }
