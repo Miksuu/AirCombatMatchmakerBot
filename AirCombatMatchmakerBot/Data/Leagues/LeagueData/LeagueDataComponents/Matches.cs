@@ -31,11 +31,11 @@ public class Matches : logClass<Matches>
 
         LeagueMatch newMatch = new(interfaceLeagueRef, _teamsToFormMatchOn);
 
-        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch);
-
         MatchesConcurrentBag.Add(newMatch);
-        Log.WriteLine("Added match channel id: " + newChannel.ChannelId + " to the MatchesConcurrentBag, count is now: " +
+        Log.WriteLine("Added match channel id: " + newMatch.MatchId + " to the MatchesConcurrentBag, count is now: " +
             MatchesConcurrentBag.Count, LogLevel.VERBOSE);
+
+        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch);
 
         Thread secondThread = new Thread(() => InitChannelOnSecondThread(newChannel));
         secondThread.Start();
