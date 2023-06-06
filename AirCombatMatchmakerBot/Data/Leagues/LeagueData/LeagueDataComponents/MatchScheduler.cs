@@ -11,14 +11,45 @@ public class MatchScheduler : logClass<MatchScheduler>
         set => teamsInTheMatchmaker.SetValue(value);
     }
 
-    [DataMember]
-    private logConcurrentDictionary<int, TeamMatchmakerData> teamsInTheMatchmaker =
+    public bool MatchSchedulerActive
+    {
+        get => matchSchedulerActive.GetValue();
+        set => matchSchedulerActive.SetValue(value);
+    }
+
+    [DataMember] private logConcurrentDictionary<int, TeamMatchmakerData> teamsInTheMatchmaker =
         new logConcurrentDictionary<int, TeamMatchmakerData>();
+    [DataMember] private logClass<bool> matchSchedulerActive = new logClass<bool>();
 
     // Doesn't need to be serialized, it's gotten from a class that loads the data from it's serialization
     public InterfaceLeague interfaceLeagueRef;
 
     public MatchScheduler() { }
+
+    // TODO: Implement this method so it's executable from some command that admin can use (for initiation of a season, for example)
+    public void ActivateMatchScheduler(int _duration)
+    {
+        if (MatchSchedulerActive)
+        {
+            Log.WriteLine(interfaceLeagueRef.LeagueCategoryName + "' " + nameof(MatchScheduler) +
+                " already active, returning", LogLevel.VERBOSE);
+            return;
+        }
+
+        Log.WriteLine("Activating " + interfaceLeagueRef.LeagueCategoryName + "' " + nameof(MatchScheduler) +
+            " with duration: " + _duration, LogLevel.VERBOSE);
+
+        MatchSchedulerActive = true;
+        new LeagueMatchSchedulerEvent(_duration, interfaceLeagueRef.LeagueCategoryId);
+
+        Log.WriteLine("Done activating " + interfaceLeagueRef.LeagueCategoryName + "' " + nameof(MatchScheduler) +
+             " with duration: " + _duration, LogLevel.DEBUG);
+    }
+
+    public void DeActivateMatchScheduler()
+    {
+
+    }
 
     public Response AddTeamToTheMatchSchedulerWithPlayerId(ulong _playerId)// InterfaceMessage _interfaceMessage)
     {

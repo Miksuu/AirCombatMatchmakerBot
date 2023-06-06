@@ -61,11 +61,6 @@ public static class CategoryAndChannelManager
             Log.WriteLine("This is a league category", LogLevel.DEBUG);
 
             InterfaceCategory interfaceCategory = GetCategoryInstance(CategoryType.LEAGUETEMPLATE);
-            //interfaceCategory.CategoryType = _categoryName;
-
-            // Cached for later use (inserting the category ID)
-            //leagueCategoryName = leagueInterface.LeagueCategoryName;
-
             InterfaceLeague leagueInterface = GetLeagueInstance(_leagueName);
 
             Log.WriteLine("Got " + nameof(leagueInterface) +
@@ -81,8 +76,6 @@ public static class CategoryAndChannelManager
                 return;
             }
 
-            //BaseLeague baseLeague = new();
-            //InterfaceLeague interfaceLeague = (InterfaceLeague)baseLeague;
             InterfaceLeague interfaceLeague = null;
 
             // Add the new newly from the interface implementations added units here
@@ -181,13 +174,13 @@ public static class CategoryAndChannelManager
                 // TODO: refactor this mess
                 interfaceLeague.LeagueRoleId = role.Id;
                 interfaceLeague.LeagueCategoryId = socketCategoryChannel.Id;
-                //interfaceLeague.LeagueData.InterfaceLeagueCategoryId = socketCategoryChannel.Id;
-                //interfaceLeague.LeagueData.interfaceLeagueRef = interfaceLeague;
                 interfaceLeague.LeagueData.SetReferences(interfaceLeague);
 
                 Database.Instance.Categories.AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(
                     socketCategoryChannel.Id, interfaceCategory);
             }
+
+            interfaceLeague.LeagueData.MatchScheduler.ActivateMatchScheduler(100000000);
 
             // Handle channel checking/creation
             await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _client, role);
