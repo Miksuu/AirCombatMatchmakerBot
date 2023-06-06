@@ -36,8 +36,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
 
         Log.WriteLine("event: " + EventId + " after setting matchChannelId", LogLevel.VERBOSE);
 
-        await mcc.interfaceLeagueCached.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(
-            mcc.interfaceLeagueCached, matchChannelId);
+        await mcc.interfaceLeagueCached.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(matchChannelId);
 
         Log.WriteLine("event: " + EventId + " after removed from bag with: " + matchChannelId, LogLevel.VERBOSE);
 

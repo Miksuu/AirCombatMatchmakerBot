@@ -218,7 +218,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             int matchIdTemp = MatchId;
 
             Database.Instance.ArchivedLeagueMatches.Add(
-                await _interfaceLeague.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(_interfaceLeague, MatchChannelId));
+                await _interfaceLeague.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(MatchChannelId));
             Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
                 Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
 

@@ -19,20 +19,15 @@ public class MatchScheduler : logClass<MatchScheduler>
     public InterfaceLeague interfaceLeagueRef;
 
     public MatchScheduler() { }
-    public MatchScheduler(InterfaceLeague _interfaceLeague)
-    {
-        interfaceLeagueRef = _interfaceLeague;
-    }
 
-    public Response AddTeamToTheMatchSchedulerWithPlayerId(
-        InterfaceLeague _interfaceLeague, ulong _playerId)// InterfaceMessage _interfaceMessage)
+    public Response AddTeamToTheMatchSchedulerWithPlayerId(ulong _playerId)// InterfaceMessage _interfaceMessage)
     {
         try
         {
             Team playerTeam =
-                _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+                interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
 
-            Log.WriteLine("Team found: " + playerTeam.GetTeamName(_interfaceLeague.LeaguePlayerCountPerTeam) +
+            Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
                 " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.", LogLevel.VERBOSE);
 
             if (TeamsInTheMatchmaker.Any(x => x.Key == playerTeam.TeamId))
@@ -52,11 +47,10 @@ public class MatchScheduler : logClass<MatchScheduler>
         }
     }
 
-    public Response RemoveTeamFromTheMatchSchedulerWithPlayerId(
-        InterfaceLeague _interfaceLeague, ulong _playerId)
+    public Response RemoveTeamFromTheMatchSchedulerWithPlayerId(ulong _playerId)
     {
         Team playerTeam =
-            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+            interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
 
         Log.WriteLine("Removing Team: " + playerTeam + " (" +
             playerTeam.TeamId + ") from the queue", LogLevel.VERBOSE);

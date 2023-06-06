@@ -39,8 +39,7 @@ public class LEAVEMATCHSCHEDULER : BaseButton
         var matchScheduler = lcc.interfaceLeagueCached.LeagueData.MatchScheduler;
         Log.WriteLine(nameof(matchScheduler) + matchScheduler, LogLevel.DEBUG);
 
-        var response = matchScheduler.RemoveTeamFromTheMatchSchedulerWithPlayerId(
-            lcc.interfaceLeagueCached, playerId);
+        var response = matchScheduler.RemoveTeamFromTheMatchSchedulerWithPlayerId(playerId);
 
         //_interfaceMessage.GenerateAndModifyTheMessage();
         //Log.WriteLine("After modifying message", LogLevel.VERBOSE);

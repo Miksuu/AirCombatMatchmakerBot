@@ -18,10 +18,6 @@ public class ChallengeStatus : logClass<ChallengeStatus>
     public InterfaceLeague interfaceLeagueRef;
 
     public ChallengeStatus() { }
-    public ChallengeStatus(InterfaceLeague _interfaceLeague)
-    {
-        interfaceLeagueRef = _interfaceLeague;
-    }
 
     public Response AddTeamFromPlayerIdToTheQueue(ulong _playerId, InterfaceMessage _interfaceMessage)
     {

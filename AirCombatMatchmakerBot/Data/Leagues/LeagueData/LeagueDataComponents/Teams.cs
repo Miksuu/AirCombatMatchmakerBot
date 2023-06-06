@@ -21,10 +21,6 @@ public class Teams : logClass<Teams>
     public InterfaceLeague interfaceLeagueRef;
 
     public Teams() { }
-    public Teams(InterfaceLeague _interfaceLeague) 
-    {
-        interfaceLeagueRef = _interfaceLeague;
-    }
 
     public void AddToConcurrentBagOfTeams(Team _Team)
     {
