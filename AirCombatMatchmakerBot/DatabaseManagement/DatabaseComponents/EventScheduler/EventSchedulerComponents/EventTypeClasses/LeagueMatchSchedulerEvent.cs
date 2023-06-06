@@ -32,69 +32,20 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
             Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
             throw new InvalidOperationException(nameof(lcc) + " was null!");
         }
-
-        /* NOT IMPLEMENTED YET
-        InterfaceCategory interfaceCategory;
-
-        try
-        {
-            interfaceCategory =
-                Database.Instance.Categories.FindInterfaceCategoryWithId(categoryId);
-
-            Log.WriteLine("Event: " + EventId + " before " +
-                nameof(interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory), LogLevel.VERBOSE);
-
-            if (interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory(channelId))
-            {
-                InterfaceChannel interfaceChannel;
-
-
-                Log.WriteLine("Event: " + EventId + " inside " +
-                    nameof(interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory), LogLevel.VERBOSE);
-
-                interfaceChannel = interfaceCategory.FindInterfaceChannelWithIdInTheCategory(channelId);
-
-
-                Log.WriteLine("Event: " + EventId + " found: " + interfaceChannel.ChannelName, LogLevel.VERBOSE);
-                await interfaceChannel.DeleteThisChannel(interfaceCategory, interfaceChannel, nameMustContain);
-                Log.WriteLine("Event: " + EventId + " after deletion of: " + interfaceChannel.ChannelName, LogLevel.VERBOSE);
-            }
-            else
-            {
-                //Log.WriteLine("Finished an event without deleting the channel, because it didn't exist!", LogLevel.WARNING);
-            }
-        }
-        catch(Exception ex)
-        {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-            return;
-        }
-
-        Log.WriteLine("Done executing event: " + nameof(DeleteChannelEvent) + " with: " +
-            categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.DEBUG);
-
-        if (!_serialize) return;
-
-        await SerializationManager.SerializeDB();*/
     }
 
     public override void CheckTheScheduledEventStatus()
     {
         try
         {
-            /*
-            InterfaceMessage confirmationMessage =
-                Database.Instance.Categories.FindInterfaceCategoryWithId(
-                    LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
-                        MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannel(
-                            MessageName.CONFIRMATIONMESSAGE);
+            lcc = new LeagueCategoryComponents(LeagueCategoryIdCached);
+            if (lcc.interfaceLeagueCached == null)
+            {
+                Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
+                throw new InvalidOperationException(nameof(lcc) + " was null!");
+            }
 
-            Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " +
-                confirmationMessage.MessageDescription, LogLevel.DEBUG);
-
-            //var timeLeft = TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
-
-            confirmationMessage.GenerateAndModifyTheMessage();*/
+            lcc.interfaceLeagueCached.LeagueData.MatchScheduler.CheckCurrentStateOfTheMatchmakerAndAssignMatches();
         }
         catch (Exception ex)
         {

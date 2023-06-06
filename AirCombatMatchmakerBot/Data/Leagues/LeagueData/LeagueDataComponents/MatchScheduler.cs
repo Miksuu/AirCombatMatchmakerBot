@@ -193,5 +193,4 @@ public class MatchScheduler : logClass<MatchScheduler>
 
         await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE);
     }
-
 }
