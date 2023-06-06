@@ -125,7 +125,7 @@ public class MatchScheduler : logClass<MatchScheduler>
                 if (availableTeamsToChallenge.Count > 0)
                 {
                     int randomTeamId = GetRandomTeamId(availableTeamsToChallenge);
-                    MatchTwoTeamsTogether(randomTeamId, teamId);
+                    MatchTwoTeamsTogether(TeamsInTheMatchmaker.First(x => x.Key == randomTeamId), teamKvp);
                 }
                 else
                 {
@@ -181,14 +181,18 @@ public class MatchScheduler : logClass<MatchScheduler>
         return availableTeamIdsToChallenge;
     }
 
-    private async void MatchTwoTeamsTogether(int _foundOpponentTeam, int _seekingTeam)
+    private async void MatchTwoTeamsTogether
+        (KeyValuePair<int, TeamMatchmakerData> _foundOpponentTeam, KeyValuePair<int, TeamMatchmakerData> _seekingTeam)
     {
-        Log.WriteLine("Matching found opponent: " + _foundOpponentTeam + " vs seeker:" + _seekingTeam, LogLevel.DEBUG);
+        _foundOpponentTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH;
+        _seekingTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH; 
+
+        Log.WriteLine("Matching found opponent: " + _foundOpponentTeam.Key + " vs seeker:" + _seekingTeam.Key, LogLevel.DEBUG);
 
         int[] teams = new int[2]
         {
-            _foundOpponentTeam,
-            _seekingTeam,
+            _foundOpponentTeam.Key,
+            _seekingTeam.Key,
         };
 
         await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE);
