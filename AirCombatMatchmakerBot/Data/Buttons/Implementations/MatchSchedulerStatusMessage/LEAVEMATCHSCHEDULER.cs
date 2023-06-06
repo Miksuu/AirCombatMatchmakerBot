@@ -5,7 +5,7 @@ using Discord.WebSocket;
 [DataContract]
 public class LEAVEMATCHSCHEDULER : BaseButton
 {
-    LeagueCategoryComponents lcc = new LeagueCategoryComponents();
+    LeagueCategoryComponents lcc;
     public LEAVEMATCHSCHEDULER()
     {
         buttonName = ButtonName.LEAVEMATCHSCHEDULER;
@@ -28,7 +28,7 @@ public class LEAVEMATCHSCHEDULER : BaseButton
         Log.WriteLine("Starting processing a leave by: " +
             playerId + " in channel: " + channelId, LogLevel.VERBOSE);
 
-        lcc.FindCategorysLeagueAndInsertItToTheCache(_interfaceMessage.MessageCategoryId);
+        lcc = new LeagueCategoryComponents(_interfaceMessage.MessageCategoryId);
         if (lcc.interfaceLeagueCached == null)
         {
             string errorMsg = nameof(lcc.interfaceLeagueCached) + " was null!";

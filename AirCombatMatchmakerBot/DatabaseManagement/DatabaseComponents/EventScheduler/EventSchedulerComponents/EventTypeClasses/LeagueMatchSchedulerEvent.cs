@@ -27,10 +27,10 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
             categoryId, LogLevel.WARNING);
 
         lcc = new LeagueCategoryComponents(LeagueCategoryIdCached);
-        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
+        if (lcc.interfaceLeagueCached == null)
         {
-            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
-            throw new InvalidOperationException(nameof(mcc) + " was null!");
+            Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
+            throw new InvalidOperationException(nameof(lcc) + " was null!");
         }
 
         /* NOT IMPLEMENTED YET

@@ -5,7 +5,7 @@ using Discord.WebSocket;
 [DataContract]
 public class CHALLENGEBUTTON : BaseButton
 {
-    LeagueCategoryComponents lcc = new LeagueCategoryComponents();
+    LeagueCategoryComponents lcc;
     public CHALLENGEBUTTON()
     {
         buttonName = ButtonName.CHALLENGEBUTTON;
@@ -28,7 +28,7 @@ public class CHALLENGEBUTTON : BaseButton
         Log.WriteLine("Starting processing a challenge by: " +
             playerId + " in channel: " + channelId, LogLevel.VERBOSE);
 
-        lcc.FindCategorysLeagueAndInsertItToTheCache(_interfaceMessage.MessageCategoryId);
+        lcc = new LeagueCategoryComponents(_interfaceMessage.MessageCategoryId);
         if (lcc.interfaceLeagueCached == null)
         {
             string errorMsg = nameof(lcc.interfaceLeagueCached) + " was null!";
