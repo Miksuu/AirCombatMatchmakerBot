@@ -79,6 +79,7 @@ public class Matches : logClass<Matches>
                 interfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
                     new ConcurrentBag<KeyValuePair<MessageName, bool>>()
                     {
+                        new KeyValuePair<MessageName, bool>(MessageName.MATCHSTARTMESSAGE, false),
                         new KeyValuePair<MessageName, bool>(MessageName.MATCHSCHEDULINGMESSAGE, false),
                     });
             }
