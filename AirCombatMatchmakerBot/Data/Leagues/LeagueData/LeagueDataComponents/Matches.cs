@@ -36,7 +36,7 @@ public class Matches : logClass<Matches>
 
         InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, _matchState);
 
-        Thread secondThread = new Thread(() => InitChannelOnSecondThread(newChannel));
+        Thread secondThread = new Thread(() => InitChannelOnSecondThread(newMatch, newChannel));
         secondThread.Start();
     }
 
@@ -93,7 +93,7 @@ public class Matches : logClass<Matches>
         }
     }
 
-    public async void InitChannelOnSecondThread(InterfaceChannel _interfaceChannel)
+    public async void InitChannelOnSecondThread(LeagueMatch _leagueMatch, InterfaceChannel _interfaceChannel)
     {
         var client = BotReference.GetClientRef();
         if (client == null)
@@ -104,9 +104,12 @@ public class Matches : logClass<Matches>
 
         await _interfaceChannel.PostChannelMessages(client);
 
-        // Schedule the match queue timeout (if the players don't accept it in the time)
-        new MatchQueueAcceptEvent(30, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
-
+        // Schedule the match queue timeout (if the players don't accept it in the time), only if the match is in the
+        if (_leagueMatch.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
+        {
+            new MatchQueueAcceptEvent(30, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
+        }
+        
         await SerializationManager.SerializeDB();
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
