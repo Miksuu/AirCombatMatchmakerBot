@@ -63,6 +63,9 @@ public class REPORTSCOREBUTTON : BaseButton
             return new Response(errorMsg, false);
         }
 
+        //Log.WriteLine(mcc.leagueMatchCached.ToString(), LogLevel.VERBOSE);
+        //Log.WriteLine(mcc.leagueMatchCached.MatchReporting.ToString(), LogLevel.VERBOSE);
+
         Response response = mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
             playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE, 

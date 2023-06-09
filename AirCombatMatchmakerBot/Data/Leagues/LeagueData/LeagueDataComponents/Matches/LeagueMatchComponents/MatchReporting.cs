@@ -68,7 +68,7 @@ public class MatchReporting : logClass<MatchReporting>
                 Log.WriteLine("before toAdd", LogLevel.DEBUG);
 
                 var toAdd = (teamKvp.Key, new ReportData(teamKvp.Value,
-                    _interfaceLeague.LeagueData.Teams.FindTeamById(teamKvp.Key).Players));
+                    interfaceLeagueRef.LeagueData.Teams.FindTeamById(teamKvp.Key).Players));
 
                 Log.WriteLine("after toAdd", LogLevel.DEBUG);
 
@@ -396,8 +396,7 @@ public class MatchReporting : logClass<MatchReporting>
         return teamsInTheMatch;
     }
 
-    public List<ReportData> GetTeamReportDatasOfTheMatchWithPlayerId(
-        InterfaceLeague _interfaceLeague, LeagueMatch _leagueMatch, ulong _playerId)
+    public List<ReportData> GetTeamReportDatasOfTheMatchWithPlayerId(LeagueMatch _leagueMatch, ulong _playerId)
     {
         Team foundTeam;
         List<Team> foundTeams = new List<Team>();
@@ -415,11 +414,11 @@ public class MatchReporting : logClass<MatchReporting>
 
         try
         {
-            foundTeam = _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+            foundTeam = interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
             foundTeams.Add(foundTeam);
 
             int otherTeamId = _leagueMatch.TeamsInTheMatch.FirstOrDefault(t => t.Key != foundTeam.TeamId).Key;
-            Team otherTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(otherTeamId);
+            Team otherTeam = interfaceLeagueRef.LeagueData.FindActiveTeamWithTeamId(otherTeamId);
 
             foundTeams.Add(otherTeam);
         }
