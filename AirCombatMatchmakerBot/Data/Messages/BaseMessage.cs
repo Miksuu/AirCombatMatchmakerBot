@@ -189,7 +189,7 @@ public abstract class BaseMessage : InterfaceMessage
                     else
                     {
                         ulong[] playerIdsInTheMatch =
-                            mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray(mcc.interfaceLeagueCached);
+                            mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray();
                         foreach (ulong id in playerIdsInTheMatch)
                         {
                             finalMentionMessage += "<@" + id.ToString() + "> ";

@@ -7,7 +7,10 @@ public enum CommandName
 {
     [EnumMember(Value = "COMMENT")]
     COMMENT = 0,
-    
+
     [EnumMember(Value = "REMOVEPLAYER")]
     REMOVEPLAYER = 1,
+
+    [EnumMember(Value = "SCHEDULE")]
+    SCHEDULE = 2,
 }

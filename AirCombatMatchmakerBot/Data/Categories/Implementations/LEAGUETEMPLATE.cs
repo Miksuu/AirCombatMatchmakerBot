@@ -15,6 +15,7 @@ public class LEAGUETEMPLATE : BaseCategory
             ChannelType.MATCHCHANNEL,
             ChannelType.MATCHREPORTSCHANNEL,
             ChannelType.CHALLENGE,
+            ChannelType.MATCHSCHEDULERCHANNEL,
         };
     }
 

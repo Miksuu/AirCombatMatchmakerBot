@@ -14,44 +14,49 @@ public class Matches : logClass<Matches>
 
     [DataMember] private logConcurrentBag<LeagueMatch> matchesConcurrentBag = new logConcurrentBag<LeagueMatch>();
 
-    public async Task CreateAMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
+    public InterfaceLeague interfaceLeagueRef;
+
+    public Matches() { }
+
+    public void SetInterfaceLeagueReferencesForTheMatches(InterfaceLeague _interfaceLeagueRef)
+    {
+        interfaceLeagueRef = _interfaceLeagueRef;
+
+        foreach (var item in MatchesConcurrentBag)
+        {
+            item.SetInterfaceLeagueReferencesForTheMatch(interfaceLeagueRef);
+        }
+    }
+
+    public async Task CreateAMatch(int[] _teamsToFormMatchOn, MatchState _matchState)
     {
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1], LogLevel.VERBOSE);
-
-        var client = BotReference.GetClientRef();
-        if (client == null)
-        {
-            Exceptions.BotClientRefNull();
-            return;
-        }
 
         if (_teamsToFormMatchOn.Length != 2)
         {
             Log.WriteLine("Warning! teams Length was not 2!", LogLevel.ERROR);
         }
 
-        LeagueMatch newMatch = new(_interfaceLeague, _teamsToFormMatchOn);
-
-        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, _interfaceLeague, client);
+        LeagueMatch newMatch = new(interfaceLeagueRef, _teamsToFormMatchOn, _matchState);
 
         MatchesConcurrentBag.Add(newMatch);
-        Log.WriteLine("Added match channel id: " + newChannel.ChannelId + " to the MatchesConcurrentBag, count is now: " +
+        Log.WriteLine("Added match channel id: " + newMatch.MatchId + " to the MatchesConcurrentBag, count is now: " +
             MatchesConcurrentBag.Count, LogLevel.VERBOSE);
 
-        Thread secondThread = new Thread(() => InitChannelOnSecondThread(client, newChannel, _interfaceLeague.LeagueCategoryId));
+        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, _matchState);
+
+        Thread secondThread = new Thread(() => InitChannelOnSecondThread(newMatch, newChannel));
         secondThread.Start();
     }
 
-    public async Task<InterfaceChannel> CreateAMatchChannel(
-        LeagueMatch _leagueMatch, InterfaceLeague _interfaceLeague, DiscordSocketClient _client)
+    public async Task<InterfaceChannel> CreateAMatchChannel(LeagueMatch _leagueMatch, MatchState _matchState)
     {
         try
         {
             // Get the category by the league category name passed in the method
             var categoryKvp =
-                Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
-                    _interfaceLeague.LeagueCategoryName);
+                Database.Instance.Leagues.GetILeagueByCategoryName(_leagueMatch.MatchLeague);
 
             string leagueMatchIdString = _leagueMatch.MatchId.ToString();
 
@@ -61,11 +66,13 @@ public class Matches : logClass<Matches>
             Log.WriteLine("Starting to create a new match channel: " +
                 overriddenMatchName, LogLevel.VERBOSE);
 
+            var dbRegularCategory = Database.Instance.Categories.FindInterfaceCategoryWithId(categoryKvp.LeagueCategoryId);
+
             // Prepare the match with the ID of the current new match
-            InterfaceChannel interfaceChannel = await categoryKvp.CreateSpecificChannelFromChannelTypeWithoutRole(
-                    ChannelType.MATCHCHANNEL, categoryKvp.SocketCategoryChannelId,
+            InterfaceChannel interfaceChannel = await dbRegularCategory.CreateSpecificChannelFromChannelTypeWithoutRole(
+                    ChannelType.MATCHCHANNEL, categoryKvp.LeagueCategoryId,
                     overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
-                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague));
+                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray());
 
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
@@ -73,8 +80,21 @@ public class Matches : logClass<Matches>
                 interfaceChannel.ChannelId))
             {
                 Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryAdd(
-                    interfaceChannel.ChannelId, categoryKvp.SocketCategoryChannelId);
+                    interfaceChannel.ChannelId, categoryKvp.LeagueCategoryId);
             }
+
+            // Override the default constructor before posting the message if the channel is scheduled one
+            // TODO: Perhaps create proper base class out of this one
+            if (_matchState == MatchState.SCHEDULINGPHASE)
+            {
+                interfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
+                    new ConcurrentBag<KeyValuePair<MessageName, bool>>()
+                    {
+                        new KeyValuePair<MessageName, bool>(MessageName.MATCHSTARTMESSAGE, false),
+                        new KeyValuePair<MessageName, bool>(MessageName.MATCHSCHEDULINGMESSAGE, false),
+                    });
+            }
+
             return interfaceChannel;
         }
         catch (Exception ex) 
@@ -84,14 +104,23 @@ public class Matches : logClass<Matches>
         }
     }
 
-    public async void InitChannelOnSecondThread(
-        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, ulong _leagueCategoryId)
+    public async void InitChannelOnSecondThread(LeagueMatch _leagueMatch, InterfaceChannel _interfaceChannel)
     {
-        await _interfaceChannel.PostChannelMessages(_client);
+        var client = BotReference.GetClientRef();
+        if (client == null)
+        {
+            Exceptions.BotClientRefNull();
+            return;
+        }
 
-        // Schedule the match queue timeout (if the players don't accept it in the time)
-        new MatchQueueAcceptEvent(30, _leagueCategoryId, _interfaceChannel.ChannelId);
+        await _interfaceChannel.PostChannelMessages(client);
 
+        // Schedule the match queue timeout (if the players don't accept it in the time), only if the match is in the
+        if (_leagueMatch.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
+        {
+            new MatchQueueAcceptEvent(30, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
+        }
+        
         await SerializationManager.SerializeDB();
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
@@ -124,19 +153,19 @@ public class Matches : logClass<Matches>
         return foundMatch;
     }
 
-    public Task<LeagueMatch?> FindMatchAndRemoveItFromConcurrentBag(InterfaceLeague _interfaceLeague, ulong _matchChannelId)
+    public Task<LeagueMatch?> FindMatchAndRemoveItFromConcurrentBag(ulong _matchChannelId)
     {
-        Log.WriteLine("Removing: " + _matchChannelId + " on: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("Removing: " + _matchChannelId + " on: " + interfaceLeagueRef.LeagueCategoryName, LogLevel.VERBOSE);
 
         LeagueMatch tempMatch = null;
         ConcurrentBag<LeagueMatch> updatedMatchesConcurrentBag = new ConcurrentBag<LeagueMatch>();
 
-        while (_interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? match))
+        while (interfaceLeagueRef.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? match))
         {
             if (match.MatchChannelId == _matchChannelId)
             {
                 Log.WriteLine("Removed matchId: " + match.MatchId + " on ch: " + _matchChannelId +
-                    " on league: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+                    " on league: " + interfaceLeagueRef.LeagueCategoryName, LogLevel.VERBOSE);
                 tempMatch = match;
             }
             else
@@ -145,7 +174,7 @@ public class Matches : logClass<Matches>
             }
         }
 
-        _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag = updatedMatchesConcurrentBag;
+        interfaceLeagueRef.LeagueData.Matches.MatchesConcurrentBag = updatedMatchesConcurrentBag;
 
         return Task.FromResult(tempMatch);
     }

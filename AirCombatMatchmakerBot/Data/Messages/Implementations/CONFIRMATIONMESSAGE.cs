@@ -61,14 +61,13 @@ public class CONFIRMATIONMESSAGE : BaseMessage
             finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
         }
 
-
         finalMessage += "You can either Confirm/Dispute the result below.";
 
         if (confirmedTeamsCounter > 1)
         {
             if (mcc.leagueMatchCached.MatchReporting.MatchState != MatchState.MATCHDONE)
             {
-                mcc.leagueMatchCached.FinishTheMatch(mcc.interfaceLeagueCached);
+                mcc.leagueMatchCached.FinishTheMatch();
             }
             else
             {

@@ -15,14 +15,17 @@ public class ChallengeStatus : logClass<ChallengeStatus>
 
     [DataMember] private logConcurrentBag<int> teamsInTheQueue = new logConcurrentBag<int>();
 
-    public Response AddTeamFromPlayerIdToTheQueue(
-        InterfaceLeague _interfaceLeague, ulong _playerId, InterfaceMessage _interfaceMessage)
+    public InterfaceLeague interfaceLeagueRef;
+
+    public ChallengeStatus() { }
+
+    public Response AddTeamFromPlayerIdToTheQueue(ulong _playerId, InterfaceMessage _interfaceMessage)
     {
         Team playerTeam;
         try
         {
             playerTeam =
-                _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+                interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
         }
         catch (Exception ex)
         {
@@ -30,7 +33,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             return new Response(ex.Message, false);
         }
 
-        Log.WriteLine("Team found: " + playerTeam.GetTeamName(_interfaceLeague.LeaguePlayerCountPerTeam) +
+        Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
             " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.", LogLevel.VERBOSE);
 
         // Add to method
@@ -41,8 +44,8 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             var challengeStatusOfTheTempLeague = league.LeagueData.ChallengeStatus;
 
             Log.WriteLine("Loop on " + nameof(league) + ": " + league.LeagueCategoryName +
-                " with cache: " + _interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
-            if (league.LeagueCategoryName == _interfaceLeague.LeagueCategoryName)
+                " with cache: " + interfaceLeagueRef.LeagueCategoryName, LogLevel.VERBOSE);
+            if (league.LeagueCategoryName == interfaceLeagueRef.LeagueCategoryName)
             {
                 Log.WriteLine("on " + league.LeagueCategoryName + ", skipping", LogLevel.VERBOSE);
                 continue;
@@ -53,7 +56,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             if (!league.LeagueData.CheckIfPlayerIsParcipiatingInTheLeague(_playerId))
             {
                 Log.WriteLine(_playerId + " is not parcipiating in this league: " +
-                    _interfaceLeague.LeagueCategoryName + ", disregarding", LogLevel.VERBOSE);
+                    interfaceLeagueRef.LeagueCategoryName + ", disregarding", LogLevel.VERBOSE);
                 continue;
             }
 
@@ -80,7 +83,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             Log.WriteLine(_playerId + " not in the queue name: " + league.LeagueCategoryName, LogLevel.VERBOSE);
         }
 
-        string response = PostChallengeToThisLeague(_interfaceLeague, playerTeam);
+        string response = PostChallengeToThisLeague(playerTeam);
         if (response == "alreadyInQueue")
         {
             Log.WriteLine(_playerId + " was already in the queue!", LogLevel.VERBOSE);
@@ -110,15 +113,15 @@ public class ChallengeStatus : logClass<ChallengeStatus>
 
     // Returns the teams in the queue as a string
     // (useful for printing, in log on the challenge channel)
-    public string ReturnTeamsInTheQueueOfAChallenge(InterfaceLeague _interfaceLeague)
+    public string ReturnTeamsInTheQueueOfAChallenge()
     {
         string teamsString = string.Empty;
         foreach (int teamInt in TeamsInTheQueue)
         {
             try
             {
-                Team team = _interfaceLeague.LeagueData.Teams.FindTeamById(_interfaceLeague.LeaguePlayerCountPerTeam, teamInt);
-                teamsString += team.GetTeamInAString(true, _interfaceLeague.LeaguePlayerCountPerTeam);
+                Team team = interfaceLeagueRef.LeagueData.Teams.FindTeamById(teamInt);
+                teamsString += team.GetTeamInAString(true, interfaceLeagueRef.LeaguePlayerCountPerTeam);
                 teamsString += "\n";
             }
             catch(Exception ex)
@@ -130,11 +133,11 @@ public class ChallengeStatus : logClass<ChallengeStatus>
         return teamsString;
     }
 
-    public string PostChallengeToThisLeague(InterfaceLeague _interfaceLeague, Team _playerTeam)
+    public string PostChallengeToThisLeague(Team _playerTeam)
     {
         if (CheckIfPlayerTeamIsAlreadyInQueue(_playerTeam))
         {
-            Log.WriteLine("Team " + _playerTeam.GetTeamName(_interfaceLeague.LeaguePlayerCountPerTeam) +
+            Log.WriteLine("Team " + _playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
                 " (" + _playerTeam.TeamId + ")" + " was already in queue!", LogLevel.DEBUG);
             return "alreadyInQueue";
         }
@@ -145,48 +148,45 @@ public class ChallengeStatus : logClass<ChallengeStatus>
         Log.WriteLine("Done adding the team to the queue. Count is now: " +
             TeamsInTheQueue.Count, LogLevel.VERBOSE);
 
-        CheckChallengeStatus(_interfaceLeague);
+        CheckChallengeStatus();
 
-        string teamsInTheQueue = ReturnTeamsInTheQueueOfAChallenge(_interfaceLeague);
+        string teamsInTheQueue = ReturnTeamsInTheQueueOfAChallenge();
 
         Log.WriteLine("Teams in the queue: " + teamsInTheQueue, LogLevel.VERBOSE);
 
         return "";
     }
 
-    public string RemoveChallengeFromThisLeague(
-        ulong _playerId, int _leaguePlayerCountPerTeam, InterfaceLeague _interfaceLeague)
+    public string RemoveChallengeFromThisLeague(ulong _playerId)
     {
-        Team team;
+
         try
         {
-            team =
-                _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+            Team team =
+                interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+            Log.WriteLine("Team found: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
+                " (" + team.TeamId + ")" + " adding it to the challenge queue: " + TeamsInTheQueue, LogLevel.VERBOSE);
+
+            if (!CheckIfPlayerTeamIsAlreadyInQueue(team))
+            {
+                Log.WriteLine(team.TeamId + " not in queue", LogLevel.VERBOSE);
+                return "notInTheQueue";
+            }
+
+            RemoveFromTeamsInTheQueue(team);
+
+            string teamsInTheQueue =
+                ReturnTeamsInTheQueueOfAChallenge();
+
+            Log.WriteLine("Teams in the queue: " + teamsInTheQueue, LogLevel.VERBOSE);
+
+            return teamsInTheQueue;
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return ex.Message;
-        }            
-
-        Log.WriteLine("Team found: " + team.GetTeamName(_leaguePlayerCountPerTeam) +
-            " (" + team.TeamId + ")" + " adding it to the challenge queue: " +
-            TeamsInTheQueue, LogLevel.VERBOSE);
-
-        if (!CheckIfPlayerTeamIsAlreadyInQueue(team))
-        {
-            Log.WriteLine(team.TeamId + " not in queue", LogLevel.VERBOSE);
-            return "notInTheQueue";
         }
-
-        RemoveFromTeamsInTheQueue(team);
-
-        string teamsInTheQueue =
-            ReturnTeamsInTheQueueOfAChallenge(_interfaceLeague);
-
-        Log.WriteLine("Teams in the queue: " + teamsInTheQueue, LogLevel.VERBOSE);
-
-        return teamsInTheQueue;
     }
 
     public bool CheckIfPlayerTeamIsAlreadyInQueue(Team _playerTeam)
@@ -211,7 +211,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
         return false;
     }
 
-    public async void CheckChallengeStatus(InterfaceLeague _interfaceLeague)
+    public async void CheckChallengeStatus()
     {
         int[] teamsToFormMatchOn = new int[2];
 
@@ -242,6 +242,6 @@ public class ChallengeStatus : logClass<ChallengeStatus>
 
         Log.WriteLine("Done looping.", LogLevel.VERBOSE);
 
-        await _interfaceLeague.LeagueData.Matches.CreateAMatch(_interfaceLeague, teamsToFormMatchOn);
+        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teamsToFormMatchOn, MatchState.PLAYERREADYCONFIRMATIONPHASE);
     }
 }

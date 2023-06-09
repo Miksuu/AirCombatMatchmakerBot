@@ -37,8 +37,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
         {
             try
             {
-                Team team = mcc.interfaceLeagueCached.LeagueData.Teams.FindTeamById(
-                    mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam, teamKvp.Key);
+                Team team = mcc.interfaceLeagueCached.LeagueData.Teams.FindTeamById(teamKvp.Key);
 
                 string teamMembers =
                     team.GetTeamInAString(

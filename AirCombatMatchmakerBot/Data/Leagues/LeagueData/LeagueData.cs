@@ -16,6 +16,12 @@ public class LeagueData : logClass<LeagueData>
         set => challengeStatus.SetValue(value);
     }
 
+    public MatchScheduler MatchScheduler
+    {
+        get => matchScheduler.GetValue();
+        set => matchScheduler.SetValue(value);
+    }
+
     public Matches Matches
     {
         get => matches.GetValue();
@@ -24,7 +30,25 @@ public class LeagueData : logClass<LeagueData>
 
     [DataMember] private logClass<Teams> teams = new logClass<Teams>(new Teams());
     [DataMember] private logClass<ChallengeStatus> challengeStatus = new logClass<ChallengeStatus>(new ChallengeStatus());
+    [DataMember] private logClass<MatchScheduler> matchScheduler = new logClass<MatchScheduler>(new MatchScheduler());
     [DataMember] private logClass<Matches> matches = new logClass<Matches>(new Matches());
+
+    public InterfaceLeague interfaceLeagueRef;
+
+    // Loaded during the serialization
+    public LeagueData(){ }
+
+    // TODO: Create a method for this where everyclass implementing an interface maybe? does this
+
+    public void SetReferences(InterfaceLeague _interfaceLeague)
+    {
+        //interfaceLeagueRef = Database.Instance.Leagues.GetILeagueByCategoryId(InterfaceLeagueCategoryId);
+        interfaceLeagueRef = _interfaceLeague;
+        Teams.interfaceLeagueRef = _interfaceLeague;
+        ChallengeStatus.interfaceLeagueRef = _interfaceLeague;
+        MatchScheduler.interfaceLeagueRef = _interfaceLeague;
+        Matches.SetInterfaceLeagueReferencesForTheMatches(_interfaceLeague);
+    }
 
     public Team FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)
     {

@@ -3,7 +3,7 @@
 public class TacviewManager
 {
     public static Task SaveTacviewFromUserUpload(
-    CategoryType _leagueName, int _matchId, SocketMessage _message)
+    LeagueName _leagueName, int _matchId, SocketMessage _message)
     {
         Log.WriteLine("Saving tacview from user upload on league: " + _leagueName + ", on matchId:" +
             _matchId + ", from user: " + _message.Author.Id, LogLevel.VERBOSE);

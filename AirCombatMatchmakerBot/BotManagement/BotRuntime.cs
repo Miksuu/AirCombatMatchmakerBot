@@ -53,8 +53,11 @@ public class BotRuntimeManager
                 }
 
                 // Delete the old tacviews so it doesn't throw error from old files
-                string pathToDelete = @"C:\AirCombatMatchmakerBot\Data\Tacviews";
-                if (Directory.Exists(pathToDelete)) Directory.Delete(pathToDelete, true);
+                string tacviewPathToDelete = @"C:\AirCombatMatchmakerBot\Data\Tacviews";
+                if (Directory.Exists(tacviewPathToDelete)) Directory.Delete(tacviewPathToDelete, true);
+
+                string logsPathToDelete = @"C:\AirCombatMatchmakerBot\Logs";
+                if (Directory.Exists(tacviewPathToDelete)) Directory.Delete(logsPathToDelete, true);
 
                 // Delete db here
 
@@ -87,13 +90,12 @@ public class BotRuntimeManager
                     Log.WriteLine("Emoji: " + item.Name + " id: " + item.Id, LogLevel.DEBUG);
                 }*/
 
-                // Creates the league references to the database
-                // (must be run before creating the channels)
-                await LeagueManager.CreateLeaguesOnStartupIfNecessary();
-
                 // Creates the categories and the channels from the interfaces
                 // (dependant on the data from CreateLeaguesOnStartupIfNecessary())
                 await CategoryAndChannelManager.CreateCategoriesAndChannelsForTheDiscordServer();
+
+                // Creates the league references to the database
+                //await LeagueManager.CreateLeaguesOnStartupIfNecessary();
 
                 // Checks the users that left during down time and sets their teams active
                 await DowntimeManager.CheckForUsersThatLeftDuringDowntime();

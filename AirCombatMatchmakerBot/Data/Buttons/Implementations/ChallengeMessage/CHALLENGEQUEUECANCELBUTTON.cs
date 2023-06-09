@@ -5,7 +5,7 @@ using Discord.WebSocket;
 [DataContract]
 public class CHALLENGEQUEUECANCELBUTTON : BaseButton
 {
-    LeagueCategoryComponents lcc = new LeagueCategoryComponents();
+    LeagueCategoryComponents lcc;
     public CHALLENGEQUEUECANCELBUTTON()
     {
         buttonName = ButtonName.CHALLENGEQUEUECANCELBUTTON;
@@ -25,7 +25,7 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseButton
         Log.WriteLine("Starting processing a challenge canel request by: " +
             _component.User.Id , LogLevel.VERBOSE);
 
-        lcc.FindCategorysLeagueAndInsertItToTheCache(_interfaceMessage.MessageCategoryId);
+        lcc = new LeagueCategoryComponents(_interfaceMessage.MessageCategoryId);
 
         if (lcc.interfaceLeagueCached == null)
         {
@@ -34,8 +34,8 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseButton
             return new Response(errorMsg, false);
         }
 
-        string response = lcc.interfaceLeagueCached.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(
-            _component.User.Id, lcc.interfaceLeagueCached.LeaguePlayerCountPerTeam, lcc.interfaceLeagueCached);
+        string response =
+            lcc.interfaceLeagueCached.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(_component.User.Id);
 
         if (response == "notInTheQueue")
         {

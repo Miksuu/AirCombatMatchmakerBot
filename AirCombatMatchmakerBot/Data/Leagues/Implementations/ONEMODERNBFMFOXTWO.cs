@@ -8,7 +8,7 @@ public class ONEMODERNBFMFOXTWO : BaseLeague
 {
     public ONEMODERNBFMFOXTWO()
     {
-        thisInterfaceLeague.LeagueCategoryName = CategoryType.ONEMODERNBFMFOXTWO;
+        thisInterfaceLeague.LeagueCategoryName = LeagueName.ONEMODERNBFMFOXTWO;
         thisInterfaceLeague.LeagueEra = Era.MODERN;
         thisInterfaceLeague.LeaguePlayerCountPerTeam = 1;
 

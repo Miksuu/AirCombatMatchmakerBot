@@ -1,5 +1,6 @@
 using Discord;
 using Discord.WebSocket;
+using System;
 using System.Collections.Concurrent;
 
 public static class CategoryAndChannelManager
@@ -21,11 +22,20 @@ public static class CategoryAndChannelManager
             return;
         }
 
-        // Get the values of the members of the specific enum type and
-        // loop through the values of the categories
-        var values = Enum.GetValues(typeof(CategoryType));
-        Log.WriteLine(nameof(values) + " count: " + values.Length, LogLevel.VERBOSE);
-        foreach (CategoryType categoryName in values)
+        var guild = BotReference.GetGuildRef();
+        if (guild == null)
+        {
+            Exceptions.BotGuildRefNull();
+            return;
+        }
+
+        foreach (LeagueName categoryName in Enum.GetValues(typeof(LeagueName)))
+        {
+            Log.WriteLine("Looping on league category name: " + categoryName, LogLevel.VERBOSE);
+            await GenerateLeagueCategoryFromName(client, guild, categoryName);
+        }
+
+        foreach (CategoryType categoryName in Enum.GetValues(typeof(CategoryType)))
         {
             Log.WriteLine("Looping on category name: " + categoryName, LogLevel.VERBOSE);
 
@@ -37,76 +47,175 @@ public static class CategoryAndChannelManager
                 continue;
             }
 
-            await GenerateACategoryFromName(client, categoryName);
+            await GenerateARegularCategoryFromName(client, guild, categoryName);
         }
 
         Log.WriteLine("Done looping through the category names.", LogLevel.VERBOSE);
     }
 
-    // Sort out this spaghetti
-    private static async Task GenerateACategoryFromName(
-        DiscordSocketClient _client, CategoryType _categoryName)
+    private static async Task GenerateLeagueCategoryFromName(
+        DiscordSocketClient _client, SocketGuild _guild, LeagueName _leagueName)
     {
-        string finalCategoryName = "";
-        bool isLeague = false;
-        CategoryType? leagueCategoryName = null;
-        InterfaceCategory? interfaceCategory = null;
-
-        Log.WriteLine("Generating category named: " + _categoryName, LogLevel.VERBOSE);
-
-        var guild = BotReference.GetGuildRef();
-        if (guild == null)
-        {
-            Exceptions.BotGuildRefNull();
-            return;
-        }
-
         try
         {
-            // For league category generating
-            if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(_categoryName))
+            Log.WriteLine("This is a league category", LogLevel.DEBUG);
+
+            InterfaceCategory interfaceCategory = GetCategoryInstance(CategoryType.LEAGUETEMPLATE);
+            InterfaceLeague leagueInterface = GetLeagueInstance(_leagueName);
+
+            Log.WriteLine("Got " + nameof(leagueInterface) +
+                leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
+
+            string finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(_leagueName);
+            Log.WriteLine("Category name is: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
+
+            if (interfaceCategory == null)
             {
-                Log.WriteLine("This is a league category", LogLevel.DEBUG);
+                Log.WriteLine(nameof(interfaceCategory).ToString() +
+                    " was null!", LogLevel.CRITICAL);
+                return;
+            }
 
-                isLeague = true;
+            InterfaceLeague interfaceLeague = null;
 
-                InterfaceLeague leagueInterface = GetLeagueInstance(_categoryName);
+            // Add the new newly from the interface implementations added units here
+            if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(
+                leagueInterface.LeagueCategoryName))
+            {
+                Log.WriteLine(nameof(Database.Instance.Leagues) +
+                    " already contains: " + leagueInterface.ToString() +
+                    " adding new units to the league", LogLevel.VERBOSE);
 
-                Log.WriteLine("Got " + nameof(leagueInterface) +
-                    leagueInterface.LeagueCategoryName, LogLevel.VERBOSE);
-
-                interfaceCategory = GetCategoryInstance(CategoryType.LEAGUETEMPLATE);
-                interfaceCategory.CategoryType = _categoryName;
-
-                // Cached for later use (inserting the category ID)
-                leagueCategoryName = leagueInterface.LeagueCategoryName;
-
-                finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(
+                // Update the units and to the database (before interfaceLeagueCategory is replaced by it)
+                interfaceLeague = Database.Instance.Leagues.GetILeagueByCategoryName(
                     leagueInterface.LeagueCategoryName);
 
-                Log.WriteLine("League's category name is: " + finalCategoryName, LogLevel.VERBOSE);
-            }
-            // For normal category generating
-            else
-            {
-                interfaceCategory = GetCategoryInstance(_categoryName);
-
-                if (interfaceCategory == null)
+                // Clears the queue on the startup
+                if (interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Count > 0)
                 {
-                    Log.WriteLine(nameof(interfaceCategory).ToString() +
-                        " was null!", LogLevel.CRITICAL);
-                    return;
+                    interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Clear();
+                    var message = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                        interfaceLeague.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
+                            ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
+
+                    await message.GenerateAndModifyTheMessage();
                 }
 
-                Log.WriteLine("interfaceCategory name: " +
-                    interfaceCategory.CategoryType, LogLevel.DEBUG);
-
-                Log.WriteLine(nameof(interfaceCategory.CategoryType) +
-                    ": " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
-
-                finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryType);
-                Log.WriteLine("Category name is: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
+                interfaceLeague.LeagueUnits = leagueInterface.LeagueUnits;
             }
+            else
+            {
+                Database.Instance.Leagues.AddToStoredLeagues(leagueInterface);
+                interfaceLeague = leagueInterface;
+            }
+
+            SocketCategoryChannel? socketCategoryChannel = null;
+
+            bool contains = false;
+            Log.WriteLine("searching for categoryname: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
+            foreach (var storedLeague in Database.Instance.Leagues.StoredLeagues)
+            {
+                Log.WriteLine("categoryname:" + storedLeague.LeagueCategoryName, LogLevel.VERBOSE);
+                if (storedLeague.LeagueCategoryName == leagueInterface.LeagueCategoryName)
+                {
+                    // Checks if the channel is also in the discord server itself too, not only database
+                    contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(storedLeague.LeagueCategoryId, _guild);
+                    break;
+                }
+            }
+
+            SocketRole? role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
+                        _guild, finalCategoryName).Result;
+
+            Log.WriteLine("Role is named: " + role.Name + " with ID: " + role.Id, LogLevel.VERBOSE);
+
+
+
+            // The category exists,
+            // just find it from the database and then get the id of the socketchannel
+            if (contains)
+            {
+                Log.WriteLine("Category: " + finalCategoryName +
+                    " found, checking it's channels", LogLevel.VERBOSE);
+
+                InterfaceCategory? dbCategory =
+                    Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
+                        interfaceCategory.CategoryType);
+
+                Log.WriteLine("Found " + nameof(dbCategory) + " named: " +
+                    dbCategory.CategoryType, LogLevel.VERBOSE);
+
+                interfaceCategory = dbCategory as InterfaceCategory;
+
+                socketCategoryChannel = _guild.GetCategoryChannel(dbCategory.SocketCategoryChannelId);
+
+                // Insert a fix here if the category is still in DB but does not exist
+
+                Log.WriteLine("Found " + nameof(socketCategoryChannel) + " that's named: " +
+                    socketCategoryChannel.Name, LogLevel.DEBUG);
+
+            }
+            // If the category doesn't exist at all, create it and add it to the database
+            else
+            {
+                socketCategoryChannel =
+                    await interfaceCategory.CreateANewSocketCategoryChannelAndReturnIt(
+                        _guild, finalCategoryName, role);
+
+                Log.WriteLine("Created a " + nameof(socketCategoryChannel) +
+                    " with id: " + socketCategoryChannel.Id +
+                    " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
+
+                Log.WriteLine("Is league, inserting " + socketCategoryChannel.Id +
+                    " to " + _leagueName, LogLevel.DEBUG);
+
+                LeagueName categoryTypeNonNullable = (LeagueName)_leagueName;
+
+                // TODO: refactor this mess
+                interfaceLeague.LeagueRoleId = role.Id;
+                interfaceLeague.LeagueCategoryId = socketCategoryChannel.Id;
+                interfaceLeague.LeagueData.SetReferences(interfaceLeague);
+
+                Database.Instance.Categories.AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(
+                    socketCategoryChannel.Id, interfaceCategory);
+            }
+
+            interfaceLeague.LeagueData.MatchScheduler.ActivateMatchScheduler(100000000);
+
+            // Handle channel checking/creation
+            await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _client, role);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
+        }
+    }
+
+    private static async Task GenerateARegularCategoryFromName(
+        DiscordSocketClient _client, SocketGuild _guild, CategoryType _categoryName)
+    {
+        try
+        {
+            Log.WriteLine("Generating category named: " + _categoryName, LogLevel.VERBOSE);
+
+            InterfaceCategory interfaceCategory = GetCategoryInstance(_categoryName);
+
+            if (interfaceCategory == null)
+            {
+                Log.WriteLine(nameof(interfaceCategory).ToString() +
+                    " was null!", LogLevel.CRITICAL);
+                return;
+            }
+
+            Log.WriteLine("interfaceCategory name: " +
+                interfaceCategory.CategoryType, LogLevel.DEBUG);
+
+            Log.WriteLine(nameof(interfaceCategory.CategoryType) +
+                ": " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
+
+            string finalCategoryName = EnumExtensions.GetEnumMemberAttrValue(interfaceCategory.CategoryType);
+            Log.WriteLine("Category name is: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
 
             if (interfaceCategory == null)
             {
@@ -125,14 +234,13 @@ public static class CategoryAndChannelManager
                 if (ct.Value.CategoryType == interfaceCategory.CategoryType)
                 {
                     // Checks if the channel is also in the discord server itself too, not only database
-                    contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(
-                        ct, guild);
+                    contains = CategoryRestore.CheckIfCategoryHasBeenDeletedAndRestoreForCategory(ct.Key, _guild);
                     break;
                 }
             }
 
             SocketRole? role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
-                        guild, finalCategoryName).Result;
+                        _guild, finalCategoryName).Result;
 
             // The category exists,
             // just find it from the database and then get the id of the socketchannel
@@ -141,70 +249,35 @@ public static class CategoryAndChannelManager
                 Log.WriteLine("Category: " + finalCategoryName +
                     " found, checking it's channels", LogLevel.VERBOSE);
 
-                try
-                {
-                    InterfaceCategory? dbCategory =
-                        Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
-                            interfaceCategory.CategoryType);
 
-                    Log.WriteLine("Found " + nameof(dbCategory) + " named: " +
-                        dbCategory.CategoryType, LogLevel.VERBOSE);
+                InterfaceCategory? dbCategory =
+                    Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
+                        interfaceCategory.CategoryType);
 
-                    interfaceCategory = dbCategory as InterfaceCategory;
+                Log.WriteLine("Found " + nameof(dbCategory) + " named: " +
+                    dbCategory.CategoryType, LogLevel.VERBOSE);
 
-                    socketCategoryChannel = guild.GetCategoryChannel(dbCategory.SocketCategoryChannelId);
+                interfaceCategory = dbCategory as InterfaceCategory;
 
-                    // Insert a fix here if the category is still in DB but does not exist
+                socketCategoryChannel = _guild.GetCategoryChannel(dbCategory.SocketCategoryChannelId);
 
-                    Log.WriteLine("Found " + nameof(socketCategoryChannel) + " that's named: " +
-                        socketCategoryChannel.Name, LogLevel.DEBUG);
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                    return;
-                }
+                // Insert a fix here if the category is still in DB but does not exist
+
+                Log.WriteLine("Found " + nameof(socketCategoryChannel) + " that's named: " +
+                    socketCategoryChannel.Name, LogLevel.DEBUG);
+
             }
             // If the category doesn't exist at all, create it and add it to the database
             else
             {
-                try
-                {
-                    socketCategoryChannel =
-                        await interfaceCategory.CreateANewSocketCategoryChannelAndReturnIt(
-                            guild, finalCategoryName, role);
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                    return;
-                }
+
+                socketCategoryChannel =
+                    await interfaceCategory.CreateANewSocketCategoryChannelAndReturnIt(
+                        _guild, finalCategoryName, role);
 
                 Log.WriteLine("Created a " + nameof(socketCategoryChannel) +
                     " with id: " + socketCategoryChannel.Id +
                     " that's named: " + socketCategoryChannel.Name, LogLevel.VERBOSE);
-
-                // Inserts the id to the discord league references to be cached for later use
-                if (isLeague)
-                {
-                    Log.WriteLine("Is league, inserting " + socketCategoryChannel.Id +
-                        " to " + leagueCategoryName, LogLevel.DEBUG);
-
-                    CategoryType categoryTypeNonNullable = (CategoryType)leagueCategoryName;
-
-                    InterfaceLeague interfaceLeague;
-                    try
-                    {
-                        interfaceLeague = Database.Instance.Leagues.GetILeagueByCategoryName(
-                            categoryTypeNonNullable);
-                        interfaceLeague.LeagueCategoryId = socketCategoryChannel.Id;
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                        return;
-                    }
-                }
 
                 Database.Instance.Categories.AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(
                     socketCategoryChannel.Id, interfaceCategory);
@@ -227,14 +300,14 @@ public static class CategoryAndChannelManager
         {
             return (InterfaceCategory)EnumExtensions.GetInstance(_categoryName.ToString());
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             throw new InvalidOperationException(ex.Message);
         }
     }
 
-    private static InterfaceLeague GetLeagueInstance(CategoryType _leagueCategoryName)
+    private static InterfaceLeague GetLeagueInstance(LeagueName _leagueCategoryName)
     {
         try
         {

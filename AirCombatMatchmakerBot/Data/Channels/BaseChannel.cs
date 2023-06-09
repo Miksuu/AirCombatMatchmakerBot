@@ -273,13 +273,9 @@ public abstract class BaseChannel : InterfaceChannel
             Log.WriteLine("Starting to to prepare channel messages on " + thisInterfaceChannel.ChannelType +
                 " count: " + Enum.GetValues(typeof(CategoryType)).Length, LogLevel.VERBOSE);
 
-            foreach (CategoryType leagueName in Enum.GetValues(typeof(CategoryType)))
+            foreach (LeagueName leagueName in Enum.GetValues(typeof(LeagueName)))
             {
                 Log.WriteLine("Looping on to find leagueName: " + leagueName.ToString(), LogLevel.VERBOSE);
-
-                // Skip all the non-leagues
-                int enumValue = (int)leagueName;
-                if (enumValue > 100) continue;
 
                 string leagueNameString = EnumExtensions.GetEnumMemberAttrValue(leagueName);
                 Log.WriteLine("leagueNameString after enumValueCheck: " + leagueNameString, LogLevel.VERBOSE);
@@ -291,9 +287,9 @@ public abstract class BaseChannel : InterfaceChannel
 
                 try
                 {
-                    var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
+                    //var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
                     var leagueInterfaceFromDatabase =
-                        Database.Instance.Leagues.GetInterfaceLeagueCategoryFromTheDatabase(leagueInterface);
+                        Database.Instance.Leagues.GetILeagueByCategoryName(leagueName);
 
                     Log.WriteLine("Starting to create a league join button for: " + leagueNameString, LogLevel.VERBOSE);
 

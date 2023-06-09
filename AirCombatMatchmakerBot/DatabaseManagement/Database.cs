@@ -131,11 +131,11 @@ public class Database
                             " which has player: " + _playerDiscordId, LogLevel.DEBUG);
 
                         EloSystem.CalculateAndSaveFinalEloDeltaForMatchForfeit(
-                            match.MatchReporting.FindTeamsInTheMatch(interfaceLeague),
+                            match.MatchReporting.FindTeamsInTheMatch(),
                             match.MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value), teamId);
 
                         Log.WriteLine("Possibly deprecated, rework this", LogLevel.WARNING);
-                        match.FinishTheMatch(interfaceLeague);
+                        match.FinishTheMatch();
                     }
                 }
 
@@ -223,7 +223,7 @@ public class Database
                     await leagueRegistrationMessage.GenerateAndModifyTheMessage();
                 }
             }
-
+             
             Log.WriteLine("Done looping through " + leagueRegistrationMessages.Count + " messages", LogLevel.VERBOSE);
 
 

@@ -7,15 +7,14 @@ public class LeagueCategoryComponents
 {
     public InterfaceLeague? interfaceLeagueCached { get; set; }
 
-    public string FindCategorysLeagueAndInsertItToTheCache(
-        ulong _messageCategoryId)
+    public LeagueCategoryComponents(ulong _messageCategoryId)
     {
         Log.WriteLine("Starting to find with category id: " + _messageCategoryId, LogLevel.VERBOSE);
 
         if (interfaceLeagueCached != null)
         {
             Log.WriteLine("Already cached, returning", LogLevel.VERBOSE);
-            return "";
+            return;
         }
 
         try
@@ -26,11 +25,9 @@ public class LeagueCategoryComponents
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-            return ex.Message;
+            throw new InvalidOperationException(ex.Message);
         }
 
         Log.WriteLine("Set: " + interfaceLeagueCached, LogLevel.VERBOSE);
-
-        return "";
     }
 }

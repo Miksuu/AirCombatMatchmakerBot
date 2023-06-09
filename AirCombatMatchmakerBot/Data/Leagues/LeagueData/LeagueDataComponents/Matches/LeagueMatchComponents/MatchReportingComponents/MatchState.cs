@@ -5,17 +5,18 @@ using System.Runtime.Serialization;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum MatchState
 {
-    // Add scheduling here (index 0)
+    [EnumMember(Value = "SchedulingPhase")]
+    SCHEDULINGPHASE = 0,
 
     [EnumMember(Value = "PlayerReadyConfirmationPhase")]
-    PLAYERREADYCONFIRMATIONPHASE = 0,
+    PLAYERREADYCONFIRMATIONPHASE = 1,
     
     [EnumMember(Value = "ReportingPhase")]
-    REPORTINGPHASE = 1,
+    REPORTINGPHASE = 2,
 
     [EnumMember(Value = "ConfirmationPhase")]
-    CONFIRMATIONPHASE = 2,
+    CONFIRMATIONPHASE = 3,
 
     [EnumMember(Value = "MatchDone")]
-    MATCHDONE = 3,
+    MATCHDONE = 4,
 }

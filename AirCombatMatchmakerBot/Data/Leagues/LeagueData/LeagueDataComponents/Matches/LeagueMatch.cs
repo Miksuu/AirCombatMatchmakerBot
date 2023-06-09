@@ -30,7 +30,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => matchReporting.SetValue(value);
     }
 
-    public CategoryType MatchLeague
+    public LeagueName MatchLeague
     {
         get => matchLeague.GetValue();
         set => matchLeague.SetValue(value);
@@ -40,12 +40,32 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logClass<int> matchId = new logClass<int>();
     [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
     [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
-    [DataMember] private logClass<CategoryType> matchLeague = new logClass<CategoryType>(new CategoryType());
+    [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>(new LeagueName());
+
+    private InterfaceLeague interfaceLeagueRef;
 
     public LeagueMatch() { }
 
-    public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn)
+    public void SetInterfaceLeagueReferencesForTheMatch(InterfaceLeague _interfaceLeagueRef)
     {
+        if (_interfaceLeagueRef == null)
+        {
+            Log.WriteLine(_interfaceLeagueRef.ToString(), LogLevel.WARNING);
+        }
+
+        interfaceLeagueRef = _interfaceLeagueRef;
+        MatchReporting.interfaceLeagueRef = _interfaceLeagueRef;
+
+        Log.WriteLine(MatchReporting.interfaceLeagueRef.ToString(), LogLevel.VERBOSE);
+
+        Log.WriteLine("Set:", LogLevel.VERBOSE);
+    }
+
+    // TODO: Add interfaceLeague ref on constructor as a reference
+    public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn, MatchState _matchState)
+    {
+        SetInterfaceLeagueReferencesForTheMatch(_interfaceLeague);
+
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
         MatchLeague = _interfaceLeague.LeagueCategoryName;
 
@@ -56,8 +76,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         foreach (int teamId in _teamsToFormMatchOn)
         {
             Team foundTeam =
-                _interfaceLeague.LeagueData.Teams.FindTeamById(
-                    leagueTeamSize, teamId);
+                _interfaceLeague.LeagueData.Teams.FindTeamById(teamId);
 
             Log.WriteLine("Found team: " + foundTeam.TeamId, LogLevel.DEBUG);
 
@@ -74,18 +93,18 @@ public class LeagueMatch : logClass<LeagueMatch>
         MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
-        MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague);
+        MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague, _matchState);
 
         Log.WriteLine("Constructed a new match with teams ids: " + TeamsInTheMatch.ElementAt(0) +
             TeamsInTheMatch.ElementAt(1) + " with matchId of: " + MatchId, LogLevel.DEBUG);
     }
 
-    public ulong[] GetIdsOfThePlayersInTheMatchAsArray(InterfaceLeague _interfaceLeague)
+    public ulong[] GetIdsOfThePlayersInTheMatchAsArray()
     {
         int playerCounter = 0;
 
         // Calculate how many users need to be granted roles
-        int userAmountToGrantRolesTo = _interfaceLeague.LeaguePlayerCountPerTeam * 2;
+        int userAmountToGrantRolesTo = interfaceLeagueRef.LeaguePlayerCountPerTeam * 2;
         ulong[] allowedUserIds = new ulong[userAmountToGrantRolesTo];
 
         Log.WriteLine(nameof(allowedUserIds) + " length: " +
@@ -97,8 +116,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             try 
             {
-                Team foundTeam = _interfaceLeague.LeagueData.Teams.FindTeamById(
-                    _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key);
+                Team foundTeam = interfaceLeagueRef.LeagueData.Teams.FindTeamById(teamKvp.Key);
 
                 foreach (Player player in foundTeam.Players)
                 {
@@ -118,6 +136,72 @@ public class LeagueMatch : logClass<LeagueMatch>
         }
 
         return allowedUserIds;
+    }
+
+    public async Task<Response> CreateScheduleSuggestion(ulong _playerId, string _dateAndTime)
+    {
+        try
+        {
+            DateTime currentTime = await TimeService.GetCurrentTime();
+
+            Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " on: " + currentTime.ToString(), LogLevel.VERBOSE);
+            // Convert the input date and time string to a DateTime object
+            if (!DateTime.TryParse(_dateAndTime, out DateTime suggestedScheduleDate))
+            {
+                Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.DEBUG);
+                return new Response("Invalid date and time format. Please provide a valid date and time.", false);
+            }
+
+            Log.WriteLine("Valid Datetime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
+
+            int timeUntil = TimeService.CalculateTimeUntil(currentTime, suggestedScheduleDate);
+
+            Log.WriteLine("Time until: " + timeUntil, LogLevel.VERBOSE);
+
+            if (timeUntil <= 0)
+            {
+                Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId +
+                    " because timeUntil was: " + timeUntil, LogLevel.DEBUG);
+                return new Response("The date you tried to suggest was too early!", false);
+            }
+
+            InterfaceChannel _interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
+                    MatchChannelId);
+
+            StartMatchAfterScheduling(_interfaceChannel, timeUntil);
+
+            return new Response("Scheduled match to: " + suggestedScheduleDate, true);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return new Response(ex.Message, false);
+        }
+    }
+
+    public async void StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, int _timeUntil)
+    {
+        Log.WriteLine("Starting the match on second thread on channel after scheduling: " + matchChannelId +
+            " with timeUntil: " + _timeUntil, LogLevel.VERBOSE);
+
+        try
+        {
+            // Delete the scheduling messages here
+            //await _interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMMATCHENTRYMESSAGE);
+
+            MatchReporting.MatchState = MatchState.PLAYERREADYCONFIRMATIONPHASE;
+
+            new MatchQueueAcceptEvent(_timeUntil, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
+
+            await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                MessageName.CONFIRMMATCHENTRYMESSAGE, true);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
+        }
     }
 
     public async void StartTheMatchOnSecondThread(InterfaceChannel _interfaceChannel)
@@ -142,7 +226,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         await SerializationManager.SerializeDB();
     }
 
-    public async void FinishTheMatch(InterfaceLeague _interfaceLeague)
+    public async void FinishTheMatch()
     {
         MatchReporting.MatchState = MatchState.MATCHDONE;
 
@@ -151,13 +235,13 @@ public class LeagueMatch : logClass<LeagueMatch>
 
         Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
         EloSystem.CalculateFinalStatsAndEloForBothTeams(
-            _interfaceLeague, MatchReporting.FindTeamsInTheMatch(_interfaceLeague),
+            interfaceLeagueRef, MatchReporting.FindTeamsInTheMatch(),
             MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
 
         Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 
         InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
-            _interfaceLeague.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
+            interfaceLeagueRef.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
                 MatchChannelId);
 
         try
@@ -187,7 +271,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         try
         {
              attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
-                MatchId, _interfaceLeague).Result;
+                MatchId, interfaceLeagueRef).Result;
 
             if (MatchReporting.FinalMessageForMatchReportingChannel == null)
             {
@@ -203,13 +287,13 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             Log.WriteLine("finalMsg: " + MatchReporting.FinalMessageForMatchReportingChannel, LogLevel.DEBUG);
 
-            await _interfaceLeague.PostMatchReport(
+            await interfaceLeagueRef.PostMatchReport(
                 MatchReporting.FinalMessageForMatchReportingChannel, MatchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
             int matchChannelDeleteDelay = 45;
 
             // Schedule an event to delete the channel later
-            new DeleteChannelEvent(matchChannelDeleteDelay, _interfaceLeague.LeagueCategoryId, MatchChannelId, "match");
+            new DeleteChannelEvent(matchChannelDeleteDelay, interfaceLeagueRef.LeagueCategoryId, MatchChannelId, "match");
 
             var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
             await messageToModify.GenerateAndModifyTheMessage();
@@ -219,14 +303,14 @@ public class LeagueMatch : logClass<LeagueMatch>
             int matchIdTemp = MatchId;
 
             Database.Instance.ArchivedLeagueMatches.Add(
-                await _interfaceLeague.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(_interfaceLeague, MatchChannelId));
+                await interfaceLeagueRef.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(MatchChannelId));
             Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
                 Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
 
             // When removing the player from the database, no need for this because it's done after he is gone from the league
             //if (!_removingPlayerFromDatabase)
             //{
-            _interfaceLeague.UpdateLeagueLeaderboard();
+            interfaceLeagueRef.UpdateLeagueLeaderboard();
             //}
 
             await SerializationManager.SerializeDB();

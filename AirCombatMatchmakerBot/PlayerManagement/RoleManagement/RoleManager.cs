@@ -6,6 +6,8 @@ public static class RoleManager
 {
     public static Task<string> FindRoleNameById(ulong _roleId)
     {
+        Log.WriteLine("Looking for role: " + _roleId, LogLevel.VERBOSE);
+
         var guild = BotReference.GetGuildRef();
         if (guild == null)
         {

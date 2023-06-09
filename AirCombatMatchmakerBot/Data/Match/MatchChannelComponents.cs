@@ -43,10 +43,12 @@ public class MatchChannelComponents
         return;
     }
 
-    public MatchChannelComponents(ulong _leagueCategoryIdCached, ulong _matchChannelIdCached)
+    public MatchChannelComponents(ulong _matchChannelIdCached)
     {
+        ulong leagueCategoryIdCached = Database.Instance.Categories.MatchChannelsIdWithCategoryId[_matchChannelIdCached];
+
         Log.WriteLine("Starting to find with matchChannelId: " + _matchChannelIdCached + 
-            " and with category id: " + _leagueCategoryIdCached, LogLevel.VERBOSE);
+            " and with category id: " + leagueCategoryIdCached, LogLevel.VERBOSE);
 
         if (interfaceLeagueCached != null || leagueMatchCached != null)
         {
@@ -57,7 +59,7 @@ public class MatchChannelComponents
         try
         {
             interfaceLeagueCached =
-                Database.Instance.Leagues.GetILeagueByCategoryId(_leagueCategoryIdCached);
+                Database.Instance.Leagues.GetILeagueByCategoryId(leagueCategoryIdCached);
             leagueMatchCached =
                 interfaceLeagueCached.LeagueData.Matches.FindLeagueMatchByTheChannelId(_matchChannelIdCached);
         }
@@ -69,7 +71,5 @@ public class MatchChannelComponents
 
         Log.WriteLine("Set: " + interfaceLeagueCached + " | " +
             leagueMatchCached, LogLevel.VERBOSE);
-
-        return;
     }
 }

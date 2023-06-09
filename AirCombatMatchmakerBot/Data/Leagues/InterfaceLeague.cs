@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 [JsonObjectAttribute]
 public interface InterfaceLeague
 {
-    public CategoryType LeagueCategoryName { get; set; }
+    public LeagueName LeagueCategoryName { get; set; }
     public Era LeagueEra { get; set; }
     public int LeaguePlayerCountPerTeam { get; set; }
     public ConcurrentBag<UnitName> LeagueUnits { get; set; }

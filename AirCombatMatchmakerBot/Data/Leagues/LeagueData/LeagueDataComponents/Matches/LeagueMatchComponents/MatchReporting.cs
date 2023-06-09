@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
-using System.Text.Json.Serialization;
-using Discord.Rest;
 
 [DataContract]
 public class MatchReporting : logClass<MatchReporting>
@@ -44,10 +42,17 @@ public class MatchReporting : logClass<MatchReporting>
     [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
     [DataMember] private logString finalResultTitleForConfirmation = new logString();
 
+    public InterfaceLeague interfaceLeagueRef;
+
     public MatchReporting() { }
 
-    public MatchReporting(ConcurrentDictionary<int, string> _teamsInTheMatch, InterfaceLeague _interfaceLeague)
+    public MatchReporting(
+        ConcurrentDictionary<int, string> _teamsInTheMatch, InterfaceLeague _interfaceLeague, MatchState _matchState)
     {
+        interfaceLeagueRef = _interfaceLeague;
+
+        MatchState = _matchState;
+
         foreach (var teamKvp in _teamsInTheMatch)
         {
             if (TeamIdsWithReportData.ContainsKey(teamKvp.Key))
@@ -63,8 +68,7 @@ public class MatchReporting : logClass<MatchReporting>
                 Log.WriteLine("before toAdd", LogLevel.DEBUG);
 
                 var toAdd = (teamKvp.Key, new ReportData(teamKvp.Value,
-                    _interfaceLeague.LeagueData.Teams.FindTeamById(
-                        _interfaceLeague.LeaguePlayerCountPerTeam, teamKvp.Key).Players));
+                    interfaceLeagueRef.LeagueData.Teams.FindTeamById(teamKvp.Key).Players));
 
                 Log.WriteLine("after toAdd", LogLevel.DEBUG);
 
@@ -73,7 +77,7 @@ public class MatchReporting : logClass<MatchReporting>
                 Log.WriteLine("after adding with toAdd", LogLevel.DEBUG);
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 continue;
@@ -96,19 +100,19 @@ public class MatchReporting : logClass<MatchReporting>
     }
 
     public async Task<Response> ProcessPlayersSentReportObject(
-        InterfaceLeague _interfaceLeague, ulong _playerId, string _reportedObjectByThePlayer,
+        ulong _playerId, string _reportedObjectByThePlayer,
         TypeOfTheReportingObject _typeOfTheReportingObject, ulong _leagueCategoryId, ulong _messageChannelId)
     {
         string response = string.Empty;
         Team reportingTeam;
 
         Log.WriteLine("Processing player's sent " + nameof(BaseReportingObject) + " in league: " +
-            _interfaceLeague.LeagueCategoryName + " by: " + _playerId + " with data: " +
+            interfaceLeagueRef.LeagueCategoryName + " by: " + _playerId + " with data: " +
             _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
 
         try
         {
-            reportingTeam = _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
+            reportingTeam = interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
                 _playerId);
 
             // First time pressing the report button for the team
@@ -147,7 +151,7 @@ public class MatchReporting : logClass<MatchReporting>
             return new Response(ex.Message, false);
         }
 
-        InterfaceChannel interfaceChannel = 
+        InterfaceChannel interfaceChannel =
             Database.Instance.Categories.FindInterfaceCategoryWithId(
                 _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
                     _messageChannelId);
@@ -159,7 +163,7 @@ public class MatchReporting : logClass<MatchReporting>
         {
             messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
 
-            try 
+            try
             {
                 var interfaceMessage = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
                     MessageName.MATCHFINALRESULTMESSAGE);
@@ -168,7 +172,7 @@ public class MatchReporting : logClass<MatchReporting>
                 // Must be called after GenerateMessage() since it's defined there
                 FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 return new Response(ex.Message, false);
@@ -181,7 +185,7 @@ public class MatchReporting : logClass<MatchReporting>
                             messageNameToEdit);
             await messageToEdit.GenerateAndModifyTheMessage();
         }
-        catch(Exception ex) 
+        catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return new Response(ex.Message, false);
@@ -209,15 +213,14 @@ public class MatchReporting : logClass<MatchReporting>
         return Task.FromResult(new Response(response, true)).Result;
     }
 
-    public async Task<Response> PrepareFinalMatchResult(
-        InterfaceLeague _interfaceLeague, ulong _playerId, ulong _leagueCategoryId, ulong _messageChannelId)
+    public async Task<Response> PrepareFinalMatchResult(ulong _playerId, ulong _messageChannelId)
     {
         try
         {
             string response = string.Empty;
 
             (string, bool, InterfaceChannel?) responseTuple =
-                CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId);
+                CheckIfMatchCanBeSentToConfirmation(interfaceLeagueRef.LeagueCategoryId, _messageChannelId);
             if (responseTuple.Item3 == null)
             {
                 Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
@@ -229,7 +232,7 @@ public class MatchReporting : logClass<MatchReporting>
 
             if (responseTuple.Item2)
             {
-                CalculateFinalMatchResult(_interfaceLeague);
+                CalculateFinalMatchResult();
 
                 Log.WriteLine("Creating new messages from: " + _playerId, LogLevel.DEBUG);
 
@@ -253,7 +256,7 @@ public class MatchReporting : logClass<MatchReporting>
 
                 await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                     MessageName.CONFIRMATIONMESSAGE);
-                interfaceCategory = _interfaceLeague.FindLeaguesInterfaceCategory();
+                interfaceCategory = interfaceLeagueRef.FindLeaguesInterfaceCategory();
 
                 // Copypasted to MODIFYMATCHBUTTON.CS, maybe replace to method
                 interfaceChannelToDeleteTheMessageIn =
@@ -275,7 +278,7 @@ public class MatchReporting : logClass<MatchReporting>
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return new Response(ex.Message, false);
-        }        
+        }
     }
 
     private (string, bool, InterfaceChannel?) CheckIfMatchCanBeSentToConfirmation(
@@ -303,7 +306,7 @@ public class MatchReporting : logClass<MatchReporting>
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-            return new (ex.Message, false, null);
+            return new(ex.Message, false, null);
         }
     }
 
@@ -363,27 +366,27 @@ public class MatchReporting : logClass<MatchReporting>
         return true;
     }
 
-    private string CalculateFinalMatchResult(InterfaceLeague _interfaceLeague)
+    private string CalculateFinalMatchResult()
     {
         Log.WriteLine("Starting to calculate the final match result with teams: " +
             TeamIdsWithReportData.ElementAt(0).Value.TeamName + " and: " +
             TeamIdsWithReportData.ElementAt(1).Value.TeamName, LogLevel.DEBUG);
 
         return EloSystem.CalculateAndSaveFinalEloDelta(
-            FindTeamsInTheMatch(_interfaceLeague), TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
+            FindTeamsInTheMatch(), TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
     }
 
-    public Team[] FindTeamsInTheMatch(InterfaceLeague _interfaceLeague)
+    public Team[] FindTeamsInTheMatch()
     {
         Team[] teamsInTheMatch = new Team[2];
         for (int t = 0; t < TeamIdsWithReportData.Count; t++)
         {
             try
             {
-                var foundTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(TeamIdsWithReportData.ElementAt(t).Key);
+                var foundTeam = interfaceLeagueRef.LeagueData.FindActiveTeamWithTeamId(TeamIdsWithReportData.ElementAt(t).Key);
                 teamsInTheMatch[t] = foundTeam;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 continue;
@@ -393,8 +396,7 @@ public class MatchReporting : logClass<MatchReporting>
         return teamsInTheMatch;
     }
 
-    public List<ReportData> GetTeamReportDatasOfTheMatchWithPlayerId(
-        InterfaceLeague _interfaceLeague, LeagueMatch _leagueMatch, ulong _playerId)
+    public List<ReportData> GetTeamReportDatasOfTheMatchWithPlayerId(LeagueMatch _leagueMatch, ulong _playerId)
     {
         Team foundTeam;
         List<Team> foundTeams = new List<Team>();
@@ -403,8 +405,7 @@ public class MatchReporting : logClass<MatchReporting>
         Log.WriteLine("Getting ReportData on match: " + _leagueMatch.MatchId +
             " with: " + _playerId, LogLevel.DEBUG);
 
-        if (!_leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(
-            _interfaceLeague).Contains(_playerId))
+        if (!_leagueMatch.GetIdsOfThePlayersInTheMatchAsArray().Contains(_playerId))
         {
             Log.WriteLine("Error, match: " + _leagueMatch.MatchId +
                 " does not contain: " + _playerId, LogLevel.CRITICAL);
@@ -413,11 +414,11 @@ public class MatchReporting : logClass<MatchReporting>
 
         try
         {
-            foundTeam = _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+            foundTeam = interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
             foundTeams.Add(foundTeam);
 
             int otherTeamId = _leagueMatch.TeamsInTheMatch.FirstOrDefault(t => t.Key != foundTeam.TeamId).Key;
-            Team otherTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(otherTeamId);
+            Team otherTeam = interfaceLeagueRef.LeagueData.FindActiveTeamWithTeamId(otherTeamId);
 
             foundTeams.Add(otherTeam);
         }

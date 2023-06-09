@@ -5,6 +5,7 @@ using Discord;
 [DataContract]
 public class MATCHFINALRESULTMESSAGE : BaseMessage
 {
+    MatchChannelComponents mcc;
     public MATCHFINALRESULTMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.MATCHFINALRESULTMESSAGE;
@@ -31,22 +32,21 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
     {
         Log.WriteLine("Starting to generate the message for the match final result", LogLevel.VERBOSE);
 
-        string finalMessage = string.Empty;
-
-        var interfaceLeagueMatchTuple = Database.Instance.Leagues.FindMatchAndItsInterfaceLeagueByCategoryAndChannelId(
-            thisInterfaceMessage.MessageCategoryId, thisInterfaceMessage.MessageChannelId);
-
-        if (interfaceLeagueMatchTuple.Item1 == null || interfaceLeagueMatchTuple.Item2 == null)
+        mcc = new MatchChannelComponents(thisInterfaceMessage.MessageChannelId);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(interfaceLeagueMatchTuple) +
-                " was null! Could not find the league.", LogLevel.CRITICAL);
-            return "Error, could not find the league or match";
+            string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
+                nameof(mcc.leagueMatchCached) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return errorMsg;
         }
 
-        thisInterfaceMessage.MessageEmbedTitle = "Match " + interfaceLeagueMatchTuple.Item2.MatchId + " has finished\n";
+        string finalMessage = string.Empty;
+
+        thisInterfaceMessage.MessageEmbedTitle = "Match " + mcc.leagueMatchCached.MatchId + " has finished\n";
 
         Dictionary<int, ReportData> matchReportingTeamIdsWithReportData =
-            interfaceLeagueMatchTuple.Item2.MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value);
+            mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value);
 
         finalMessage += "\nPlayers: ";
 

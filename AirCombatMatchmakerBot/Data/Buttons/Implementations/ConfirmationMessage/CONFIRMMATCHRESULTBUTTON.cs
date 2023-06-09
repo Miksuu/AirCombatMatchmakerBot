@@ -42,7 +42,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
 
             List<ReportData> reportDataTupleWithString =
                 mcc.leagueMatchCached.MatchReporting.GetTeamReportDatasOfTheMatchWithPlayerId(
-                    mcc.interfaceLeagueCached, mcc.leagueMatchCached, componentPlayerId);
+                    mcc.leagueMatchCached, componentPlayerId);
 
             if (reportDataTupleWithString.ElementAt(0).ConfirmedMatch)
             {

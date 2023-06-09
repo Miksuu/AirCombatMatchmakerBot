@@ -25,13 +25,13 @@ public class Categories : logClass<Categories>
         new logConcurrentDictionary<ulong, ulong>();
 
     public InterfaceCategory FindInterfaceCategoryWithId(
-        ulong _idToSearchWith)
+        ulong _channelIdToSearchWith)
     {
-        Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
-        InterfaceCategory interfaceCategory = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Key == _idToSearchWith).Value;
+        Log.WriteLine("Getting CategoryKvp with id: " + _channelIdToSearchWith, LogLevel.VERBOSE);
+        InterfaceCategory interfaceCategory = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Key == _channelIdToSearchWith).Value;
         if (interfaceCategory == null)
         {
-            string errorMsg = nameof(interfaceCategory) + " was null! with id: " + _idToSearchWith;
+            string errorMsg = nameof(interfaceCategory) + " was null! with id: " + _channelIdToSearchWith;
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             throw new InvalidOperationException(errorMsg);
         }

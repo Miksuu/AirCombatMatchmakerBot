@@ -42,7 +42,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
             belongsToLeagueCategoryId, LogLevel.DEBUG);
 
         InterfaceLeague interfaceLeague =
-            Database.Instance.Leagues.FindLeagueInterfaceWithLeagueCategoryId(belongsToLeagueCategoryId);
+            Database.Instance.Leagues.GetILeagueByCategoryId(belongsToLeagueCategoryId);
 
         thisInterfaceMessage.MessageEmbedTitle = EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName);
 
