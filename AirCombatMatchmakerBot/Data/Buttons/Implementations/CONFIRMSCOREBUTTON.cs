@@ -54,7 +54,7 @@ public class CONFIRMSCOREBUTTON : BaseButton
         Log.WriteLine("Done setting ConfirmedMatch false", LogLevel.VERBOSE);
 
         var response = mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
-            mcc.interfaceLeagueCached, playerId, playerReportedResult.ToString(),
+            playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE,
             _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
 

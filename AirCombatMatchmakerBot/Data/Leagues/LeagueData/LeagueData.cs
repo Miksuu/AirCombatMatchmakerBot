@@ -47,7 +47,7 @@ public class LeagueData : logClass<LeagueData>
         Teams.interfaceLeagueRef = _interfaceLeague;
         ChallengeStatus.interfaceLeagueRef = _interfaceLeague;
         MatchScheduler.interfaceLeagueRef = _interfaceLeague;
-        Matches.interfaceLeagueRef = _interfaceLeague;
+        Matches.SetInterfaceLeagueReferencesForTheMatches(_interfaceLeague);
     }
 
     public Team FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)

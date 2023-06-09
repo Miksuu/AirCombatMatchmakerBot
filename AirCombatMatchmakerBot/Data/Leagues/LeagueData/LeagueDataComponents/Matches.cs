@@ -18,6 +18,16 @@ public class Matches : logClass<Matches>
 
     public Matches() { }
 
+    public void SetInterfaceLeagueReferencesForTheMatches(InterfaceLeague _interfaceLeagueRef)
+    {
+        interfaceLeagueRef = _interfaceLeagueRef;
+
+        foreach (var item in MatchesConcurrentBag)
+        {
+
+        }
+    }
+
     public async Task CreateAMatch(int[] _teamsToFormMatchOn, MatchState _matchState)
     {
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
@@ -62,7 +72,7 @@ public class Matches : logClass<Matches>
             InterfaceChannel interfaceChannel = await dbRegularCategory.CreateSpecificChannelFromChannelTypeWithoutRole(
                     ChannelType.MATCHCHANNEL, categoryKvp.LeagueCategoryId,
                     overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
-                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(interfaceLeagueRef));
+                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray());
 
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 

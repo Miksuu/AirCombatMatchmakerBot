@@ -121,7 +121,7 @@ public static class MessageReceiver
 
             // Process the tacview file, and delete the original MessageDescription by the user
             var finalResponse = mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
-                mcc.interfaceLeagueCached, _socketMessage.Author.Id, acmiUrl,
+                _socketMessage.Author.Id, acmiUrl,
                     TypeOfTheReportingObject.TACVIEWLINK,
                     mcc.interfaceLeagueCached.LeagueCategoryId,
                     _socketMessage.Channel.Id).Result;
@@ -134,7 +134,7 @@ public static class MessageReceiver
             if (mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.REPORTINGPHASE)
             {
                 finalResponse = await mcc.leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
-                    mcc.interfaceLeagueCached, _socketMessage.Author.Id, _socketMessage.Channel.Id);
+                    _socketMessage.Author.Id, _socketMessage.Channel.Id);
 
                 if (!finalResponse.serialize)
                 {

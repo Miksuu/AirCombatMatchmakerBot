@@ -26,8 +26,7 @@ public abstract class BaseMatchCommand : BaseCommand
 
         MatchState matchState = mcc.leagueMatchCached.MatchReporting.MatchState;
 
-        if (!mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray(
-                mcc.interfaceLeagueCached).Contains(_commandPlayerId))
+        if (!mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray().Contains(_commandPlayerId))
         {
             Log.WriteLine("User: " + _commandPlayerId + " tried to comment on channel: " +
                 _matchChannelId + "!", LogLevel.WARNING);
