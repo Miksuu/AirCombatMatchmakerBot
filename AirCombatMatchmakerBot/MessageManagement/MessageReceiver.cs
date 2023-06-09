@@ -101,43 +101,50 @@ public static class MessageReceiver
         {
             Log.WriteLine("acmiUrl detected: " + acmiUrl, LogLevel.DEBUG);
 
-            // Maybe use MatchChannel component here?
-            var interfaceLeagueWithLeagueMatch =
-                Database.Instance.Leagues.FindLeagueInterfaceAndLeagueMatchWithChannelId(_socketMessage.Channel.Id);
-
-            if (interfaceLeagueWithLeagueMatch.Item1 == null || interfaceLeagueWithLeagueMatch.Item2 == null)
+            MatchChannelComponents mcc = new MatchChannelComponents( _socketMessage.Channel.Id);
+            if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
             {
-                Log.WriteLine(nameof(interfaceLeagueWithLeagueMatch) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(mcc.interfaceLeagueCached) + " or " +
+                    nameof(mcc.leagueMatchCached) + " was null!", LogLevel.CRITICAL);
                 return;
             }
+
+            // Maybe use MatchChannel component here?
+            //var interfaceLeagueWithLeagueMatch =
+            //    Database.Instance.Leagues.FindLeagueInterfaceAndLeagueMatchWithChannelId(_socketMessage.Channel.Id);
+
+            //if (interfaceLeagueWithLeagueMatch.Item1 == null || interfaceLeagueWithLeagueMatch.Item2 == null)
+            //{
+            //    Log.WriteLine(nameof(interfaceLeagueWithLeagueMatch) + " was null!", LogLevel.CRITICAL);
+            //    return;
+            //}
 
             // Process the tacview file, and delete the original MessageDescription by the user
-            var finalResponseTuple = interfaceLeagueWithLeagueMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
-                interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id, acmiUrl,
+            var finalResponse = mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
+                mcc.interfaceLeagueCached, _socketMessage.Author.Id, acmiUrl,
                     TypeOfTheReportingObject.TACVIEWLINK,
-                    interfaceLeagueWithLeagueMatch.Item1.LeagueCategoryId,
+                    mcc.interfaceLeagueCached.LeagueCategoryId,
                     _socketMessage.Channel.Id).Result;
 
-            if (!finalResponseTuple.serialize)
+            if (!finalResponse.serialize)
             {
                 return;
             }
 
-            if (interfaceLeagueWithLeagueMatch.Item2.MatchReporting.MatchState == MatchState.REPORTINGPHASE)
+            if (mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.REPORTINGPHASE)
             {
-                finalResponseTuple = await interfaceLeagueWithLeagueMatch.Item2.MatchReporting.PrepareFinalMatchResult(
-                    interfaceLeagueWithLeagueMatch.Item1, _socketMessage.Author.Id,
-                    interfaceLeagueWithLeagueMatch.Item1.LeagueCategoryId, _socketMessage.Channel.Id);
+                finalResponse = await mcc.leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
+                    mcc.interfaceLeagueCached, _socketMessage.Author.Id, _socketMessage.Channel.Id);
 
-                if (!finalResponseTuple.serialize)
+                if (!finalResponse.serialize)
                 {
                     return;
                 }
             }
 
             await TacviewManager.SaveTacviewFromUserUpload(
-                interfaceLeagueWithLeagueMatch.Item1.LeagueCategoryName,
-                interfaceLeagueWithLeagueMatch.Item2.MatchId, _socketMessage);
+                mcc.interfaceLeagueCached.LeagueCategoryName,
+                mcc.leagueMatchCached.MatchId, _socketMessage);
 
             ulong smId = _socketMessage.Author.Id;
 

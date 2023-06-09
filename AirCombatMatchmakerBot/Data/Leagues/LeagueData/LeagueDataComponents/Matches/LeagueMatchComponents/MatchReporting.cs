@@ -212,14 +212,14 @@ public class MatchReporting : logClass<MatchReporting>
     }
 
     public async Task<Response> PrepareFinalMatchResult(
-        InterfaceLeague _interfaceLeague, ulong _playerId, ulong _leagueCategoryId, ulong _messageChannelId)
+        InterfaceLeague _interfaceLeague, ulong _playerId, ulong _messageChannelId)
     {
         try
         {
             string response = string.Empty;
 
             (string, bool, InterfaceChannel?) responseTuple =
-                CheckIfMatchCanBeSentToConfirmation(_leagueCategoryId, _messageChannelId);
+                CheckIfMatchCanBeSentToConfirmation(_interfaceLeague.LeagueCategoryId, _messageChannelId);
             if (responseTuple.Item3 == null)
             {
                 Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);

@@ -23,7 +23,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
 
     public override async Task ExecuteTheScheduledEvent(bool _serialize = true)
     {
-        mcc = new MatchChannelComponents(LeagueCategoryIdCached, MatchChannelIdCached);
+        mcc = new MatchChannelComponents(MatchChannelIdCached);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
@@ -96,7 +96,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
 
     public override void CheckTheScheduledEventStatus()
     {
-        mcc = new MatchChannelComponents(LeagueCategoryIdCached, MatchChannelIdCached);
+        mcc = new MatchChannelComponents(MatchChannelIdCached);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
