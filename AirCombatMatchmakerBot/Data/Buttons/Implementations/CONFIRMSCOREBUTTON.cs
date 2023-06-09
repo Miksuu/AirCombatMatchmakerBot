@@ -36,7 +36,6 @@ public class CONFIRMSCOREBUTTON : BaseButton
             thisInterfaceButton.ButtonCategoryId, LogLevel.DEBUG);
 
         mcc = new MatchChannelComponents(_interfaceMessage);
-
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
