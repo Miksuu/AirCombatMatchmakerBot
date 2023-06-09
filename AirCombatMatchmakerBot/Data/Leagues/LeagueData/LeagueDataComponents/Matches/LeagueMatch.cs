@@ -48,13 +48,24 @@ public class LeagueMatch : logClass<LeagueMatch>
 
     public void SetInterfaceLeagueReferencesForTheMatch(InterfaceLeague _interfaceLeagueRef)
     {
+        if (_interfaceLeagueRef == null)
+        {
+            Log.WriteLine(_interfaceLeagueRef.ToString(), LogLevel.WARNING);
+        }
+
         interfaceLeagueRef = _interfaceLeagueRef;
         MatchReporting.interfaceLeagueRef = _interfaceLeagueRef;
+
+        Log.WriteLine(MatchReporting.interfaceLeagueRef.ToString(), LogLevel.VERBOSE);
+
+        Log.WriteLine("Set:", LogLevel.VERBOSE);
     }
 
     // TODO: Add interfaceLeague ref on constructor as a reference
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn, MatchState _matchState)
     {
+        SetInterfaceLeagueReferencesForTheMatch(_interfaceLeague);
+
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
         MatchLeague = _interfaceLeague.LeagueCategoryName;
 

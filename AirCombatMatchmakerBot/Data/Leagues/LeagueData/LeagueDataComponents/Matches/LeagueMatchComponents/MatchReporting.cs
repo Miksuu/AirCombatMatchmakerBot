@@ -49,6 +49,8 @@ public class MatchReporting : logClass<MatchReporting>
     public MatchReporting(
         ConcurrentDictionary<int, string> _teamsInTheMatch, InterfaceLeague _interfaceLeague, MatchState _matchState)
     {
+        interfaceLeagueRef = _interfaceLeague;
+
         MatchState = _matchState;
 
         foreach (var teamKvp in _teamsInTheMatch)

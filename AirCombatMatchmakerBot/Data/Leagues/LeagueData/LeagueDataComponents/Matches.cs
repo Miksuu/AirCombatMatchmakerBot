@@ -24,7 +24,7 @@ public class Matches : logClass<Matches>
 
         foreach (var item in MatchesConcurrentBag)
         {
-
+            item.SetInterfaceLeagueReferencesForTheMatch(interfaceLeagueRef);
         }
     }
 
