@@ -2,7 +2,7 @@
 using Discord.WebSocket;
 
 [DataContract]
-public class COMMENT : BaseCommand
+public class COMMENT : BaseMatchCommand
 {
     public COMMENT()
     {
@@ -12,6 +12,14 @@ public class COMMENT : BaseCommand
         commandDescription = "Posts a comment about your match." + removeComment;
         commandOption = new("comment", "Enter your comment here." + removeComment);
         isAdminCommand = false;
+
+        matchStatesNotAllowedWithMessage = new Dictionary<MatchState, string>
+            {
+                { MatchState.SCHEDULINGPHASE, "You can not use the /comment command during the scheduling phase!" },
+                { MatchState.PLAYERREADYCONFIRMATIONPHASE, "The match has not even begun yet, your comment was not posted!" },
+                { MatchState.MATCHDONE, "That match is already done, your comment was not posted!" }
+            };
+
     }
 
     protected override async Task<Response> ActivateCommandFunction(SocketSlashCommand _command, string _firstOptionString)
@@ -22,40 +30,34 @@ public class COMMENT : BaseCommand
         Log.WriteLine("Activating a comment command: " + commandChannelId +
             " by: " + commandPlayerId + " with: " + _firstOptionString, LogLevel.DEBUG);
 
+        mcc = new MatchChannelComponents(commandChannelId);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
+        {
+            string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
+                nameof(mcc.leagueMatchCached) + " was null!";
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            return new Response(errorMsg, false);
+        }
+
         if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
             commandChannelId))
         {
             return new Response("You are not commenting on the match channel!", false);
         }
 
-        var leagueInterfaceWithTheMatch =
-            Database.Instance.Leagues.FindLeagueInterfaceAndLeagueMatchWithChannelId(commandChannelId);
-        if (leagueInterfaceWithTheMatch.Item1 == null || leagueInterfaceWithTheMatch.Item2 == null)
+        Response matchStateResponse =
+            CheckThatPlayerIsInTheMatchAndReturnResponseFromMatchStatesThatAreNotAllowed(
+                commandPlayerId, commandChannelId);
+        if (matchStateResponse.serialize == false)
         {
-            Log.WriteLine(nameof(leagueInterfaceWithTheMatch) + " was null!", LogLevel.ERROR);
-            return new Response("Error while processing your command!", false);
-        }
-
-        if (leagueInterfaceWithTheMatch.Item2.MatchReporting.MatchState == MatchState.MATCHDONE)
-        {
-            Log.WriteLine("Match " + leagueInterfaceWithTheMatch.Item2.MatchId + 
-                " was already done, returning", LogLevel.VERBOSE);
-            return new Response("That match is already done, your comment was not posted", false);
-        }
-
-        if (!leagueInterfaceWithTheMatch.Item2.GetIdsOfThePlayersInTheMatchAsArray(
-            leagueInterfaceWithTheMatch.Item1).Contains(commandPlayerId))
-        {
-            Log.WriteLine("User: " + commandPlayerId + " tried to comment on channel: " +
-                commandChannelId + "!", LogLevel.WARNING);
-            return new Response("That's not your match to comment on!", false);
+            return matchStateResponse;
         }
 
         var finalResponseTuple =
-            await leagueInterfaceWithTheMatch.Item2.MatchReporting.ProcessPlayersSentReportObject(
-                 leagueInterfaceWithTheMatch.Item1, commandPlayerId,
+            await mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
+                 mcc.interfaceLeagueCached, commandPlayerId,
                     _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER,
-                    leagueInterfaceWithTheMatch.Item1.LeagueCategoryId, commandChannelId);
+                    mcc.interfaceLeagueCached.LeagueCategoryId, commandChannelId);
 
         if (finalResponseTuple.serialize)
         {
@@ -67,7 +69,6 @@ public class COMMENT : BaseCommand
             {
                 return new Response("Comment posted: " + _firstOptionString, true);
             }
-            
         }
 
         return new Response("Couldn't post comment", false);
