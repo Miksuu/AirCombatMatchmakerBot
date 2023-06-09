@@ -5,8 +5,11 @@ public abstract class BaseMatchCommand : BaseCommand
 {
     protected MatchChannelComponents mcc;
 
-    protected Dictionary<MatchState, string> matchStatesNotAllowedWithMessage 
+    // Match states not allowed
+    protected Dictionary<MatchState, string> matchStatesNotAllowedWithMessage
         = new Dictionary<MatchState, string>();
+
+    protected (MatchState, string) matchStateAllowedWithMessage;
 
     protected Response CheckThatPlayerIsInTheMatchAndReturnResponseFromMatchStatesThatAreNotAllowed(
         ulong _commandPlayerId, ulong _matchChannelId)
