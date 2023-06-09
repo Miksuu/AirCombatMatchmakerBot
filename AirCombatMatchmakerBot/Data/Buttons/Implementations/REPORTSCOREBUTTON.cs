@@ -74,8 +74,7 @@ public class REPORTSCOREBUTTON : BaseButton
         }
 
         response = await mcc.leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
-            mcc.interfaceLeagueCached, playerId,
-            _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId);
+            mcc.interfaceLeagueCached, playerId, _interfaceMessage.MessageChannelId);
 
         if (!response.serialize)
         {
