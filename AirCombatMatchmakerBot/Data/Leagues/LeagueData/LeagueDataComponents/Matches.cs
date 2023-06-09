@@ -74,6 +74,7 @@ public class Matches : logClass<Matches>
             }
 
             // Override the default constructor before posting the message if the channel is scheduled one
+            // TODO: Perhaps create proper base class out of this one
             if (_matchState == MatchState.SCHEDULINGPHASE)
             {
                 interfaceChannel.ChannelMessages = new ConcurrentDictionary<MessageName, bool>(
