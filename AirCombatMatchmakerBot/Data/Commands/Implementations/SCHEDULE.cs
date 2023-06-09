@@ -11,16 +11,11 @@ public class SCHEDULE : BaseMatchCommand
         commandOption = new("time", "Enter your time here");
         isAdminCommand = false;
 
-        matchStateAllowedWithMessage = new Dictionary<MatchState, string>
-            {
-                { MatchState.SCHEDULINGPHASE, "This match isn't on the scheduling phase!" }
-            };
-
+        matchStateAllowedWithMessage = (MatchState.SCHEDULINGPHASE, "You can only use the /schedule command during scheduling phase.");
     }
 
     protected override async Task<Response> ActivateCommandFunction(SocketSlashCommand _command, string _firstOptionString)
     {
-        /*
         ulong commandChannelId = _command.Channel.Id;
         ulong commandPlayerId = _command.User.Id;
 
@@ -50,23 +45,7 @@ public class SCHEDULE : BaseMatchCommand
             return matchStateResponse;
         }
 
-        var finalResponseTuple =
-            await mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
-                 mcc.interfaceLeagueCached, commandPlayerId,
-                    _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER,
-                    mcc.interfaceLeagueCached.LeagueCategoryId, commandChannelId);
-
-        if (finalResponseTuple.serialize)
-        {
-            if (_firstOptionString == "-")
-            {
-                return new Response("Comment removed!", true);
-            }
-            else
-            {
-                return new Response("Comment posted: " + _firstOptionString, true);
-            }
-        }*/
+        mcc.leagueMatchCached.MatchReporting.CreateScheduleSuggestion(commandPlayerId, _firstOptionString);
 
         return new Response("Couldn't schedule (not implemented yet)", false);
     }

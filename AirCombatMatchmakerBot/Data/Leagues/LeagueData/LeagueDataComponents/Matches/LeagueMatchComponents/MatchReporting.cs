@@ -37,7 +37,8 @@ public class MatchReporting : logClass<MatchReporting>
         set => finalResultTitleForConfirmation.SetValue(value);
     }
 
-    [DataMember] private logConcurrentDictionary<int, ReportData> teamIdsWithReportData =
+    [DataMember]
+    private logConcurrentDictionary<int, ReportData> teamIdsWithReportData =
         new logConcurrentDictionary<int, ReportData>();
     [DataMember] private logClass<MatchState> matchState = new logClass<MatchState>();
     [DataMember] private logString finalResultForConfirmation = new logString();
@@ -75,7 +76,7 @@ public class MatchReporting : logClass<MatchReporting>
                 Log.WriteLine("after adding with toAdd", LogLevel.DEBUG);
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 continue;
@@ -149,7 +150,7 @@ public class MatchReporting : logClass<MatchReporting>
             return new Response(ex.Message, false);
         }
 
-        InterfaceChannel interfaceChannel = 
+        InterfaceChannel interfaceChannel =
             Database.Instance.Categories.FindInterfaceCategoryWithId(
                 _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
                     _messageChannelId);
@@ -161,7 +162,7 @@ public class MatchReporting : logClass<MatchReporting>
         {
             messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
 
-            try 
+            try
             {
                 var interfaceMessage = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
                     MessageName.MATCHFINALRESULTMESSAGE);
@@ -170,7 +171,7 @@ public class MatchReporting : logClass<MatchReporting>
                 // Must be called after GenerateMessage() since it's defined there
                 FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 return new Response(ex.Message, false);
@@ -183,7 +184,7 @@ public class MatchReporting : logClass<MatchReporting>
                             messageNameToEdit);
             await messageToEdit.GenerateAndModifyTheMessage();
         }
-        catch(Exception ex) 
+        catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return new Response(ex.Message, false);
@@ -277,7 +278,7 @@ public class MatchReporting : logClass<MatchReporting>
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return new Response(ex.Message, false);
-        }        
+        }
     }
 
     private (string, bool, InterfaceChannel?) CheckIfMatchCanBeSentToConfirmation(
@@ -305,7 +306,7 @@ public class MatchReporting : logClass<MatchReporting>
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-            return new (ex.Message, false, null);
+            return new(ex.Message, false, null);
         }
     }
 
@@ -385,7 +386,7 @@ public class MatchReporting : logClass<MatchReporting>
                 var foundTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(TeamIdsWithReportData.ElementAt(t).Key);
                 teamsInTheMatch[t] = foundTeam;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 continue;
@@ -436,5 +437,31 @@ public class MatchReporting : logClass<MatchReporting>
         }
 
         return reportDatas;
+    }
+
+    public Response CreateScheduleSuggestion(ulong _playerId, string _dateAndTime)
+    {
+        // Convert the input date and time string to a DateTime object
+        if (!DateTime.TryParse(_dateAndTime, out DateTime scheduleDate))
+        {
+            return new Response("Invalid date and time format. Please provide a valid date and time.", false);
+        }
+
+        /*
+        // Calculate the time until the match (time_until_match_variable_which_is_dependant_on_how_much_time_was_left_until_the_schedule_suggestion)
+        int timeUntilMatchInSeconds = CalculateTimeUntilMatch(); // Replace this with your actual calculation
+
+        // Get the necessary references for league category and match channel
+        ulong leagueCategoryId = interfaceLeagueRef.LeagueCategoryId;
+        ulong matchChannelId = _interfaceChannel.ChannelId;
+        */
+
+        // Create the MatchQueueAcceptEvent with the calculated time until the match
+        //var matchQueueAcceptEvent = new MatchQueueAcceptEvent(timeUntilMatchInSeconds, leagueCategoryId, matchChannelId);
+
+        // Schedule the match by adding the event to the event scheduler
+        //Database.Instance.EventScheduler.ScheduledEvents.Add(matchQueueAcceptEvent);
+
+        return new Response("Invalid date and time format. Please provide a valid date and time.", false);
     }
 }

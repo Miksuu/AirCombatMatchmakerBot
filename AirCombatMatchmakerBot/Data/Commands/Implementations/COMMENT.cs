@@ -19,7 +19,6 @@ public class COMMENT : BaseMatchCommand
                 { MatchState.PLAYERREADYCONFIRMATIONPHASE, "The match has not even begun yet, your comment was not posted!" },
                 { MatchState.MATCHDONE, "That match is already done, your comment was not posted!" }
             };
-
     }
 
     protected override async Task<Response> ActivateCommandFunction(SocketSlashCommand _command, string _firstOptionString)
