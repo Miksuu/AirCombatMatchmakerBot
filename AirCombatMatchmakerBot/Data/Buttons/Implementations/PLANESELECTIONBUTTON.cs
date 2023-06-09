@@ -88,7 +88,8 @@ public class PLANESELECTIONBUTTON : BaseButton
 
                         try
                         {
-                            var playerIdSelectedPlane = planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(x => x.Key == playerId);
+                            var playerIdSelectedPlane = planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(
+                                x => x.Key == playerId);
 
                             var unitNameInstance = (InterfaceUnit)EnumExtensions.GetInstance(playerSelectedPlane);
 

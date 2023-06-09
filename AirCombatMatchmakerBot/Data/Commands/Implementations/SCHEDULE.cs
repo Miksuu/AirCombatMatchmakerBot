@@ -45,8 +45,8 @@ public class SCHEDULE : BaseMatchCommand
             return matchStateResponse;
         }
 
-        mcc.leagueMatchCached.MatchReporting.CreateScheduleSuggestion(commandPlayerId, _firstOptionString);
+        Response response = await mcc.leagueMatchCached.CreateScheduleSuggestion(commandPlayerId, _firstOptionString);
 
-        return new Response("Couldn't schedule (not implemented yet)", false);
+        return response;
     }
 }

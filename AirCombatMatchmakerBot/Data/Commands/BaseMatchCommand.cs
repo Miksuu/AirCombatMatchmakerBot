@@ -36,7 +36,7 @@ public abstract class BaseMatchCommand : BaseCommand
         Log.WriteLine("Starting to check: " + mcc.leagueMatchCached.MatchReporting.MatchState, LogLevel.VERBOSE);
 
         // Check if matchStateAllowedWithMessage is set and if the current match state matches
-        if (matchStateAllowedWithMessage.Item2 != null && matchStateAllowedWithMessage.Item1 == matchState)
+        if (matchStateAllowedWithMessage.Item2 != null && matchStateAllowedWithMessage.Item1 != matchState)
         {
             return new Response(matchStateAllowedWithMessage.Item2, false);
         }

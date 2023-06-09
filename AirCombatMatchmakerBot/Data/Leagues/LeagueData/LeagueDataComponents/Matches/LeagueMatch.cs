@@ -138,6 +138,72 @@ public class LeagueMatch : logClass<LeagueMatch>
         return allowedUserIds;
     }
 
+    public async Task<Response> CreateScheduleSuggestion(ulong _playerId, string _dateAndTime)
+    {
+        try
+        {
+            DateTime currentTime = await TimeService.GetCurrentTime();
+
+            Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " on: " + currentTime.ToString(), LogLevel.VERBOSE);
+            // Convert the input date and time string to a DateTime object
+            if (!DateTime.TryParse(_dateAndTime, out DateTime suggestedScheduleDate))
+            {
+                Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.DEBUG);
+                return new Response("Invalid date and time format. Please provide a valid date and time.", false);
+            }
+
+            Log.WriteLine("Valid Datetime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
+
+            int timeUntil = TimeService.CalculateTimeUntil(currentTime, suggestedScheduleDate);
+
+            Log.WriteLine("Time until: " + timeUntil, LogLevel.VERBOSE);
+
+            if (timeUntil <= 0)
+            {
+                Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId +
+                    " because timeUntil was: " + timeUntil, LogLevel.DEBUG);
+                return new Response("The date you tried to suggest was too early!", false);
+            }
+
+            InterfaceChannel _interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
+                    MatchChannelId);
+
+            StartMatchAfterScheduling(_interfaceChannel, timeUntil);
+
+            return new Response("Scheduled match to: " + suggestedScheduleDate, true);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return new Response(ex.Message, false);
+        }
+    }
+
+    public async void StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, int _timeUntil)
+    {
+        Log.WriteLine("Starting the match on second thread on channel after scheduling: " + matchChannelId +
+            " with timeUntil: " + _timeUntil, LogLevel.VERBOSE);
+
+        try
+        {
+            // Delete the scheduling messages here
+            //await _interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMMATCHENTRYMESSAGE);
+
+            MatchReporting.MatchState = MatchState.PLAYERREADYCONFIRMATIONPHASE;
+
+            new MatchQueueAcceptEvent(_timeUntil, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
+
+            await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                MessageName.CONFIRMMATCHENTRYMESSAGE, true);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
+        }
+    }
+
     public async void StartTheMatchOnSecondThread(InterfaceChannel _interfaceChannel)
     {
         Log.WriteLine("Starting the match on second thread on channel: " + _interfaceChannel.ChannelId, LogLevel.VERBOSE);
