@@ -53,8 +53,11 @@ public class BotRuntimeManager
                 }
 
                 // Delete the old tacviews so it doesn't throw error from old files
-                string pathToDelete = @"C:\AirCombatMatchmakerBot\Data\Tacviews";
-                if (Directory.Exists(pathToDelete)) Directory.Delete(pathToDelete, true);
+                string tacviewPathToDelete = @"C:\AirCombatMatchmakerBot\Data\Tacviews";
+                if (Directory.Exists(tacviewPathToDelete)) Directory.Delete(tacviewPathToDelete, true);
+
+                string logsPathToDelete = @"C:\AirCombatMatchmakerBot\Logs";
+                if (Directory.Exists(tacviewPathToDelete)) Directory.Delete(logsPathToDelete, true);
 
                 // Delete db here
 
