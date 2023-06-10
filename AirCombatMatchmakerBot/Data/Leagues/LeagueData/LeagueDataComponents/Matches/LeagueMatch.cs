@@ -36,11 +36,18 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => matchLeague.SetValue(value);
     }
 
+    public ScheduleObject ScheduleObject
+    {
+        get => scheduleObject.GetValue();
+        set => scheduleObject.SetValue(value);
+    }
+
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logClass<int> matchId = new logClass<int>();
     [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
     [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
     [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>(new LeagueName());
+    [DataMember] private logClass<ScheduleObject> scheduleObject = new logClass<ScheduleObject>(new ScheduleObject());
 
     private InterfaceLeague interfaceLeagueRef;
 
@@ -168,6 +175,10 @@ public class LeagueMatch : logClass<LeagueMatch>
             InterfaceChannel _interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
                 Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelId);
+
+            var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam()
+
+            scheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, ));
 
             StartMatchAfterScheduling(_interfaceChannel, timeUntil);
 
