@@ -176,9 +176,9 @@ public class LeagueMatch : logClass<LeagueMatch>
                 Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelId);
 
-            var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam()
+            var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
 
-            scheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, ));
+            scheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
             StartMatchAfterScheduling(_interfaceChannel, timeUntil);
 
