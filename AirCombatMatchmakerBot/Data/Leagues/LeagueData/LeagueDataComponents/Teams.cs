@@ -60,7 +60,7 @@ public class Teams : logClass<Teams>
         return false;
     }
 
-    public Team CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(ulong _idToSearchFor)
+    public Team CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(ulong _playerIdToSearchFor)
     {
         foreach (Team team in TeamsConcurrentBag)
         {
@@ -71,7 +71,7 @@ public class Teams : logClass<Teams>
                 Log.WriteLine("Checking player: " + teamPlayer.PlayerNickName +
                     " (" + teamPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
 
-                if (teamPlayer.PlayerDiscordId == _idToSearchFor)
+                if (teamPlayer.PlayerDiscordId == _playerIdToSearchFor)
                 {
                     if (team.TeamActive) return team;
                 }
