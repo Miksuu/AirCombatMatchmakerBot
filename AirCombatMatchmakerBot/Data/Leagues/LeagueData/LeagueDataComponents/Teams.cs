@@ -37,12 +37,11 @@ public class Teams : logClass<Teams>
         CurrentTeamInt++;
     }
 
-    public bool CheckIfPlayerIsAlreadyInATeamById(
-        int _leagueTeamSize, ulong _idToSearchFor)
+    public bool CheckIfPlayerIsAlreadyInATeamById(ulong _idToSearchFor)
     {
         foreach (Team team in TeamsConcurrentBag)
         {
-            Log.WriteLine("Searching team: " + team.GetTeamName(_leagueTeamSize), LogLevel.VERBOSE);
+            Log.WriteLine("Searching team: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam), LogLevel.VERBOSE);
 
             foreach (Player teamPlayer in team.Players)
             {
@@ -61,12 +60,11 @@ public class Teams : logClass<Teams>
         return false;
     }
 
-    public Team CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
-        int _leagueTeamSize, ulong _idToSearchFor)
+    public Team CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(ulong _idToSearchFor)
     {
         foreach (Team team in TeamsConcurrentBag)
         {
-            Log.WriteLine("Searching team: " + team.GetTeamName(_leagueTeamSize), LogLevel.VERBOSE);
+            Log.WriteLine("Searching team: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam), LogLevel.VERBOSE);
 
             foreach (Player teamPlayer in team.Players)
             {
@@ -86,15 +84,14 @@ public class Teams : logClass<Teams>
     }
 
     // Always run CheckIfPlayerIsAlreadyInATeamById() before!
-    public Team ReturnTeamThatThePlayerIsIn(
-        int _leagueTeamSize, ulong _idToSearchFor)
+    public Team ReturnTeamThatThePlayerIsIn(ulong _idToSearchFor)
     {
         foreach (Team team in TeamsConcurrentBag)
         {
             List<Player> Players = team.Players.ToList();
 
             Log.WriteLine("Searching team: " + team.GetTeamName(
-                _leagueTeamSize) + " with " + Players.Count, LogLevel.VERBOSE);
+                interfaceLeagueRef.LeaguePlayerCountPerTeam) + " with " + Players.Count, LogLevel.VERBOSE);
 
             foreach (Player teamPlayer in Players)
             {
