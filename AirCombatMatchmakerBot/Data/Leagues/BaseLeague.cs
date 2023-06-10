@@ -209,11 +209,10 @@ public abstract class BaseLeague : InterfaceLeague
             Log.WriteLine("Found player: " + player.PlayerNickName +
                 " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
 
-            bool playerIsInATeamAlready = LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(
-                thisInterfaceLeague.LeaguePlayerCountPerTeam, _userId);
+            bool playerIsInATeamAlready = LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(_userId);
 
             bool playerIsInActiveTeamAlready = LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
-                thisInterfaceLeague.LeaguePlayerCountPerTeam, _userId).TeamActive;
+                _userId).TeamActive;
 
             if (!playerIsInATeamAlready)
             {

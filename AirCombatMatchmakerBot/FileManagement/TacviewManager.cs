@@ -72,8 +72,7 @@ public class TacviewManager
 
                 var teams = _interfaceLeague.LeagueData.Teams;
 
-                var foundTeam = teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
-                    _interfaceLeague.LeaguePlayerCountPerTeam, playerId).TeamName;
+                var foundTeam = teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(playerId).TeamName;
 
                 tacviewResults[index] = new AttachmentData(foundTeam + "'s Tacview", file.Url);
                 index++;
