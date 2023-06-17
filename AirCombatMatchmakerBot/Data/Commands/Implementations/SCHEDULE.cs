@@ -40,7 +40,7 @@ public class SCHEDULE : BaseMatchCommand
         Response matchStateResponse =
             CheckThatPlayerIsInTheMatchAndReturnResponseFromMatchStatesThatAreNotAllowed(
                 commandPlayerId, commandChannelId);
-        if (matchStateResponse.serialize == false)
+        if (!matchStateResponse.serialize)
         {
             return matchStateResponse;
         }

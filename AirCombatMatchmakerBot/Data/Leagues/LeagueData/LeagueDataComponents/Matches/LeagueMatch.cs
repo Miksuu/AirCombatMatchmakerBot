@@ -178,9 +178,18 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
 
+            // Add a check if the time is the same than the scheduleobject's
+            //if (suggestedScheduleDate.)
+
+            if (playerTeamId == scheduleObject.GetValue().TeamIdThatRequestedScheduling)
+            {
+                return new Response("You have already suggested a date which is: " + scheduleObject.GetValue().RequestedSchedulingTime, false);
+            }
+            //             StartMatchAfterScheduling(_interfaceChannel, timeUntil);
+
+
             scheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
-            StartMatchAfterScheduling(_interfaceChannel, timeUntil);
 
             return new Response("Scheduled match to: " + suggestedScheduleDate, true);
         }

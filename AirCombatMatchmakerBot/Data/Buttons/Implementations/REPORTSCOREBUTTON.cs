@@ -32,7 +32,6 @@ public class REPORTSCOREBUTTON : BaseButton
     {
         try
         {
-
             string[] splitStrings = thisInterfaceButton.ButtonCustomId.Split('_');
             ulong playerId = _component.User.Id;
             int playerReportedResult = int.Parse(splitStrings[1]);
