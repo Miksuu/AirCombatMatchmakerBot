@@ -1,6 +1,7 @@
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
+using System;
 
 [DataContract]
 public class LeagueMatch : logClass<LeagueMatch>
@@ -191,9 +192,16 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             Log.WriteLine("Valid Datetime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
 
-            ulong timeUntil = (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+            ulong timeUntil = TimeService.CalculateTimeUntilWithUnixTime(
+                (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
 
             Log.WriteLine("Time until: " + timeUntil, LogLevel.VERBOSE);
+
+            //DateTime dateTime = DateTime.Now;
+            ulong scheduledTime = (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+            //ulong currentTimeAndTimeUntil = currentUnixTime + timeUntil;
+
+            //Log.WriteLine("CUR: " + currentTimeAndTimeUntil + " | " + ScheduleObject.RequestedSchedulingTimeInUnixTime, LogLevel.DEBUG);
 
             if (timeUntil <= 0)
             {
@@ -210,13 +218,11 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             if (playerTeamId == ScheduleObject.TeamIdThatRequestedScheduling)
             {
-                return new Response("You have already suggested a date which is: " 
-                    + ScheduleObject.GetValue().RequestedSchedulingTimeInUnixTime, false);
+                return new Response("You have already suggested a date!", false);
             }
-            
+
             // Add a check if the time is the same than the scheduleobject's
-            if ((ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds ==
-                ScheduleObject.RequestedSchedulingTimeInUnixTime)
+            if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
             {
                 StartMatchAfterScheduling(_interfaceChannel, timeUntil);
                 return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
