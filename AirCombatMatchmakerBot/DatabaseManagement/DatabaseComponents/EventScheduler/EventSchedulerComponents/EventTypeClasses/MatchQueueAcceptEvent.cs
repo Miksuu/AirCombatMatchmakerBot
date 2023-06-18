@@ -82,6 +82,8 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
             }
         }
 
+        mcc.leagueMatchCached.AttemptToPutTheTeamsBackToTheQueueAfterTheMatch();
+
         // Create the event and execute it instantly
         var newEvent = new DeleteChannelEvent(mcc.interfaceLeagueCached.LeagueCategoryId, matchChannelId, "match");
         Log.WriteLine("event: " + EventId + " created newEvent", LogLevel.VERBOSE);

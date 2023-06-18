@@ -195,6 +195,6 @@ public class MatchScheduler : logClass<MatchScheduler>
             _seekingTeam.Key,
         };
 
-        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE);
+        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE, true);
     }
 }

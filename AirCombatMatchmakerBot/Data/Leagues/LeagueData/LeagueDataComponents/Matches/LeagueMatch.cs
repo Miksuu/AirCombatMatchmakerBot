@@ -43,12 +43,19 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => scheduleObject.SetValue(value);
     }
 
+    public bool AttemptToPutTeamsBackToQueueAfterTheMatch
+    {
+        get => attemptToPutTeamsBackToQueueAfterTheMatch.GetValue();
+        set => attemptToPutTeamsBackToQueueAfterTheMatch.SetValue(value);
+    }
+
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logClass<int> matchId = new logClass<int>();
     [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
     [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
     [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>(new LeagueName());
     [DataMember] private logClass<ScheduleObject> scheduleObject = new logClass<ScheduleObject>(new ScheduleObject());
+    [DataMember] private logClass<bool> attemptToPutTeamsBackToQueueAfterTheMatch = new logClass<bool>();
 
     private InterfaceLeague interfaceLeagueRef;
 
@@ -70,15 +77,17 @@ public class LeagueMatch : logClass<LeagueMatch>
     }
 
     // TODO: Add interfaceLeague ref on constructor as a reference
-    public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn, MatchState _matchState)
+    public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn,
+        MatchState _matchState, bool _attemptToPutTeamsBackToQueueAfterTheMatch = false)
     {
+        AttemptToPutTeamsBackToQueueAfterTheMatch = _attemptToPutTeamsBackToQueueAfterTheMatch;
         SetInterfaceLeagueReferencesForTheMatch(_interfaceLeague);
 
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
         MatchLeague = _interfaceLeague.LeagueCategoryName;
 
         Log.WriteLine("Teams to from the match on: " + _teamsToFormMatchOn[0] +
-            ", " + _teamsToFormMatchOn[1], LogLevel.DEBUG);
+            ", " + _teamsToFormMatchOn[1] + " scheduled match: " + _attemptToPutTeamsBackToQueueAfterTheMatch, LogLevel.DEBUG);
 
         // Add the team's name to the ConcurrentDictionary as a value
         foreach (int teamId in _teamsToFormMatchOn)
@@ -122,7 +131,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         {
             Log.WriteLine("Looping on team id: " + teamKvp.Key, LogLevel.VERBOSE);
 
-            try 
+            try
             {
                 Team foundTeam = interfaceLeagueRef.LeagueData.Teams.FindTeamById(teamKvp.Key);
 
@@ -136,7 +145,7 @@ public class LeagueMatch : logClass<LeagueMatch>
                     playerCounter++;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 continue;
@@ -331,8 +340,8 @@ public class LeagueMatch : logClass<LeagueMatch>
 
         try
         {
-             attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
-                MatchId, interfaceLeagueRef).Result;
+            attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
+               MatchId, interfaceLeagueRef).Result;
 
             if (MatchReporting.FinalMessageForMatchReportingChannel == null)
             {
@@ -350,6 +359,8 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             await interfaceLeagueRef.PostMatchReport(
                 MatchReporting.FinalMessageForMatchReportingChannel, MatchReporting.FinalResultTitleForConfirmation, attachmentDatas);
+
+            AttemptToPutTheTeamsBackToTheQueueAfterTheMatch();
 
             ulong matchChannelDeleteDelay = 45;
 
@@ -380,6 +391,27 @@ public class LeagueMatch : logClass<LeagueMatch>
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
+        }
+    }
+
+    public void AttemptToPutTheTeamsBackToTheQueueAfterTheMatch()
+    {
+        // Defined when the match is created
+        if (AttemptToPutTeamsBackToQueueAfterTheMatch)
+        {
+            // Place the teams back in to the queue
+            foreach (var teamId in MatchReporting.TeamIdsWithReportData)
+            {
+                if (!interfaceLeagueRef.LeagueData.MatchScheduler.TeamsInTheMatchmaker.ContainsKey(teamId.Key))
+                {
+                    Log.WriteLine("Does not contain key: " + teamId + ", left from the matchmaker?", LogLevel.DEBUG);
+                    continue;
+                }
+
+                interfaceLeagueRef.LeagueData.MatchScheduler.TeamsInTheMatchmaker[teamId.Key].TeamMatchmakingState = TeamMatchmakingState.INQUEUE;
+
+                Log.WriteLine("Set team's " + teamId + " to in queue.", LogLevel.DEBUG);
+            }
         }
     }
 }
