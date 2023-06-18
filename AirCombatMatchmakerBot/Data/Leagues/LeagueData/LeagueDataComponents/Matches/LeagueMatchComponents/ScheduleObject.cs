@@ -1,12 +1,13 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 [DataContract]
 public class ScheduleObject : logClass<ScheduleObject>
 {
-    public DateTime RequestedSchedulingTime
+    public ulong RequestedSchedulingTimeInUnixTime
     {
-        get => requestedSchedulingTime.GetValue();
-        set => requestedSchedulingTime.SetValue(value);
+        get => requestedSchedulingTimeInUnixTime.GetValue();
+        set => requestedSchedulingTimeInUnixTime.SetValue(value);
     }
 
     public int TeamIdThatRequestedScheduling
@@ -15,7 +16,7 @@ public class ScheduleObject : logClass<ScheduleObject>
         set => teamIdThatRequestedScheduling.SetValue(value);
     }
 
-    [DataMember] private logClass<DateTime> requestedSchedulingTime = new logClass<DateTime>();
+    [DataMember] private logClass<ulong> requestedSchedulingTimeInUnixTime = new logClass<ulong>();
     [DataMember] private logClass<int> teamIdThatRequestedScheduling = new logClass<int>();
 
 
@@ -23,7 +24,7 @@ public class ScheduleObject : logClass<ScheduleObject>
     public ScheduleObject(DateTime _requestedTime, int _teamId)
     {
         Log.WriteLine("Creating a new " + nameof(ScheduleObject) + " by: " + _teamId, LogLevel.DEBUG);
-        RequestedSchedulingTime = _requestedTime;
+        RequestedSchedulingTimeInUnixTime = (ulong)(_requestedTime - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
         TeamIdThatRequestedScheduling = _teamId;
     }
 }

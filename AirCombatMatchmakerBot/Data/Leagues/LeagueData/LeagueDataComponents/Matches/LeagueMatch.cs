@@ -149,9 +149,9 @@ public class LeagueMatch : logClass<LeagueMatch>
     {
         try
         {
-            DateTime currentTime = await TimeService.GetCurrentTime();
+            //DateTime currentTime = await TimeService.GetCurrentTime();
 
-            Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " on: " + currentTime.ToString(), LogLevel.VERBOSE);
+            Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.VERBOSE);
             // Convert the input date and time string to a DateTime object
             bool isValidDateAndTime = DateTime.TryParse(_dateAndTime, out DateTime suggestedScheduleDate);
 
@@ -166,7 +166,8 @@ public class LeagueMatch : logClass<LeagueMatch>
 
                 if (ScheduleObject.TeamIdThatRequestedScheduling == playerTeamIdTemp)
                 {
-                    return new Response("You have already suggested a date which is: " + ScheduleObject.GetValue().requestedSchedulingTime, false);
+                    return new Response("You have already suggested a date which is: " +
+                        ScheduleObject.GetValue().RequestedSchedulingTimeInUnixTime, false);
                 }
 
                 Log.WriteLine("player: " + playerTeamIdTemp + " on team: " + playerTeamIdTemp + " accepted the match.", LogLevel.DEBUG);
@@ -176,16 +177,16 @@ public class LeagueMatch : logClass<LeagueMatch>
                     Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                         MatchChannelId);
 
-                int timeUntilTemp = TimeService.CalculateTimeUntil(currentTime, ScheduleObject.requestedSchedulingTime);
+                ulong timeUntilTemp = TimeService.CalculateTimeUntilWithUnixTime(ScheduleObject.RequestedSchedulingTimeInUnixTime);
 
                 StartMatchAfterScheduling(_interfaceChannelTemp, timeUntilTemp);
 
-                return new Response("Scheduled match to: " + ScheduleObject.requestedSchedulingTime, true);
+                return new Response("Scheduled match to: " + ScheduleObject.RequestedSchedulingTimeInUnixTime, true);
             }
 
             Log.WriteLine("Valid Datetime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
 
-            int timeUntil = TimeService.CalculateTimeUntil(currentTime, suggestedScheduleDate);
+            ulong timeUntil = (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
 
             Log.WriteLine("Time until: " + timeUntil, LogLevel.VERBOSE);
 
@@ -204,11 +205,13 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             if (playerTeamId == ScheduleObject.TeamIdThatRequestedScheduling)
             {
-                return new Response("You have already suggested a date which is: " + ScheduleObject.GetValue().requestedSchedulingTime, false);
+                return new Response("You have already suggested a date which is: " 
+                    + ScheduleObject.GetValue().RequestedSchedulingTimeInUnixTime, false);
             }
             
             // Add a check if the time is the same than the scheduleobject's
-            if (suggestedScheduleDate == ScheduleObject.requestedSchedulingTime)
+            if ((ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds ==
+                ScheduleObject.RequestedSchedulingTimeInUnixTime)
             {
                 StartMatchAfterScheduling(_interfaceChannel, timeUntil);
                 return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
@@ -225,7 +228,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         }
     }
 
-    public async void StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, int _timeUntil)
+    public async void StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, ulong _timeUntil)
     {
         Log.WriteLine("Starting the match on second thread on channel after scheduling: " + matchChannelId +
             " with timeUntil: " + _timeUntil, LogLevel.VERBOSE);
@@ -335,7 +338,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             await interfaceLeagueRef.PostMatchReport(
                 MatchReporting.FinalMessageForMatchReportingChannel, MatchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
-            int matchChannelDeleteDelay = 45;
+            ulong matchChannelDeleteDelay = 45;
 
             // Schedule an event to delete the channel later
             new DeleteChannelEvent(matchChannelDeleteDelay, interfaceLeagueRef.LeagueCategoryId, MatchChannelId, "match");

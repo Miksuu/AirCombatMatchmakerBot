@@ -7,7 +7,7 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
     public LeagueMatchSchedulerEvent() { }
 
     public LeagueMatchSchedulerEvent(
-        int _timeFromNowToExecuteOn, ulong _leagueCategoryId)
+        ulong _timeFromNowToExecuteOn, ulong _leagueCategoryId)
     {
         Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
             _leagueCategoryId, LogLevel.VERBOSE);

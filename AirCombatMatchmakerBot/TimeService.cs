@@ -35,11 +35,17 @@ public static class TimeService
         }
     }
 
-    public static int CalculateTimeUntil(DateTime _currentTime, DateTime _timeUntil)
+    public static ulong CalculateTimeUntil(DateTime _timeUntil)
     {
-        TimeSpan timeDifference = _timeUntil - _currentTime;
-        int timeUntilInSeconds = (int)timeDifference.TotalSeconds;
-        return timeUntilInSeconds;
+        ulong timeDiff = (ulong)(_timeUntil - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds -
+            (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+        return timeDiff;
+    }
+
+    public static ulong CalculateTimeUntilWithUnixTime(ulong _timeUntil)
+    {
+        ulong timeDiff = _timeUntil - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+        return timeDiff;
     }
 
     public class ApiResponse

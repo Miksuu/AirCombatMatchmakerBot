@@ -8,7 +8,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
     public MatchQueueAcceptEvent() { }
 
     public MatchQueueAcceptEvent(
-        int _timeFromNowToExecuteOn, ulong _leagueCategoryIdCached, ulong _matchChannelIdCached)
+        ulong _timeFromNowToExecuteOn, ulong _leagueCategoryIdCached, ulong _matchChannelIdCached)
     {
         Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
             _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.VERBOSE);
