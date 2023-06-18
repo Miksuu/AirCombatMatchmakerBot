@@ -160,7 +160,7 @@ public class LeagueMatch : logClass<LeagueMatch>
                 Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.DEBUG);
                 return new Response("Invalid date and time format. Please provide a valid date and time.", false);
             }
-            else if (!isValidDateAndTime && _dateAndTime.ToLower() == "accept")
+            else if (!isValidDateAndTime && _dateAndTime.ToLower() == "accept" && ScheduleObject.TeamIdThatRequestedScheduling != 0)
             {
                 var playerTeamIdTemp = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
 
