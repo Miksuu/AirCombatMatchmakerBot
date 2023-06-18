@@ -181,7 +181,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
                 ulong timeUntilTemp = TimeService.CalculateTimeUntilWithUnixTime(ScheduleObject.RequestedSchedulingTimeInUnixTime);
 
-                StartMatchAfterScheduling(_interfaceChannelTemp, timeUntilTemp);
+                await StartMatchAfterScheduling(_interfaceChannelTemp, timeUntilTemp);
 
                 return new Response("Scheduled match to: " + ScheduleObject.RequestedSchedulingTimeInUnixTime, true);
             }
@@ -224,7 +224,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             // Add a check if the time is the same than the scheduleobject's
             if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
             {
-                StartMatchAfterScheduling(_interfaceChannel, timeUntil);
+                await StartMatchAfterScheduling(_interfaceChannel, timeUntil);
                 return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
             }
 
@@ -239,7 +239,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         }
     }
 
-    public async void StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, ulong _timeUntil)
+    public async Task StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, ulong _timeUntil)
     {
         Log.WriteLine("Starting the match on second thread on channel after scheduling: " + matchChannelId +
             " with timeUntil: " + _timeUntil, LogLevel.VERBOSE);
@@ -255,6 +255,8 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMMATCHENTRYMESSAGE, true);
+
+            return;
         }
         catch (Exception ex)
         {
