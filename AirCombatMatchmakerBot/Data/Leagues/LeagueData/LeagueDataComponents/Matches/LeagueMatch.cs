@@ -153,10 +153,34 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " on: " + currentTime.ToString(), LogLevel.VERBOSE);
             // Convert the input date and time string to a DateTime object
-            if (!DateTime.TryParse(_dateAndTime, out DateTime suggestedScheduleDate))
+            bool isValidDateAndTime = DateTime.TryParse(_dateAndTime, out DateTime suggestedScheduleDate);
+
+            if (!isValidDateAndTime && _dateAndTime.ToLower() != "accept")
             {
                 Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.DEBUG);
                 return new Response("Invalid date and time format. Please provide a valid date and time.", false);
+            }
+            else if (!isValidDateAndTime && _dateAndTime.ToLower() == "accept")
+            {
+                var playerTeamIdTemp = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
+
+                if (ScheduleObject.TeamIdThatRequestedScheduling == playerTeamIdTemp)
+                {
+                    return new Response("You have already suggested a date which is: " + ScheduleObject.GetValue().requestedSchedulingTime, false);
+                }
+
+                Log.WriteLine("player: " + playerTeamIdTemp + " on team: " + playerTeamIdTemp + " accepted the match.", LogLevel.DEBUG);
+
+                // Move to method
+                InterfaceChannel _interfaceChannelTemp = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
+                        MatchChannelId);
+
+                int timeUntilTemp = TimeService.CalculateTimeUntil(currentTime, ScheduleObject.requestedSchedulingTime);
+
+                StartMatchAfterScheduling(_interfaceChannelTemp, timeUntilTemp);
+
+                return new Response("Scheduled match to: " + ScheduleObject.requestedSchedulingTime, true);
             }
 
             Log.WriteLine("Valid Datetime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
@@ -178,18 +202,19 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
 
-            // Add a check if the time is the same than the scheduleobject's
-            //if (suggestedScheduleDate.)
-
-            if (playerTeamId == scheduleObject.GetValue().TeamIdThatRequestedScheduling)
+            if (playerTeamId == ScheduleObject.TeamIdThatRequestedScheduling)
             {
-                return new Response("You have already suggested a date which is: " + scheduleObject.GetValue().RequestedSchedulingTime, false);
+                return new Response("You have already suggested a date which is: " + ScheduleObject.GetValue().requestedSchedulingTime, false);
             }
-            //             StartMatchAfterScheduling(_interfaceChannel, timeUntil);
+            
+            // Add a check if the time is the same than the scheduleobject's
+            if (suggestedScheduleDate == ScheduleObject.requestedSchedulingTime)
+            {
+                StartMatchAfterScheduling(_interfaceChannel, timeUntil);
+                return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
+            }
 
-
-            scheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
-
+            ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
             return new Response("Scheduled match to: " + suggestedScheduleDate, true);
         }
@@ -212,7 +237,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             MatchReporting.MatchState = MatchState.PLAYERREADYCONFIRMATIONPHASE;
 
-            new MatchQueueAcceptEvent(_timeUntil, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
+            new MatchQueueAcceptEvent(_timeUntil + 900, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
 
             await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMMATCHENTRYMESSAGE, true);
