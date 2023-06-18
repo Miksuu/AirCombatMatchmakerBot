@@ -151,7 +151,8 @@ public class LeagueMatch : logClass<LeagueMatch>
         {
             //DateTime currentTime = await TimeService.GetCurrentTime();
 
-            Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.VERBOSE);
+            Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " with towards id: " +
+                ScheduleObject.TeamIdThatRequestedScheduling, LogLevel.VERBOSE);
             // Convert the input date and time string to a DateTime object
             bool isValidDateAndTime = DateTime.TryParse(_dateAndTime, out DateTime suggestedScheduleDate);
 
@@ -182,6 +183,10 @@ public class LeagueMatch : logClass<LeagueMatch>
                 StartMatchAfterScheduling(_interfaceChannelTemp, timeUntilTemp);
 
                 return new Response("Scheduled match to: " + ScheduleObject.RequestedSchedulingTimeInUnixTime, true);
+            }
+            else if (!isValidDateAndTime && _dateAndTime.ToLower() == "accept" && ScheduleObject.TeamIdThatRequestedScheduling == 0)
+            {
+                return new Response("You can't accept a match that hasn't been scheduled!", false);
             }
 
             Log.WriteLine("Valid Datetime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
