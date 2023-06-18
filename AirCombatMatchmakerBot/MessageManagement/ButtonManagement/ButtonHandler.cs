@@ -38,18 +38,26 @@ public static class ButtonHandler
 
             Log.WriteLine(response.responseString + " | " + response.serialize, LogLevel.DEBUG);
 
+            /*
             // Fix an API change in discord
             if (response.responseString == "")
             {
                 Log.WriteLine("responseString was empty, returning", LogLevel.VERBOSE);
+                await _component.RespondAsync();
                 return;
-            }
+            }*/
 
             await _component.RespondAsync(response.responseString, ephemeral: databaseButton.EphemeralResponse);
             //else { Log.WriteLine("the response was: " + responseTuple.Item1, LogLevel.CRITICAL); }
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
+            if (ex.Message.Contains("error 50006"))
+            {
+                Log.WriteLine("skipped empty message try-catch", LogLevel.VERBOSE);
+                return;
+            }
+
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
         }
