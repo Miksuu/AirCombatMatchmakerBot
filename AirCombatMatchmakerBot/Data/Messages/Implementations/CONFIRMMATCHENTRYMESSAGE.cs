@@ -62,9 +62,15 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                 if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
                     scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
                 {
+                    // Skips the matches that have not been scheduled
+                    if (mcc.leagueMatchCached.IsAScheduledMatch)
+                    {
+                        finalMessage += "Scheduled time: " +
+                            TimeService.ConvertToDateTimeFromUnixTime(scheduledEvent.TimeToExecuteTheEventOn).ToString() + "\n";
+                    }
+
                     finalMessage += "Time left: " +
-                        TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(
-                            scheduledEvent.TimeToExecuteTheEventOn)+ "\n";
+                        TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + "\n";
                 }
             }
         }
