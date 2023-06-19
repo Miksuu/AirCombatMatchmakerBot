@@ -167,10 +167,11 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             // Parse the input date and time string
             if (!DateTime.TryParseExact(_dateAndTime, new[] {
-                "dd/MM/yyyy HH:mm:ss'z'", "dd/MM/yyyy HH:mm'z'", "dd/MM/yyyy HH'z'", "dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm",
-                "dd.MM.yyyy HH:mm:ss'z'", "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'", "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm",
-                "dd.MM.yyyy HH:mm:ss'z'", "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'", "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm" },
-                CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out suggestedScheduleDate))
+                "dd/MM/yyyy HH:mm:ss'z'", "dd/MM/yyyy HH:mm'z'", "dd/MM/yyyy HH'z'",
+                "dd/MM/yyyy HHmmss'z'", "dd/MM/yyyy HHmm'z'", 
+                "dd.MM.yyyy HH:mm:ss'z'", "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'",
+                "dd.MM.yyyy HHmmss'z'", "dd.MM.yyyy HHmm'z'"},
+                CultureInfo.InvariantCulture, DateTimeStyles.None, out suggestedScheduleDate))
             {
                 return new Response("Invalid date and time format. Please provide a valid date and time.", false);
             }
@@ -185,7 +186,9 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             bool isValidDateAndTime = true;
             ulong scheduledTime = (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
-            ulong currentTime = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            ulong currentTime = (ulong)(
+                TimeService.GetCurrentTime().Result -
+                    new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
             ulong timeUntil = scheduledTime - currentTime;
 
             if (!isValidDateAndTime && _dateAndTime.ToLower() != "accept")
