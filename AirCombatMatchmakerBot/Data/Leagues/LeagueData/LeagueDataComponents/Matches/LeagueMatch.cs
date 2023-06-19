@@ -2,6 +2,7 @@ using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
 using System;
+using System.Globalization;
 
 [DataContract]
 public class LeagueMatch : logClass<LeagueMatch>
@@ -159,12 +160,33 @@ public class LeagueMatch : logClass<LeagueMatch>
     {
         try
         {
-            //DateTime currentTime = await TimeService.GetCurrentTime();
-
             Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " with towards id: " +
                 ScheduleObject.TeamIdThatRequestedScheduling, LogLevel.VERBOSE);
-            // Convert the input date and time string to a DateTime object
-            bool isValidDateAndTime = DateTime.TryParse(_dateAndTime, out DateTime suggestedScheduleDate);
+
+            DateTime suggestedScheduleDate;
+
+            // Parse the input date and time string
+            if (!DateTime.TryParseExact(_dateAndTime, new[] {
+                "dd/MM/yyyy HH:mm:ss'z'", "dd/MM/yyyy HH:mm'z'", "dd/MM/yyyy HH'z'", "dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm",
+                "dd.MM.yyyy HH:mm:ss'z'", "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'", "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm",
+                "dd.MM.yyyy HH:mm:ss'z'", "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'", "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm" },
+                CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out suggestedScheduleDate))
+            {
+                return new Response("Invalid date and time format. Please provide a valid date and time.", false);
+            }
+
+            // Assume the year is the current year if not provided
+            if (suggestedScheduleDate.Year == 1)
+            {
+                suggestedScheduleDate = suggestedScheduleDate.AddYears(DateTime.UtcNow.Year - 1);
+            }
+
+            Log.WriteLine("Valid DateTime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
+
+            bool isValidDateAndTime = true;
+            ulong scheduledTime = (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+            ulong currentTime = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            ulong timeUntil = scheduledTime - currentTime;
 
             if (!isValidDateAndTime && _dateAndTime.ToLower() != "accept")
             {
@@ -173,7 +195,8 @@ public class LeagueMatch : logClass<LeagueMatch>
             }
             else if (!isValidDateAndTime && _dateAndTime.ToLower() == "accept" && ScheduleObject.TeamIdThatRequestedScheduling != 0)
             {
-                var playerTeamIdTemp = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
+                var playerTeamIdTemp = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
+                    _playerId).TeamId;
 
                 if (ScheduleObject.TeamIdThatRequestedScheduling == playerTeamIdTemp)
                 {
@@ -183,7 +206,6 @@ public class LeagueMatch : logClass<LeagueMatch>
 
                 Log.WriteLine("player: " + playerTeamIdTemp + " on team: " + playerTeamIdTemp + " accepted the match.", LogLevel.DEBUG);
 
-                // Move to method
                 InterfaceChannel _interfaceChannelTemp = Database.Instance.Categories.FindInterfaceCategoryWithId(
                     Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                         MatchChannelId);
@@ -198,19 +220,6 @@ public class LeagueMatch : logClass<LeagueMatch>
             {
                 return new Response("You can't accept a match that hasn't been scheduled!", false);
             }
-
-            Log.WriteLine("Valid Datetime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
-
-            ulong timeUntil = TimeService.CalculateTimeUntilWithUnixTime(
-                (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
-
-            Log.WriteLine("Time until: " + timeUntil, LogLevel.VERBOSE);
-
-            //DateTime dateTime = DateTime.Now;
-            ulong scheduledTime = (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
-            //ulong currentTimeAndTimeUntil = currentUnixTime + timeUntil;
-
-            //Log.WriteLine("CUR: " + currentTimeAndTimeUntil + " | " + ScheduleObject.RequestedSchedulingTimeInUnixTime, LogLevel.DEBUG);
 
             if (timeUntil <= 0)
             {
@@ -230,7 +239,6 @@ public class LeagueMatch : logClass<LeagueMatch>
                 return new Response("You have already suggested a date!", false);
             }
 
-            // Add a check if the time is the same than the scheduleobject's
             if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
             {
                 await StartMatchAfterScheduling(_interfaceChannel, timeUntil);
@@ -247,6 +255,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             return new Response(ex.Message, false);
         }
     }
+
 
     public async Task StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, ulong _timeUntil)
     {
