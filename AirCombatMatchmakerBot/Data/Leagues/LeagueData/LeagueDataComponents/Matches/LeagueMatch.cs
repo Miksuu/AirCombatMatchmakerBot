@@ -166,14 +166,45 @@ public class LeagueMatch : logClass<LeagueMatch>
             DateTime suggestedScheduleDate;
 
             // Parse the input date and time string
-            if (!DateTime.TryParseExact(_dateAndTime, new[] {
-                "dd/MM/yyyy HH:mm:ss'z'", "dd/MM/yyyy HH:mm'z'", "dd/MM/yyyy HH'z'",
-                "dd/MM/yyyy HHmmss'z'", "dd/MM/yyyy HHmm'z'", 
-                "dd.MM.yyyy HH:mm:ss'z'", "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'",
-                "dd.MM.yyyy HHmmss'z'", "dd.MM.yyyy HHmm'z'"},
-                CultureInfo.InvariantCulture, DateTimeStyles.None, out suggestedScheduleDate))
+            if (_dateAndTime.ToLower().StartsWith("today "))
             {
-                return new Response("Invalid date and time format. Please provide a valid date and time.", false);
+                string timeString = _dateAndTime.Substring(6);
+                DateTime currentDate = DateTime.UtcNow.Date;
+                if (!TimeSpan.TryParseExact(timeString, new[] {
+                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
+                    @"hhmmss'z'", @"hhmm'z'"
+
+                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
+                {
+                    return new Response("Invalid time format. Please provide a valid time.", false);
+                }
+                suggestedScheduleDate = currentDate.Add(timeComponent);
+            }
+            else if (_dateAndTime.ToLower().StartsWith("tomorrow "))
+            {
+                string timeString = _dateAndTime.Substring(9);
+                DateTime tomorrowDate = DateTime.UtcNow.Date.AddDays(1);
+                if (!TimeSpan.TryParseExact(timeString, new[] { 
+                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'", 
+                    @"hhmmss'z'", @"hhmm'z'"
+                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
+                {
+                    return new Response("Invalid time format. Please provide a valid time.", false);
+                }
+                suggestedScheduleDate = tomorrowDate.Add(timeComponent);
+            }
+            else
+            {
+                if (!DateTime.TryParseExact(_dateAndTime, new[] {
+                    "dd/MM/yyyy HH:mm:ss'z'", "dd/MM/yyyy HH:mm'z'", "dd/MM/yyyy HH'z'",
+                    "dd/MM/yyyy HHmmss'z'", "dd/MM/yyyy HHmm'z'",
+                    "dd.MM.yyyy HH:mm:ss'z'", "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'",
+                    "dd.MM.yyyy HHmmss'z'", "dd.MM.yyyy HHmm'z'",
+                },
+                CultureInfo.InvariantCulture, DateTimeStyles.None, out suggestedScheduleDate))
+                {
+                    return new Response("Invalid date and time format. Please provide a valid date and time.", false);
+                }
             }
 
             // Assume the year is the current year if not provided
