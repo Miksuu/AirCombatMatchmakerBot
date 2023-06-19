@@ -62,9 +62,9 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                 if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
                     scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
                 {
-                    var timeLeft = scheduledEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
-
-                    finalMessage += "Time left: " + timeLeft + " seconds.\n";
+                    finalMessage += "Time left: " +
+                        TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(
+                            scheduledEvent.TimeToExecuteTheEventOn)+ "\n";
                 }
             }
         }
