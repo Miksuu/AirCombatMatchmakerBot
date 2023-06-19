@@ -184,8 +184,34 @@ public class LeagueMatch : logClass<LeagueMatch>
             {
                 string timeString = _dateAndTime.Substring(9);
                 DateTime tomorrowDate = DateTime.UtcNow.Date.AddDays(1);
-                if (!TimeSpan.TryParseExact(timeString, new[] { 
-                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'", 
+                if (!TimeSpan.TryParseExact(timeString, new[] {
+                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
+                    @"hhmmss'z'", @"hhmm'z'"
+                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
+                {
+                    return new Response("Invalid time format. Please provide a valid time.", false);
+                }
+                suggestedScheduleDate = tomorrowDate.Add(timeComponent);
+            }
+            if (_dateAndTime.ToLower().EndsWith("today"))
+            {
+                DateTime currentDate = DateTime.UtcNow.Date;
+                string timeString = _dateAndTime.Replace("today", "").Trim();
+                if (!TimeSpan.TryParseExact(timeString, new[] {
+                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
+                    @"hhmmss'z'", @"hhmm'z'"
+                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
+                {
+                    return new Response("Invalid time format. Please provide a valid time.", false);
+                }
+                suggestedScheduleDate = currentDate.Add(timeComponent);
+            }
+            else if (_dateAndTime.ToLower().EndsWith("tomorrow"))
+            {
+                DateTime tomorrowDate = DateTime.UtcNow.Date.AddDays(1);
+                string timeString = _dateAndTime.Replace("tomorrow", "").Trim();
+                if (!TimeSpan.TryParseExact(timeString, new[] {
+                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
                     @"hhmmss'z'", @"hhmm'z'"
                 }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
                 {
