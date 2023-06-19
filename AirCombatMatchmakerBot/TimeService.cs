@@ -131,8 +131,6 @@ public static class TimeService
         }
     }
 
-
-
     public class ApiResponse
     {
         public string utc_datetime { get; set; }
