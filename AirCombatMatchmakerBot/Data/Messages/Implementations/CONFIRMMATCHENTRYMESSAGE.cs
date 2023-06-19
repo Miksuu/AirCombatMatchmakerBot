@@ -10,7 +10,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
     public CONFIRMMATCHENTRYMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.CONFIRMMATCHENTRYMESSAGE;
-        thisInterfaceMessage.MessageEmbedTitle = "Select your plane. If you do not select your plane in a minute," +
+        thisInterfaceMessage.MessageEmbedTitle = "Select your plane. If you do not select your plane before the timer below expires," +
             " the match will be timed out.";
     }
 
