@@ -8,7 +8,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
     public MatchQueueAcceptEvent() { }
 
     public MatchQueueAcceptEvent(
-        int _timeFromNowToExecuteOn, ulong _leagueCategoryIdCached, ulong _matchChannelIdCached)
+        ulong _timeFromNowToExecuteOn, ulong _leagueCategoryIdCached, ulong _matchChannelIdCached)
     {
         Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
             _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.VERBOSE);
@@ -81,6 +81,8 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
                     playerIdToAddBackInToTheQueue, interfaceMessage);
             }
         }
+
+        mcc.leagueMatchCached.AttemptToPutTheTeamsBackToTheQueueAfterTheMatch();
 
         // Create the event and execute it instantly
         var newEvent = new DeleteChannelEvent(mcc.interfaceLeagueCached.LeagueCategoryId, matchChannelId, "match");

@@ -28,8 +28,11 @@ public class Matches : logClass<Matches>
         }
     }
 
-    public async Task CreateAMatch(int[] _teamsToFormMatchOn, MatchState _matchState)
+    public async Task CreateAMatch(
+        int[] _teamsToFormMatchOn, MatchState _matchState, bool _attemptToPutTeamsBackToQueueAfterTheMatch = false)
     {
+        
+
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1], LogLevel.VERBOSE);
 
@@ -38,7 +41,8 @@ public class Matches : logClass<Matches>
             Log.WriteLine("Warning! teams Length was not 2!", LogLevel.ERROR);
         }
 
-        LeagueMatch newMatch = new(interfaceLeagueRef, _teamsToFormMatchOn, _matchState);
+        LeagueMatch newMatch = new(
+            interfaceLeagueRef, _teamsToFormMatchOn, _matchState, _attemptToPutTeamsBackToQueueAfterTheMatch);
 
         MatchesConcurrentBag.Add(newMatch);
         Log.WriteLine("Added match channel id: " + newMatch.MatchId + " to the MatchesConcurrentBag, count is now: " +

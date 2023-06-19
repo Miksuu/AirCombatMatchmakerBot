@@ -1,6 +1,7 @@
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
+using System;
 
 [DataContract]
 public class LeagueMatch : logClass<LeagueMatch>
@@ -36,11 +37,25 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => matchLeague.SetValue(value);
     }
 
+    public ScheduleObject ScheduleObject
+    {
+        get => scheduleObject.GetValue();
+        set => scheduleObject.SetValue(value);
+    }
+
+    public bool IsAScheduledMatch
+    {
+        get => isAScheduledMatch.GetValue();
+        set => isAScheduledMatch.SetValue(value);
+    }
+
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logClass<int> matchId = new logClass<int>();
     [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
     [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
     [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>(new LeagueName());
+    [DataMember] private logClass<ScheduleObject> scheduleObject = new logClass<ScheduleObject>(new ScheduleObject());
+    [DataMember] private logClass<bool> isAScheduledMatch = new logClass<bool>();
 
     private InterfaceLeague interfaceLeagueRef;
 
@@ -62,15 +77,17 @@ public class LeagueMatch : logClass<LeagueMatch>
     }
 
     // TODO: Add interfaceLeague ref on constructor as a reference
-    public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn, MatchState _matchState)
+    public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn,
+        MatchState _matchState, bool _attemptToPutTeamsBackToQueueAfterTheMatch = false)
     {
+        IsAScheduledMatch = _attemptToPutTeamsBackToQueueAfterTheMatch;
         SetInterfaceLeagueReferencesForTheMatch(_interfaceLeague);
 
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
         MatchLeague = _interfaceLeague.LeagueCategoryName;
 
         Log.WriteLine("Teams to from the match on: " + _teamsToFormMatchOn[0] +
-            ", " + _teamsToFormMatchOn[1], LogLevel.DEBUG);
+            ", " + _teamsToFormMatchOn[1] + " scheduled match: " + _attemptToPutTeamsBackToQueueAfterTheMatch, LogLevel.DEBUG);
 
         // Add the team's name to the ConcurrentDictionary as a value
         foreach (int teamId in _teamsToFormMatchOn)
@@ -114,7 +131,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         {
             Log.WriteLine("Looping on team id: " + teamKvp.Key, LogLevel.VERBOSE);
 
-            try 
+            try
             {
                 Team foundTeam = interfaceLeagueRef.LeagueData.Teams.FindTeamById(teamKvp.Key);
 
@@ -128,7 +145,7 @@ public class LeagueMatch : logClass<LeagueMatch>
                     playerCounter++;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 continue;
@@ -142,21 +159,58 @@ public class LeagueMatch : logClass<LeagueMatch>
     {
         try
         {
-            DateTime currentTime = await TimeService.GetCurrentTime();
+            //DateTime currentTime = await TimeService.GetCurrentTime();
 
-            Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " on: " + currentTime.ToString(), LogLevel.VERBOSE);
+            Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " with towards id: " +
+                ScheduleObject.TeamIdThatRequestedScheduling, LogLevel.VERBOSE);
             // Convert the input date and time string to a DateTime object
-            if (!DateTime.TryParse(_dateAndTime, out DateTime suggestedScheduleDate))
+            bool isValidDateAndTime = DateTime.TryParse(_dateAndTime, out DateTime suggestedScheduleDate);
+
+            if (!isValidDateAndTime && _dateAndTime.ToLower() != "accept")
             {
                 Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.DEBUG);
                 return new Response("Invalid date and time format. Please provide a valid date and time.", false);
             }
+            else if (!isValidDateAndTime && _dateAndTime.ToLower() == "accept" && ScheduleObject.TeamIdThatRequestedScheduling != 0)
+            {
+                var playerTeamIdTemp = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
+
+                if (ScheduleObject.TeamIdThatRequestedScheduling == playerTeamIdTemp)
+                {
+                    return new Response("You have already suggested a date which is: " +
+                        ScheduleObject.GetValue().RequestedSchedulingTimeInUnixTime, false);
+                }
+
+                Log.WriteLine("player: " + playerTeamIdTemp + " on team: " + playerTeamIdTemp + " accepted the match.", LogLevel.DEBUG);
+
+                // Move to method
+                InterfaceChannel _interfaceChannelTemp = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
+                        MatchChannelId);
+
+                ulong timeUntilTemp = TimeService.CalculateTimeUntilWithUnixTime(ScheduleObject.RequestedSchedulingTimeInUnixTime);
+
+                await StartMatchAfterScheduling(_interfaceChannelTemp, timeUntilTemp);
+
+                return new Response("Scheduled match to: " + ScheduleObject.RequestedSchedulingTimeInUnixTime, true);
+            }
+            else if (!isValidDateAndTime && _dateAndTime.ToLower() == "accept" && ScheduleObject.TeamIdThatRequestedScheduling == 0)
+            {
+                return new Response("You can't accept a match that hasn't been scheduled!", false);
+            }
 
             Log.WriteLine("Valid Datetime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
 
-            int timeUntil = TimeService.CalculateTimeUntil(currentTime, suggestedScheduleDate);
+            ulong timeUntil = TimeService.CalculateTimeUntilWithUnixTime(
+                (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
 
             Log.WriteLine("Time until: " + timeUntil, LogLevel.VERBOSE);
+
+            //DateTime dateTime = DateTime.Now;
+            ulong scheduledTime = (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+            //ulong currentTimeAndTimeUntil = currentUnixTime + timeUntil;
+
+            //Log.WriteLine("CUR: " + currentTimeAndTimeUntil + " | " + ScheduleObject.RequestedSchedulingTimeInUnixTime, LogLevel.DEBUG);
 
             if (timeUntil <= 0)
             {
@@ -169,7 +223,21 @@ public class LeagueMatch : logClass<LeagueMatch>
                 Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelId);
 
-            StartMatchAfterScheduling(_interfaceChannel, timeUntil);
+            var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
+
+            if (playerTeamId == ScheduleObject.TeamIdThatRequestedScheduling)
+            {
+                return new Response("You have already suggested a date!", false);
+            }
+
+            // Add a check if the time is the same than the scheduleobject's
+            if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
+            {
+                await StartMatchAfterScheduling(_interfaceChannel, timeUntil);
+                return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
+            }
+
+            ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
             return new Response("Scheduled match to: " + suggestedScheduleDate, true);
         }
@@ -180,7 +248,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         }
     }
 
-    public async void StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, int _timeUntil)
+    public async Task StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, ulong _timeUntil)
     {
         Log.WriteLine("Starting the match on second thread on channel after scheduling: " + matchChannelId +
             " with timeUntil: " + _timeUntil, LogLevel.VERBOSE);
@@ -192,10 +260,12 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             MatchReporting.MatchState = MatchState.PLAYERREADYCONFIRMATIONPHASE;
 
-            new MatchQueueAcceptEvent(_timeUntil, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
+            new MatchQueueAcceptEvent(_timeUntil + 900, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
 
             await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMMATCHENTRYMESSAGE, true);
+
+            return;
         }
         catch (Exception ex)
         {
@@ -270,8 +340,8 @@ public class LeagueMatch : logClass<LeagueMatch>
 
         try
         {
-             attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
-                MatchId, interfaceLeagueRef).Result;
+            attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
+               MatchId, interfaceLeagueRef).Result;
 
             if (MatchReporting.FinalMessageForMatchReportingChannel == null)
             {
@@ -290,7 +360,9 @@ public class LeagueMatch : logClass<LeagueMatch>
             await interfaceLeagueRef.PostMatchReport(
                 MatchReporting.FinalMessageForMatchReportingChannel, MatchReporting.FinalResultTitleForConfirmation, attachmentDatas);
 
-            int matchChannelDeleteDelay = 45;
+            AttemptToPutTheTeamsBackToTheQueueAfterTheMatch();
+
+            ulong matchChannelDeleteDelay = 45;
 
             // Schedule an event to delete the channel later
             new DeleteChannelEvent(matchChannelDeleteDelay, interfaceLeagueRef.LeagueCategoryId, MatchChannelId, "match");
@@ -319,6 +391,27 @@ public class LeagueMatch : logClass<LeagueMatch>
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
+        }
+    }
+
+    public void AttemptToPutTheTeamsBackToTheQueueAfterTheMatch()
+    {
+        // Defined when the match is created
+        if (IsAScheduledMatch)
+        {
+            // Place the teams back in to the queue
+            foreach (var teamId in MatchReporting.TeamIdsWithReportData)
+            {
+                if (!interfaceLeagueRef.LeagueData.MatchScheduler.TeamsInTheMatchmaker.ContainsKey(teamId.Key))
+                {
+                    Log.WriteLine("Does not contain key: " + teamId + ", left from the matchmaker?", LogLevel.DEBUG);
+                    continue;
+                }
+
+                interfaceLeagueRef.LeagueData.MatchScheduler.TeamsInTheMatchmaker[teamId.Key].TeamMatchmakingState = TeamMatchmakingState.INQUEUE;
+
+                Log.WriteLine("Set team's " + teamId + " to in queue.", LogLevel.DEBUG);
+            }
         }
     }
 }

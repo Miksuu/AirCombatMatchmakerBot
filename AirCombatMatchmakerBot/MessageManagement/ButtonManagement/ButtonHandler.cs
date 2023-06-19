@@ -5,17 +5,14 @@ public static class ButtonHandler
 {
     public static async Task HandleButtonPress(SocketMessageComponent _component)
     {
-        Log.WriteLine("Button press detected by: " + _component.User.Id, LogLevel.VERBOSE);
-
-        InterfaceButton databaseButton;
-        InterfaceMessage interfaceMessage;
-
-        ulong componentChannelId = _component.Channel.Id;
-        ulong componentMessageId = _component.Message.Id;
-
         try
         {
-            interfaceMessage = Database.Instance.Categories.FindInterfaceMessageWithComponentChannelIdAndMessageId(
+            Log.WriteLine("Button press detected by: " + _component.User.Id, LogLevel.VERBOSE);
+
+            ulong componentChannelId = _component.Channel.Id;
+            ulong componentMessageId = _component.Message.Id;
+
+            InterfaceMessage interfaceMessage = Database.Instance.Categories.FindInterfaceMessageWithComponentChannelIdAndMessageId(
             componentChannelId, componentMessageId);
 
             Log.WriteLine("Found: " + interfaceMessage.MessageChannelId + " | " +
@@ -27,28 +24,43 @@ public static class ButtonHandler
                 Log.WriteLine("Channel id, msg or it's id was null!", LogLevel.ERROR);
             }
 
-            databaseButton = FindInterfaceButtonFromTheDatabase(
+            InterfaceButton databaseButton = FindInterfaceButtonFromTheDatabase(
                 _component, interfaceMessage.MessageCategoryId);
+
+            var response = databaseButton.ActivateButtonFunction(
+                _component, interfaceMessage).Result;
+
+            // Only serialize when the interaction was something that needs to be serialized (defined in ActivateButtonFunction())
+            if (response.serialize)
+            {
+                await SerializationManager.SerializeDB();
+            }
+
+            Log.WriteLine(response.responseString + " | " + response.serialize, LogLevel.DEBUG);
+
+            /*
+            // Fix an API change in discord
+            if (response.responseString == "")
+            {
+                Log.WriteLine("responseString was empty, returning", LogLevel.VERBOSE);
+                await _component.RespondAsync();
+                return;
+            }*/
+
+            await _component.RespondAsync(response.responseString, ephemeral: databaseButton.EphemeralResponse);
+            //else { Log.WriteLine("the response was: " + responseTuple.Item1, LogLevel.CRITICAL); }
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
+            if (ex.Message.Contains("error 50006"))
+            {
+                Log.WriteLine("skipped empty message try-catch", LogLevel.VERBOSE);
+                return;
+            }
+
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
         }
-
-        var response = databaseButton.ActivateButtonFunction(
-            _component, interfaceMessage).Result;
-
-        // Only serialize when the interaction was something that needs to be serialized (defined in ActivateButtonFunction())
-        if (response.serialize)
-        {
-            await SerializationManager.SerializeDB();
-        }
-
-        Log.WriteLine(response.responseString + " | " +response.serialize, LogLevel.DEBUG);
-
-        await _component.RespondAsync(response.responseString, ephemeral: databaseButton.EphemeralResponse);
-        //else { Log.WriteLine("the response was: " + responseTuple.Item1, LogLevel.CRITICAL); }
     }
 
     private static InterfaceButton FindInterfaceButtonFromTheDatabase(

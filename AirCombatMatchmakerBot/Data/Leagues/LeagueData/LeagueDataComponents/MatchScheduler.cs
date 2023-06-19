@@ -27,7 +27,7 @@ public class MatchScheduler : logClass<MatchScheduler>
     public MatchScheduler() { }
 
     // TODO: Implement this method so it's executable from some command that admin can use (for initiation of a season, for example)
-    public void ActivateMatchScheduler(int _duration)
+    public void ActivateMatchScheduler(ulong _duration)
     {
         if (MatchSchedulerActive)
         {
@@ -195,6 +195,6 @@ public class MatchScheduler : logClass<MatchScheduler>
             _seekingTeam.Key,
         };
 
-        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE);
+        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE, true);
     }
 }

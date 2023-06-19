@@ -42,7 +42,7 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
 
     public ScheduledEvent() { }
 
-    protected void SetupScheduledEvent(int _timeFromNowToExecuteOn)
+    protected void SetupScheduledEvent(ulong _timeFromNowToExecuteOn)
     {
         Log.WriteLine("Setting " + typeof(ScheduledEvent) + "' TimeToExecuteTheEventOn: " +
             _timeFromNowToExecuteOn + " seconds from now", LogLevel.VERBOSE);

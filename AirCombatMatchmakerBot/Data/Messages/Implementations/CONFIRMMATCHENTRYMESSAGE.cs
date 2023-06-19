@@ -10,7 +10,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
     public CONFIRMMATCHENTRYMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.CONFIRMMATCHENTRYMESSAGE;
-        thisInterfaceMessage.MessageEmbedTitle = "Select your plane. If you do not select your plane in a minute," +
+        thisInterfaceMessage.MessageEmbedTitle = "Select your plane. If you do not select your plane before the timer below expires," +
             " the match will be timed out.";
     }
 
@@ -62,9 +62,15 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                 if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
                     scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
                 {
-                    var timeLeft = scheduledEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+                    // Skips the matches that have not been scheduled
+                    if (mcc.leagueMatchCached.IsAScheduledMatch)
+                    {
+                        finalMessage += "Scheduled time: " +
+                            TimeService.ConvertToDateTimeFromUnixTime(scheduledEvent.TimeToExecuteTheEventOn).ToString() + "\n";
+                    }
 
-                    finalMessage += "Time left: " + timeLeft + " seconds.\n";
+                    finalMessage += "Time left: " +
+                        TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + "\n";
                 }
             }
         }

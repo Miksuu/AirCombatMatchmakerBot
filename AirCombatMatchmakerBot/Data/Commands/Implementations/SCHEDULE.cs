@@ -40,13 +40,11 @@ public class SCHEDULE : BaseMatchCommand
         Response matchStateResponse =
             CheckThatPlayerIsInTheMatchAndReturnResponseFromMatchStatesThatAreNotAllowed(
                 commandPlayerId, commandChannelId);
-        if (matchStateResponse.serialize == false)
+        if (!matchStateResponse.serialize)
         {
             return matchStateResponse;
         }
 
-        Response response = await mcc.leagueMatchCached.CreateScheduleSuggestion(commandPlayerId, _firstOptionString);
-
-        return response;
+        return await mcc.leagueMatchCached.CreateScheduleSuggestion(commandPlayerId, _firstOptionString);
     }
 }
