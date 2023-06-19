@@ -43,10 +43,10 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => scheduleObject.SetValue(value);
     }
 
-    public bool AttemptToPutTeamsBackToQueueAfterTheMatch
+    public bool IsAScheduledMatch
     {
-        get => attemptToPutTeamsBackToQueueAfterTheMatch.GetValue();
-        set => attemptToPutTeamsBackToQueueAfterTheMatch.SetValue(value);
+        get => isAScheduledMatch.GetValue();
+        set => isAScheduledMatch.SetValue(value);
     }
 
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
@@ -55,7 +55,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
     [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>(new LeagueName());
     [DataMember] private logClass<ScheduleObject> scheduleObject = new logClass<ScheduleObject>(new ScheduleObject());
-    [DataMember] private logClass<bool> attemptToPutTeamsBackToQueueAfterTheMatch = new logClass<bool>();
+    [DataMember] private logClass<bool> isAScheduledMatch = new logClass<bool>();
 
     private InterfaceLeague interfaceLeagueRef;
 
@@ -80,7 +80,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn,
         MatchState _matchState, bool _attemptToPutTeamsBackToQueueAfterTheMatch = false)
     {
-        AttemptToPutTeamsBackToQueueAfterTheMatch = _attemptToPutTeamsBackToQueueAfterTheMatch;
+        IsAScheduledMatch = _attemptToPutTeamsBackToQueueAfterTheMatch;
         SetInterfaceLeagueReferencesForTheMatch(_interfaceLeague);
 
         int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
@@ -397,7 +397,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     public void AttemptToPutTheTeamsBackToTheQueueAfterTheMatch()
     {
         // Defined when the match is created
-        if (AttemptToPutTeamsBackToQueueAfterTheMatch)
+        if (IsAScheduledMatch)
         {
             // Place the teams back in to the queue
             foreach (var teamId in MatchReporting.TeamIdsWithReportData)
