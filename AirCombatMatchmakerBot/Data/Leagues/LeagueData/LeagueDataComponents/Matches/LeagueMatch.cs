@@ -164,98 +164,27 @@ public class LeagueMatch : logClass<LeagueMatch>
             Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " with towards id: " +
                 ScheduleObject.TeamIdThatRequestedScheduling, LogLevel.VERBOSE);
 
-            DateTime suggestedScheduleDate;
-
-            // Parse the input date and time string
-            if (_dateAndTime.ToLower().StartsWith("today "))
+            DateTime? suggestedScheduleDate = TimeService.GetDateTimeFromUserInput(_dateAndTime);
+            if (suggestedScheduleDate == null || !suggestedScheduleDate.HasValue)
             {
-                string timeString = _dateAndTime.Substring(6);
-                DateTime currentDate = DateTime.UtcNow.Date;
-                if (!TimeSpan.TryParseExact(timeString, new[] {
-                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
-                    @"hhmmss'z'", @"hhmm'z'"
-
-                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
-                {
-                    return new Response("Invalid time format. Please provide a valid time.", false);
-                }
-                suggestedScheduleDate = currentDate.Add(timeComponent);
-            }
-            else if (_dateAndTime.ToLower().StartsWith("tomorrow "))
-            {
-                string timeString = _dateAndTime.Substring(9);
-                DateTime tomorrowDate = DateTime.UtcNow.Date.AddDays(1);
-                if (!TimeSpan.TryParseExact(timeString, new[] {
-                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
-                    @"hhmmss'z'", @"hhmm'z'"
-                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
-                {
-                    return new Response("Invalid time format. Please provide a valid time.", false);
-                }
-                suggestedScheduleDate = tomorrowDate.Add(timeComponent);
-            }
-            if (_dateAndTime.ToLower().EndsWith("today"))
-            {
-                DateTime currentDate = DateTime.UtcNow.Date;
-                string timeString = _dateAndTime.Replace("today", "").Trim();
-                if (!TimeSpan.TryParseExact(timeString, new[] {
-                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
-                    @"hhmmss'z'", @"hhmm'z'"
-                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
-                {
-                    return new Response("Invalid time format. Please provide a valid time.", false);
-                }
-                suggestedScheduleDate = currentDate.Add(timeComponent);
-            }
-            else if (_dateAndTime.ToLower().EndsWith("tomorrow"))
-            {
-                DateTime tomorrowDate = DateTime.UtcNow.Date.AddDays(1);
-                string timeString = _dateAndTime.Replace("tomorrow", "").Trim();
-                if (!TimeSpan.TryParseExact(timeString, new[] {
-                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
-                    @"hhmmss'z'", @"hhmm'z'"
-                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
-                {
-                    return new Response("Invalid time format. Please provide a valid time.", false);
-                }
-                suggestedScheduleDate = tomorrowDate.Add(timeComponent);
-            }
-            else
-            {
-                bool regularFormatParse = DateTime.TryParseExact(_dateAndTime, new[] {
-                    "dd/MM/yyyy HH:mm:ss'z'", "dd/MM/yyyy HH:mm'z'", "dd/MM/yyyy HH'z'",
-                    "dd/MM/yyyy HHmmss'z'", "dd/MM/yyyy HHmm'z'",
-                    "dd.MM.yyyy HH:mm:ss'z'", "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'",
-                    "dd.MM.yyyy HHmmss'z'", "dd.MM.yyyy HHmm'z'",
-                    "HH:mm:ss'z' dd/MM/yyyy", "HH:mm'z' dd/MM/yyyy", "HH'z' dd/MM/yyyy",
-                    "HHmmss'z' dd/MM/yyyy", "HHmm'z' dd/MM/yyyy",
-                    "HH:mm:ss'z' dd.MM.yyyy", "HH:mm'z' dd.MM.yyyy", "HH'z' dd.MM.yyyy",
-                    "HHmmss'z' dd.MM.yyyy", "HHmm'z' dd.MM.yyyy"
-                },
-                CultureInfo.InvariantCulture, DateTimeStyles.None, out suggestedScheduleDate);
-
-                if (!regularFormatParse) 
-                {
-                    if (!TryParseWeekdayAndTime(_dateAndTime, out suggestedScheduleDate))
-                    {
-                        return new Response("Invalid date and time format. Please provide a valid date and time.", false);
-                    }
-                }
+                return new Response("Invalid date and time format. Please provide a valid date and time.", false);
             }
 
-            // Assume the year is the current year if not provided
-            if (suggestedScheduleDate.Year == 1)
+            var defaultEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            if (!suggestedScheduleDate.HasValue)
             {
-                suggestedScheduleDate = suggestedScheduleDate.AddYears(DateTime.UtcNow.Year - 1);
+                return new Response("Invalid date and time format. Please provide a valid date and time.", false);
             }
 
-            Log.WriteLine("Valid DateTime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
+            TimeSpan timeDifference = suggestedScheduleDate.Value - defaultEpoch;
+            ulong scheduledTime = (ulong)timeDifference.TotalSeconds;
 
             bool isValidDateAndTime = true;
-            ulong scheduledTime = (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+            //ulong scheduledTime = (ulong)(suggestedScheduleDate - defaultEpoch).TotalSeconds;
             ulong currentTime = (ulong)(
                 TimeService.GetCurrentTime().Result -
-                    new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+                    defaultEpoch).TotalSeconds;
 
             if (currentTime >= scheduledTime)
             {
@@ -331,56 +260,6 @@ public class LeagueMatch : logClass<LeagueMatch>
             return new Response(ex.Message, false);
         }
     }
-
-    // Helper method to parse weekday and time, generated by GPT
-    bool TryParseWeekdayAndTime(string input, out DateTime dateTime)
-    {
-        string[] daysOfWeek = { "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" };
-        string[] daysOfWeekShort = { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
-
-        // Check if the input contains a weekday
-        foreach (string day in daysOfWeek)
-        {
-            if (input.ToLower().Contains(day))
-            {
-                DateTime currentDate = DateTime.UtcNow.Date;
-                int currentDayOfWeek = (int)currentDate.DayOfWeek;
-                int targetDayOfWeek = Array.IndexOf(daysOfWeek, day.ToLower());
-
-                if (targetDayOfWeek == -1)
-                {
-                    targetDayOfWeek = Array.IndexOf(daysOfWeekShort, day.ToLower().Substring(0, 3));
-                }
-
-                int daysToAdd = (targetDayOfWeek - currentDayOfWeek + 7) % 7;
-
-                if (daysToAdd == 0 && currentDate.TimeOfDay.TotalSeconds > 0)
-                {
-                    // If the current time is past the specified time, move to the next week
-                    daysToAdd = 7;
-                }
-
-                DateTime scheduledDate = currentDate.AddDays(daysToAdd);
-
-                string timeString = input.ToLower().Replace(day, "").Trim();
-                if (!TimeSpan.TryParseExact(timeString, new[] {
-                @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
-                @"hhmmss'z'", @"hhmm'z'"
-            }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
-                {
-                    dateTime = default;
-                    return false;
-                }
-
-                dateTime = scheduledDate.Add(timeComponent);
-                return true;
-            }
-        }
-
-        dateTime = default;
-        return false;
-    }
-
 
     public async Task StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, ulong _timeUntil)
     {
