@@ -227,6 +227,10 @@ public class LeagueMatch : logClass<LeagueMatch>
                     "dd/MM/yyyy HHmmss'z'", "dd/MM/yyyy HHmm'z'",
                     "dd.MM.yyyy HH:mm:ss'z'", "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'",
                     "dd.MM.yyyy HHmmss'z'", "dd.MM.yyyy HHmm'z'",
+                    "HH:mm:ss'z' dd/MM/yyyy", "HH:mm'z' dd/MM/yyyy", "HH'z' dd/MM/yyyy",
+                    "HHmmss'z' dd/MM/yyyy", "HHmm'z' dd/MM/yyyy",
+                    "HH:mm:ss'z' dd.MM.yyyy", "HH:mm'z' dd.MM.yyyy", "HH'z' dd.MM.yyyy",
+                    "HHmmss'z' dd.MM.yyyy", "HHmm'z' dd.MM.yyyy"
                 },
                 CultureInfo.InvariantCulture, DateTimeStyles.None, out suggestedScheduleDate);
 
