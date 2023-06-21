@@ -138,7 +138,11 @@ public static class TimeService
         //DateTime suggestedScheduleDate;
 
         // Parse the input date and time string
-        if (_dateAndTime.ToLower().StartsWith("today "))
+        if (_dateAndTime.ToLower().Equals("now"))
+        {
+            return DateTime.UtcNow;
+        }
+        else if (_dateAndTime.ToLower().StartsWith("today "))
         {
             string timeString = _dateAndTime.Substring(6);
             DateTime currentDate = DateTime.UtcNow.Date;
