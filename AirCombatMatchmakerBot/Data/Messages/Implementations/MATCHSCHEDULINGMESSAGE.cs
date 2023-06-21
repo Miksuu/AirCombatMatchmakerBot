@@ -5,6 +5,7 @@ using Discord;
 [DataContract]
 public class MATCHSCHEDULINGMESSAGE : BaseMessage
 {
+    MatchChannelComponents mcc { get; set; }
     public MATCHSCHEDULINGMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.MATCHSCHEDULINGMESSAGE;
@@ -25,12 +26,34 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
 
     public override string GenerateMessage()
     {
-        if (thisInterfaceMessage.MessageDescription == null)
+        try
         {
-            Log.WriteLine("MessageDescription was null!", LogLevel.CRITICAL);
-            return "MessageDescription was null!";
+            mcc = new MatchChannelComponents(this);
+            if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
+            {
+                string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
+                    nameof(mcc.leagueMatchCached) + " was null!";
+                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                return errorMsg;
+            }
+
+            var scheduleObject = mcc.leagueMatchCached.ScheduleObject;
+            var requestedTime = scheduleObject.RequestedSchedulingTimeInUnixTime;
+
+            string time = TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(requestedTime);
+
+
+            var teamNameThatScheduled = mcc.leagueMatchCached.TeamsInTheMatch.First(
+                t => t.Key == scheduleObject.TeamIdThatRequestedScheduling).Value;
+
+
+            return time + " requested by team: " + teamNameThatScheduled;
+        }
+        catch (Exception ex) 
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return ex.Message;
         }
 
-        return thisInterfaceMessage.MessageDescription;
     }
 }
