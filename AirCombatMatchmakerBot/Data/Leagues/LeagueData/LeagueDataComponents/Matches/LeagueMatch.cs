@@ -252,8 +252,6 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
-            
-
             return new Response("Suggested match time to: " + suggestedScheduleDate + 
                 " that is in: " + TimeService.CalculateTimeUntilWithUnixTime(timeUntil), true);
         }
