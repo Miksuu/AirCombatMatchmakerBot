@@ -42,10 +42,8 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
 
             string time = TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(requestedTime);
 
-
             var teamNameThatScheduled = mcc.leagueMatchCached.TeamsInTheMatch.First(
                 t => t.Key == scheduleObject.TeamIdThatRequestedScheduling).Value;
-
 
             return time + " requested by team: " + teamNameThatScheduled;
         }
