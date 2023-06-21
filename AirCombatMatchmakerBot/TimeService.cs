@@ -135,8 +135,6 @@ public static class TimeService
 
     public static DateTime? GetDateTimeFromUserInput(string _dateAndTime)
     {
-        //DateTime suggestedScheduleDate;
-
         // Parse the input date and time string
         if (_dateAndTime.ToLower().Equals("now"))
         {
@@ -223,6 +221,19 @@ public static class TimeService
                 suggestedScheduleDate = suggestedScheduleDate.AddYears(DateTime.UtcNow.Year - 1);
             }
 
+            if (suggestedScheduleDate == DateTime.MinValue)
+            {
+                TimeSpan duration;
+                if (TryParseDuration(_dateAndTime, out duration))
+                {
+                    suggestedScheduleDate = DateTime.UtcNow.Add(duration);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
             return suggestedScheduleDate;
         }
     }
@@ -274,6 +285,54 @@ public static class TimeService
 
         dateTime = default;
         return false;
+    }
+
+    private static bool TryParseDuration(string input, out TimeSpan duration)
+    {
+        duration = TimeSpan.Zero;
+
+        var parts = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length % 2 != 0)
+        {
+            return false; // Invalid input format
+        }
+
+        try
+        {
+            for (int i = 0; i < parts.Length; i += 2)
+            {
+                int value = int.Parse(parts[i]);
+                string unit = parts[i + 1].ToLower();
+
+                if (unit.StartsWith("second"))
+                {
+                    duration = duration.Add(TimeSpan.FromSeconds(value));
+                }
+                else if (unit.StartsWith("minute"))
+                {
+                    duration = duration.Add(TimeSpan.FromMinutes(value));
+                }
+                else if (unit.StartsWith("hour"))
+                {
+                    duration = duration.Add(TimeSpan.FromHours(value));
+                }
+                else if (unit.StartsWith("day"))
+                {
+                    duration = duration.Add(TimeSpan.FromDays(value));
+                }
+                else
+                {
+                    return false; // Invalid unit
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine("Failed to parse: " + input + " with exception: " + ex.Message, LogLevel.DEBUG);
+            return false; // Failed to parse input
+        }
+
+        return true;
     }
 
     public class ApiResponse
