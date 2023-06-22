@@ -38,18 +38,23 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             }
 
             var scheduleObject = mcc.leagueMatchCached.ScheduleObject;
-            var requestedTime = scheduleObject.RequestedSchedulingTimeInUnixTime;
+            var teamsInTheMatch = mcc.leagueMatchCached.TeamsInTheMatch;
+            if (!teamsInTheMatch.ContainsKey(scheduleObject.TeamIdThatRequestedScheduling))
+            {
+                return thisInterfaceMessage.MessageDescription;
+            }
 
-            string time = TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(requestedTime);
+            
+            var requestedTime = TimeService.ConvertToDateTimeFromUnixTime(scheduleObject.RequestedSchedulingTimeInUnixTime);
 
-            Log.WriteLine("time: " + time, LogLevel.VERBOSE);
-
-            var teamNameThatScheduled = mcc.leagueMatchCached.TeamsInTheMatch.First(
+            var teamNameThatScheduled = teamsInTheMatch.First(
                 t => t.Key == scheduleObject.TeamIdThatRequestedScheduling).Value;
+            /*
+            string time = TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(requestedTime);
+            Log.WriteLine("time: " + time, LogLevel.VERBOSE);
+            Log.WriteLine("teamNameThatScheduled: " + teamNameThatScheduled, LogLevel.VERBOSE);*/
 
-            Log.WriteLine("teamNameThatScheduled: " + teamNameThatScheduled, LogLevel.VERBOSE);
-
-            return time + " requested by team: " + teamNameThatScheduled;
+            return requestedTime + " requested by team: " + teamNameThatScheduled;
         }
         catch (Exception ex) 
         {
