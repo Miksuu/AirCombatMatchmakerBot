@@ -30,9 +30,9 @@ public interface InterfaceMessage
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, AttachmentData[] _attachmentDatas,
         bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
-    public Task ModifyMessage(string _newContent);
+    public void ModifyMessage(string _newContent);
     public Task AddContentToTheEndOfTheMessage(string _content);
     public abstract string GenerateMessage();
-    public Task GenerateAndModifyTheMessage();
+    public void GenerateAndModifyTheMessage();
     public Task<Discord.IMessage> GetMessageById(IMessageChannel _channel);
 }

@@ -42,8 +42,12 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
 
             string time = TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(requestedTime);
 
+            Log.WriteLine("time: " + time, LogLevel.VERBOSE);
+
             var teamNameThatScheduled = mcc.leagueMatchCached.TeamsInTheMatch.First(
                 t => t.Key == scheduleObject.TeamIdThatRequestedScheduling).Value;
+
+            Log.WriteLine("teamNameThatScheduled: " + teamNameThatScheduled, LogLevel.VERBOSE);
 
             return time + " requested by team: " + teamNameThatScheduled;
         }

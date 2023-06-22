@@ -233,7 +233,7 @@ public class LeagueMatch : logClass<LeagueMatch>
                 return new Response("The date you tried to suggest was too early!", false);
             }
 
-            InterfaceChannel _interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
                 Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelId);
 
@@ -246,14 +246,16 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
             {
-                await StartMatchAfterScheduling(_interfaceChannel, timeUntil);
+                await StartMatchAfterScheduling(interfaceChannel, timeUntil);
                 return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
             }
 
             ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
+            interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHSCHEDULINGMESSAGE).GenerateAndModifyTheMessage();
+
             return new Response("Suggested match time to: " + suggestedScheduleDate + 
-                " that is in: " + TimeService.CalculateTimeUntilWithUnixTime(timeUntil), true);
+                " that is in: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(timeUntil), true);
         }
         catch (Exception ex)
         {
@@ -382,7 +384,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             new DeleteChannelEvent(matchChannelDeleteDelay, interfaceLeagueRef.LeagueCategoryId, MatchChannelId, "match");
 
             var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
-            await messageToModify.GenerateAndModifyTheMessage();
+            messageToModify.GenerateAndModifyTheMessage();
 
             //await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
 

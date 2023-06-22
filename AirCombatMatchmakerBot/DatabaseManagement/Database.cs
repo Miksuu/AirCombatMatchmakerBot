@@ -157,7 +157,7 @@ public class Database
                             ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
                                 MessageName.CHALLENGEMESSAGE);
 
-                await challengeMessage.GenerateAndModifyTheMessage();
+                challengeMessage.GenerateAndModifyTheMessage();
             }
             catch (Exception ex) 
             {
