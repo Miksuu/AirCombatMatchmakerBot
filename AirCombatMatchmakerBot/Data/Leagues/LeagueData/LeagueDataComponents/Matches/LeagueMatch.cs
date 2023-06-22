@@ -254,8 +254,10 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHSCHEDULINGMESSAGE).GenerateAndModifyTheMessage();
 
+            Log.WriteLine("timeUntil: " + timeUntil, LogLevel.VERBOSE);
+
             return new Response("Suggested match time to: " + suggestedScheduleDate + 
-                " that is in: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(timeUntil), true);
+                " that is in: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(timeUntil + currentTime), true);
         }
         catch (Exception ex)
         {
