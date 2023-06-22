@@ -167,7 +167,7 @@ public static class TimeService
             }
             return tomorrowDate.Add(timeComponent);
         }
-        if (_dateAndTime.ToLower().EndsWith("today"))
+        else if (_dateAndTime.ToLower().EndsWith("today"))
         {
             DateTime currentDate = DateTime.UtcNow.Date;
             string timeString = _dateAndTime.Replace("today", "").Trim();
@@ -211,7 +211,20 @@ public static class TimeService
             {
                 if (!TryParseWeekdayAndTime(_dateAndTime, out suggestedScheduleDate))
                 {
-                    return null;
+                    Log.WriteLine(suggestedScheduleDate.ToString(), LogLevel.VERBOSE);
+
+                    if (suggestedScheduleDate == DateTime.MinValue)
+                    {
+                        TimeSpan duration;
+                        if (TryParseDuration(_dateAndTime, out duration))
+                        {
+                            suggestedScheduleDate = DateTime.UtcNow.Add(duration);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
                 }
             }
 
@@ -219,19 +232,6 @@ public static class TimeService
             if (suggestedScheduleDate.Year == 1)
             {
                 suggestedScheduleDate = suggestedScheduleDate.AddYears(DateTime.UtcNow.Year - 1);
-            }
-
-            if (suggestedScheduleDate == DateTime.MinValue)
-            {
-                TimeSpan duration;
-                if (TryParseDuration(_dateAndTime, out duration))
-                {
-                    suggestedScheduleDate = DateTime.UtcNow.Add(duration);
-                }
-                else
-                {
-                    return null;
-                }
             }
 
             return suggestedScheduleDate;
@@ -292,7 +292,7 @@ public static class TimeService
         duration = TimeSpan.Zero;
 
         var parts = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length % 2 != 0)
+        if (parts.Length == 0 || parts.Length % 2 != 0)
         {
             return false; // Invalid input format
         }
@@ -301,7 +301,12 @@ public static class TimeService
         {
             for (int i = 0; i < parts.Length; i += 2)
             {
-                int value = int.Parse(parts[i]);
+                int value;
+                if (!int.TryParse(parts[i], out value))
+                {
+                    return false; // Failed to parse value
+                }
+
                 string unit = parts[i + 1].ToLower();
 
                 if (unit.StartsWith("second"))
@@ -326,9 +331,8 @@ public static class TimeService
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Log.WriteLine("Failed to parse: " + input + " with exception: " + ex.Message, LogLevel.DEBUG);
             return false; // Failed to parse input
         }
 
