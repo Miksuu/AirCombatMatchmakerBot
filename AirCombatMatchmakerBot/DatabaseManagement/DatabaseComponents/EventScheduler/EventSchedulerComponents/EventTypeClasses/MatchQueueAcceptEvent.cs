@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Concurrent;
+using System.Runtime.Serialization;
 
 [DataContract]
 public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
@@ -8,12 +9,13 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
     public MatchQueueAcceptEvent() { }
 
     public MatchQueueAcceptEvent(
-        ulong _timeFromNowToExecuteOn, ulong _leagueCategoryIdCached, ulong _matchChannelIdCached)
+        ulong _timeFromNowToExecuteOn, ulong _leagueCategoryIdCached, ulong _matchChannelIdCached,
+        ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
         Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
             _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.VERBOSE);
 
-        base.SetupScheduledEvent(_timeFromNowToExecuteOn);
+        base.SetupScheduledEvent(_timeFromNowToExecuteOn, _scheduledEvents);
         LeagueCategoryIdCached = _leagueCategoryIdCached;
         MatchChannelIdCached = _matchChannelIdCached;
 

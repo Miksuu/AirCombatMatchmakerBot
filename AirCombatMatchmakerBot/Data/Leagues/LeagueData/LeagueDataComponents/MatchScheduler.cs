@@ -40,7 +40,8 @@ public class MatchScheduler : logClass<MatchScheduler>
             " with duration: " + _duration, LogLevel.VERBOSE);
 
         MatchSchedulerActive = true;
-        new LeagueMatchSchedulerEvent(_duration, interfaceLeagueRef.LeagueCategoryId);
+        new LeagueMatchSchedulerEvent(
+            _duration, interfaceLeagueRef.LeagueCategoryId, interfaceLeagueRef.LeagueEventManager.ClassScheduledEvents);
 
         Log.WriteLine("Done activating " + interfaceLeagueRef.LeagueCategoryName + "' " + nameof(MatchScheduler) +
              " with duration: " + _duration, LogLevel.DEBUG);

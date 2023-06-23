@@ -17,6 +17,8 @@ public interface InterfaceLeague
     public ulong LeagueRoleId { get; set; }
     public ulong LeagueRegistrationMessageId { get; set; }
 
+    public EventManager LeagueEventManager { get; set; }
+
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);
     public InterfaceCategory FindLeaguesInterfaceCategory();
     public Task PostMatchReport(string _finalResultMessage, string _finalResultTitle,
@@ -24,4 +26,6 @@ public interface InterfaceLeague
     public void UpdateLeagueLeaderboard();
 
     public Task<Response> RegisterUserToALeague(ulong _userId);
+
+    public void HandleLeaguesAndItsMatchesEvents(ulong _currentUnixTime);
 }

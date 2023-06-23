@@ -55,7 +55,8 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
         string finalMessage = string.Empty;
 
-        foreach (ScheduledEvent scheduledEvent in Database.Instance.EventScheduler.ScheduledEvents)
+        // Add to a method inside the match
+        foreach (ScheduledEvent scheduledEvent in mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents)
         {
             if (scheduledEvent.GetType() == typeof(MatchQueueAcceptEvent))
             {
@@ -106,13 +107,14 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         Log.WriteLine(playersThatAreReady + " | " +
             mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2, LogLevel.DEBUG);
 
+        // Need to move this inside the class itself
         if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
             mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
         {
             // Perhaps make this an abstract method to remove each of the event type from the queue
             // with each of derived classes having their own conditions
             List<ScheduledEvent> scheduledEventsToRemove = new List<ScheduledEvent>();
-            foreach (ScheduledEvent scheduledEvent in Database.Instance.EventScheduler.ScheduledEvents)
+            foreach (ScheduledEvent scheduledEvent in mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents)
             {
                 if (scheduledEvent.GetType() == typeof(MatchQueueAcceptEvent))
                 {
@@ -124,7 +126,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                 }
             }
 
-            Database.Instance.EventScheduler.RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
+            mcc.leagueMatchCached.MatchEventManager.RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
 
             mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.REPORTINGPHASE;
 

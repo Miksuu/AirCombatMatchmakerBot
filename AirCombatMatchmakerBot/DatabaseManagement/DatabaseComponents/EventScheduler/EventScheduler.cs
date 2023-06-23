@@ -38,14 +38,9 @@ public class EventScheduler : logClass<EventScheduler>
 
         LastUnixTimeCheckedOn = currentUnixTime;
 
-        // Replace this with looping through leagues
-        foreach (ScheduledEvent scheduledEvent in ScheduledEvents)
-        {
-            scheduledEvent.CheckIfTheEventCanBeExecuted(_currentUnixTime);
-        }
         foreach (InterfaceLeague storedLeague in Database.Instance.Leagues.StoredLeagues)
         {
-
+            storedLeague.HandleLeaguesAndItsMatchesEvents(currentUnixTime);
         }
     }
 
@@ -66,33 +61,6 @@ public class EventScheduler : logClass<EventScheduler>
             Thread.Sleep(waitTimeInMs);
 
             Log.WriteLine("Wait done.", LogLevel.VERBOSE);
-        }
-    }
-
-    public void RemoveEventsFromTheScheduledEventsBag(List<ScheduledEvent> _scheduledEventsToRemove)
-    {
-        var updatedScheduledEvents = new ConcurrentBag<ScheduledEvent>();
-
-        foreach (var item in ScheduledEvents)
-        {
-            if (!_scheduledEventsToRemove.Contains(item))
-            {
-                updatedScheduledEvents.Add(item);
-            }
-        }
-
-        ScheduledEvents = updatedScheduledEvents;
-
-        foreach (var item in _scheduledEventsToRemove)
-        {
-            if (!ScheduledEvents.Contains(item))
-            {
-                Log.WriteLine("event: " + item.EventId + " removed", LogLevel.DEBUG);
-            }
-            else
-            {
-                Log.WriteLine("event: " + item.EventId + ", failed to remove", LogLevel.ERROR);
-            }
         }
     }
 }
