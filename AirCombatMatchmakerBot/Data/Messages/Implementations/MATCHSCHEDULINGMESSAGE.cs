@@ -5,7 +5,6 @@ using Discord;
 [DataContract]
 public class MATCHSCHEDULINGMESSAGE : BaseMessage
 {
-    MatchChannelComponents mcc { get; set; }
     public MATCHSCHEDULINGMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.MATCHSCHEDULINGMESSAGE;
