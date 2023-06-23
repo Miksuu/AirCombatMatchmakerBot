@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using Discord;
+using System.Threading.Channels;
 
 [DataContract]
 public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
@@ -24,7 +25,7 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public async override string GenerateMessage()
     {
         try
         {
@@ -49,16 +50,25 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
             var teamNameThatScheduled = teamsInTheMatch.First(
                 t => t.Key == scheduleObject.TeamIdThatRequestedScheduling).Value;
 
+            // Refactor this?
+            var messageToFind = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                mcc.interfaceLeagueCached.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                    mcc.leagueMatchCached.MatchChannelId).FindInterfaceMessageWithNameInTheChannel(
+                        MessageName.MATCHSCHEDULINGMESSAGE);
+            var client = BotReference.GetClientRef();
+            var channel = client.GetChannel(mcc.leagueMatchCached.MatchChannelId) as IMessageChannel;
+            var message = await channel.GetMessageAsync(messageToFind.MessageId);
+
             thisInterfaceMessage.MessageDescription +=
                 "**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**\n" +
-                "Instructions: " + cachedUserMessage.GetJumpUrl();
+                "Instructions: " + message.GetJumpUrl();
 
-            return thisInterfaceMessage.MessageDescription;
+            return Task.FromResult(thisInterfaceMessage.MessageDescription);
         }
         catch (Exception ex) 
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-            return ex.Message;
+            return Task.FromResult(ex.Message);
         }
     }
 }
