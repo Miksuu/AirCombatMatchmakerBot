@@ -31,7 +31,7 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             "``/schedule 6 hours``\n" + 
             "``/schedule 4 hours 30minutes``\n" + 
             "``/schedule 42 minutes``\n\n" + 
-            "Once you agree to a certain time, use ``/schedule accept`` command, or click the button below!";
+            //"Once you agree to a certain time, use ``/schedule accept`` command, or click the button below!";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)

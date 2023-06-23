@@ -61,7 +61,8 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
 
             thisInterfaceMessage.MessageDescription +=
                 "**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**\n" +
-                "Instructions: " + message.GetJumpUrl();
+                "If the time is fine, use ``/schedule accept`` command, or click the ACCEPT button below. " +
+                "Otherwise refer to the instructions: " + message.GetJumpUrl() + " to propose a new time!";
 
             Log.WriteLine(thisInterfaceMessage.MessageDescription, LogLevel.VERBOSE);
 
