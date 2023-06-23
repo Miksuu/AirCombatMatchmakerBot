@@ -103,6 +103,7 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected logConcurrentBag<InterfaceButton> buttonsInTheMessage = new logConcurrentBag<InterfaceButton>();
 
     protected bool mentionMatchPlayers { get; set; }
+    protected bool mentionOtherTeamsPlayers { get; set; }
     protected Discord.IUserMessage cachedUserMessage { get; set; }
 
     protected InterfaceMessage thisInterfaceMessage;
@@ -171,7 +172,7 @@ public abstract class BaseMessage : InterfaceMessage
             if (_component == null)
             {
                 string finalMentionMessage = "";
-                if (mentionMatchPlayers)
+                if (mentionMatchPlayers || mentionOtherTeamsPlayers)
                 {
                     MatchChannelComponents mcc = new MatchChannelComponents(this);
                     if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
@@ -190,9 +191,17 @@ public abstract class BaseMessage : InterfaceMessage
                     {
                         ulong[] playerIdsInTheMatch =
                             mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray();
-                        foreach (ulong id in playerIdsInTheMatch)
+                        foreach (ulong playerId in playerIdsInTheMatch)
                         {
-                            finalMentionMessage += "<@" + id.ToString() + "> ";
+                            // Skip pinging the team that doesn't need to be pinged (such as when received Schedule request)
+                            if (mentionOtherTeamsPlayers &&
+                                mcc.interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId).TeamId ==
+                                    mcc.leagueMatchCached.ScheduleObject.TeamIdThatRequestedScheduling)
+                            {
+                                continue;
+                            }
+
+                            finalMentionMessage += "<@" + playerId.ToString() + "> ";
                         }
                     }
                 }
