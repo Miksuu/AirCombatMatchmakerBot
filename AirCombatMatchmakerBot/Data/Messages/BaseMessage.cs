@@ -364,7 +364,7 @@ public abstract class BaseMessage : InterfaceMessage
         return this;
     }
 
-    public async Task ModifyMessage(string _newContent)
+    public async void ModifyMessage(string _newContent)
     {
         thisInterfaceMessage.MessageDescription = _newContent;
 
@@ -405,15 +405,15 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("Adding content: " + _content + " to the end of the message: " +
             thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
 
-        await ModifyMessage(thisInterfaceMessage.MessageDescription + "\n\n" + _content);
+        ModifyMessage(thisInterfaceMessage.MessageDescription + "\n\n" + _content);
 
         Log.WriteLine("Done adding content: " + _content + " to the end of the message: " +
             thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
     }
 
-    public async Task GenerateAndModifyTheMessage()
+    public void GenerateAndModifyTheMessage()
     {
-        await ModifyMessage(GenerateMessage());
+        ModifyMessage(GenerateMessage());
     }
 
     protected abstract void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId);

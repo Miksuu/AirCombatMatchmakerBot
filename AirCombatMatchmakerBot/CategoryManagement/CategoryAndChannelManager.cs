@@ -98,7 +98,7 @@ public static class CategoryAndChannelManager
                         interfaceLeague.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
                             ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
 
-                    await message.GenerateAndModifyTheMessage();
+                    message.GenerateAndModifyTheMessage();
                 }
 
                 interfaceLeague.LeagueUnits = leagueInterface.LeagueUnits;

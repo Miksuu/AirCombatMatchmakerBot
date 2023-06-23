@@ -183,7 +183,7 @@ public class MatchReporting : logClass<MatchReporting>
         {
             InterfaceMessage messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
                             messageNameToEdit);
-            await messageToEdit.GenerateAndModifyTheMessage();
+            messageToEdit.GenerateAndModifyTheMessage();
         }
         catch (Exception ex)
         {

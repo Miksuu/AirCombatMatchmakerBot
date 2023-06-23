@@ -2,6 +2,9 @@ using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
 using System;
+using System.Globalization;
+using System.Security;
+using Microsoft.VisualBasic;
 
 [DataContract]
 public class LeagueMatch : logClass<LeagueMatch>
@@ -159,58 +162,43 @@ public class LeagueMatch : logClass<LeagueMatch>
     {
         try
         {
-            //DateTime currentTime = await TimeService.GetCurrentTime();
-
             Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " with towards id: " +
                 ScheduleObject.TeamIdThatRequestedScheduling, LogLevel.VERBOSE);
-            // Convert the input date and time string to a DateTime object
-            bool isValidDateAndTime = DateTime.TryParse(_dateAndTime, out DateTime suggestedScheduleDate);
 
-            if (!isValidDateAndTime && _dateAndTime.ToLower() != "accept")
-            {
-                Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.DEBUG);
-                return new Response("Invalid date and time format. Please provide a valid date and time.", false);
-            }
-            else if (!isValidDateAndTime && _dateAndTime.ToLower() == "accept" && ScheduleObject.TeamIdThatRequestedScheduling != 0)
-            {
-                var playerTeamIdTemp = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
+            var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
 
-                if (ScheduleObject.TeamIdThatRequestedScheduling == playerTeamIdTemp)
+            DateTime? suggestedScheduleDate = TimeService.GetDateTimeFromUserInput(_dateAndTime);
+            if (suggestedScheduleDate == null || !suggestedScheduleDate.HasValue)
+            {
+                if (_dateAndTime.ToLower() == "accept")
                 {
-                    return new Response("You have already suggested a date which is: " +
-                        ScheduleObject.GetValue().RequestedSchedulingTimeInUnixTime, false);
+                    return AcceptMatchScheduling(_playerId, playerTeamId).Result;
                 }
-
-                Log.WriteLine("player: " + playerTeamIdTemp + " on team: " + playerTeamIdTemp + " accepted the match.", LogLevel.DEBUG);
-
-                // Move to method
-                InterfaceChannel _interfaceChannelTemp = Database.Instance.Categories.FindInterfaceCategoryWithId(
-                    Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
-                        MatchChannelId);
-
-                ulong timeUntilTemp = TimeService.CalculateTimeUntilWithUnixTime(ScheduleObject.RequestedSchedulingTimeInUnixTime);
-
-                await StartMatchAfterScheduling(_interfaceChannelTemp, timeUntilTemp);
-
-                return new Response("Scheduled match to: " + ScheduleObject.RequestedSchedulingTimeInUnixTime, true);
+                else
+                {
+                    Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.DEBUG);
+                    return new Response("Invalid date and time format. Please provide a valid date and time.", false);
+                }
             }
-            else if (!isValidDateAndTime && _dateAndTime.ToLower() == "accept" && ScheduleObject.TeamIdThatRequestedScheduling == 0)
+
+            var defaultEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            TimeSpan timeDifference = suggestedScheduleDate.Value - defaultEpoch;
+            ulong scheduledTime = (ulong)timeDifference.TotalSeconds;
+
+            bool isValidDateAndTime = true;
+            ulong currentTime = (ulong)(
+                TimeService.GetCurrentTime().Result -
+                    defaultEpoch).TotalSeconds;
+
+            if (currentTime >= scheduledTime)
             {
-                return new Response("You can't accept a match that hasn't been scheduled!", false);
+                return new Response("That time is already past! Please provide a valid date and time.", false);
             }
 
-            Log.WriteLine("Valid Datetime: " + suggestedScheduleDate.ToLongTimeString() + " by: " + _playerId, LogLevel.VERBOSE);
+            ulong timeUntil = scheduledTime - currentTime;
 
-            ulong timeUntil = TimeService.CalculateTimeUntilWithUnixTime(
-                (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
 
-            Log.WriteLine("Time until: " + timeUntil, LogLevel.VERBOSE);
-
-            //DateTime dateTime = DateTime.Now;
-            ulong scheduledTime = (ulong)(suggestedScheduleDate - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
-            //ulong currentTimeAndTimeUntil = currentUnixTime + timeUntil;
-
-            //Log.WriteLine("CUR: " + currentTimeAndTimeUntil + " | " + ScheduleObject.RequestedSchedulingTimeInUnixTime, LogLevel.DEBUG);
 
             if (timeUntil <= 0)
             {
@@ -219,33 +207,63 @@ public class LeagueMatch : logClass<LeagueMatch>
                 return new Response("The date you tried to suggest was too early!", false);
             }
 
-            InterfaceChannel _interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
                 Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelId);
-
-            var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
 
             if (playerTeamId == ScheduleObject.TeamIdThatRequestedScheduling)
             {
                 return new Response("You have already suggested a date!", false);
             }
 
-            // Add a check if the time is the same than the scheduleobject's
             if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
             {
-                await StartMatchAfterScheduling(_interfaceChannel, timeUntil);
+                await StartMatchAfterScheduling(interfaceChannel, timeUntil);
                 return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
             }
 
             ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
-            return new Response("Scheduled match to: " + suggestedScheduleDate, true);
+            interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHSCHEDULINGMESSAGE).GenerateAndModifyTheMessage();
+
+            Log.WriteLine("timeUntil: " + timeUntil, LogLevel.VERBOSE);
+
+            return new Response("Suggested match time to: " + suggestedScheduleDate + 
+                " that is in: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(timeUntil + currentTime), true);
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return new Response(ex.Message, false);
         }
+    }
+
+    // Used by /schedule accept command, and the ACCEPTSCHEDULEDTIME-button
+    public async Task<Response> AcceptMatchScheduling(ulong _playerId, int _playerTeamId)
+    {
+        if (ScheduleObject.TeamIdThatRequestedScheduling == 0)
+        {
+            return new Response("You can't accept a match that hasn't been scheduled!", false);
+        }
+
+        if (ScheduleObject.TeamIdThatRequestedScheduling == _playerTeamId)
+        {
+            return new Response("You have already suggested a date which is: " +
+                ScheduleObject.GetValue().RequestedSchedulingTimeInUnixTime, false);
+        }
+
+        Log.WriteLine("player: " + _playerId + " on team: " + _playerTeamId + " accepted the match.", LogLevel.DEBUG);
+
+        InterfaceChannel _interfaceChannelTemp = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
+                MatchChannelId);
+
+        ulong timeUntilTemp = TimeService.CalculateTimeUntilWithUnixTime(ScheduleObject.RequestedSchedulingTimeInUnixTime);
+
+        // Perhaps move to another thread
+        await StartMatchAfterScheduling(_interfaceChannelTemp, timeUntilTemp);
+
+        return new Response("Scheduled match to: " + ScheduleObject.RequestedSchedulingTimeInUnixTime, true);
     }
 
     public async Task StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, ulong _timeUntil)
@@ -368,7 +386,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             new DeleteChannelEvent(matchChannelDeleteDelay, interfaceLeagueRef.LeagueCategoryId, MatchChannelId, "match");
 
             var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
-            await messageToModify.GenerateAndModifyTheMessage();
+            messageToModify.GenerateAndModifyTheMessage();
 
             //await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
 
