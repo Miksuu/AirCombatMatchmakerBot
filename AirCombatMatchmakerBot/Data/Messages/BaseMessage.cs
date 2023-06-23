@@ -103,6 +103,7 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected logConcurrentBag<InterfaceButton> buttonsInTheMessage = new logConcurrentBag<InterfaceButton>();
 
     protected bool mentionMatchPlayers { get; set; }
+    protected bool mentionOtherTeamsPlayers { get; set; }
     protected Discord.IUserMessage cachedUserMessage { get; set; }
 
     protected InterfaceMessage thisInterfaceMessage;
@@ -156,11 +157,11 @@ public abstract class BaseMessage : InterfaceMessage
             // Pass league id as parameter here
             leagueRegistrationMessage.belongsToLeagueCategoryId = _leagueCategoryId;
             
-            messageForGenerating = leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague();
+            messageForGenerating = leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague().Result;
         }
         else
         {
-            messageForGenerating = "\n" + GenerateMessage();
+            messageForGenerating = "\n" + GenerateMessage().Result;
         }
 
         if (_displayMessage)
@@ -171,7 +172,7 @@ public abstract class BaseMessage : InterfaceMessage
             if (_component == null)
             {
                 string finalMentionMessage = "";
-                if (mentionMatchPlayers)
+                if (mentionMatchPlayers || mentionOtherTeamsPlayers)
                 {
                     MatchChannelComponents mcc = new MatchChannelComponents(this);
                     if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
@@ -190,9 +191,17 @@ public abstract class BaseMessage : InterfaceMessage
                     {
                         ulong[] playerIdsInTheMatch =
                             mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray();
-                        foreach (ulong id in playerIdsInTheMatch)
+                        foreach (ulong playerId in playerIdsInTheMatch)
                         {
-                            finalMentionMessage += "<@" + id.ToString() + "> ";
+                            // Skip pinging the team that doesn't need to be pinged (such as when received Schedule request)
+                            if (mentionOtherTeamsPlayers &&
+                                mcc.interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId).TeamId ==
+                                    mcc.leagueMatchCached.ScheduleObject.TeamIdThatRequestedScheduling)
+                            {
+                                continue;
+                            }
+
+                            finalMentionMessage += "<@" + playerId.ToString() + "> ";
                         }
                     }
                 }
@@ -221,15 +230,6 @@ public abstract class BaseMessage : InterfaceMessage
                     }
                     else
                     {
-                        try
-                        {
-
-                        }
-                        catch(Exception ex)
-                        {
-                            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                            return this;
-                        }
                         var iMessageChannel = await _interfaceChannel.GetMessageChannelById(_client);
 
                         List<FileAttachment> attachments = new List<FileAttachment>();
@@ -320,7 +320,7 @@ public abstract class BaseMessage : InterfaceMessage
             thisInterfaceMessage.ButtonsInTheMessage.Add(interfaceButton);
         }
 
-        messageForGenerating = "\n" + GenerateMessage();
+        messageForGenerating = "\n" + GenerateMessage().Result;
 
         if (_displayMessage)
         {
@@ -390,6 +390,8 @@ public abstract class BaseMessage : InterfaceMessage
 
         var embed = new EmbedBuilder();
 
+        Log.WriteLine(thisInterfaceMessage.MessageDescription, LogLevel.VERBOSE);
+
         // set the title, description, and color of the embedded MessageDescription
         embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
              .WithDescription(thisInterfaceMessage.MessageDescription)
@@ -413,7 +415,7 @@ public abstract class BaseMessage : InterfaceMessage
 
     public void GenerateAndModifyTheMessage()
     {
-        ModifyMessage(GenerateMessage());
+        ModifyMessage(GenerateMessage().Result);
     }
 
     protected abstract void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId);
@@ -476,7 +478,7 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("Done generating buttons", LogLevel.VERBOSE);
     }
 
-    public abstract string GenerateMessage();
+    public abstract Task<string> GenerateMessage();
 
     public async Task<Discord.IMessage> GetMessageById(IMessageChannel _channel)
     {

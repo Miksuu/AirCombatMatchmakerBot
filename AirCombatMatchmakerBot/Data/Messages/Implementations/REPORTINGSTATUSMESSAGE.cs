@@ -21,7 +21,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
         string reportingStatusMessage = string.Empty;
 
@@ -31,7 +31,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
             string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                 nameof(mcc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return errorMsg;
+            return Task.FromResult(errorMsg);
         }
 
         foreach (var teamKvp in mcc.leagueMatchCached.TeamsInTheMatch)
@@ -94,6 +94,6 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
         Log.WriteLine("Returning: " + reportingStatusMessage, LogLevel.DEBUG);
 
-        return reportingStatusMessage;
+        return Task.FromResult(reportingStatusMessage);
     }
 }

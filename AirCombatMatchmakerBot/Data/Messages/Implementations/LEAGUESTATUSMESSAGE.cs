@@ -21,7 +21,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
         string finalMessage = string.Empty;
         List<Team> sortedTeamListByElo = new List<Team>();
@@ -46,6 +46,6 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
             Log.WriteLine("Generated the leaderboard: " + finalMessage, LogLevel.VERBOSE);
         }
 
-        return finalMessage;
+        return Task.FromResult(finalMessage);
     }
 }

@@ -28,7 +28,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
         Log.WriteLine("Starting to generate the message for the match final result", LogLevel.VERBOSE);
 
@@ -38,7 +38,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
             string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                 nameof(mcc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return errorMsg;
+            return Task.FromResult(errorMsg);
         }
 
         string finalMessage = string.Empty;
@@ -144,6 +144,6 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         Log.WriteLine("Returning: " + finalMessage, LogLevel.DEBUG);
 
-        return finalMessage;
+        return Task.FromResult(finalMessage);
     }
 }

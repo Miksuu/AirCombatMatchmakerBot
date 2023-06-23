@@ -32,7 +32,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
         Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
 
@@ -40,7 +40,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
-            return nameof(mcc) + " was null!";
+            return Task.FromResult(nameof(mcc) + " was null!");
         }
 
         string finalMessage = "Confirmed:\n";
@@ -90,6 +90,6 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 
-        return finalMessage;
+        return Task.FromResult(finalMessage);
     }
 }

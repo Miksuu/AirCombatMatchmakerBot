@@ -168,7 +168,7 @@ public class MatchReporting : logClass<MatchReporting>
                 var interfaceMessage = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
                     MessageName.MATCHFINALRESULTMESSAGE);
 
-                FinalResultForConfirmation = interfaceMessage.GenerateMessage();
+                FinalResultForConfirmation = interfaceMessage.GenerateMessage().Result;
                 // Must be called after GenerateMessage() since it's defined there
                 FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
             }

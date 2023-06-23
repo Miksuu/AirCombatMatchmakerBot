@@ -28,7 +28,7 @@ public class REGISTRATIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
         /*
         if (MessageDescription == null)
@@ -37,6 +37,6 @@ public class REGISTRATIONMESSAGE : BaseMessage
             return "";
         }*/
 
-        return thisInterfaceMessage.MessageDescription;
+        return Task.FromResult(thisInterfaceMessage.MessageDescription);
     }
 }

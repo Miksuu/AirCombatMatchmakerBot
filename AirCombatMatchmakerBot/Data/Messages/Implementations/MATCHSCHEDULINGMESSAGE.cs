@@ -12,7 +12,6 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
         thisInterfaceMessage.MessageButtonNamesWithAmount = new ConcurrentDictionary<ButtonName, int>(
             new ConcurrentBag<KeyValuePair<ButtonName, int>>()
             {
-                new KeyValuePair<ButtonName, int>(ButtonName.ACCEPTSCHEDULEDTIME, 1),
             });
 
         thisInterfaceMessage.MessageEmbedTitle = "Schedule your match here using the /schedule command";
@@ -24,15 +23,15 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             "Examples:\n" +
             "``/schedule 0659z 01.02.2024``\n" +
             "``/schedule 03/04/2024 07z``\n" +
-            "``/schedule 1835z saturday ``\n" +
+            "``/schedule 1835z saturday``\n" +
             "``/schedule sunday 19z``\n" +
             "``/schedule today 1920z``\n" +
             "``/schedule tomorrow 2023z``\n" +
-            "``/schedule now``\n\n" + 
-            "``/schedule 6 hours``\n\n" + 
-            "``/schedule 4 hours 30minutes``\n\n" + 
-            "``/schedule 42 minutes``\n\n" + 
-            "Once you agree to a certain time, use ``/schedule accept`` command, or click the button below!";
+            "``/schedule now``\n" +
+            "``/schedule 6 hours``\n" +
+            "``/schedule 4 hours 30minutes``\n" +
+            "``/schedule 42 minutes``\n" +
+            "*Copypasting these messages won't work! You have to type them in manually.*";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
@@ -40,8 +39,8 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
-        return thisInterfaceMessage.MessageDescription;
+        return Task.FromResult(thisInterfaceMessage.MessageDescription);
     }
 }
