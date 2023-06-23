@@ -23,7 +23,7 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             "Examples:\n" +
             "``/schedule 0659z 01.02.2024``\n" +
             "``/schedule 03/04/2024 07z``\n" +
-            "``/schedule 1835z saturday ``\n" +
+            "``/schedule 1835z saturday``\n" +
             "``/schedule sunday 19z``\n" +
             "``/schedule today 1920z``\n" +
             "``/schedule tomorrow 2023z``\n" +
