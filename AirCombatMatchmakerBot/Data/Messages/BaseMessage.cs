@@ -221,15 +221,6 @@ public abstract class BaseMessage : InterfaceMessage
                     }
                     else
                     {
-                        try
-                        {
-
-                        }
-                        catch(Exception ex)
-                        {
-                            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                            return this;
-                        }
                         var iMessageChannel = await _interfaceChannel.GetMessageChannelById(_client);
 
                         List<FileAttachment> attachments = new List<FileAttachment>();

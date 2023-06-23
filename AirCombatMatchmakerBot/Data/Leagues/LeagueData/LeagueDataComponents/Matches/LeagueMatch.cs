@@ -57,6 +57,12 @@ public class LeagueMatch : logClass<LeagueMatch>
         get => matchEventManager.GetValue();
         set => matchEventManager.SetValue(value);
     }
+    public ConcurrentBag<ulong> StoredScheduleMessageIds
+    {
+        get => storedScheduleMessageIds.GetValue();
+        set => storedScheduleMessageIds.SetValue(value);
+    }
+
 
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logClass<int> matchId = new logClass<int>();
@@ -66,6 +72,8 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logClass<ScheduleObject> scheduleObject = new logClass<ScheduleObject>(new ScheduleObject());
     [DataMember] private logClass<bool> isAScheduledMatch = new logClass<bool>();
     [DataMember] private logClass<EventManager> matchEventManager = new logClass<EventManager>(new EventManager());
+
+    [DataMember] private logConcurrentBag<ulong> storedScheduleMessageIds = new logConcurrentBag<ulong>();
 
     private InterfaceLeague interfaceLeagueRef;
 
@@ -204,9 +212,6 @@ public class LeagueMatch : logClass<LeagueMatch>
             }
 
             ulong timeUntil = scheduledTime - currentTime;
-
-
-
             if (timeUntil <= 0)
             {
                 Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId +
@@ -231,7 +236,11 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
-            interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHSCHEDULINGMESSAGE).GenerateAndModifyTheMessage();
+            var schedulingInstructionsMessageId = 
+                interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHSCHEDULINGMESSAGE).MessageId;
+
+            MATCHSCHEDULINGSUGGESTIONMESSAGE? msg2 =
+                interfaceChannel.CreateAMessageForTheChannelFromMessageName(MessageName.MATCHSCHEDULINGSUGGESTIONMESSAGE).Result as MATCHSCHEDULINGSUGGESTIONMESSAGE;
 
             Log.WriteLine("timeUntil: " + timeUntil, LogLevel.VERBOSE);
 
