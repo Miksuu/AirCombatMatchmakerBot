@@ -324,48 +324,40 @@ public class LeagueMatch : logClass<LeagueMatch>
 
     public async void FinishTheMatch()
     {
-        MatchReporting.MatchState = MatchState.MATCHDONE;
-
-        AttachmentData[] attachmentDatas;
-        InterfaceMessage interfaceMessage;
-
-        Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
-        EloSystem.CalculateFinalStatsAndEloForBothTeams(
-            interfaceLeagueRef, MatchReporting.FindTeamsInTheMatch(),
-            MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
-
-        Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
-
-        InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
-            interfaceLeagueRef.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                MatchChannelId);
-
         try
         {
+            MatchReporting.MatchState = MatchState.MATCHDONE;
+
+            AttachmentData[] attachmentDatas;
+            InterfaceMessage interfaceMessage;
+
+            Log.WriteLine("Finishing match: " + MatchId, LogLevel.DEBUG);
+            EloSystem.CalculateFinalStatsAndEloForBothTeams(
+                interfaceLeagueRef, MatchReporting.FindTeamsInTheMatch(),
+                MatchReporting.TeamIdsWithReportData.ToDictionary(x => x.Key, x => x.Value));
+
+            Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
+
+            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                interfaceLeagueRef.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                    MatchChannelId);
+
             interfaceMessage = await interfaceChannel.CreateAMessageForTheChannelFromMessageName(
-                MessageName.MATCHFINALRESULTMESSAGE, false);
-        }
-        catch (Exception ex)
-        {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-            return;
-        }
+                    MessageName.MATCHFINALRESULTMESSAGE, false);
 
-        var matchFinalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
-        if (matchFinalResultMessage == null)
-        {
-            Log.WriteLine(nameof(matchFinalResultMessage) + " was null!", LogLevel.ERROR);
-            return;
-        }
+            var matchFinalResultMessage = interfaceMessage as MATCHFINALRESULTMESSAGE;
+            if (matchFinalResultMessage == null)
+            {
+                Log.WriteLine(nameof(matchFinalResultMessage) + " was null!", LogLevel.ERROR);
+                return;
+            }
 
-        Log.WriteLine("altMsg: " + matchFinalResultMessage.AlternativeMessage, LogLevel.DEBUG);
+            Log.WriteLine("altMsg: " + matchFinalResultMessage.AlternativeMessage, LogLevel.DEBUG);
 
-        MatchReporting.FinalResultForConfirmation = interfaceMessage.MessageDescription;
-        MatchReporting.FinalMessageForMatchReportingChannel = matchFinalResultMessage.AlternativeMessage;
-        MatchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
+            MatchReporting.FinalResultForConfirmation = interfaceMessage.MessageDescription;
+            MatchReporting.FinalMessageForMatchReportingChannel = matchFinalResultMessage.AlternativeMessage;
+            MatchReporting.FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
-        try
-        {
             attachmentDatas = TacviewManager.FindTacviewAttachmentsForACertainMatch(
                MatchId, interfaceLeagueRef).Result;
 
