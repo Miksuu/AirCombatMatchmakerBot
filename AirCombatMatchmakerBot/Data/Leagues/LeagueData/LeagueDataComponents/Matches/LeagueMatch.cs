@@ -52,6 +52,12 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => isAScheduledMatch.SetValue(value);
     }
 
+    public EventManager MatchEventManager
+    {
+        get => matchEventManager.GetValue();
+        set => matchEventManager.SetValue(value);
+    }
+
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logClass<int> matchId = new logClass<int>();
     [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
@@ -59,6 +65,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>(new LeagueName());
     [DataMember] private logClass<ScheduleObject> scheduleObject = new logClass<ScheduleObject>(new ScheduleObject());
     [DataMember] private logClass<bool> isAScheduledMatch = new logClass<bool>();
+    [DataMember] private logClass<EventManager> matchEventManager = new logClass<EventManager>(new EventManager());
 
     private InterfaceLeague interfaceLeagueRef;
 
@@ -278,7 +285,8 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             MatchReporting.MatchState = MatchState.PLAYERREADYCONFIRMATIONPHASE;
 
-            new MatchQueueAcceptEvent(_timeUntil + 900, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId);
+            new MatchQueueAcceptEvent(
+                _timeUntil + 900, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId, MatchEventManager.ClassScheduledEvents);
 
             await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMMATCHENTRYMESSAGE, true);
@@ -383,7 +391,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             ulong matchChannelDeleteDelay = 45;
 
             // Schedule an event to delete the channel later
-            new DeleteChannelEvent(matchChannelDeleteDelay, interfaceLeagueRef.LeagueCategoryId, MatchChannelId, "match");
+            new DeleteChannelEvent(matchChannelDeleteDelay, interfaceLeagueRef.LeagueCategoryId, MatchChannelId, "match", MatchEventManager.ClassScheduledEvents);
 
             var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
             messageToModify.GenerateAndModifyTheMessage();

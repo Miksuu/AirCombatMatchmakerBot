@@ -63,6 +63,12 @@ public abstract class BaseLeague : InterfaceLeague
         set => leagueRegistrationMessageId.SetValue(value);
     }
 
+    public EventManager LeagueEventManager
+    {
+        get => leagueEventManager.GetValue();
+        set => leagueEventManager.SetValue(value);
+    }
+
     // Generated based on the implementation
     [DataMember] protected logClass<LeagueName> leagueCategoryName = new logClass<LeagueName>(new LeagueName());
     [DataMember] protected logClass<Era> leagueEra = new logClass<Era>(new Era());
@@ -81,6 +87,9 @@ public abstract class BaseLeague : InterfaceLeague
 
     // Reference to the MessageDescription related to this league on the #league-registration channel
     [DataMember] private logClass<ulong> leagueRegistrationMessageId = new logClass<ulong>();
+
+    // Events to loop through in the specific league
+    [DataMember] private logClass<EventManager> leagueEventManager = new logClass<EventManager>(new EventManager());
 
     protected InterfaceLeague thisInterfaceLeague;
 
@@ -289,5 +298,15 @@ public abstract class BaseLeague : InterfaceLeague
         UpdateLeagueLeaderboard();
 
         return Task.FromResult(new Response(responseMsg, true));
+    }
+
+    public void HandleLeaguesAndItsMatchesEvents(ulong _currentUnixTime)
+    {
+        LeagueEventManager.HandleEvents(_currentUnixTime);
+
+        foreach (LeagueMatch leagueMatch in LeagueData.Matches.MatchesConcurrentBag)
+        {
+            leagueMatch.MatchEventManager.HandleEvents(_currentUnixTime);
+        }
     }
 }

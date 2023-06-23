@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Concurrent;
+using System.Runtime.Serialization;
 
 [DataContract]
 public class LeagueMatchSchedulerEvent : ScheduledEvent
@@ -7,12 +8,13 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
     public LeagueMatchSchedulerEvent() { }
 
     public LeagueMatchSchedulerEvent(
-        ulong _timeFromNowToExecuteOn, ulong _leagueCategoryId)
+        ulong _timeFromNowToExecuteOn, ulong _leagueCategoryId,
+        ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
         Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
             _leagueCategoryId, LogLevel.VERBOSE);
 
-        base.SetupScheduledEvent(_timeFromNowToExecuteOn);
+        base.SetupScheduledEvent(_timeFromNowToExecuteOn, _scheduledEvents);
         LeagueCategoryIdCached = _leagueCategoryId;
 
         Log.WriteLine("Done creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +

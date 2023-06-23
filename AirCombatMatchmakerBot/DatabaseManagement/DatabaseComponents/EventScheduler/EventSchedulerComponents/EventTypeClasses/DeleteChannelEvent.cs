@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Concurrent;
+using System.Runtime.Serialization;
 
 [DataContract]
 public class DeleteChannelEvent : ScheduledEvent
@@ -14,12 +15,13 @@ public class DeleteChannelEvent : ScheduledEvent
     public DeleteChannelEvent() { }
 
     public DeleteChannelEvent(
-        ulong _timeFromNowToExecuteOn, ulong _categoryIdToDeleteChannelOn, ulong _channelIdToDelete, string _nameMustContain)
+        ulong _timeFromNowToExecuteOn, ulong _categoryIdToDeleteChannelOn, ulong _channelIdToDelete, string _nameMustContain,
+        ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
         Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
             _categoryIdToDeleteChannelOn + "|" + _channelIdToDelete + "|" + _nameMustContain, LogLevel.VERBOSE);
 
-        base.SetupScheduledEvent(_timeFromNowToExecuteOn);
+        base.SetupScheduledEvent(_timeFromNowToExecuteOn, _scheduledEvents);
         LeagueCategoryIdCached = _categoryIdToDeleteChannelOn;
         MatchChannelIdCached = _channelIdToDelete;
         if (_nameMustContain == "")
