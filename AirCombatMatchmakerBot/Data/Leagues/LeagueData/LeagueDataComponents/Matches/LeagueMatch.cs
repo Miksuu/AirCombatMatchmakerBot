@@ -5,6 +5,8 @@ using System;
 using System.Globalization;
 using System.Security;
 using Microsoft.VisualBasic;
+using Discord;
+using System.Threading.Channels;
 
 [DataContract]
 public class LeagueMatch : logClass<LeagueMatch>
@@ -62,7 +64,6 @@ public class LeagueMatch : logClass<LeagueMatch>
         get => storedScheduleMessageIds.GetValue();
         set => storedScheduleMessageIds.SetValue(value);
     }
-
 
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logClass<int> matchId = new logClass<int>();
@@ -187,7 +188,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             {
                 if (_dateAndTime.ToLower() == "accept")
                 {
-                    return AcceptMatchScheduling(_playerId, playerTeamId).Result;
+                    return AcceptMatchScheduling(_playerId, playerTeamId);
                 }
                 else
                 {
@@ -230,17 +231,17 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
             {
-                await StartMatchAfterScheduling(interfaceChannel, timeUntil);
+                StartMatchAfterSchedulingOnAnotherThread(interfaceChannel, timeUntil);
                 return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
             }
 
             ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
-            var schedulingInstructionsMessageId = 
-                interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.MATCHSCHEDULINGMESSAGE).MessageId;
+            var newMessage =
+                interfaceChannel.CreateAMessageForTheChannelFromMessageName(
+                    MessageName.MATCHSCHEDULINGSUGGESTIONMESSAGE).Result;
 
-            MATCHSCHEDULINGSUGGESTIONMESSAGE? msg2 =
-                interfaceChannel.CreateAMessageForTheChannelFromMessageName(MessageName.MATCHSCHEDULINGSUGGESTIONMESSAGE).Result as MATCHSCHEDULINGSUGGESTIONMESSAGE;
+            StoredScheduleMessageIds.Add(newMessage.MessageId);
 
             Log.WriteLine("timeUntil: " + timeUntil, LogLevel.VERBOSE);
 
@@ -255,7 +256,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     }
 
     // Used by /schedule accept command, and the ACCEPTSCHEDULEDTIME-button
-    public async Task<Response> AcceptMatchScheduling(ulong _playerId, int _playerTeamId)
+    public Response AcceptMatchScheduling(ulong _playerId, int _playerTeamId)
     {
         if (ScheduleObject.TeamIdThatRequestedScheduling == 0)
         {
@@ -276,21 +277,35 @@ public class LeagueMatch : logClass<LeagueMatch>
 
         ulong timeUntilTemp = TimeService.CalculateTimeUntilWithUnixTime(ScheduleObject.RequestedSchedulingTimeInUnixTime);
 
-        // Perhaps move to another thread
-        await StartMatchAfterScheduling(_interfaceChannelTemp, timeUntilTemp);
+        // Improved response time
+        Thread secondThread = new Thread(() => StartMatchAfterSchedulingOnAnotherThread(_interfaceChannelTemp, timeUntilTemp));
+        secondThread.Start();
 
         return new Response("Scheduled match to: " + ScheduleObject.RequestedSchedulingTimeInUnixTime, true);
     }
 
-    public async Task StartMatchAfterScheduling(InterfaceChannel _interfaceChannel, ulong _timeUntil)
+    public async void StartMatchAfterSchedulingOnAnotherThread(InterfaceChannel _interfaceChannel, ulong _timeUntil)
     {
-        Log.WriteLine("Starting the match on second thread on channel after scheduling: " + matchChannelId +
-            " with timeUntil: " + _timeUntil, LogLevel.VERBOSE);
-
         try
         {
-            // Delete the scheduling messages here
-            //await _interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.CONFIRMMATCHENTRYMESSAGE);
+            Log.WriteLine("Starting the match on second thread on channel after scheduling: " + matchChannelId +
+                " with timeUntil: " + _timeUntil, LogLevel.VERBOSE);
+
+            var client = BotReference.GetClientRef();
+
+            // Loop through scheduling messages and delete them
+            foreach (ulong messageId in StoredScheduleMessageIds)
+            {
+                var iMessageChannel = await _interfaceChannel.GetMessageChannelById(client);
+
+                var messageToDelete = await iMessageChannel.GetMessageAsync(messageId);
+                if (messageToDelete == null)
+                {
+                    Log.WriteLine(nameof(messageToDelete) + " was null!", LogLevel.ERROR);
+                    continue;
+                }
+                await messageToDelete.DeleteAsync();
+            }
 
             MatchReporting.MatchState = MatchState.PLAYERREADYCONFIRMATIONPHASE;
 

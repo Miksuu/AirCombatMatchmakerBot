@@ -33,7 +33,7 @@ public class ACCEPTSCHEDULEDTIME : BaseButton
 
         var playerId = _component.User.Id;
 
-        var response = await mcc.leagueMatchCached.AcceptMatchScheduling(
+        var response = mcc.leagueMatchCached.AcceptMatchScheduling(
             playerId,
             mcc.interfaceLeagueCached.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(playerId).TeamId);
 

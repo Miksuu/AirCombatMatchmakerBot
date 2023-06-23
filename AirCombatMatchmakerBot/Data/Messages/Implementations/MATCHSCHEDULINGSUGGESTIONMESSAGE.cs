@@ -49,7 +49,9 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
             var teamNameThatScheduled = teamsInTheMatch.First(
                 t => t.Key == scheduleObject.TeamIdThatRequestedScheduling).Value;
 
-            thisInterfaceMessage.MessageDescription += "\n\n**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**";
+            thisInterfaceMessage.MessageDescription +=
+                "**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**\n" +
+                "Instructions: " + cachedUserMessage.GetJumpUrl();
 
             return thisInterfaceMessage.MessageDescription;
         }
