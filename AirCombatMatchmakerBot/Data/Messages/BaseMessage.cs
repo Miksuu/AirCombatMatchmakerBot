@@ -311,7 +311,7 @@ public abstract class BaseMessage : InterfaceMessage
             thisInterfaceMessage.ButtonsInTheMessage.Add(interfaceButton);
         }
 
-        messageForGenerating = "\n" + GenerateMessage();
+        messageForGenerating = "\n" + GenerateMessage().Result;
 
         if (_displayMessage)
         {
@@ -404,13 +404,9 @@ public abstract class BaseMessage : InterfaceMessage
             thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
     }
 
-    public async void GenerateAndModifyTheMessage()
+    public void GenerateAndModifyTheMessage()
     {
-        var newcont = await GenerateMessage();
-
-        Log.WriteLine("newcontent: " + newcont, LogLevel.VERBOSE);
-
-        ModifyMessage(newcont);
+        ModifyMessage(GenerateMessage().Result);
     }
 
     protected abstract void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId);
