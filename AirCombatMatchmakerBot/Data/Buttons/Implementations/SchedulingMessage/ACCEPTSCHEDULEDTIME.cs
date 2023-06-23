@@ -1,4 +1,4 @@
-using Discord;
+﻿using Discord;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 
@@ -33,8 +33,18 @@ public class ACCEPTSCHEDULEDTIME : BaseButton
 
         var playerId = _component.User.Id;
 
-        return await mcc.leagueMatchCached.AcceptMatchScheduling(
+        var response = await mcc.leagueMatchCached.AcceptMatchScheduling(
             playerId,
             mcc.interfaceLeagueCached.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(playerId).TeamId);
+
+        // If the interaction was succesfull, start removing the message, perhaps move to another thread to improve responsibility
+        if (response.serialize)
+        {
+            await Database.Instance.Categories.FindInterfaceCategoryWithId(
+                mcc.interfaceLeagueCached.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                    mcc.leagueMatchCached.MatchChannelId).DeleteMessagesInAChannelWithMessageName(MessageName.MATCHSCHEDULINGMESSAGE);
+        }
+
+        return response;
     }
 }
