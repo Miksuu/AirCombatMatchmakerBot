@@ -27,10 +27,10 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             "``/schedule sunday 19z``\n" +
             "``/schedule today 1920z``\n" +
             "``/schedule tomorrow 2023z``\n" +
-            "``/schedule now``\n" + 
-            "``/schedule 6 hours``\n" + 
-            "``/schedule 4 hours 30minutes``\n" + 
-            "``/schedule 42 minutes``\n\n" + 
+            "``/schedule now``\n" +
+            "``/schedule 6 hours``\n" +
+            "``/schedule 4 hours 30minutes``\n" +
+            "``/schedule 42 minutes``\n\n";
             //"Once you agree to a certain time, use ``/schedule accept`` command, or click the button below!";
     }
 
