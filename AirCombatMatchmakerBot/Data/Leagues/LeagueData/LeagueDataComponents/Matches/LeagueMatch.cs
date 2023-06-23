@@ -265,8 +265,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
         if (ScheduleObject.TeamIdThatRequestedScheduling == _playerTeamId)
         {
-            return new Response("You have already suggested a date which is: " +
-                ScheduleObject.GetValue().RequestedSchedulingTimeInUnixTime, false);
+            return new Response("You have already suggested a date!", false);
         }
 
         Log.WriteLine("player: " + _playerId + " on team: " + _playerTeamId + " accepted the match.", LogLevel.DEBUG);
@@ -281,7 +280,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         Thread secondThread = new Thread(() => StartMatchAfterSchedulingOnAnotherThread(_interfaceChannelTemp, timeUntilTemp));
         secondThread.Start();
 
-        return new Response("Scheduled match to: " + ScheduleObject.RequestedSchedulingTimeInUnixTime, true);
+        return new Response("", true);
     }
 
     public async void StartMatchAfterSchedulingOnAnotherThread(InterfaceChannel _interfaceChannel, ulong _timeUntil)
