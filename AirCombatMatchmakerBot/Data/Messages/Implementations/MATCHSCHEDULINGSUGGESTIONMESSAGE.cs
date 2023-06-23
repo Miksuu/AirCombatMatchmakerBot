@@ -60,8 +60,8 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
             var message = await channel.GetMessageAsync(messageToFind.MessageId);
 
             thisInterfaceMessage.MessageDescription +=
-                "**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**\n" +
-                "If the time is fine, use ``/schedule accept`` command, or click the ACCEPT button below. " +
+                "**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**\n\n" +
+                "If the time above is fine, use ``/schedule accept`` command, or click the ACCEPT button below. " +
                 "Otherwise refer to the instructions: " + message.GetJumpUrl() + " to propose a new time!";
 
             Log.WriteLine(thisInterfaceMessage.MessageDescription, LogLevel.VERBOSE);
