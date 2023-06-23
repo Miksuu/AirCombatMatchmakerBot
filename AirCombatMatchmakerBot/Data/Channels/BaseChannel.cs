@@ -3,6 +3,7 @@ using Discord;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
+using Discord.Rest;
 
 [DataContract]
 public abstract class BaseChannel : InterfaceChannel
@@ -102,8 +103,6 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.DEBUG);
     }
 
-
-
     public async Task CreateAChannelForTheCategoryWithoutRole(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
@@ -145,7 +144,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public async Task<InterfaceMessage> CreateAMessageForTheChannelFromMessageName(
-        MessageName _MessageName, bool _displayMessage = true,
+        MessageName _MessageName, bool _sendMessageOnItsCreation = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
         Log.WriteLine("Creating a message named: " + _MessageName.ToString(), LogLevel.DEBUG);
@@ -160,40 +159,43 @@ public abstract class BaseChannel : InterfaceChannel
             throw new InvalidOperationException("Client ref was not found!");
         }
 
-        InterfaceMessage newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-            client, this, true, _displayMessage, 0, _component, _ephemeral);
+        if (_sendMessageOnItsCreation)
+        {
+            interfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+                client, this, true, 0, _component, _ephemeral);
+        }
 
-        return newInterfaceMessage;
+        return interfaceMessage;
     }
 
     public async Task<Discord.IUserMessage> CreateARawMessageForTheChannelFromMessageName(
-        string _input, string _embedTitle, bool _displayMessage,
+        string _input, string _embedTitle, bool _sendMessageOnItsCreation,
         SocketMessageComponent? _component, bool _ephemeral, params string[] _files)
     {
-        Log.WriteLine("Creating a raw message: " + _input, LogLevel.DEBUG);
-
-        InterfaceMessage interfaceMessage =
-            (InterfaceMessage)EnumExtensions.GetInstance(MessageName.RAWMESSAGEINPUT.ToString());
-
-        var rawMessageInput = interfaceMessage as RAWMESSAGEINPUT;
-        if (rawMessageInput == null)
-        {
-            Log.WriteLine(nameof(rawMessageInput) + " was null!", LogLevel.CRITICAL);
-            throw new InvalidOperationException(nameof(rawMessageInput) + " was null!");
-        }
-
-        rawMessageInput.GenerateRawMessage(_input, _embedTitle);
-
-        var client = BotReference.GetClientRef();
-        if (client == null)
-        {
-            throw new InvalidOperationException(Exceptions.BotClientRefNull());
-        }
-
         try
         {
+            Log.WriteLine("Creating a raw message: " + _input, LogLevel.DEBUG);
+
+            InterfaceMessage interfaceMessage =
+                (InterfaceMessage)EnumExtensions.GetInstance(MessageName.RAWMESSAGEINPUT.ToString());
+
+            var rawMessageInput = interfaceMessage as RAWMESSAGEINPUT;
+            if (rawMessageInput == null)
+            {
+                Log.WriteLine(nameof(rawMessageInput) + " was null!", LogLevel.CRITICAL);
+                throw new InvalidOperationException(nameof(rawMessageInput) + " was null!");
+            }
+
+            rawMessageInput.GenerateRawMessage(_input, _embedTitle);
+
+            var client = BotReference.GetClientRef();
+            if (client == null)
+            {
+                throw new InvalidOperationException(Exceptions.BotClientRefNull());
+            }
+
             var createdInterfaceMessage = await rawMessageInput.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                client, this, true, _displayMessage, 0, _component, _ephemeral, _files);
+                client, this, true, 0, _component, _ephemeral, _files);
 
             return createdInterfaceMessage.CachedUserMessage;
         }
@@ -206,7 +208,7 @@ public abstract class BaseChannel : InterfaceChannel
     }
 
     public async Task<InterfaceMessage> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
-        string _input, AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
+        string _input, AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _sendMessageOnItsCreation = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
         Log.WriteLine("Creating a raw message with attachmentdata: " + _input +
@@ -234,7 +236,7 @@ public abstract class BaseChannel : InterfaceChannel
         interfaceMessage = rawMessageInput;
 
         var newMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
-            client, this, _attachmentDatas, _displayMessage, 0, _component, _ephemeral);
+            client, this, _attachmentDatas, 0, _component, _ephemeral);
 
         return newMessage;
     }
@@ -302,7 +304,7 @@ public abstract class BaseChannel : InterfaceChannel
                         (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
 
                     var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
-                            _client, this, true, true, leagueInterfaceFromDatabase.LeagueCategoryId);
+                            _client, this, true, leagueInterfaceFromDatabase.LeagueCategoryId);
 
                     leagueInterfaceFromDatabase.LeagueRegistrationMessageId = interfaceMessage.MessageId;
 
@@ -332,7 +334,7 @@ public abstract class BaseChannel : InterfaceChannel
                     InterfaceMessage interfaceMessage =
                         (InterfaceMessage)EnumExtensions.GetInstance(thisInterfaceChannel.ChannelMessages.ElementAt(m).Key.ToString());
 
-                    await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(_client, this, true, true);
+                    await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(_client, this, true);
                     thisInterfaceChannel.ChannelMessages[thisInterfaceChannel.ChannelMessages.ElementAt(m).Key] = true;
                 }
             }

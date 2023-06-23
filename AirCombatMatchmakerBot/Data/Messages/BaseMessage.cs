@@ -103,7 +103,7 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected logConcurrentBag<InterfaceButton> buttonsInTheMessage = new logConcurrentBag<InterfaceButton>();
 
     protected bool mentionMatchPlayers { get; set; }
-    protected Discord.IUserMessage cachedUserMessage { get; set; }
+    public Discord.IUserMessage cachedUserMessage { get; set; }
 
     protected InterfaceMessage thisInterfaceMessage;
 
@@ -114,10 +114,8 @@ public abstract class BaseMessage : InterfaceMessage
 
     // If the component is not null, this is a reply
     public async Task<InterfaceMessage> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, bool _embed, 
-        bool _displayMessage = true, ulong _leagueCategoryId = 0, 
-        SocketMessageComponent? _component = null, bool _ephemeral = true,
-        params string[] _files)
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, bool _embed, ulong _leagueCategoryId = 0, 
+        SocketMessageComponent? _component = null, bool _ephemeral = true, params string[] _files)
     {
         thisInterfaceMessage.MessageChannelId = _interfaceChannel.ChannelId;
         thisInterfaceMessage.MessageCategoryId = _interfaceChannel.ChannelsCategoryId;
@@ -163,95 +161,93 @@ public abstract class BaseMessage : InterfaceMessage
             messageForGenerating = "\n" + GenerateMessage();
         }
 
-        if (_displayMessage)
+
+        var componentsBuilt = component.Build();
+
+        // Send a regular MessageDescription
+        if (_component == null)
         {
-            var componentsBuilt = component.Build();
-
-            // Send a regular MessageDescription
-            if (_component == null)
+            string finalMentionMessage = "";
+            if (mentionMatchPlayers)
             {
-                string finalMentionMessage = "";
-                if (mentionMatchPlayers)
+                MatchChannelComponents mcc = new MatchChannelComponents(this);
+                if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
                 {
-                    MatchChannelComponents mcc = new MatchChannelComponents(this);
-                    if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
-                    {
-                        Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
-                        throw new InvalidOperationException(nameof(mcc) + " was null!");
-                    }
-
-                    if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
-                    {
-                        string errorMsg = nameof(mcc) + " was null!";
-                        Log.WriteLine(errorMsg, LogLevel.ERROR);
-                        //return null;
-                    }
-                    else
-                    {
-                        ulong[] playerIdsInTheMatch =
-                            mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray();
-                        foreach (ulong id in playerIdsInTheMatch)
-                        {
-                            finalMentionMessage += "<@" + id.ToString() + "> ";
-                        }
-                    }
+                    Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+                    throw new InvalidOperationException(nameof(mcc) + " was null!");
                 }
 
-                if (_embed)
+                if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
                 {
-                    var embed = new EmbedBuilder();
-
-                    // set the title, description, and color of the embedded MessageDescription
-                    embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
-                         .WithDescription(messageForGenerating)
-                         .WithColor(messageEmbedColor);
-
-                    // add a field to the embedded MessageDescription
-                    //embed.AddField("Field Name", "Field Value");
-
-                    // add a thumbnail image to the embedded MessageDescription
-                    //embed.WithThumbnailUrl("");
-
-                    if (_files.Length == 0)
-                    {
-                        cachedUserMessage = await textChannel.SendMessageAsync(
-                            finalMentionMessage, false, embed.Build(), components: componentsBuilt);
-
-                        thisInterfaceMessage.MessageId = cachedUserMessage.Id;
-                    }
-                    else
-                    {
-                        var iMessageChannel = await _interfaceChannel.GetMessageChannelById(_client);
-
-                        List<FileAttachment> attachments = new List<FileAttachment>();
-                        for (int i = 0; i < _files.Length; i++)
-                        {
-
-                            FileStream fileStream = new FileStream(_files[i], FileMode.Open, FileAccess.Read);
-
-                            string newName = "Match-" + _files[i].Split('-').Last();
-                            attachments.Add(new FileAttachment(fileStream, newName));
-                        }
-                        cachedUserMessage = await iMessageChannel.SendFilesAsync(attachments);
-                    }
-
-                    thisInterfaceMessage.MessageDescription = messageForGenerating;
-
-                    _interfaceChannel.InterfaceMessagesWithIds.TryAdd(thisInterfaceMessage.MessageId, this);
+                    string errorMsg = nameof(mcc) + " was null!";
+                    Log.WriteLine(errorMsg, LogLevel.ERROR);
+                    //return null;
                 }
-                // NON EMBED MESSAGES ARE NOT ADDED TO THE InterfaceMessagesWithIds list!!!
                 else
                 {
-                    cachedUserMessage = await textChannel.SendMessageAsync(
-                        thisInterfaceMessage.MessageDescription, false, components: componentsBuilt);
+                    ulong[] playerIdsInTheMatch =
+                        mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray();
+                    foreach (ulong id in playerIdsInTheMatch)
+                    {
+                        finalMentionMessage += "<@" + id.ToString() + "> ";
+                    }
                 }
             }
-            // Reply to a MessageDescription
+
+            if (_embed)
+            {
+                var embed = new EmbedBuilder();
+
+                // set the title, description, and color of the embedded MessageDescription
+                embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
+                     .WithDescription(messageForGenerating)
+                     .WithColor(messageEmbedColor);
+
+                // add a field to the embedded MessageDescription
+                //embed.AddField("Field Name", "Field Value");
+
+                // add a thumbnail image to the embedded MessageDescription
+                //embed.WithThumbnailUrl("");
+
+                if (_files.Length == 0)
+                {
+                    cachedUserMessage = await textChannel.SendMessageAsync(
+                        finalMentionMessage, false, embed.Build(), components: componentsBuilt);
+
+                    thisInterfaceMessage.MessageId = cachedUserMessage.Id;
+                }
+                else
+                {
+                    var iMessageChannel = await _interfaceChannel.GetMessageChannelById(_client);
+
+                    List<FileAttachment> attachments = new List<FileAttachment>();
+                    for (int i = 0; i < _files.Length; i++)
+                    {
+
+                        FileStream fileStream = new FileStream(_files[i], FileMode.Open, FileAccess.Read);
+
+                        string newName = "Match-" + _files[i].Split('-').Last();
+                        attachments.Add(new FileAttachment(fileStream, newName));
+                    }
+                    cachedUserMessage = await iMessageChannel.SendFilesAsync(attachments);
+                }
+
+                thisInterfaceMessage.MessageDescription = messageForGenerating;
+
+                _interfaceChannel.InterfaceMessagesWithIds.TryAdd(thisInterfaceMessage.MessageId, this);
+            }
+            // NON EMBED MESSAGES ARE NOT ADDED TO THE InterfaceMessagesWithIds list!!!
             else
             {
-                await _component.RespondAsync(
-                    messageForGenerating, ephemeral: _ephemeral, components: componentsBuilt);
+                cachedUserMessage = await textChannel.SendMessageAsync(
+                    thisInterfaceMessage.MessageDescription, false, components: componentsBuilt);
             }
+        }
+        // Reply to a MessageDescription
+        else
+        {
+            await _component.RespondAsync(
+                messageForGenerating, ephemeral: _ephemeral, components: componentsBuilt);
         }
 
         Log.WriteLine("Created a new message with id: " + thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
@@ -261,8 +257,7 @@ public abstract class BaseMessage : InterfaceMessage
 
     public async Task<InterfaceMessage> CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, AttachmentData[] _attachmentDatas,
-        bool _displayMessage = true, ulong _leagueCategoryId = 0,
-        SocketMessageComponent? _component = null, bool _ephemeral = true)
+        ulong _leagueCategoryId = 0, SocketMessageComponent? _component = null, bool _ephemeral = true)
     {
         thisInterfaceMessage.MessageChannelId = _interfaceChannel.ChannelId;
         thisInterfaceMessage.MessageCategoryId = _interfaceChannel.ChannelsCategoryId;
@@ -313,41 +308,38 @@ public abstract class BaseMessage : InterfaceMessage
 
         messageForGenerating = "\n" + GenerateMessage();
 
-        if (_displayMessage)
+        var componentsBuilt = component.Build();
+
+        // Send a regular MessageDescription
+        if (_component == null)
         {
-            var componentsBuilt = component.Build();
+            var embed = new EmbedBuilder();
 
-            // Send a regular MessageDescription
-            if (_component == null)
-            {
-                var embed = new EmbedBuilder();
+            // set the title, description, and color of the embedded MessageDescription
+            embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
+                 .WithDescription(messageForGenerating)
+                 .WithColor(messageEmbedColor);
 
-                // set the title, description, and color of the embedded MessageDescription
-                embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
-                     .WithDescription(messageForGenerating)
-                     .WithColor(messageEmbedColor);
+            // add a field to the embedded MessageDescription
+            //embed.AddField("Field Name", "Field Value");
 
-                // add a field to the embedded MessageDescription
-                //embed.AddField("Field Name", "Field Value");
+            // add a thumbnail image to the embedded MessageDescription
+            //embed.WithThumbnailUrl("https://example.com/thumbnail.png");
 
-                // add a thumbnail image to the embedded MessageDescription
-                //embed.WithThumbnailUrl("https://example.com/thumbnail.png");
+            var userMessage = await textChannel.SendMessageAsync(
+                "", false, embed.Build(), components: componentsBuilt);
 
-                var userMessage = await textChannel.SendMessageAsync(
-                    "", false, embed.Build(), components: componentsBuilt);
+            thisInterfaceMessage.MessageId = userMessage.Id;
 
-                thisInterfaceMessage.MessageId = userMessage.Id;
+            thisInterfaceMessage.MessageDescription = messageForGenerating;
 
-                thisInterfaceMessage.MessageDescription = messageForGenerating;
-
-                _interfaceChannel.InterfaceMessagesWithIds.TryAdd(thisInterfaceMessage.MessageId, this);
-            }
-            // Reply to a MessageDescription
-            else
-            {
-                await _component.RespondAsync(
-                    messageForGenerating, ephemeral: _ephemeral, components: componentsBuilt);
-            }
+            _interfaceChannel.InterfaceMessagesWithIds.TryAdd(thisInterfaceMessage.MessageId, this);
+        }
+        // Reply to a MessageDescription
+        else
+        {
+            await _component.RespondAsync(
+                messageForGenerating, ephemeral: _ephemeral, components: componentsBuilt);
         }
 
         Log.WriteLine("Created a new message with id: " + thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
