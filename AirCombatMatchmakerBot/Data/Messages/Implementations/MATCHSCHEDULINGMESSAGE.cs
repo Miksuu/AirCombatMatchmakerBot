@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using Discord;
 
@@ -17,6 +17,19 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             });
 
         thisInterfaceMessage.MessageEmbedTitle = "Schedule your match here using the /schedule command";
+        thisInterfaceMessage.MessageDescription = "Enter the time you would be able to play the match on in format: \n " +
+            "``/schedule 27.11.2022 1030z``\n" + "Instead of using the date 27.11.2022 you can use: [today, tomorrow]," +
+            " [any weekday] (will assume the next day that's available), [now] (will schedule the match 20 minutes away, 5 minutes time to accept)." +
+            "\nYou can also use slashes in the date and put the time first, for example: ``/schedule 11z 27/11/2022``\n\n" +
+            "Examples:\n" +
+            "``/schedule 0659z 01.02.2024``\n" +
+            "``/schedule 03/04/2024 07z``\n" +
+            "``/schedule 1835z saturday ``\n" +
+            "``/schedule sunday 19z``\n" +
+            "``/schedule today 1920z``\n" +
+            "``/schedule tomorrow 2023z``\n" +
+            "``/schedule now``\n\n" + 
+            "Once you agree to a certain time, use ``/schedule accept`` command, or click the button below!";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
@@ -28,20 +41,6 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
     {
         try
         {
-            thisInterfaceMessage.MessageDescription = "Enter the time you would be able to play the match on in format: \n " +
-                "``/schedule 27.11.2022 1030z``\n" + "Instead of using the date 27.11.2022 you can use: [today, tomorrow]," +
-                " [any weekday] (will assume the next day that's available), [now] (will schedule the match 20 minutes away, 5 minutes time to accept)." +
-                "\nYou can also use slashes in the date and put the time first, for example: ``/schedule 11z 27/11/2022``\n\n" +
-                "Examples:\n" +
-                "``/schedule 0659z 01.02.2024``\n" +
-                "``/schedule 03/04/2024 07z``\n" +
-                "``/schedule 1835z saturday``\n" +
-                "``/schedule sunday 19z``\n" +
-                "``/schedule 1920z today``\n" +
-                "``/schedule tomorrow 2023z``\n" +
-                "``/schedule now``\n\n" +
-                "Once you agree to a certain time, use ``/schedule accept`` command, or click the button below!";
-
             mcc = new MatchChannelComponents(this);
             if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
             {
@@ -67,9 +66,7 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             Log.WriteLine("time: " + time, LogLevel.VERBOSE);
             Log.WriteLine("teamNameThatScheduled: " + teamNameThatScheduled, LogLevel.VERBOSE);*/
 
-            thisInterfaceMessage.MessageDescription += "\n\n**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**";
-
-            return thisInterfaceMessage.MessageDescription;
+            return requestedTime + " requested by team: " + teamNameThatScheduled;
         }
         catch (Exception ex) 
         {
