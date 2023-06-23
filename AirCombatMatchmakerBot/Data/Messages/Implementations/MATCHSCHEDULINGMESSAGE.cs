@@ -67,7 +67,7 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             Log.WriteLine("time: " + time, LogLevel.VERBOSE);
             Log.WriteLine("teamNameThatScheduled: " + teamNameThatScheduled, LogLevel.VERBOSE);*/
 
-            thisInterfaceMessage.MessageDescription += "\n\n" + requestedTime + " requested by team: " + teamNameThatScheduled;
+            thisInterfaceMessage.MessageDescription += "\n\n**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**";
 
             return thisInterfaceMessage.MessageDescription;
         }
