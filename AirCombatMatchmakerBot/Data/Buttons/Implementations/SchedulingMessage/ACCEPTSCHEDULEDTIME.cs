@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using System.Runtime.Serialization;
 using Discord.WebSocket;
 
@@ -10,7 +10,7 @@ public class ACCEPTSCHEDULEDTIME : BaseButton
     {
         buttonName = ButtonName.ACCEPTSCHEDULEDTIME;
         thisInterfaceButton.ButtonLabel = "ACCEPT";
-        buttonStyle = ButtonStyle.Primary;
+        buttonStyle = ButtonStyle.Success;
         ephemeralResponse = false;
     }
 
