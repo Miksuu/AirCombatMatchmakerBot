@@ -139,8 +139,11 @@ public static class TimeService
         // Parse the input date and time string
         if (_dateAndTime.ToLower().Equals("now"))
         {
-            return DateTime.UtcNow;
+            DateTime currentDateTime = DateTime.UtcNow;
+            DateTime newDateTime = currentDateTime.AddSeconds(300);
+            return newDateTime;
         }
+
         else if (_dateAndTime.ToLower().StartsWith("today "))
         {
             string timeString = _dateAndTime.Substring(6);
