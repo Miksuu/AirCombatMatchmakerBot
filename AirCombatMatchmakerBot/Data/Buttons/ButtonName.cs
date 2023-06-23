@@ -43,4 +43,7 @@ public enum ButtonName
 
     [EnumMember(Value = "LEAVEMATCHSCHEDULER")]
     LEAVEMATCHSCHEDULER,
+
+    [EnumMember(Value = "ACCEPTSCHEDULEDTIME")]
+    ACCEPTSCHEDULEDTIME,
 }
