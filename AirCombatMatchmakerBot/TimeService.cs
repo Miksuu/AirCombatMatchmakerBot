@@ -17,7 +17,8 @@ public static class TimeService
                 {
                     var timeData = await response.Content.ReadAsStringAsync();
                     var apiResponse = JsonSerializer.Deserialize<ApiResponse>(timeData);
-                    var currentTime = DateTime.Parse(apiResponse.utc_datetime, null, System.Globalization.DateTimeStyles.RoundtripKind).ToUniversalTime();
+                    var currentTime = DateTime.Parse(
+                        apiResponse.utc_datetime, null, System.Globalization.DateTimeStyles.RoundtripKind).ToUniversalTime();
                     Log.WriteLine(currentTime.ToString(), LogLevel.VERBOSE);
                     return currentTime;
                 }
