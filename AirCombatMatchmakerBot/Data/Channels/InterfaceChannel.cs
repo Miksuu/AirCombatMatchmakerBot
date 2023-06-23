@@ -21,13 +21,13 @@ public interface InterfaceChannel
     public Task CreateAChannelForTheCategoryWithoutRole(
     SocketGuild _guild, params ulong[] _allowedUsersIdsArray);
     public Task<InterfaceMessage> CreateAMessageForTheChannelFromMessageName(
-        MessageName _MessageName, bool _sendMessageOnItsCreation = true,
+        MessageName _MessageName, bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
     public Task<Discord.IUserMessage> CreateARawMessageForTheChannelFromMessageName(
-        string _input, string _embedTitle = "", bool _sendMessageOnItsCreation = true,
+        string _input, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true, params string[] _files);
     public Task<InterfaceMessage> CreateARawMessageForTheChannelFromMessageNameWithAttachmentData(
-        string _input, AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _sendMessageOnItsCreation = true,
+        string _input, AttachmentData[] _attachmentDatas, string _embedTitle = "", bool _displayMessage = true,
         SocketMessageComponent? _component = null, bool _ephemeral = true);
 
     public Task PostChannelMessages(DiscordSocketClient _client);

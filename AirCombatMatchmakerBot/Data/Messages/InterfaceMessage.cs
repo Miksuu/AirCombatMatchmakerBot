@@ -22,12 +22,14 @@ public interface InterfaceMessage
 
     public Task<InterfaceMessage> CreateTheMessageAndItsButtonsOnTheBaseClass(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, bool _embed,
-        ulong _leagueCategoryId = 0, SocketMessageComponent? _component = null, bool _ephemeral = true,
+        bool _displayMessage = true, ulong _leagueCategoryId = 0,
+        SocketMessageComponent? _component = null, bool _ephemeral = true,
         params string[] _files);
 
     public Task<InterfaceMessage> CreateTheMessageAndItsButtonsOnTheBaseClassWithAttachmentData(
         DiscordSocketClient _client, InterfaceChannel _interfaceChannel, AttachmentData[] _attachmentDatas,
-        ulong _leagueCategoryId = 0, SocketMessageComponent? _component = null, bool _ephemeral = true);
+        bool _displayMessage = true, ulong _leagueCategoryId = 0,
+        SocketMessageComponent? _component = null, bool _ephemeral = true);
     public void ModifyMessage(string _newContent);
     public Task AddContentToTheEndOfTheMessage(string _content);
     public abstract Task<string> GenerateMessage();
