@@ -165,18 +165,23 @@ public class LeagueMatch : logClass<LeagueMatch>
             Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " with towards id: " +
                 ScheduleObject.TeamIdThatRequestedScheduling, LogLevel.VERBOSE);
 
+            var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
+
             DateTime? suggestedScheduleDate = TimeService.GetDateTimeFromUserInput(_dateAndTime);
             if (suggestedScheduleDate == null || !suggestedScheduleDate.HasValue)
             {
-                return new Response("Invalid date and time format. Please provide a valid date and time.", false);
+                if (_dateAndTime.ToLower() == "accept")
+                {
+                    return AcceptMatchScheduling(_playerId, playerTeamId).Result;
+                }
+                else
+                {
+                    Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.DEBUG);
+                    return new Response("Invalid date and time format. Please provide a valid date and time.", false);
+                }
             }
 
             var defaultEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-            if (!suggestedScheduleDate.HasValue)
-            {
-                return new Response("Invalid date and time format. Please provide a valid date and time.", false);
-            }
 
             TimeSpan timeDifference = suggestedScheduleDate.Value - defaultEpoch;
             ulong scheduledTime = (ulong)timeDifference.TotalSeconds;
@@ -193,17 +198,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             ulong timeUntil = scheduledTime - currentTime;
 
-            var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
 
-            if (!isValidDateAndTime && _dateAndTime.ToLower() != "accept")
-            {
-                Log.WriteLine("Invalid date suggested: " + _dateAndTime + " by: " + _playerId, LogLevel.DEBUG);
-                return new Response("Invalid date and time format. Please provide a valid date and time.", false);
-            }
-            else if (!isValidDateAndTime && _dateAndTime.ToLower() == "accept")
-            {
-                return AcceptMatchScheduling(_playerId, playerTeamId).Result;
-            }
 
             if (timeUntil <= 0)
             {
