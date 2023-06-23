@@ -11,7 +11,7 @@ public class ACCEPTSCHEDULEDTIME : BaseButton
         buttonName = ButtonName.ACCEPTSCHEDULEDTIME;
         thisInterfaceButton.ButtonLabel = "ACCEPT";
         buttonStyle = ButtonStyle.Success;
-        ephemeralResponse = false;
+        ephemeralResponse = true;
     }
 
     protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId)
