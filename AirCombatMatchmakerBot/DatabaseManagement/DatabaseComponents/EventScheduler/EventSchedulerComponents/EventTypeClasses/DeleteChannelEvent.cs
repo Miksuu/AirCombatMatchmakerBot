@@ -57,18 +57,16 @@ public class DeleteChannelEvent : ScheduledEvent
 
     public override async Task ExecuteTheScheduledEvent(bool _serialize = true)
     {
-        ulong categoryId = LeagueCategoryIdCached;
-        ulong channelId = MatchChannelIdCached;
-        string nameMustContain = NameMustContain;
-
-        Log.WriteLine("Starting to execute event: " + EventId + " named " + nameof(DeleteChannelEvent) + " with: " +
-            categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.VERBOSE);
-
-        InterfaceCategory interfaceCategory;
-
         try
         {
-            interfaceCategory =
+            ulong categoryId = LeagueCategoryIdCached;
+            ulong channelId = MatchChannelIdCached;
+            string nameMustContain = NameMustContain;
+
+            Log.WriteLine("Starting to execute event: " + EventId + " named " + nameof(DeleteChannelEvent) + " with: " +
+                categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.VERBOSE);
+
+            InterfaceCategory interfaceCategory =
                 Database.Instance.Categories.FindInterfaceCategoryWithId(categoryId);
 
             Log.WriteLine("Event: " + EventId + " before " +
@@ -93,19 +91,19 @@ public class DeleteChannelEvent : ScheduledEvent
             {
                 //Log.WriteLine("Finished an event without deleting the channel, because it didn't exist!", LogLevel.WARNING);
             }
+
+            Log.WriteLine("Done executing event: " + nameof(DeleteChannelEvent) + " with: " +
+                categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.DEBUG);
+
+            if (!_serialize) return;
+
+            await SerializationManager.SerializeDB();
         }
         catch(Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
         }
-
-        Log.WriteLine("Done executing event: " + nameof(DeleteChannelEvent) + " with: " +
-            categoryId + "|" + channelId + "|" + nameMustContain, LogLevel.DEBUG);
-
-        if (!_serialize) return;
-
-        await SerializationManager.SerializeDB();
     }
 
     public override void CheckTheScheduledEventStatus()

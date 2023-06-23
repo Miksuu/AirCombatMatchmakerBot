@@ -72,7 +72,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
             else
             {
                 // Move this to method
-                foreach (ScheduledEvent scheduledEvent in mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents)
+                foreach (ScheduledEvent scheduledEvent in mcc.interfaceLeagueCached.LeagueEventManager.ClassScheduledEvents)
                 {
                     if (scheduledEvent.GetType() == typeof(DeleteChannelEvent))
                     {

@@ -406,7 +406,9 @@ public class LeagueMatch : logClass<LeagueMatch>
             ulong matchChannelDeleteDelay = 45;
 
             // Schedule an event to delete the channel later
-            new DeleteChannelEvent(matchChannelDeleteDelay, interfaceLeagueRef.LeagueCategoryId, MatchChannelId, "match", MatchEventManager.ClassScheduledEvents);
+            new DeleteChannelEvent(
+                matchChannelDeleteDelay, interfaceLeagueRef.LeagueCategoryId,
+                MatchChannelId, "match", interfaceLeagueRef.LeagueEventManager.ClassScheduledEvents);
 
             var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
             messageToModify.GenerateAndModifyTheMessage();
