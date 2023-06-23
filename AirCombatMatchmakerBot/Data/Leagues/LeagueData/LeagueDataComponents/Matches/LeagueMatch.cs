@@ -52,6 +52,12 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => isAScheduledMatch.SetValue(value);
     }
 
+    public ConcurrentBag<ScheduledEvent> MatchScheduledEvents
+    {
+        get => matchScheduledEvents.GetValue();
+        set => matchScheduledEvents.SetValue(value);
+    }
+
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logClass<int> matchId = new logClass<int>();
     [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
@@ -59,6 +65,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>(new LeagueName());
     [DataMember] private logClass<ScheduleObject> scheduleObject = new logClass<ScheduleObject>(new ScheduleObject());
     [DataMember] private logClass<bool> isAScheduledMatch = new logClass<bool>();
+    [DataMember] private logConcurrentBag<ScheduledEvent> matchScheduledEvents = new logConcurrentBag<ScheduledEvent>();
 
     private InterfaceLeague interfaceLeagueRef;
 

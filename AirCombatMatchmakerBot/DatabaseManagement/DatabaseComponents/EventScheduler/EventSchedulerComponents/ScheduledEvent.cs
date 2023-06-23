@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.Tracing;
+﻿using Discord;
+using System.Collections.Concurrent;
+using System.Diagnostics.Tracing;
 using System.Runtime.Serialization;
 
 [DataContract]
@@ -42,6 +44,53 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
 
     public ScheduledEvent() { }
 
+    public bool CheckIfTheEventCanBeExecuted(
+        ulong _currentUnixTime, ConcurrentBag<ScheduledEvent> _scheduledEvents, bool _clearEventOnTheStartup = false)
+    {
+        Log.WriteLine("Loop on event: " + EventId + " type: " + GetType() + " with times: " +
+            _currentUnixTime + " >= " + TimeToExecuteTheEventOn, LogLevel.VERBOSE);
+
+        if (_currentUnixTime >= TimeToExecuteTheEventOn)
+        {
+            Log.WriteLine("Attempting to execute event: " + EventId, LogLevel.VERBOSE);
+
+            if (EventIsBeingExecuted && !_clearEventOnTheStartup)
+            {
+                Log.WriteLine("Event: " + EventId + " was being executed already, continuing.", LogLevel.VERBOSE);
+                return false;
+            }
+
+            EventIsBeingExecuted = true;
+
+            Log.WriteLine("Executing event: " + EventId, LogLevel.DEBUG);
+
+            //InterfaceEventType interfaceEventType = (InterfaceEventType)scheduledEvent;
+            //Log.WriteLine("event: " + EventId + " cast", LogLevel.VERBOSE);
+            ExecuteTheScheduledEvent();
+            Log.WriteLine("event: " + EventId + " after execute await", LogLevel.VERBOSE);
+
+            var scheduledEventsToRemove = ScheduledEvents.Where(e => e.EventId == EventId).ToList();
+            foreach (var item in scheduledEventsToRemove)
+            {
+                Log.WriteLine("event: " + EventId + " scheduledEventsToRemove: " + item.EventId, LogLevel.VERBOSE);
+            }
+
+            RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
+        }
+        else if (_currentUnixTime % 5 == 0 && _currentUnixTime <= TimeToExecuteTheEventOn)
+        {
+            Log.WriteLine("event: " + EventId + " going to check the event status", LogLevel.VERBOSE);
+            CheckTheScheduledEventStatus();
+        }
+        else
+        {
+            Log.WriteLine("event: " + EventId + " ended up in else", LogLevel.VERBOSE);
+        }
+
+        Log.WriteLine("Done with if statement on event: " + EventId + " type: " + GetType() + " with times: " +
+            _currentUnixTime + " >= " + TimeToExecuteTheEventOn, LogLevel.VERBOSE);
+    }
+
     protected void SetupScheduledEvent(ulong _timeFromNowToExecuteOn)
     {
         Log.WriteLine("Setting " + typeof(ScheduledEvent) + "' TimeToExecuteTheEventOn: " +
@@ -51,6 +100,7 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
         TimeToExecuteTheEventOn = currentUnixTime + (ulong)_timeFromNowToExecuteOn;
         EventId = ++Database.Instance.EventScheduler.EventCounter;
 
+        // Replace this with league of match specific ScheduledEvents list
         Database.Instance.EventScheduler.ScheduledEvents.Add(this);
 
         Log.WriteLine(typeof(ScheduledEvent) + "' TimeToExecuteTheEventOn is now: " +

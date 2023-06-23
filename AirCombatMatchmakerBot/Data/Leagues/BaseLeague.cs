@@ -63,6 +63,12 @@ public abstract class BaseLeague : InterfaceLeague
         set => leagueRegistrationMessageId.SetValue(value);
     }
 
+    public ConcurrentBag<ScheduledEvent> LeagueScheduledEvents
+    {
+        get => leagueScheduledEvents.GetValue();
+        set => leagueScheduledEvents.SetValue(value);
+    }
+
     // Generated based on the implementation
     [DataMember] protected logClass<LeagueName> leagueCategoryName = new logClass<LeagueName>(new LeagueName());
     [DataMember] protected logClass<Era> leagueEra = new logClass<Era>(new Era());
@@ -81,6 +87,9 @@ public abstract class BaseLeague : InterfaceLeague
 
     // Reference to the MessageDescription related to this league on the #league-registration channel
     [DataMember] private logClass<ulong> leagueRegistrationMessageId = new logClass<ulong>();
+
+    // Events to loop through in the specific league
+    [DataMember] private logConcurrentBag<ScheduledEvent> leagueScheduledEvents = new logConcurrentBag<ScheduledEvent>();
 
     protected InterfaceLeague thisInterfaceLeague;
 
