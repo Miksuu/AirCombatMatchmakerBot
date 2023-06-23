@@ -27,14 +27,14 @@ public class REPORTINGMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
         if (thisInterfaceMessage.MessageDescription == null)
         {
             Log.WriteLine("MessageDescription was null!", LogLevel.CRITICAL);
-            return "MessageDescription was null!";
+            return Task.FromResult("MessageDescription was null!");
         }
 
-        return thisInterfaceMessage.MessageDescription;
+        return Task.FromResult(thisInterfaceMessage.MessageDescription);
     }
 }

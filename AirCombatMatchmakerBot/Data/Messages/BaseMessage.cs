@@ -154,11 +154,11 @@ public abstract class BaseMessage : InterfaceMessage
             // Pass league id as parameter here
             leagueRegistrationMessage.belongsToLeagueCategoryId = _leagueCategoryId;
             
-            messageForGenerating = leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague();
+            messageForGenerating = leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague().Result;
         }
         else
         {
-            messageForGenerating = "\n" + GenerateMessage();
+            messageForGenerating = "\n" + GenerateMessage().Result;
         }
 
 
@@ -373,6 +373,8 @@ public abstract class BaseMessage : InterfaceMessage
 
         var embed = new EmbedBuilder();
 
+        Log.WriteLine(thisInterfaceMessage.MessageDescription, LogLevel.VERBOSE);
+
         // set the title, description, and color of the embedded MessageDescription
         embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
              .WithDescription(thisInterfaceMessage.MessageDescription)
@@ -394,9 +396,13 @@ public abstract class BaseMessage : InterfaceMessage
             thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
     }
 
-    public void GenerateAndModifyTheMessage()
+    public async void GenerateAndModifyTheMessage()
     {
-        ModifyMessage(GenerateMessage());
+        var newcont = await GenerateMessage();
+
+        Log.WriteLine("newcontent: " + newcont, LogLevel.VERBOSE);
+
+        ModifyMessage(newcont);
     }
 
     protected abstract void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId);
@@ -459,7 +465,7 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("Done generating buttons", LogLevel.VERBOSE);
     }
 
-    public abstract string GenerateMessage();
+    public abstract Task<string> GenerateMessage();
 
     public async Task<Discord.IMessage> GetMessageById(IMessageChannel _channel)
     {

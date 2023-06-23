@@ -24,7 +24,7 @@ public class CHALLENGEMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
         Log.WriteLine("Generating a challenge queue message with _channelId: " +
             thisInterfaceMessage.MessageChannelId + " on category: " + thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
@@ -66,7 +66,7 @@ public class CHALLENGEMESSAGE : BaseMessage
                     if (leagueCategory == null)
                     {
                         Log.WriteLine(nameof(leagueCategory) + " was null!", LogLevel.ERROR);
-                        return "";
+                        return Task.FromResult("");
                     }
 
                     foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
@@ -85,7 +85,7 @@ public class CHALLENGEMESSAGE : BaseMessage
 
                     Log.WriteLine("Challenge message generated: " + challengeMessage, LogLevel.VERBOSE);
 
-                    return challengeMessage;
+                    return Task.FromResult(challengeMessage);
                 }
             }
         }
@@ -93,6 +93,6 @@ public class CHALLENGEMESSAGE : BaseMessage
         Log.WriteLine("Did not find a channel id to generate a challenge" +
             " queue message on!", LogLevel.ERROR);
 
-        return string.Empty;
+        return Task.FromResult(string.Empty);
     }
 }

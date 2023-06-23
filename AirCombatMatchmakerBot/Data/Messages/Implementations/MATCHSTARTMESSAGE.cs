@@ -17,7 +17,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
         string generatedMessage = "";
         bool firstTeam = true;
@@ -30,7 +30,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
-            return nameof(mcc) + " was null!";
+            return Task.FromResult(nameof(mcc) + " was null!");
         }
 
         foreach (var teamKvp in mcc.leagueMatchCached.TeamsInTheMatch)
@@ -54,6 +54,6 @@ public class MATCHSTARTMESSAGE : BaseMessage
             }
         }
 
-        return generatedMessage;
+        return Task.FromResult(generatedMessage);
     }
 }

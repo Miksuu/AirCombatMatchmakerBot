@@ -25,7 +25,7 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public async override string GenerateMessage()
+    public async override Task<string> GenerateMessage()
     {
         try
         {
@@ -63,12 +63,14 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
                 "**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**\n" +
                 "Instructions: " + message.GetJumpUrl();
 
-            return Task.FromResult(thisInterfaceMessage.MessageDescription);
+            Log.WriteLine(thisInterfaceMessage.MessageDescription, LogLevel.VERBOSE);
+
+            return thisInterfaceMessage.MessageDescription;
         }
         catch (Exception ex) 
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-            return Task.FromResult(ex.Message);
+            return Task.FromResult(ex.Message).Result;
         }
     }
 }

@@ -39,8 +39,8 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
-        return thisInterfaceMessage.MessageDescription;
+        return Task.FromResult(thisInterfaceMessage.MessageDescription);
     }
 }

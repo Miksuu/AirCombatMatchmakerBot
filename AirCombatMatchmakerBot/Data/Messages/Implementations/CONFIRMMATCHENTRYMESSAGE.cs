@@ -42,7 +42,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             buttonsToGenerate, ButtonName.PLANESELECTIONBUTTON, _component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
         Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
 
@@ -50,7 +50,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
-            return nameof(mcc) + " was null!";
+            return Task.FromResult(nameof(mcc) + " was null!");
         }
 
         string finalMessage = string.Empty;
@@ -87,7 +87,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             if (teamPlane == null)
             {
                 Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.CRITICAL);
-                return nameof(teamPlane) + " was null!";
+                return Task.FromResult(nameof(teamPlane) + " was null!");
             }
 
             foreach (var item in teamPlane.TeamMemberIdsWithSelectedPlanesByTheTeam)
@@ -140,7 +140,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                return ex.Message;
+                return Task.FromResult(ex.Message);
             }
 
             new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
@@ -148,6 +148,6 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
         Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 
-        return finalMessage;
+        return Task.FromResult(finalMessage);
     }
 }

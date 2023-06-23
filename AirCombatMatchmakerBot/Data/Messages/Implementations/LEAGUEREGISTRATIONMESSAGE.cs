@@ -25,18 +25,18 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override string GenerateMessage()
+    public override Task<string> GenerateMessage()
     {
         if (thisInterfaceMessage.MessageDescription == null)
         {
             Log.WriteLine("MessageDescription was null!", LogLevel.CRITICAL);
-            return "MessageDescription was null!";
+            return Task.FromResult("MessageDescription was null!");
         }
 
-        return thisInterfaceMessage.MessageDescription;
+        return Task.FromResult(thisInterfaceMessage.MessageDescription);
     }
 
-    public string GenerateMessageForSpecificCategoryLeague()
+    public  Task<string> GenerateMessageForSpecificCategoryLeague()
     {
         Log.WriteLine("Starting to generate the league registration message with: " +
             belongsToLeagueCategoryId, LogLevel.DEBUG);
@@ -52,7 +52,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         Log.WriteLine(returned, LogLevel.VERBOSE);
 
-        return returned;
+        return Task.FromResult(returned);
     }
 
     private string GetAllowedUnitsAsString(InterfaceLeague _interfaceLeague)
