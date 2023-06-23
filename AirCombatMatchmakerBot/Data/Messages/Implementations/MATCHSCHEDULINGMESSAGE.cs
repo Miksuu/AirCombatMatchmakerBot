@@ -31,7 +31,7 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             "``/schedule 6 hours``\n" +
             "``/schedule 4 hours 30minutes``\n" +
             "``/schedule 42 minutes``\n" +
-            "*Copypasting these messages won't work! Type them in manually.*";
+            "*Copypasting these messages won't work! You have to type them in manually.*";
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
