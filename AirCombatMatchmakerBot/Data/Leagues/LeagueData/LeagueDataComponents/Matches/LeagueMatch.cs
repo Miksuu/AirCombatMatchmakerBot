@@ -226,7 +226,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             if (playerTeamId == ScheduleObject.TeamIdThatRequestedScheduling)
             {
-                return new Response("You have already suggested a date!", false);
+                return new Response("You have already suggested a date for the match!", false);
             }
 
             if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
