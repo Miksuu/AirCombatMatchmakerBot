@@ -203,9 +203,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             ulong scheduledTime = (ulong)timeDifference.TotalSeconds;
 
             bool isValidDateAndTime = true;
-            ulong currentTime = (ulong)(
-                TimeService.GetCurrentTime().Result -
-                    defaultEpoch).TotalSeconds;
+            ulong currentTime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
 
             if (currentTime >= scheduledTime)
             {

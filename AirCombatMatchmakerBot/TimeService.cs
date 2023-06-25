@@ -4,6 +4,7 @@ using System.Text.Json;
 
 public static class TimeService
 {
+    /*
     private const string TimeApiUrl = "http://worldtimeapi.org/api/timezone/etc/utc";
 
     public static async Task<DateTime> GetCurrentTime()
@@ -34,7 +35,13 @@ public static class TimeService
             Log.WriteLine("An error occurred while retrieving the current time from the API: " + ex.Message, LogLevel.CRITICAL);
             throw;
         }
+
+    
+    public class ApiResponse
+    {
+        public string utc_datetime { get; set; }
     }
+    }*/
 
     public static ulong CalculateTimeUntilWithUnixTime(ulong _timeUntil)
     {
@@ -345,10 +352,5 @@ public static class TimeService
         }
 
         return true;
-    }
-
-    public class ApiResponse
-    {
-        public string utc_datetime { get; set; }
     }
 }
