@@ -149,6 +149,8 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
             mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.REPORTINGPHASE;
 
+            mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
+
             InterfaceChannel interfaceChannel;
             try
             {
