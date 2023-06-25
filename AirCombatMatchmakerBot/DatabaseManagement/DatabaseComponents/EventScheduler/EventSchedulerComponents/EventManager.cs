@@ -115,6 +115,7 @@ public class EventManager : logClass<EventManager>
         }
     }
 
+    // Refactor this to take in single event id instead of list
     public void RemoveEventsFromTheScheduledEventsBag(List<ScheduledEvent> _scheduledEventsToRemove)
     {
         var updatedScheduledEvents = new ConcurrentBag<ScheduledEvent>();
