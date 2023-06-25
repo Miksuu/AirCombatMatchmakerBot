@@ -136,15 +136,17 @@ public static class TimeService
 
     public static DateTime? GetDateTimeFromUserInput(string _dateAndTime)
     {
+        _dateAndTime = _dateAndTime.ToLower();
+
         // Parse the input date and time string
-        if (_dateAndTime.ToLower().Equals("now"))
+        if (_dateAndTime.Equals("now"))
         {
             DateTime currentDateTime = DateTime.UtcNow;
             DateTime newDateTime = currentDateTime.AddSeconds(300);
             return newDateTime;
         }
 
-        else if (_dateAndTime.ToLower().StartsWith("today "))
+        else if (_dateAndTime.StartsWith("today "))
         {
             string timeString = _dateAndTime.Substring(6);
             DateTime currentDate = DateTime.UtcNow.Date;
@@ -158,7 +160,7 @@ public static class TimeService
             }
             return currentDate.Add(timeComponent);
         }
-        else if (_dateAndTime.ToLower().StartsWith("tomorrow "))
+        else if (_dateAndTime.StartsWith("tomorrow "))
         {
             string timeString = _dateAndTime.Substring(9);
             DateTime tomorrowDate = DateTime.UtcNow.Date.AddDays(1);
@@ -171,7 +173,7 @@ public static class TimeService
             }
             return tomorrowDate.Add(timeComponent);
         }
-        else if (_dateAndTime.ToLower().EndsWith("today"))
+        else if (_dateAndTime.EndsWith("today"))
         {
             DateTime currentDate = DateTime.UtcNow.Date;
             string timeString = _dateAndTime.Replace("today", "").Trim();
@@ -184,7 +186,7 @@ public static class TimeService
             }
             return currentDate.Add(timeComponent);
         }
-        else if (_dateAndTime.ToLower().EndsWith("tomorrow"))
+        else if (_dateAndTime.EndsWith("tomorrow"))
         {
             DateTime tomorrowDate = DateTime.UtcNow.Date.AddDays(1);
             string timeString = _dateAndTime.Replace("tomorrow", "").Trim();
@@ -251,15 +253,17 @@ public static class TimeService
         // Check if the input contains a weekday
         foreach (string day in daysOfWeek)
         {
-            if (input.ToLower().Contains(day))
+            string dayLower = day.ToLower();
+
+            if (input.Contains(dayLower))
             {
                 DateTime currentDate = DateTime.UtcNow.Date;
                 int currentDayOfWeek = (int)currentDate.DayOfWeek;
-                int targetDayOfWeek = Array.IndexOf(daysOfWeek, day.ToLower());
+                int targetDayOfWeek = Array.IndexOf(daysOfWeek, dayLower);
 
                 if (targetDayOfWeek == -1)
                 {
-                    targetDayOfWeek = Array.IndexOf(daysOfWeekShort, day.ToLower().Substring(0, 3));
+                    targetDayOfWeek = Array.IndexOf(daysOfWeekShort, dayLower.Substring(0, 3));
                 }
 
                 int daysToAdd = (targetDayOfWeek - currentDayOfWeek + 7) % 7;
@@ -272,7 +276,7 @@ public static class TimeService
 
                 DateTime scheduledDate = currentDate.AddDays(daysToAdd);
 
-                string timeString = input.ToLower().Replace(day, "").Trim();
+                string timeString = input.Replace(dayLower, "").Trim();
                 if (!TimeSpan.TryParseExact(timeString, new[] {
                 @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
                 @"hhmmss'z'", @"hhmm'z'"
