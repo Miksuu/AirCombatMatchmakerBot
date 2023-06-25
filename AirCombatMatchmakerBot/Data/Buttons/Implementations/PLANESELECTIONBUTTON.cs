@@ -52,59 +52,71 @@ public class PLANESELECTIONBUTTON : BaseButton
                 try
                 {
                     Log.WriteLine("Loop on: " + teamKvp.Key + " with " + teamKvp.Value, LogLevel.VERBOSE);
-                    if (teamKvp.Key == playerTeam.TeamId)
+                    if (teamKvp.Key != playerTeam.TeamId)
                     {
-                        Log.WriteLine("Found team: " + teamKvp.Key + " with name: " + teamKvp.Value.TeamName +
-                            " with playerId: " + playerId, LogLevel.VERBOSE);
-
-                        var planeReportObject =
-                            mcc.leagueMatchCached.MatchReporting.GetInterfaceReportingObjectWithTypeOfTheReportingObject(
-                                TypeOfTheReportingObject.PLAYERPLANE, playerTeam.TeamId) as PLAYERPLANE;
-                        if (planeReportObject == null)
-                        {
-                            Log.WriteLine(nameof(planeReportObject) + " was null!", LogLevel.CRITICAL);
-                            continue;
-                        }
-
-                        Log.WriteLine(planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.Count.ToString(), LogLevel.DEBUG);
-
-                        if (planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] != UnitName.NOTSELECTED)
-                        {
-                            return Task.FromResult(new Response("Already accepted: " + playerId, false));
-                        }
-
-                        if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
-                        {
-                            Log.WriteLine("Does not contain: " + playerId, LogLevel.CRITICAL);
-                            continue;
-                        }
-                        else
-                        {
-                            Log.WriteLine("Contains: " + playerId, LogLevel.VERBOSE);
-
-                            var playerIdSelectedPlane = planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(
-                                x => x.Key == playerId);
-
-                            var unitNameInstance = (InterfaceUnit)EnumExtensions.GetInstance(playerSelectedPlane);
-
-                            Log.WriteLine("unitNameInstance:" + unitNameInstance, LogLevel.VERBOSE);
-
-                            if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
-                            {
-                                Log.WriteLine("does not contain", LogLevel.ERROR);
-                                continue;
-                            }
-
-                            planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] = unitNameInstance.UnitName;
-
-                            Log.WriteLine("Done modifying: " + playerId + " with plane: " +
-                                planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.DEBUG);
-                        }
-
-                        _interfaceMessage.GenerateAndModifyTheMessage();
-
-                        return Task.FromResult(new Response("", true));
+                        continue;
                     }
+
+                    Log.WriteLine("Found team: " + teamKvp.Key + " with name: " + teamKvp.Value.TeamName +
+                        " with playerId: " + playerId, LogLevel.VERBOSE);
+
+                    var planeReportObject =
+                        mcc.leagueMatchCached.MatchReporting.GetInterfaceReportingObjectWithTypeOfTheReportingObject(
+                            TypeOfTheReportingObject.PLAYERPLANE, playerTeam.TeamId) as PLAYERPLANE;
+                    if (planeReportObject == null)
+                    {
+                        Log.WriteLine(nameof(planeReportObject) + " was null!", LogLevel.CRITICAL);
+                        continue;
+                    }
+
+                    Log.WriteLine(planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.Count.ToString(), LogLevel.DEBUG);
+
+                    if (planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] != UnitName.NOTSELECTED)
+                    {
+                        return Task.FromResult(new Response("Already accepted: " + playerId, false));
+                    }
+
+                    if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
+                    {
+                        Log.WriteLine("Does not contain: " + playerId, LogLevel.CRITICAL);
+                        continue;
+                    }
+
+                    Log.WriteLine("Contains: " + playerId, LogLevel.VERBOSE);
+
+                    var playerIdSelectedPlane = planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(
+                        x => x.Key == playerId);
+
+                    var unitNameInstance = (InterfaceUnit)EnumExtensions.GetInstance(playerSelectedPlane);
+
+                    Log.WriteLine("unitNameInstance:" + unitNameInstance, LogLevel.VERBOSE);
+
+                    if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
+                    {
+                        Log.WriteLine("does not contain", LogLevel.ERROR);
+                        continue;
+                    }
+
+                    planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] = unitNameInstance.UnitName;
+
+                    Log.WriteLine("Done modifying: " + playerId + " with plane: " +
+                        planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.DEBUG);
+
+                    // Add check here that if everyone else is ready, skip the rest (unecessary processing)
+
+                    // If timeUntil is more than 20minutes, add a temp event to cancel the queue after 5min
+                    var matchQueueEvent = mcc.leagueMatchCached.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent));
+                    var timeUntil = matchQueueEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+                    if (timeUntil > 1200)
+                    {
+                        new TempQueueEvent(
+                            mcc.interfaceLeagueCached.LeagueCategoryId, mcc.leagueMatchCached.MatchChannelId,
+                            playerId, mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents);
+                    }
+
+                    _interfaceMessage.GenerateAndModifyTheMessage();
+
+                    return Task.FromResult(new Response("", true));
                 }
                 catch (Exception ex)
                 {

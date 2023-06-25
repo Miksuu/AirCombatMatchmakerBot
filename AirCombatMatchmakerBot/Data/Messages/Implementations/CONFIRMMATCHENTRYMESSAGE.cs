@@ -90,17 +90,37 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                 return Task.FromResult(nameof(teamPlane) + " was null!");
             }
 
-            foreach (var item in teamPlane.TeamMemberIdsWithSelectedPlanesByTheTeam)
+            foreach (var kvp in teamPlane.TeamMemberIdsWithSelectedPlanesByTheTeam)
             {
                 string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
 
-                if (item.Value != UnitName.NOTSELECTED)
+                if (kvp.Value != UnitName.NOTSELECTED)
                 {
                     checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
                     playersThatAreReady++;
                 }
 
-                finalMessage += checkmark + " " + teamKvp.Value.TeamName + "\n";
+                finalMessage += checkmark + " " + teamKvp.Value.TeamName;
+
+                if (mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.Any(e => e.GetType() == typeof(TempQueueEvent)))
+                {
+                    var listOfTempQueueEvents = mcc.leagueMatchCached.MatchEventManager.GetListOfEventsByType(typeof(TempQueueEvent));
+
+                    foreach (TempQueueEvent scheduledEvent in listOfTempQueueEvents)
+                    {
+                        if (scheduledEvent.PlayerIdCached != kvp.Key)
+                        {
+                            continue;
+                        }
+
+                        var timeLeft = scheduledEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+
+                        finalMessage += "(valid for: " + 
+
+                    }
+                }
+
+                finalMessage += "\n";
             }
         }
 
