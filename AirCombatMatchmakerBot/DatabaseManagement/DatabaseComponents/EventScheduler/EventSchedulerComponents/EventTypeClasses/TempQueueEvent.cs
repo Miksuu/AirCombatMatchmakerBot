@@ -20,7 +20,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
         Log.WriteLine("Creating event: " + nameof(TempQueueEvent) + "|" +
             _leagueCategoryId + "|" + _matchChannelId, LogLevel.VERBOSE);
 
-        base.SetupScheduledEvent(300, _scheduledEvents);
+        base.SetupScheduledEvent(30, _scheduledEvents);
         LeagueCategoryIdCached = _leagueCategoryId;
         MatchChannelIdCached = _matchChannelId;
         PlayerIdCached = _playerId;

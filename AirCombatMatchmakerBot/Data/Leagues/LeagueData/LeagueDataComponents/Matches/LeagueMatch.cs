@@ -310,11 +310,11 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             MatchReporting.MatchState = MatchState.PLAYERREADYCONFIRMATIONPHASE;
 
-            new MatchQueueAcceptEvent(
-                _timeUntil + 900, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId, MatchEventManager.ClassScheduledEvents);
-
             await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMMATCHENTRYMESSAGE, true);
+
+            new MatchQueueAcceptEvent(
+                _timeUntil + 900, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId, MatchEventManager.ClassScheduledEvents);
 
             return;
         }
