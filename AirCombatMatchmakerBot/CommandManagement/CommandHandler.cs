@@ -24,41 +24,41 @@ public static class CommandHandler
 
     private static async Task SlashCommandHandler(SocketSlashCommand _command)
     {
-        Log.WriteLine("Start of SlashCommandHandler", LogLevel.VERBOSE);
-
-        string? firstOptionString = string.Empty;
-
-        Log.WriteLine("OptionsCount: " + _command.Data.Options.Count, LogLevel.VERBOSE);
-
-        if (_command.Data.Options.Count > 0)
+        try
         {
-            var firstOption = _command.Data.Options.FirstOrDefault();
-            if(firstOption == null)
+            Log.WriteLine("Start of SlashCommandHandler", LogLevel.VERBOSE);
+
+            string? firstOptionString = string.Empty;
+
+            Log.WriteLine("OptionsCount: " + _command.Data.Options.Count, LogLevel.VERBOSE);
+
+            if (_command.Data.Options.Count > 0)
             {
-                Log.WriteLine(nameof(firstOption) + " was null! ", LogLevel.ERROR);
+                var firstOption = _command.Data.Options.FirstOrDefault();
+                if (firstOption == null)
+                {
+                    Log.WriteLine(nameof(firstOption) + " was null! ", LogLevel.ERROR);
+                    return;
+                }
+
+                firstOptionString = firstOption.Value.ToString();
+
+                Log.WriteLine("The command " + _command.Data.Name + " had " + _command.Data.Options.Count + " options in it." +
+                    " The first command had an argument: " + firstOptionString, LogLevel.DEBUG);
+
+                // Add a for loop here to print the command arguments, if multiple later on.
+            }
+            else
+            {
+                Log.WriteLine("The command " + _command.Data.Name + " does not have any options in it.", LogLevel.DEBUG);
+            }
+
+            if (firstOptionString == null)
+            {
+                Log.WriteLine("firstOptionString was null! ", LogLevel.ERROR);
                 return;
             }
 
-            firstOptionString = firstOption.Value.ToString();
-
-            Log.WriteLine("The command " + _command.Data.Name + " had " + _command.Data.Options.Count + " options in it." +
-                " The first command had an argument: " + firstOptionString, LogLevel.DEBUG);
-
-            // Add a for loop here to print the command arguments, if multiple later on.
-        }
-        else
-        {
-            Log.WriteLine("The command " + _command.Data.Name + " does not have any options in it.", LogLevel.DEBUG);
-        }
-
-        if (firstOptionString == null)
-        {
-            Log.WriteLine("firstOptionString was null! ", LogLevel.ERROR);
-            return;
-        }
-
-        try
-        {
             InterfaceCommand interfaceCommand = GetCommandInstance(_command.CommandName.ToUpper().ToString());
 
             var responseTuple = await interfaceCommand.ReceiveCommandAndCheckForAdminRights(_command, firstOptionString);
@@ -75,6 +75,12 @@ public static class CommandHandler
         }
         catch (Exception ex)
         {
+            if (ex.Message.Contains("error 50006"))
+            {
+                Log.WriteLine("skipped empty message try-catch", LogLevel.VERBOSE);
+                return;
+            }
+
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
         }
