@@ -29,25 +29,32 @@ public class MATCHSCHEDULERSTATUSMESSAGE : BaseMessage
 
     public override Task<string> GenerateMessage()
     {
-        //try
-        //{
+        try
+        {
+            string finalMessage = string.Empty;
 
-        //}
-        //catch (Exception ex)
-        //{
-        //    Log.WriteLine(ex.Message);
-        //    throw;
-        //}
+            lcc = new LeagueCategoryComponents(thisInterfaceMessage.MessageCategoryId);
+            if (lcc.interfaceLeagueCached == null)
+            {
+                Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
+                throw new InvalidOperationException(nameof(lcc) + " was null!");
+            }
 
-        //string finalMessage = string.Empty;
+            thisInterfaceMessage.MessageEmbedTitle =
+                EnumExtensions.GetEnumMemberAttrValue(lcc.interfaceLeagueCached.LeagueCategoryName);
 
-        ////lcc = new LeagueCategoryComponents(MessageCategoryId);
-        //if (lcc.interfaceLeagueCached == null)
-        //{
-        //    Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
-        //    throw new InvalidOperationException(nameof(lcc) + " was null!");
-        //}
+            // Upcoming matches
 
-        return Task.FromResult(thisInterfaceMessage.MessageDescription);
+            // Current matches
+
+            finalMessage += "*Click the buttons below to join/leave the scheduler*";
+
+            return Task.FromResult(thisInterfaceMessage.MessageDescription);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message);
+            throw;
+        }
     }
 }
