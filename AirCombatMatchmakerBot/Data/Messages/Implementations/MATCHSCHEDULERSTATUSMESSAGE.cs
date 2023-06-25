@@ -29,24 +29,24 @@ public class MATCHSCHEDULERSTATUSMESSAGE : BaseMessage
 
     public override Task<string> GenerateMessage()
     {
-        try
-        {
+        //try
+        //{
 
-        }
-        catch (Exception ex)
-        {
-            Log.WriteLine(ex.Message, LogLevel.VERBOSE);
-            throw;
-        }
+        //}
+        //catch (Exception ex)
+        //{
+        //    Log.WriteLine(ex.Message);
+        //    throw;
+        //}
 
-        string finalMessage = string.Empty;
+        //string finalMessage = string.Empty;
 
-        lcc = new LeagueCategoryComponents(MessageCategoryId);
-        if (lcc.interfaceLeagueCached == null)
-        {
-            Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
-            throw new InvalidOperationException(nameof(lcc) + " was null!");
-        }
+        ////lcc = new LeagueCategoryComponents(MessageCategoryId);
+        //if (lcc.interfaceLeagueCached == null)
+        //{
+        //    Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
+        //    throw new InvalidOperationException(nameof(lcc) + " was null!");
+        //}
 
         return Task.FromResult(thisInterfaceMessage.MessageDescription);
     }

@@ -34,7 +34,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
         }
 
         Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
-            " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.", LogLevel.VERBOSE);
+            " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
 
         // Add to method
         foreach (InterfaceLeague league in Database.Instance.Leagues.StoredLeagues)
@@ -44,23 +44,23 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             var challengeStatusOfTheTempLeague = league.LeagueData.ChallengeStatus;
 
             Log.WriteLine("Loop on " + nameof(league) + ": " + league.LeagueCategoryName +
-                " with cache: " + interfaceLeagueRef.LeagueCategoryName, LogLevel.VERBOSE);
+                " with cache: " + interfaceLeagueRef.LeagueCategoryName);
             if (league.LeagueCategoryName == interfaceLeagueRef.LeagueCategoryName)
             {
-                Log.WriteLine("on " + league.LeagueCategoryName + ", skipping", LogLevel.VERBOSE);
+                Log.WriteLine("on " + league.LeagueCategoryName + ", skipping");
                 continue;
             }
 
-            Log.WriteLine("Searching: " + league.LeagueCategoryName, LogLevel.VERBOSE);
+            Log.WriteLine("Searching: " + league.LeagueCategoryName);
 
             if (!league.LeagueData.CheckIfPlayerIsParcipiatingInTheLeague(_playerId))
             {
                 Log.WriteLine(_playerId + " is not parcipiating in this league: " +
-                    interfaceLeagueRef.LeagueCategoryName + ", disregarding", LogLevel.VERBOSE);
+                    interfaceLeagueRef.LeagueCategoryName + ", disregarding");
                 continue;
             }
 
-            Log.WriteLine(_playerId + " is parcipiating in this league: " + league.LeagueCategoryName, LogLevel.VERBOSE);
+            Log.WriteLine(_playerId + " is parcipiating in this league: " + league.LeagueCategoryName);
 
             try
             {
@@ -75,21 +75,21 @@ public class ChallengeStatus : logClass<ChallengeStatus>
 
             if (challengeStatusOfTheTempLeague.CheckIfPlayerTeamIsAlreadyInQueue(teamToSearchFor))
             {
-                Log.WriteLine(_playerId + " already at queue", LogLevel.VERBOSE);
+                Log.WriteLine(_playerId + " already at queue");
                 // Add link to the channel
                 return new Response("You are already in the queue at another league: " + league.LeagueCategoryName, false);
             }
 
-            Log.WriteLine(_playerId + " not in the queue name: " + league.LeagueCategoryName, LogLevel.VERBOSE);
+            Log.WriteLine(_playerId + " not in the queue name: " + league.LeagueCategoryName);
         }
 
         string response = PostChallengeToThisLeague(playerTeam);
         if (response == "alreadyInQueue")
         {
-            Log.WriteLine(_playerId + " was already in the queue!", LogLevel.VERBOSE);
+            Log.WriteLine(_playerId + " was already in the queue!");
             return new Response("You are already in the queue!", false);
         }
-        Log.WriteLine("response was: " + response, LogLevel.VERBOSE);
+        Log.WriteLine("response was: " + response);
 
         _interfaceMessage.GenerateAndModifyTheMessage();
 
@@ -99,7 +99,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
     public void RemoveFromTeamsInTheQueue(Team _Team)
     {
         Log.WriteLine("Removing Team: " + _Team + " (" +
-            _Team.TeamId + ") from the queue", LogLevel.VERBOSE);
+            _Team.TeamId + ") from the queue");
 
         foreach (int team in TeamsInTheQueue.Where(t => t == _Team.TeamId))
         {
@@ -108,7 +108,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
         }
 
         Log.WriteLine("Done removing the team from the queue. Count is now: " +
-            TeamsInTheQueue.Count, LogLevel.VERBOSE);
+            TeamsInTheQueue.Count);
     }
 
     // Returns the teams in the queue as a string
@@ -143,16 +143,16 @@ public class ChallengeStatus : logClass<ChallengeStatus>
         }
 
         Log.WriteLine("Adding Team: " + _playerTeam + " (" +
-            _playerTeam.TeamId + ") to the queue", LogLevel.VERBOSE);
+            _playerTeam.TeamId + ") to the queue");
         TeamsInTheQueue.Add(_playerTeam.TeamId);
         Log.WriteLine("Done adding the team to the queue. Count is now: " +
-            TeamsInTheQueue.Count, LogLevel.VERBOSE);
+            TeamsInTheQueue.Count);
 
         CheckChallengeStatus();
 
         string teamsInTheQueue = ReturnTeamsInTheQueueOfAChallenge();
 
-        Log.WriteLine("Teams in the queue: " + teamsInTheQueue, LogLevel.VERBOSE);
+        Log.WriteLine("Teams in the queue: " + teamsInTheQueue);
 
         return "";
     }
@@ -165,11 +165,11 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             Team team =
                 interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
             Log.WriteLine("Team found: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
-                " (" + team.TeamId + ")" + " adding it to the challenge queue: " + TeamsInTheQueue, LogLevel.VERBOSE);
+                " (" + team.TeamId + ")" + " adding it to the challenge queue: " + TeamsInTheQueue);
 
             if (!CheckIfPlayerTeamIsAlreadyInQueue(team))
             {
-                Log.WriteLine(team.TeamId + " not in queue", LogLevel.VERBOSE);
+                Log.WriteLine(team.TeamId + " not in queue");
                 return "notInTheQueue";
             }
 
@@ -178,7 +178,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             string teamsInTheQueue =
                 ReturnTeamsInTheQueueOfAChallenge();
 
-            Log.WriteLine("Teams in the queue: " + teamsInTheQueue, LogLevel.VERBOSE);
+            Log.WriteLine("Teams in the queue: " + teamsInTheQueue);
 
             return teamsInTheQueue;
         }
@@ -193,11 +193,11 @@ public class ChallengeStatus : logClass<ChallengeStatus>
     {
         int teamId = _playerTeam.TeamId;
 
-        Log.WriteLine("Checking if " + teamId + " was already in queue.", LogLevel.VERBOSE);
+        Log.WriteLine("Checking if " + teamId + " was already in queue.");
 
         foreach (var item in TeamsInTheQueue)
         {
-            Log.WriteLine("team in queue: " + item, LogLevel.VERBOSE);
+            Log.WriteLine("team in queue: " + item);
         }
 
         if (TeamsInTheQueue.Any(x => x == teamId))
@@ -206,7 +206,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             return true;
         }
 
-        Log.WriteLine("TeamId: " + teamId + " was not already in queue!", LogLevel.VERBOSE);
+        Log.WriteLine("TeamId: " + teamId + " was not already in queue!");
 
         return false;
     }
@@ -216,7 +216,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
         int[] teamsToFormMatchOn = new int[2];
 
         Log.WriteLine("Checking challenge status with team amount: " +
-            TeamsInTheQueue.Count, LogLevel.VERBOSE);
+            TeamsInTheQueue.Count);
 
         // Replace this with some method later on that calculates ELO between the teams in the queue
         if (TeamsInTheQueue.Count < 2)
@@ -231,16 +231,16 @@ public class ChallengeStatus : logClass<ChallengeStatus>
 
         for (int t = 0; t < 2; t++)
         {
-            Log.WriteLine("Looping on team index: " + t, LogLevel.VERBOSE);
+            Log.WriteLine("Looping on team index: " + t);
             teamsToFormMatchOn[t] = TeamsInTheQueue.FirstOrDefault();
             Log.WriteLine("Done adding to " + nameof(teamsToFormMatchOn) +
-                ", Length: " + teamsToFormMatchOn.Length, LogLevel.VERBOSE);
+                ", Length: " + teamsToFormMatchOn.Length);
             TeamsInTheQueue = new ConcurrentBag<int>(TeamsInTheQueue.Except(new[] { teamsToFormMatchOn[t] }));
             Log.WriteLine("Done removing from " + nameof(TeamsInTheQueue) +
-                ", count: " + TeamsInTheQueue.Count, LogLevel.VERBOSE);
+                ", count: " + TeamsInTheQueue.Count);
         }
 
-        Log.WriteLine("Done looping.", LogLevel.VERBOSE);
+        Log.WriteLine("Done looping.");
 
         await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teamsToFormMatchOn, MatchState.PLAYERREADYCONFIRMATIONPHASE);
     }

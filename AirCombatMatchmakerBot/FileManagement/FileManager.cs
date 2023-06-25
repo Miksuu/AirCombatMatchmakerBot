@@ -39,31 +39,31 @@ public static class FileManager
     {
         string _filePathWithFileName = _filePath + @"\" + _fileName;
 
-        Log.WriteLine("Starting to create: " + _filePathWithFileName, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to create: " + _filePathWithFileName);
         if (!Directory.Exists(_filePath))
         {
             Directory.CreateDirectory(_filePath);
-            Log.WriteLine("Done creating: " + _filePath, LogLevel.VERBOSE);
+            Log.WriteLine("Done creating: " + _filePath);
         }
         else
         {
-            Log.WriteLine("Already exists, did not create : " + _filePath, LogLevel.VERBOSE);
+            Log.WriteLine("Already exists, did not create : " + _filePath);
         }
 
-        Log.WriteLine("Starting to create: " + _filePathWithFileName, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to create: " + _filePathWithFileName);
         if (!File.Exists(_filePathWithFileName))
         {
             using (var fileStream = new FileStream(_filePathWithFileName, FileMode.CreateNew))
             {
                 if (_optionalFileContent != null)
                 {
-                    Log.WriteLine("File has content, setting stream", LogLevel.VERBOSE);
+                    Log.WriteLine("File has content, setting stream");
                     await _optionalFileContent.CopyToAsync(fileStream);
                 }
 
                 //await fileStream.CopyToAsync(fileStream);
                 fileStream.Dispose();
-                Log.WriteLine("Done creating: " + _filePathWithFileName, LogLevel.VERBOSE);
+                Log.WriteLine("Done creating: " + _filePathWithFileName);
             }
         }
         else if (File.Exists(_filePathWithFileName) && File.ReadAllText(_filePathWithFileName) == "0")
@@ -72,13 +72,13 @@ public static class FileManager
             {
                 if (_optionalFileContent != null)
                 {
-                    Log.WriteLine("File has content, setting stream", LogLevel.VERBOSE);
+                    Log.WriteLine("File has content, setting stream");
                     await _optionalFileContent.CopyToAsync(fileStream);
                 }
 
                 //await fileStream.CopyToAsync(fileStream);
                 fileStream.Dispose();
-                Log.WriteLine("Already exists, truncated: " + _filePathWithFileName, LogLevel.VERBOSE);
+                Log.WriteLine("Already exists, truncated: " + _filePathWithFileName);
             }
         }
     }

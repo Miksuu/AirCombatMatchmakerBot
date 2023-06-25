@@ -15,7 +15,7 @@ public static class ChannelRestore
         if (_guild.GetCategoryChannel(_categoryId).Channels.Any(
             x => x.Id == _interfaceChannel.ChannelId))
         {
-            Log.WriteLine("Channel found, returning. ", LogLevel.VERBOSE);
+            Log.WriteLine("Channel found, returning. ");
             return true;
         }
 

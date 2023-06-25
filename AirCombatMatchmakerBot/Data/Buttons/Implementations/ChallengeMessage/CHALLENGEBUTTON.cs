@@ -26,7 +26,7 @@ public class CHALLENGEBUTTON : BaseButton
         ulong channelId = _component.Channel.Id;
 
         Log.WriteLine("Starting processing a challenge by: " +
-            playerId + " in channel: " + channelId, LogLevel.VERBOSE);
+            playerId + " in channel: " + channelId);
 
         lcc = new LeagueCategoryComponents(_interfaceMessage.MessageCategoryId);
         if (lcc.interfaceLeagueCached == null)
@@ -45,7 +45,7 @@ public class CHALLENGEBUTTON : BaseButton
             playerId, _interfaceMessage);
 
 
-        Log.WriteLine("After modifying message", LogLevel.VERBOSE);
+        Log.WriteLine("After modifying message");
 
         return response;
     }

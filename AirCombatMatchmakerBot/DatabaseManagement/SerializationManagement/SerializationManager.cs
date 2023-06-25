@@ -85,14 +85,14 @@ public static class SerializationManager
             {
                 // Move to method
                 string userString = user.Username + " (" + user.Id + ")";
-                Log.WriteLine("Looping on: " + userString, LogLevel.VERBOSE);
+                Log.WriteLine("Looping on: " + userString);
 
                 if (!user.IsBot)
                 {
                     if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(user.Id))
                     {
                         Log.WriteLine("User: " + user.Id +
-                            " does not have a profile, disregarding", LogLevel.VERBOSE);
+                            " does not have a profile, disregarding");
 
                         continue;
                     }
@@ -101,11 +101,11 @@ public static class SerializationManager
                 }
                 else
                 {
-                    Log.WriteLine(userString + " is a bot, disregarding.", LogLevel.VERBOSE);
+                    Log.WriteLine(userString + " is a bot, disregarding.");
                 }
             }
         }
-        Log.WriteLine("Done looping through current users.", LogLevel.VERBOSE);
+        Log.WriteLine("Done looping through current users.");
 
         return Task.CompletedTask;
     }
@@ -125,7 +125,7 @@ public static class SerializationManager
         // Move to method when necessary
         foreach (var item in Database.Instance.Leagues.StoredLeagues)
         {
-            Log.WriteLine("Loop on: " + item.LeagueCategoryName, LogLevel.VERBOSE);
+            Log.WriteLine("Loop on: " + item.LeagueCategoryName);
             item.LeagueData.SetReferences(item);
         }
 

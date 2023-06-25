@@ -23,7 +23,7 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseButton
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
         Log.WriteLine("Starting processing a challenge canel request by: " +
-            _component.User.Id , LogLevel.VERBOSE);
+            _component.User.Id );
 
         lcc = new LeagueCategoryComponents(_interfaceMessage.MessageCategoryId);
 
@@ -44,7 +44,7 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseButton
 
         _interfaceMessage.GenerateAndModifyTheMessage();
 
-        Log.WriteLine("After modifying message", LogLevel.VERBOSE);
+        Log.WriteLine("After modifying message");
 
         return new Response("", true);
     }

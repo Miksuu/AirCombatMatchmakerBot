@@ -9,11 +9,11 @@ public static class CategoryRestore
         ulong _categoryKey, SocketGuild _guild)
     {
         Log.WriteLine("Checking if categoryId: " + _categoryKey +
-            " has been deleted.", LogLevel.VERBOSE);
+            " has been deleted.");
 
         if (_guild.CategoryChannels.Any(x => x.Id == _categoryKey))
         {
-            Log.WriteLine("Category found, returning. ", LogLevel.VERBOSE);
+            Log.WriteLine("Category found, returning. ");
             return true;
         }
 

@@ -37,7 +37,7 @@ public class RAWMESSAGEINPUT : BaseMessage
     public string GenerateRawMessage(string _input, string _embedTitle = "")
     {
         Log.WriteLine("Generating a raw message with input: " + _input +
-            " and title: " + _embedTitle, LogLevel.VERBOSE);
+            " and title: " + _embedTitle);
         thisInterfaceMessage.MessageEmbedTitle = _embedTitle;
         thisInterfaceMessage.MessageDescription = _input;
         return thisInterfaceMessage.MessageDescription;

@@ -60,7 +60,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
                 if (interfaceItem.HiddenBeforeConfirmation)
                 {
-                    Log.WriteLine(interfaceItem.TypeOfTheReportingObject + " was hidden before confirmation", LogLevel.VERBOSE);
+                    Log.WriteLine(interfaceItem.TypeOfTheReportingObject + " was hidden before confirmation");
                     continue;
                 }
 
@@ -88,7 +88,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
             }
 
             Log.WriteLine("Done looping through team: " + teamKvp.Key + " (" + teamKvp.Value +
-                ")" + "with message: " + reportingStatusPerTeam, LogLevel.VERBOSE);
+                ")" + "with message: " + reportingStatusPerTeam);
             reportingStatusMessage += reportingStatusPerTeam + "\n";
         }
 

@@ -39,11 +39,11 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         }
         if (sortedTeamListByElo.Count > 0)
         {
-            Log.WriteLine("Generated the leaderboard (" + sortedTeamListByElo.Count + "): " + finalMessage, LogLevel.VERBOSE);
+            Log.WriteLine("Generated the leaderboard (" + sortedTeamListByElo.Count + "): " + finalMessage);
         }
         else
         {
-            Log.WriteLine("Generated the leaderboard: " + finalMessage, LogLevel.VERBOSE);
+            Log.WriteLine("Generated the leaderboard: " + finalMessage);
         }
 
         return Task.FromResult(finalMessage);

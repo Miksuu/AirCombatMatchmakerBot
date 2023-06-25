@@ -7,7 +7,7 @@ public static class DowntimeManager
     public static async Task CheckForUsersThatJoinedAfterDowntime()
     {
         Log.WriteLine("Checking for Users that entered the discord during " +
-            "the bot's downtime and that are not on the registration List", LogLevel.VERBOSE);
+            "the bot's downtime and that are not on the registration List");
 
         List<SocketGuildUser> foundUsers = new List<SocketGuildUser>();
 
@@ -31,7 +31,7 @@ public static class DowntimeManager
             if (user.IsBot)
             {
                 Log.WriteLine("User " + user.Username +
-                    " is a bot, disregarding", LogLevel.VERBOSE);
+                    " is a bot, disregarding");
             }
             else
             {
@@ -39,7 +39,7 @@ public static class DowntimeManager
                 {
                     Log.WriteLine(
                         user.Username + "(" + user.Id +
-                        ") was not found, disregarding", LogLevel.VERBOSE);
+                        ") was not found, disregarding");
                 }
                 // Run handle user join that will server the same purpose than the
                 // new player joining when the bot is up (if he was registered)
@@ -50,7 +50,7 @@ public static class DowntimeManager
             }
         }
 
-        Log.WriteLine("Starting to go through foundUsers: " + foundUsers.Count, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to go through foundUsers: " + foundUsers.Count);
 
         foreach (SocketGuildUser user in foundUsers)
         {
@@ -65,7 +65,7 @@ public static class DowntimeManager
     public static Task CheckForUsersThatLeftDuringDowntime()
     {
         Log.WriteLine(
-            "Starting to check for users that left during the downtime.", LogLevel.VERBOSE);
+            "Starting to check for users that left during the downtime.");
 
         List<ulong> usersOnTheServerAfterDowntime = new List<ulong>();
 
@@ -87,20 +87,20 @@ public static class DowntimeManager
 
             string userNameWithId = user.Username + " (" + user.Id + ")";
 
-            Log.WriteLine("Looping on: " + userNameWithId, LogLevel.VERBOSE);
+            Log.WriteLine("Looping on: " + userNameWithId);
 
             if (!user.IsBot)
             {
                 Log.WriteLine("Found user: " + userNameWithId +
-                    " adding it to List.", LogLevel.VERBOSE);
+                    " adding it to List.");
 
                 usersOnTheServerAfterDowntime.Add(user.Id);
 
                 Log.WriteLine("The List count is now: " +
-                    usersOnTheServerAfterDowntime.Count, LogLevel.VERBOSE);
+                    usersOnTheServerAfterDowntime.Count);
             }
             else Log.WriteLine("User " + user.Username +
-                " was a bot, diregarding", LogLevel.VERBOSE);
+                " was a bot, diregarding");
         }
 
         Log.WriteLine("Looping done with: " + usersOnTheServerAfterDowntime.Count +
@@ -140,7 +140,7 @@ public static class DowntimeManager
             Log.WriteLine("test", LogLevel.DEBUG);
 
         }
-        else Log.WriteLine("No difference detected.", LogLevel.VERBOSE);
+        else Log.WriteLine("No difference detected.");
 
         return difference;
     }

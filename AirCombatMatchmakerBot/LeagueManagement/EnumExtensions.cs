@@ -4,7 +4,7 @@ public static class EnumExtensions
 {
     public static object GetInstance(string _string)
     {
-        Log.WriteLine("GetInstance string: " + _string, LogLevel.VERBOSE);
+        Log.WriteLine("GetInstance string: " + _string);
 
         Type? t = Type.GetType(_string.ToUpper());
 
@@ -13,7 +13,7 @@ public static class EnumExtensions
             Log.WriteLine("type was null for: " + _string.ToUpper(), LogLevel.CRITICAL);
             throw new InvalidOperationException("type was null for: " + _string.ToUpper());
         }
-        Log.WriteLine("Generated type: " + t, LogLevel.VERBOSE);
+        Log.WriteLine("Generated type: " + t);
 
         var instance = Activator.CreateInstance(t);
         if (instance == null)
@@ -21,7 +21,7 @@ public static class EnumExtensions
             Log.WriteLine("instance was null for: " + _string.ToUpper(), LogLevel.CRITICAL);
             throw new InvalidOperationException("instance was null for: " + _string.ToUpper());
         }
-        Log.WriteLine("Generated instance: " + instance, LogLevel.VERBOSE);
+        Log.WriteLine("Generated instance: " + instance);
 
         return instance;
     }
@@ -34,7 +34,7 @@ public static class EnumExtensions
             return "null";
         }
 
-        Log.WriteLine("enumValString: " + enumValString, LogLevel.VERBOSE);
+        Log.WriteLine("enumValString: " + enumValString);
 
         var type = _enumVal.GetType();
         if (type == typeof(string))
@@ -43,12 +43,12 @@ public static class EnumExtensions
         }
         else
         {
-            Log.WriteLine(nameof(type) + ": " + type.ToString(), LogLevel.VERBOSE);
+            Log.WriteLine(nameof(type) + ": " + type.ToString());
         }
 
         var memInfo = _enumVal.GetType().GetMember(enumValString);
 
-        Log.WriteLine(nameof(memInfo) + ": " + memInfo.ToString(), LogLevel.VERBOSE);
+        Log.WriteLine(nameof(memInfo) + ": " + memInfo.ToString());
 
         var attr = memInfo[0].GetCustomAttributes(false).OfType<EnumMemberAttribute>().FirstOrDefault();
 
@@ -63,7 +63,7 @@ public static class EnumExtensions
             Log.WriteLine("attr.value was null!", LogLevel.CRITICAL);
             return "null";
         }
-        Log.WriteLine("returning attr.value: " + attr.Value, LogLevel.VERBOSE);
+        Log.WriteLine("returning attr.value: " + attr.Value);
 
         return attr.Value;
     }

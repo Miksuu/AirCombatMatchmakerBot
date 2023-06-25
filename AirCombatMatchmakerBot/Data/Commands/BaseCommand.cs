@@ -8,13 +8,13 @@ public abstract class BaseCommand : InterfaceCommand
         get
         {
             Log.WriteLine("Getting " + nameof(commandName) + ": " +
-                commandName, LogLevel.VERBOSE);
+                commandName);
             return commandName;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(commandName) + commandName
-                + " to: " + value, LogLevel.VERBOSE);
+                + " to: " + value);
             commandName = value;
         }
     }
@@ -24,13 +24,13 @@ public abstract class BaseCommand : InterfaceCommand
         get
         {
             Log.WriteLine("Getting " + nameof(commandDescription) + ": " +
-                commandOption, LogLevel.VERBOSE);
+                commandOption);
             return commandDescription;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(commandOption) + commandOption
-                + " to: " + value, LogLevel.VERBOSE);
+                + " to: " + value);
             commandDescription = value;
         }
     }
@@ -40,13 +40,13 @@ public abstract class BaseCommand : InterfaceCommand
         get
         {
             Log.WriteLine("Getting " + nameof(commandOption) + ": " +
-                commandOption, LogLevel.VERBOSE);
+                commandOption);
             return commandOption;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(commandOption) + commandOption
-                + " to: " + value, LogLevel.VERBOSE);
+                + " to: " + value);
             commandOption = value;
         }
     }
@@ -61,22 +61,22 @@ public abstract class BaseCommand : InterfaceCommand
     {
         ulong commandSenderId = _command.User.Id;
 
-        Log.WriteLine("Received command " + commandName + " by: " + commandSenderId, LogLevel.VERBOSE);
+        Log.WriteLine("Received command " + commandName + " by: " + commandSenderId);
 
         bool senderIsAdmin = Database.Instance.Admins.CheckIfCommandSenderWasAnAdmin(_command);
 
         if (isAdminCommand && senderIsAdmin)
         {
-            Log.WriteLine("Command was admin command and the sender was admin", LogLevel.VERBOSE);
+            Log.WriteLine("Command was admin command and the sender was admin");
             return await ActivateCommandFunction(_command, _firstOptionString);
         }
         else if (isAdminCommand && !senderIsAdmin)
         {
-            Log.WriteLine(commandSenderId + " tried to access an admin command", LogLevel.VERBOSE);
+            Log.WriteLine(commandSenderId + " tried to access an admin command");
             return new Response("You are not allowed to use that command!", false);
         }
 
-        Log.WriteLine("Command was a regular one", LogLevel.VERBOSE);
+        Log.WriteLine("Command was a regular one");
 
         return await ActivateCommandFunction(_command, _firstOptionString);
     }

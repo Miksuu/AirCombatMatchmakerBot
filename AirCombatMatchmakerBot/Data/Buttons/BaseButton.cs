@@ -93,20 +93,20 @@ public abstract class BaseButton : InterfaceButton
         Log.WriteLine("Creating a button: " + buttonName + " | label: " +
             thisInterfaceButton.ButtonLabel + " | custom-id:" + _customId + " with style: " +
             buttonStyle + " | category-id: " + _buttonCategoryId + " with buttonIndex:" +
-            _buttonIndex, LogLevel.VERBOSE);
+            _buttonIndex);
 
         //buttonIndex = _buttonIndex;
 
         string tempCustomId = GenerateCustomButtonProperties(_buttonIndex, _leagueCategoryId);
-        Log.WriteLine("tempCustomId: " + tempCustomId, LogLevel.VERBOSE);
+        Log.WriteLine("tempCustomId: " + tempCustomId);
 
         if (tempCustomId != "")
         {
-            Log.WriteLine("Button had " + nameof(GenerateCustomButtonProperties) + " generated for it.", LogLevel.VERBOSE);
+            Log.WriteLine("Button had " + nameof(GenerateCustomButtonProperties) + " generated for it.");
             _customId = tempCustomId;
         }
 
-        Log.WriteLine("_customId: " + _customId, LogLevel.VERBOSE);
+        Log.WriteLine("_customId: " + _customId);
 
         // Insert the button category id for faster reference later
         thisInterfaceButton.ButtonCategoryId = _buttonCategoryId;

@@ -16,7 +16,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
     {
-        Log.WriteLine("Generating buttons with: " + _leagueCategoryId, LogLevel.VERBOSE);
+        Log.WriteLine("Generating buttons with: " + _leagueCategoryId);
 
         Dictionary<string, string> buttonsToGenerate = new Dictionary<string, string>();
 
@@ -26,7 +26,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
             return;
         }
-        Log.WriteLine("units count: " + mcc.interfaceLeagueCached.LeagueUnits.Count, LogLevel.VERBOSE);
+        Log.WriteLine("units count: " + mcc.interfaceLeagueCached.LeagueUnits.Count);
 
         foreach (UnitName unitName in mcc.interfaceLeagueCached.LeagueUnits)
         {
@@ -117,7 +117,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                                 continue;
                             }
 
-                            Log.WriteLine(scheduledEvent.TimeToExecuteTheEventOn.ToString(), LogLevel.VERBOSE);
+                            Log.WriteLine(scheduledEvent.TimeToExecuteTheEventOn.ToString());
 
                             finalMessage += " (valid for: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + ")";
                         }

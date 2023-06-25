@@ -33,14 +33,14 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
     public override Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
     {
-        Log.WriteLine("starting leagueRegistration", LogLevel.VERBOSE);
+        Log.WriteLine("starting leagueRegistration");
 
         string[] splitStrings = _component.Data.CustomId.Split('_');
 
         /*
         foreach (var item in splitStrings)
         {
-            Log.WriteLine("item: " + item, LogLevel.VERBOSE);
+            Log.WriteLine("item: " + item);
         }*/
 
         // Add try-catch here

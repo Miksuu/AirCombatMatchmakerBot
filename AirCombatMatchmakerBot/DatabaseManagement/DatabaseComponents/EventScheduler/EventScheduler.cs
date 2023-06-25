@@ -28,7 +28,7 @@ public class EventScheduler : logClass<EventScheduler>
         ulong currentUnixTime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
 
         Log.WriteLine("Time: " + currentUnixTime + " with: " +
-            nameof(_clearEventOnTheStartup) + ": " + _clearEventOnTheStartup, LogLevel.VERBOSE);
+            nameof(_clearEventOnTheStartup) + ": " + _clearEventOnTheStartup);
 
         // Might get caused by the daylight savings
         if (currentUnixTime < LastUnixTimeCheckedOn)
@@ -52,15 +52,15 @@ public class EventScheduler : logClass<EventScheduler>
 
         while (true)
         {
-            Log.WriteLine("Executing " + nameof(CheckCurrentTimeAndExecuteScheduledEvents), LogLevel.VERBOSE);
+            Log.WriteLine("Executing " + nameof(CheckCurrentTimeAndExecuteScheduledEvents));
 
             await CheckCurrentTimeAndExecuteScheduledEvents();
             Log.WriteLine("Done executing " + nameof(CheckCurrentTimeAndExecuteScheduledEvents) +
-                ", waiting " + waitTimeInMs + "ms", LogLevel.VERBOSE);
+                ", waiting " + waitTimeInMs + "ms");
 
             Thread.Sleep(waitTimeInMs);
 
-            Log.WriteLine("Wait done.", LogLevel.VERBOSE);
+            Log.WriteLine("Wait done.");
         }
     }
 }

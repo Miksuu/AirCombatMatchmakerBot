@@ -6,7 +6,7 @@
     public Response(string _responseString, bool _serialize)
     {
         Log.WriteLine("Init " + nameof(responseString) +
-            " with: " + _responseString + " | serialize: " + _serialize, LogLevel.VERBOSE);
+            " with: " + _responseString + " | serialize: " + _serialize);
         this.responseString = _responseString;
         this.serialize = _serialize;
     }

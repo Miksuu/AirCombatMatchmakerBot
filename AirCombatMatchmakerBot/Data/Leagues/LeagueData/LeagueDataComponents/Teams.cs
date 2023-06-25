@@ -25,15 +25,15 @@ public class Teams : logClass<Teams>
     public void AddToConcurrentBagOfTeams(Team _Team)
     {
         Log.WriteLine(
-            "Adding Team: " + _Team + " (" + _Team.TeamId + ") to the Teams ConcurrentBag", LogLevel.VERBOSE);
+            "Adding Team: " + _Team + " (" + _Team.TeamId + ") to the Teams ConcurrentBag");
         TeamsConcurrentBag.Add(_Team);
-        Log.WriteLine("Done adding the team. Count is now: " + TeamsConcurrentBag.Count, LogLevel.VERBOSE);
+        Log.WriteLine("Done adding the team. Count is now: " + TeamsConcurrentBag.Count);
     }
 
     public void IncrementCurrentTeamInt()
     {
         Log.WriteLine("Incrementing current team int that has count of: " +
-            CurrentTeamInt, LogLevel.VERBOSE);
+            CurrentTeamInt);
         CurrentTeamInt++;
     }
 
@@ -41,12 +41,12 @@ public class Teams : logClass<Teams>
     {
         foreach (Team team in TeamsConcurrentBag)
         {
-            Log.WriteLine("Searching team: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam), LogLevel.VERBOSE);
+            Log.WriteLine("Searching team: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam));
 
             foreach (Player teamPlayer in team.Players)
             {
                 Log.WriteLine("Checking player: " + teamPlayer.PlayerNickName +
-                    " (" + teamPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
+                    " (" + teamPlayer.PlayerDiscordId + ")");
 
                 if (teamPlayer.PlayerDiscordId == _idToSearchFor)
                 {
@@ -55,7 +55,7 @@ public class Teams : logClass<Teams>
             }
         }
 
-        Log.WriteLine("Did not find any teams that the player was in the league", LogLevel.VERBOSE);
+        Log.WriteLine("Did not find any teams that the player was in the league");
 
         return false;
     }
@@ -64,12 +64,12 @@ public class Teams : logClass<Teams>
     {
         foreach (Team team in TeamsConcurrentBag)
         {
-            Log.WriteLine("Searching team: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam), LogLevel.VERBOSE);
+            Log.WriteLine("Searching team: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam));
 
             foreach (Player teamPlayer in team.Players)
             {
                 Log.WriteLine("Checking player: " + teamPlayer.PlayerNickName +
-                    " (" + teamPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
+                    " (" + teamPlayer.PlayerDiscordId + ")");
 
                 if (teamPlayer.PlayerDiscordId == _playerIdToSearchFor)
                 {
@@ -78,7 +78,7 @@ public class Teams : logClass<Teams>
             }
         }
 
-        Log.WriteLine("Did not find any teams that the player was active in the league", LogLevel.VERBOSE);
+        Log.WriteLine("Did not find any teams that the player was active in the league");
 
         return new Team();
     }
@@ -91,12 +91,12 @@ public class Teams : logClass<Teams>
             List<Player> Players = team.Players.ToList();
 
             Log.WriteLine("Searching team: " + team.GetTeamName(
-                interfaceLeagueRef.LeaguePlayerCountPerTeam) + " with " + Players.Count, LogLevel.VERBOSE);
+                interfaceLeagueRef.LeaguePlayerCountPerTeam) + " with " + Players.Count);
 
             foreach (Player teamPlayer in Players)
             {
                 Log.WriteLine("Checking player: " + teamPlayer.PlayerNickName +
-                    " (" + teamPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
+                    " (" + teamPlayer.PlayerDiscordId + ")");
 
                 if (teamPlayer.PlayerDiscordId == _idToSearchFor)
                 {
@@ -112,7 +112,7 @@ public class Teams : logClass<Teams>
 
     public Team FindTeamById( int _id)
     {
-        Log.WriteLine("Finding team by id: " + _id, LogLevel.VERBOSE);
+        Log.WriteLine("Finding team by id: " + _id);
 
         Team? foundTeam = TeamsConcurrentBag.FirstOrDefault(x => x.TeamId == _id);
         if (foundTeam == null)

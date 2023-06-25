@@ -27,18 +27,18 @@ public class CHALLENGEMESSAGE : BaseMessage
     public override Task<string> GenerateMessage()
     {
         Log.WriteLine("Generating a challenge queue message with _channelId: " +
-            thisInterfaceMessage.MessageChannelId + " on category: " + thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
+            thisInterfaceMessage.MessageChannelId + " on category: " + thisInterfaceMessage.MessageCategoryId);
 
         foreach (var createdCategoriesKvp in
             Database.Instance.Categories.CreatedCategoriesWithChannels)
         {
             Log.WriteLine("On league: " +
-                createdCategoriesKvp.Value.CategoryType, LogLevel.VERBOSE);
+                createdCategoriesKvp.Value.CategoryType);
 
             string leagueName =
                 EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryType);
 
-            Log.WriteLine("Full league name: " + leagueName, LogLevel.VERBOSE);
+            Log.WriteLine("Full league name: " + leagueName);
 
             if (createdCategoriesKvp.Value.InterfaceChannels.Any(
                     x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId))
@@ -48,7 +48,7 @@ public class CHALLENGEMESSAGE : BaseMessage
                         x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId).Value.ChannelId;
 
                 Log.WriteLine("Looping on league: " + leagueName +
-                    " looking for id: " + channelIdToLookFor, LogLevel.VERBOSE);
+                    " looking for id: " + channelIdToLookFor);
 
                 if (thisInterfaceMessage.MessageChannelId == channelIdToLookFor)
                 {
@@ -83,7 +83,7 @@ public class CHALLENGEMESSAGE : BaseMessage
                         }
                     }
 
-                    Log.WriteLine("Challenge message generated: " + challengeMessage, LogLevel.VERBOSE);
+                    Log.WriteLine("Challenge message generated: " + challengeMessage);
 
                     return Task.FromResult(challengeMessage);
                 }

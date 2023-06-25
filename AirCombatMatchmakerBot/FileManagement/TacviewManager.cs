@@ -6,7 +6,7 @@ public class TacviewManager
     LeagueName _leagueName, int _matchId, SocketMessage _message)
     {
         Log.WriteLine("Saving tacview from user upload on league: " + _leagueName + ", on matchId:" +
-            _matchId + ", from user: " + _message.Author.Id, LogLevel.VERBOSE);
+            _matchId + ", from user: " + _message.Author.Id);
         string pathToCreate = @"C:\AirCombatMatchmakerBot\Data\Tacviews\" +
             _leagueName.ToString() + @"\" + _matchId.ToString();
 
@@ -14,7 +14,7 @@ public class TacviewManager
         FileManager.SaveFileAttachment(_message, pathToCreate, fileName);
 
         Log.WriteLine("Done saving tacview from user upload on league: " + _leagueName + ", on matchId:" +
-            _matchId + ", from user: " + _message.Author.Id, LogLevel.VERBOSE);
+            _matchId + ", from user: " + _message.Author.Id);
 
         return Task.CompletedTask;
     }
@@ -23,7 +23,7 @@ public class TacviewManager
         int _matchId, InterfaceLeague _interfaceLeague)
     {
         Log.WriteLine("Getting tacview from user upload on league: " +
-            _interfaceLeague.LeagueCategoryName + ", on matchId:" + _matchId, LogLevel.VERBOSE);
+            _interfaceLeague.LeagueCategoryName + ", on matchId:" + _matchId);
 
         string pathToLookFor = @"C:\AirCombatMatchmakerBot\Data\Tacviews\" +
             _interfaceLeague.LeagueCategoryName.ToString() + @"\" + _matchId.ToString() + @"\";
@@ -65,7 +65,7 @@ public class TacviewManager
 
             foreach (var file in cachedUserMessage.Attachments)
             {
-                Log.WriteLine("Found file: " + file.Url + " on match: " + _matchId, LogLevel.VERBOSE);
+                Log.WriteLine("Found file: " + file.Url + " on match: " + _matchId);
 
                 string playerUlongString = file.Url.Split('/').Last().Split('_').Last().Split('.').First();
                 ulong playerId = ulong.Parse(playerUlongString);
@@ -79,7 +79,7 @@ public class TacviewManager
             }
 
             Log.WriteLine("Done getting tacview from user upload on league: " + _interfaceLeague.LeagueCategoryName +
-                ", on matchId:" + _matchId + ", with count: " + finalFiles.Length, LogLevel.VERBOSE);
+                ", on matchId:" + _matchId + ", with count: " + finalFiles.Length);
         }
 
         return Task.FromResult(tacviewResults);

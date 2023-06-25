@@ -20,7 +20,7 @@ public static class TimeService
                     var apiResponse = JsonSerializer.Deserialize<ApiResponse>(timeData);
                     var currentTime = DateTime.Parse(
                         apiResponse.utc_datetime, null, System.Globalization.DateTimeStyles.RoundtripKind).ToUniversalTime();
-                    Log.WriteLine(currentTime.ToString(), LogLevel.VERBOSE);
+                    Log.WriteLine(currentTime.ToString());
                     return currentTime;
                 }
                 else
@@ -224,7 +224,7 @@ public static class TimeService
             {
                 if (!TryParseWeekdayAndTime(_dateAndTime, out suggestedScheduleDate))
                 {
-                    Log.WriteLine(suggestedScheduleDate.ToString(), LogLevel.VERBOSE);
+                    Log.WriteLine(suggestedScheduleDate.ToString());
 
                     if (suggestedScheduleDate == DateTime.MinValue)
                     {

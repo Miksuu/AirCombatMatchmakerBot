@@ -16,11 +16,11 @@ public class MatchChannelComponents
     public MatchChannelComponents(InterfaceMessage _interfaceMessage)
     {
         Log.WriteLine("Starting to find with: " + _interfaceMessage.MessageId +
-            " and with category id: " + _interfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
+            " and with category id: " + _interfaceMessage.MessageCategoryId);
 
         if (interfaceLeagueCached != null || leagueMatchCached != null)
         {
-            Log.WriteLine("Already cached, returning", LogLevel.VERBOSE);
+            Log.WriteLine("Already cached, returning");
             return;
         }
 
@@ -38,7 +38,7 @@ public class MatchChannelComponents
         }
 
         Log.WriteLine("Set: " + interfaceLeagueCached + " | " +
-            leagueMatchCached, LogLevel.VERBOSE);
+            leagueMatchCached);
 
         return;
     }
@@ -48,11 +48,11 @@ public class MatchChannelComponents
         ulong leagueCategoryIdCached = Database.Instance.Categories.MatchChannelsIdWithCategoryId[_matchChannelIdCached];
 
         Log.WriteLine("Starting to find with matchChannelId: " + _matchChannelIdCached + 
-            " and with category id: " + leagueCategoryIdCached, LogLevel.VERBOSE);
+            " and with category id: " + leagueCategoryIdCached);
 
         if (interfaceLeagueCached != null || leagueMatchCached != null)
         {
-            Log.WriteLine("Already cached, returning", LogLevel.VERBOSE);
+            Log.WriteLine("Already cached, returning");
             return;
         }
 
@@ -70,6 +70,6 @@ public class MatchChannelComponents
         }
 
         Log.WriteLine("Set: " + interfaceLeagueCached + " | " +
-            leagueMatchCached, LogLevel.VERBOSE);
+            leagueMatchCached);
     }
 }

@@ -74,7 +74,7 @@ public class Team
     public string GetTeamName(int _leagueTeamSize, bool _getAsMention = false)
     {
         Log.WriteLine("Getting team name: " + TeamName +
-            " with mention: " + _getAsMention, LogLevel.VERBOSE);
+            " with mention: " + _getAsMention);
 
         if (_leagueTeamSize < 2 && _getAsMention)
         {
@@ -86,7 +86,7 @@ public class Team
             }
 
             Log.WriteLine("Found player: " + player.PlayerNickName +
-                " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
+                " (" + player.PlayerDiscordId + ")");
 
             return player.GetPlayerIdAsMention();
         }
@@ -108,7 +108,7 @@ public class Team
         }
 
         Log.WriteLine("Final result of a team's string with skillrating: " +
-            result, LogLevel.VERBOSE);
+            result);
 
         return result;
     }
@@ -116,9 +116,9 @@ public class Team
     public bool CheckIfATeamContainsAPlayerById(ulong _playerId)
     {
         bool contains = false;
-        Log.WriteLine("Checking if " + _playerId + " if is in the team.", LogLevel.VERBOSE);
+        Log.WriteLine("Checking if " + _playerId + " if is in the team.");
         contains = Players.Any(x => x.PlayerDiscordId == _playerId);
-        Log.WriteLine(_playerId + " contains: " + contains, LogLevel.VERBOSE);
+        Log.WriteLine(_playerId + " contains: " + contains);
         return contains;
     }
 
@@ -128,7 +128,7 @@ public class Team
 
         Log.WriteLine("Starting to loop through team: " + TeamName + " (" + TeamId +
             ") with player count of: " + Players.Count +
-            " with player id: " + _playerId, LogLevel.VERBOSE);
+            " with player id: " + _playerId);
 
         if (TeamActive && teamContainsPlayer)
         {
@@ -137,7 +137,7 @@ public class Team
             return (this, true);
         }
 
-        Log.WriteLine("Team was not found!", LogLevel.VERBOSE);
+        Log.WriteLine("Team was not found!");
         return (null, false);
         //throw new InvalidOperationException("Team was not found!");
     }
@@ -149,7 +149,7 @@ public class Team
 
     public string GetTeamStats()
     {
-        Log.WriteLine("Getting team: " + teamName + " with id: " + teamId + " stats.", LogLevel.VERBOSE);
+        Log.WriteLine("Getting team: " + teamName + " with id: " + teamId + " stats.");
         return TeamStats.CalculateAndReturnTotalStatValuesAsString();
     }
 }

@@ -34,7 +34,7 @@ public class Matches : logClass<Matches>
         
 
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
-            _teamsToFormMatchOn[1], LogLevel.VERBOSE);
+            _teamsToFormMatchOn[1]);
 
         if (_teamsToFormMatchOn.Length != 2)
         {
@@ -46,7 +46,7 @@ public class Matches : logClass<Matches>
 
         MatchesConcurrentBag.Add(newMatch);
         Log.WriteLine("Added match channel id: " + newMatch.MatchId + " to the MatchesConcurrentBag, count is now: " +
-            MatchesConcurrentBag.Count, LogLevel.VERBOSE);
+            MatchesConcurrentBag.Count);
 
         InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, _matchState);
 
@@ -68,7 +68,7 @@ public class Matches : logClass<Matches>
             string overriddenMatchName = "match-" + leagueMatchIdString;
 
             Log.WriteLine("Starting to create a new match channel: " +
-                overriddenMatchName, LogLevel.VERBOSE);
+                overriddenMatchName);
 
             var dbRegularCategory = Database.Instance.Categories.FindInterfaceCategoryWithId(categoryKvp.LeagueCategoryId);
 
@@ -129,12 +129,12 @@ public class Matches : logClass<Matches>
         
         await SerializationManager.SerializeDB();
 
-        Log.WriteLine("DONE CREATING A MATCH CHANNEL!", LogLevel.VERBOSE);
+        Log.WriteLine("DONE CREATING A MATCH CHANNEL!");
     }
 
     public LeagueMatch FindLeagueMatchByTheChannelId(ulong _channelId)
     {
-        Log.WriteLine("Getting match by channelId: " + _channelId, LogLevel.VERBOSE);
+        Log.WriteLine("Getting match by channelId: " + _channelId);
 
         LeagueMatch? foundMatch = MatchesConcurrentBag.FirstOrDefault(x => x.MatchChannelId == _channelId);
         if (foundMatch == null)
@@ -145,7 +145,7 @@ public class Matches : logClass<Matches>
 
             if (foundArchivedMatch != null)
             {
-                Log.WriteLine("Returning archived match: " + foundArchivedMatch.MatchId, LogLevel.VERBOSE);
+                Log.WriteLine("Returning archived match: " + foundArchivedMatch.MatchId);
                 return foundArchivedMatch;
             }
 
@@ -161,7 +161,7 @@ public class Matches : logClass<Matches>
 
     public Task<LeagueMatch?> FindMatchAndRemoveItFromConcurrentBag(ulong _matchChannelId)
     {
-        Log.WriteLine("Removing: " + _matchChannelId + " on: " + interfaceLeagueRef.LeagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("Removing: " + _matchChannelId + " on: " + interfaceLeagueRef.LeagueCategoryName);
 
         LeagueMatch tempMatch = null;
         ConcurrentBag<LeagueMatch> updatedMatchesConcurrentBag = new ConcurrentBag<LeagueMatch>();
@@ -171,7 +171,7 @@ public class Matches : logClass<Matches>
             if (match.MatchChannelId == _matchChannelId)
             {
                 Log.WriteLine("Removed matchId: " + match.MatchId + " on ch: " + _matchChannelId +
-                    " on league: " + interfaceLeagueRef.LeagueCategoryName, LogLevel.VERBOSE);
+                    " on league: " + interfaceLeagueRef.LeagueCategoryName);
                 tempMatch = match;
             }
             else

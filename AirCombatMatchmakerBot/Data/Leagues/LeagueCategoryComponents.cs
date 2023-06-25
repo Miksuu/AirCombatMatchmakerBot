@@ -9,11 +9,11 @@ public class LeagueCategoryComponents
 
     public LeagueCategoryComponents(ulong _messageCategoryId)
     {
-        Log.WriteLine("Starting to find with category id: " + _messageCategoryId, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to find with category id: " + _messageCategoryId);
 
         if (interfaceLeagueCached != null)
         {
-            Log.WriteLine("Already cached, returning", LogLevel.VERBOSE);
+            Log.WriteLine("Already cached, returning");
             return;
         }
 
@@ -28,6 +28,6 @@ public class LeagueCategoryComponents
             throw new InvalidOperationException(ex.Message);
         }
 
-        Log.WriteLine("Set: " + interfaceLeagueCached, LogLevel.VERBOSE);
+        Log.WriteLine("Set: " + interfaceLeagueCached);
     }
 }

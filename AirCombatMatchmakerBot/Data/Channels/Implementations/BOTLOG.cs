@@ -22,7 +22,7 @@ public class BOTLOG : BaseChannel
     /*
     public override Task PrepareChannelMessages()
     {
-        Log.WriteLine("Setting logging channel id with: " + channelId, LogLevel.VERBOSE);
+        Log.WriteLine("Setting logging channel id with: " + channelId);
         return Task.CompletedTask;
     }*/
 }

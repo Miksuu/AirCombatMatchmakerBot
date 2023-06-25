@@ -66,7 +66,7 @@ public abstract class BaseChannel : InterfaceChannel
          params ulong[] _allowedUsersIdsArray)
     {
         Log.WriteLine("Creating a channel named: " + thisInterfaceChannel.ChannelType +
-            " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
+            " for category: " + thisInterfaceChannel.ChannelsCategoryId);
 
         string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(thisInterfaceChannel.ChannelType);
 
@@ -106,7 +106,7 @@ public abstract class BaseChannel : InterfaceChannel
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
         Log.WriteLine("Creating a channel named: " + thisInterfaceChannel.ChannelType +
-            " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
+            " for category: " + thisInterfaceChannel.ChannelsCategoryId);
 
         string channelTypeString = EnumExtensions.GetEnumMemberAttrValue(thisInterfaceChannel.ChannelType);
 
@@ -240,10 +240,10 @@ public abstract class BaseChannel : InterfaceChannel
 
     public virtual async Task PostChannelMessages(DiscordSocketClient _client)
     {
-        //Log.WriteLine("Starting to post channel messages on: " + channelType, LogLevel.VERBOSE);
+        //Log.WriteLine("Starting to post channel messages on: " + channelType);
 
         Log.WriteLine("Finding channel: " + thisInterfaceChannel.ChannelType + " (" + thisInterfaceChannel.ChannelId +
-            ") parent category with id: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.VERBOSE);
+            ") parent category with id: " + thisInterfaceChannel.ChannelsCategoryId);
 
         // If the MessageDescription doesn't exist, set it ID to 0 to regenerate it
 
@@ -264,19 +264,19 @@ public abstract class BaseChannel : InterfaceChannel
 
         Log.WriteLine(nameof(thisInterfaceChannel.InterfaceMessagesWithIds) + " count: " +
             thisInterfaceChannel.InterfaceMessagesWithIds.Count + " | " + nameof(channelMessagesFromDb) +
-            " count: " + channelMessagesFromDb.Count, LogLevel.VERBOSE);
+            " count: " + channelMessagesFromDb.Count);
 
         if (thisInterfaceChannel.ChannelType == ChannelType.LEAGUEREGISTRATION)
         {
             Log.WriteLine("Starting to to prepare channel messages on " + thisInterfaceChannel.ChannelType +
-                " count: " + Enum.GetValues(typeof(CategoryType)).Length, LogLevel.VERBOSE);
+                " count: " + Enum.GetValues(typeof(CategoryType)).Length);
 
             foreach (LeagueName leagueName in Enum.GetValues(typeof(LeagueName)))
             {
-                Log.WriteLine("Looping on to find leagueName: " + leagueName.ToString(), LogLevel.VERBOSE);
+                Log.WriteLine("Looping on to find leagueName: " + leagueName.ToString());
 
                 string leagueNameString = EnumExtensions.GetEnumMemberAttrValue(leagueName);
-                Log.WriteLine("leagueNameString after enumValueCheck: " + leagueNameString, LogLevel.VERBOSE);
+                Log.WriteLine("leagueNameString after enumValueCheck: " + leagueNameString);
                 if (leagueNameString == null)
                 {
                     Log.WriteLine(nameof(leagueNameString) + " was null!", LogLevel.CRITICAL);
@@ -289,10 +289,10 @@ public abstract class BaseChannel : InterfaceChannel
                     var leagueInterfaceFromDatabase =
                         Database.Instance.Leagues.GetILeagueByCategoryName(leagueName);
 
-                    Log.WriteLine("Starting to create a league join button for: " + leagueNameString, LogLevel.VERBOSE);
+                    Log.WriteLine("Starting to create a league join button for: " + leagueNameString);
 
                     Log.WriteLine(nameof(leagueInterfaceFromDatabase) + " before creating leagueButtonRegisterationCustomId: "
-                        + leagueInterfaceFromDatabase.ToString(), LogLevel.VERBOSE);
+                        + leagueInterfaceFromDatabase.ToString());
 
                     if (leagueInterfaceFromDatabase.LeagueRegistrationMessageId != 0) continue;
 
@@ -309,9 +309,9 @@ public abstract class BaseChannel : InterfaceChannel
                             (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString()));
 
                     Log.WriteLine("Added to the ConcurrentDictionary, count is now: " +
-                        thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+                        thisInterfaceChannel.InterfaceMessagesWithIds.Count);
 
-                    Log.WriteLine("Done looping on: " + leagueNameString, LogLevel.VERBOSE);
+                    Log.WriteLine("Done looping on: " + leagueNameString);
                 }
                 catch (Exception ex)
                 {
@@ -346,7 +346,7 @@ public abstract class BaseChannel : InterfaceChannel
     public InterfaceMessage FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName)
     {
-        Log.WriteLine("Getting MessageName with name: " + _messageName, LogLevel.VERBOSE);
+        Log.WriteLine("Getting MessageName with name: " + _messageName);
 
         var interfaceMessage = thisInterfaceChannel.InterfaceMessagesWithIds.FirstOrDefault(
             x => x.Value.MessageName == _messageName).Value;
@@ -357,7 +357,7 @@ public abstract class BaseChannel : InterfaceChannel
             throw new InvalidOperationException(errorMsg);
         }
 
-        Log.WriteLine("Found: " + interfaceMessage.MessageName, LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + interfaceMessage.MessageName);
         return interfaceMessage;
     }
 
@@ -367,7 +367,7 @@ public abstract class BaseChannel : InterfaceChannel
     {
         List<InterfaceMessage> interfaceMessageValues = new();
 
-        Log.WriteLine("Getting CategoryKvp with name: " + _messageName, LogLevel.VERBOSE);
+        Log.WriteLine("Getting CategoryKvp with name: " + _messageName);
 
         var foundInterfaceMessages = thisInterfaceChannel.InterfaceMessagesWithIds.Where(
             x => x.Value.MessageName == _messageName);
@@ -379,18 +379,18 @@ public abstract class BaseChannel : InterfaceChannel
 
         foreach (var message in foundInterfaceMessages)
         {
-            Log.WriteLine("Found: " + message.Value.MessageName, LogLevel.VERBOSE);
+            Log.WriteLine("Found: " + message.Value.MessageName);
             interfaceMessageValues.Add(message.Value);
         }
 
-        Log.WriteLine("returning messages with count: " + interfaceMessageValues.Count, LogLevel.VERBOSE);
+        Log.WriteLine("returning messages with count: " + interfaceMessageValues.Count);
 
         return interfaceMessageValues;
     }
 
     public async Task<IMessageChannel> GetMessageChannelById(DiscordSocketClient _client)
     {
-        Log.WriteLine("Getting IMessageChannel with id: " + thisInterfaceChannel.ChannelId, LogLevel.VERBOSE);
+        Log.WriteLine("Getting IMessageChannel with id: " + thisInterfaceChannel.ChannelId);
 
         var channel = await _client.GetChannelAsync(thisInterfaceChannel.ChannelId) as IMessageChannel;
         if (channel == null)
@@ -399,7 +399,7 @@ public abstract class BaseChannel : InterfaceChannel
             throw new InvalidOperationException(nameof(channel) + " was null!");
         }
 
-        Log.WriteLine("Found: " + channel.Id, LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + channel.Id);
         return channel;
     }
 
@@ -418,7 +418,7 @@ public abstract class BaseChannel : InterfaceChannel
 
             foreach (var interfaceMessage in interfaceMessages)
             {
-                Log.WriteLine("Looping on: " + interfaceMessage.MessageId, LogLevel.VERBOSE);
+                Log.WriteLine("Looping on: " + interfaceMessage.MessageId);
 
                 Discord.IMessage message;
 
@@ -428,7 +428,7 @@ public abstract class BaseChannel : InterfaceChannel
                     await message.DeleteAsync();
 
                     Log.WriteLine("Deleted the message: " + message.Id +
-                        " deleting it from DB count: " + thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+                        " deleting it from DB count: " + thisInterfaceChannel.InterfaceMessagesWithIds.Count);
                 }
                 catch (Exception ex) 
                 {
@@ -444,7 +444,7 @@ public abstract class BaseChannel : InterfaceChannel
 
                 thisInterfaceChannel.InterfaceMessagesWithIds.TryRemove(message.Id, out InterfaceMessage? im);
                 Log.WriteLine("Deleted the message: " + message.Id + " from DB. count now:" +
-                    thisInterfaceChannel.InterfaceMessagesWithIds.Count, LogLevel.VERBOSE);
+                    thisInterfaceChannel.InterfaceMessagesWithIds.Count);
             }
         }
         catch (Exception ex)
@@ -471,7 +471,7 @@ public abstract class BaseChannel : InterfaceChannel
             return;
         }
 
-        Log.WriteLine("found guild.", LogLevel.VERBOSE);
+        Log.WriteLine("found guild.");
 
         // Perhaps search within category for a faster operation
         var channel = guild.Channels.FirstOrDefault(
@@ -484,11 +484,11 @@ public abstract class BaseChannel : InterfaceChannel
         }
 
         Log.WriteLine("Found channel: " + +channel.Id + " named: " + channel.Name +
-            " deleting it.", LogLevel.VERBOSE);
+            " deleting it.");
 
         await channel.DeleteAsync();
 
-        Log.WriteLine("Deleted channel: " + channel.Id + " deleting db entry.", LogLevel.VERBOSE);
+        Log.WriteLine("Deleted channel: " + channel.Id + " deleting db entry.");
 
         _interfaceCategory.InterfaceChannels.TryRemove(
                 channelId, out InterfaceChannel? _ic);

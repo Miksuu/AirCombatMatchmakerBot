@@ -44,14 +44,14 @@ public class CONFIRMSCOREBUTTON : BaseButton
             return Task.FromResult(new Response(errorMsg, false));
         }
 
-        Log.WriteLine("Setting ConfirmedMatch false", LogLevel.VERBOSE);
+        Log.WriteLine("Setting ConfirmedMatch false");
 
         foreach (var item in mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData)
         {
             item.Value.ConfirmedMatch = false;
         }
 
-        Log.WriteLine("Done setting ConfirmedMatch false", LogLevel.VERBOSE);
+        Log.WriteLine("Done setting ConfirmedMatch false");
 
         var response = mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
             playerId, playerReportedResult.ToString(),

@@ -5,7 +5,7 @@ public static class CommandHandler
     // Installs the commands that are predefined in the code itself
     public async static Task InstallCommandsAsync()
     {
-        Log.WriteLine("Starting to install the commands.", LogLevel.VERBOSE);
+        Log.WriteLine("Starting to install the commands.");
 
         var client = BotReference.GetClientRef();
 
@@ -26,11 +26,11 @@ public static class CommandHandler
     {
         try
         {
-            Log.WriteLine("Start of SlashCommandHandler", LogLevel.VERBOSE);
+            Log.WriteLine("Start of SlashCommandHandler");
 
             string? firstOptionString = string.Empty;
 
-            Log.WriteLine("OptionsCount: " + _command.Data.Options.Count, LogLevel.VERBOSE);
+            Log.WriteLine("OptionsCount: " + _command.Data.Options.Count);
 
             if (_command.Data.Options.Count > 0)
             {
@@ -71,13 +71,13 @@ public static class CommandHandler
             await _command.RespondAsync(BotMessaging.GetMessageResponse(
                 _command.Data.Name, responseTuple.responseString, _command.Channel.Name), ephemeral: true);
 
-            Log.WriteLine("Sending and responding to the message done.", LogLevel.VERBOSE);
+            Log.WriteLine("Sending and responding to the message done.");
         }
         catch (Exception ex)
         {
             if (ex.Message.Contains("error 50006"))
             {
-                Log.WriteLine("skipped empty message try-catch", LogLevel.VERBOSE);
+                Log.WriteLine("skipped empty message try-catch");
                 return;
             }
 
@@ -88,11 +88,11 @@ public static class CommandHandler
 
     public static async Task PrepareCommands()
     {
-        Log.WriteLine("Starting to prepare the commands.", LogLevel.VERBOSE);
+        Log.WriteLine("Starting to prepare the commands.");
 
         var commandEnumValues = Enum.GetValues(typeof(CommandName));
         Log.WriteLine(nameof(commandEnumValues) +
-            " length: " + commandEnumValues.Length, LogLevel.VERBOSE);
+            " length: " + commandEnumValues.Length);
 
         var client = BotReference.GetClientRef();
         if (client == null)
@@ -103,7 +103,7 @@ public static class CommandHandler
 
         foreach (CommandName commandName in commandEnumValues)
         {
-            Log.WriteLine("Looping on cmd" + nameof(commandName), LogLevel.VERBOSE);
+            Log.WriteLine("Looping on cmd" + nameof(commandName));
 
             try
             {
@@ -136,7 +136,7 @@ public static class CommandHandler
             "which user do you want to terminate?"
             );
         */
-        Log.WriteLine("Done preparing the commands.", LogLevel.VERBOSE);
+        Log.WriteLine("Done preparing the commands.");
 
         return;
     }

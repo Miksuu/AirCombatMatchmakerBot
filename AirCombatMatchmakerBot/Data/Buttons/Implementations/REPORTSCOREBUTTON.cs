@@ -22,7 +22,7 @@ public class REPORTSCOREBUTTON : BaseButton
     {
         thisInterfaceButton.ButtonLabel = _buttonIndex.ToString();
         Log.WriteLine("is: " + nameof(buttonName) +
-            " set label to: " + thisInterfaceButton.ButtonLabel, LogLevel.VERBOSE);
+            " set label to: " + thisInterfaceButton.ButtonLabel);
 
         return "";
     }

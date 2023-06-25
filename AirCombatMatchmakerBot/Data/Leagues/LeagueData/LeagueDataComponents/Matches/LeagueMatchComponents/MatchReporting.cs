@@ -61,7 +61,7 @@ public class MatchReporting : logClass<MatchReporting>
                 continue;
             }
 
-            Log.WriteLine("Adding team: " + teamKvp.Key + " | " + teamKvp.Value, LogLevel.VERBOSE);
+            Log.WriteLine("Adding team: " + teamKvp.Key + " | " + teamKvp.Value);
 
             try
             {
@@ -124,7 +124,7 @@ public class MatchReporting : logClass<MatchReporting>
             // Replacing the result
             else
             {
-                Log.WriteLine("Key was, the team is not their first time reporting.", LogLevel.VERBOSE);
+                Log.WriteLine("Key was, the team is not their first time reporting.");
 
                 var interfaceReportingObject =
                     GetInterfaceReportingObjectWithTypeOfTheReportingObject(_typeOfTheReportingObject, reportingTeam.TeamId).thisReportingObject;
@@ -195,12 +195,12 @@ public class MatchReporting : logClass<MatchReporting>
         foreach (var reportedTeamKvp in TeamIdsWithReportData)
         {
             Log.WriteLine("Reported team: " + reportedTeamKvp.Key +
-                " with value: " + reportedTeamKvp.Value, LogLevel.VERBOSE);
+                " with value: " + reportedTeamKvp.Value);
         }
 
         int reportedTeamsCount = TeamIdsWithReportData.Count;
 
-        Log.WriteLine("Reported teams count: " + reportedTeamsCount, LogLevel.VERBOSE);
+        Log.WriteLine("Reported teams count: " + reportedTeamsCount);
 
         if (reportedTeamsCount > 2)
         {
@@ -270,7 +270,7 @@ public class MatchReporting : logClass<MatchReporting>
                     MessageName.REPORTINGSTATUSMESSAGE);
             }
 
-            Log.WriteLine("returning response: " + response, LogLevel.VERBOSE);
+            Log.WriteLine("returning response: " + response);
 
             return new Response(response?.ToString() ?? "[null]", true);
         }
@@ -312,7 +312,7 @@ public class MatchReporting : logClass<MatchReporting>
 
     private bool CheckIfConfirmationMessageCanBeShown(InterfaceChannel _interfaceChannel)
     {
-        Log.WriteLine("Starting to check if the confirmation message can be showed.", LogLevel.VERBOSE);
+        Log.WriteLine("Starting to check if the confirmation message can be showed.");
 
         foreach (var teamKvp in TeamIdsWithReportData)
         {
@@ -320,7 +320,7 @@ public class MatchReporting : logClass<MatchReporting>
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
 
             Log.WriteLine("Got field infos, length: " + fieldInfos.Length + " for team: " +
-                teamKvp.Value.TeamName, LogLevel.VERBOSE);
+                teamKvp.Value.TeamName);
 
             foreach (var item in teamKvp.Value.ReportingObjects)
             {

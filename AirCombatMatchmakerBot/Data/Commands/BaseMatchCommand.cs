@@ -33,7 +33,7 @@ public abstract class BaseMatchCommand : BaseCommand
             return new Response("That's not your match to comment on!", false);
         }
 
-        Log.WriteLine("Starting to check: " + mcc.leagueMatchCached.MatchReporting.MatchState, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to check: " + mcc.leagueMatchCached.MatchReporting.MatchState);
 
         // Check if matchStateAllowedWithMessage is set and if the current match state matches
         if (matchStateAllowedWithMessage.Item2 != null && matchStateAllowedWithMessage.Item1 != matchState)
@@ -43,13 +43,13 @@ public abstract class BaseMatchCommand : BaseCommand
         else if (matchStatesNotAllowedWithMessage.ContainsKey(matchState))
         {
             Log.WriteLine(nameof(matchStatesNotAllowedWithMessage) + " does not contain key: " +
-                matchState + " returning false", LogLevel.VERBOSE);
+                matchState + " returning false");
             return new Response(matchStatesNotAllowedWithMessage[matchState], false);
         }
         else
         {
             Log.WriteLine(nameof(matchStatesNotAllowedWithMessage) + " does not contain key: " +
-                matchState + " returning false", LogLevel.VERBOSE);
+                matchState + " returning false");
             return new Response("", true);
         }
     }

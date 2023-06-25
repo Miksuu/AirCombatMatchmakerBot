@@ -7,7 +7,7 @@ public static class ButtonHandler
     {
         try
         {
-            Log.WriteLine("Button press detected by: " + _component.User.Id, LogLevel.VERBOSE);
+            Log.WriteLine("Button press detected by: " + _component.User.Id);
 
             ulong componentChannelId = _component.Channel.Id;
             ulong componentMessageId = _component.Message.Id;
@@ -42,7 +42,7 @@ public static class ButtonHandler
             // Fix an API change in discord
             if (response.responseString == "")
             {
-                Log.WriteLine("responseString was empty, returning", LogLevel.VERBOSE);
+                Log.WriteLine("responseString was empty, returning");
                 await _component.RespondAsync();
                 return;
             }*/
@@ -54,7 +54,7 @@ public static class ButtonHandler
         {
             if (ex.Message.Contains("error 50006"))
             {
-                Log.WriteLine("skipped empty message try-catch", LogLevel.VERBOSE);
+                Log.WriteLine("skipped empty message try-catch");
                 return;
             }
 
@@ -75,7 +75,7 @@ public static class ButtonHandler
             throw new InvalidOperationException(nameof(databaseCategory.Value) + " was null!");
         }
 
-        Log.WriteLine("Found category: " + databaseCategory.Value.CategoryType, LogLevel.VERBOSE);
+        Log.WriteLine("Found category: " + databaseCategory.Value.CategoryType);
 
         // Find the channel by id
         var databaseChannel = databaseCategory.Value.InterfaceChannels.FirstOrDefault(
@@ -86,7 +86,7 @@ public static class ButtonHandler
             throw new InvalidOperationException(nameof(databaseChannel) + " was null!");
         }
 
-        Log.WriteLine("Found channel: " + databaseChannel.Value.ChannelType, LogLevel.VERBOSE);
+        Log.WriteLine("Found channel: " + databaseChannel.Value.ChannelType);
 
         // Find the database MessageDescription
         var databaseMessage = databaseChannel.Value.InterfaceMessagesWithIds.FirstOrDefault(
@@ -97,7 +97,7 @@ public static class ButtonHandler
             throw new InvalidOperationException(nameof(databaseMessage) + " was null!");
         }
 
-        Log.WriteLine("Found channel: " + databaseMessage.Value.MessageName, LogLevel.VERBOSE);
+        Log.WriteLine("Found channel: " + databaseMessage.Value.MessageName);
 
         // Find multiple buttons where the button name is the one being looked for
         InterfaceButton? foundButton = databaseMessage.Value.ButtonsInTheMessage.FirstOrDefault(

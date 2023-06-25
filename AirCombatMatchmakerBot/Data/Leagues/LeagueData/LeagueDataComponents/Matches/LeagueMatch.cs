@@ -90,9 +90,9 @@ public class LeagueMatch : logClass<LeagueMatch>
         interfaceLeagueRef = _interfaceLeagueRef;
         MatchReporting.interfaceLeagueRef = _interfaceLeagueRef;
 
-        Log.WriteLine(MatchReporting.interfaceLeagueRef.ToString(), LogLevel.VERBOSE);
+        Log.WriteLine(MatchReporting.interfaceLeagueRef.ToString());
 
-        Log.WriteLine("Set:", LogLevel.VERBOSE);
+        Log.WriteLine("Set:");
     }
 
     // TODO: Add interfaceLeague ref on constructor as a reference
@@ -144,11 +144,11 @@ public class LeagueMatch : logClass<LeagueMatch>
         ulong[] allowedUserIds = new ulong[userAmountToGrantRolesTo];
 
         Log.WriteLine(nameof(allowedUserIds) + " length: " +
-            allowedUserIds.Length, LogLevel.VERBOSE);
+            allowedUserIds.Length);
 
         foreach (var teamKvp in TeamsInTheMatch)
         {
-            Log.WriteLine("Looping on team id: " + teamKvp.Key, LogLevel.VERBOSE);
+            Log.WriteLine("Looping on team id: " + teamKvp.Key);
 
             try
             {
@@ -159,7 +159,7 @@ public class LeagueMatch : logClass<LeagueMatch>
                     allowedUserIds[playerCounter] = player.PlayerDiscordId;
                     Log.WriteLine("Added " + allowedUserIds[playerCounter] + " to: " +
                         nameof(allowedUserIds) + ". " + nameof(playerCounter) + " is now: " +
-                        playerCounter + 1 + " out of: " + (allowedUserIds.Length - 1).ToString(), LogLevel.VERBOSE);
+                        playerCounter + 1 + " out of: " + (allowedUserIds.Length - 1).ToString());
 
                     playerCounter++;
                 }
@@ -179,7 +179,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         try
         {
             Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " with towards id: " +
-                ScheduleObject.TeamIdThatRequestedScheduling, LogLevel.VERBOSE);
+                ScheduleObject.TeamIdThatRequestedScheduling);
 
             var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
 
@@ -241,7 +241,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             StoredScheduleMessageIds.Add(newMessage.MessageId);
 
-            Log.WriteLine("timeUntil: " + timeUntil, LogLevel.VERBOSE);
+            Log.WriteLine("timeUntil: " + timeUntil);
 
             return new Response("", true);
             //return new Response("Suggested match time to: " + suggestedScheduleDate + 
@@ -287,7 +287,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         try
         {
             Log.WriteLine("Starting the match on second thread on channel after scheduling: " + matchChannelId +
-                " with timeUntil: " + _timeUntil, LogLevel.VERBOSE);
+                " with timeUntil: " + _timeUntil);
 
             var client = BotReference.GetClientRef();
 
@@ -324,7 +324,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
     public async void StartTheMatchOnSecondThread(InterfaceChannel _interfaceChannel)
     {
-        Log.WriteLine("Starting the match on second thread on channel: " + _interfaceChannel.ChannelId, LogLevel.VERBOSE);
+        Log.WriteLine("Starting the match on second thread on channel: " + _interfaceChannel.ChannelId);
 
         try
         {

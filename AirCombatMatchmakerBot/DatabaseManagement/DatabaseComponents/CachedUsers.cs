@@ -15,7 +15,7 @@ public class CachedUsers : logClass<CachedUsers>
 
     public void AddUserIdToCachedConcurrentBag(ulong _userId)
     {
-        Log.WriteLine("Adding " + _userId + " to the cache ConcurrentBag", LogLevel.VERBOSE);
+        Log.WriteLine("Adding " + _userId + " to the cache ConcurrentBag");
         if (!CachedUserIDs.Contains(_userId))
         {
             CachedUserIDs.Add(_userId);
@@ -24,13 +24,13 @@ public class CachedUsers : logClass<CachedUsers>
         }
         else
         {
-            Log.WriteLine("User " + _userId + " is already on the ConcurrentBag", LogLevel.VERBOSE);
+            Log.WriteLine("User " + _userId + " is already on the ConcurrentBag");
         }
     }
 
     public void RemoveUserFromTheCachedConcurrentBag(ulong _userId)
     {
-        Log.WriteLine("Removing " + _userId + " from the cache ConcurrentBag", LogLevel.VERBOSE);
+        Log.WriteLine("Removing " + _userId + " from the cache ConcurrentBag");
 
         if (!CachedUserIDs.Contains(_userId))
         {

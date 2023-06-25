@@ -40,25 +40,25 @@ public class PLANESELECTIONBUTTON : BaseButton
             string playerSelectedPlane = splitStrings[0];
 
             Log.WriteLine("Starting to find team with playerId: " + playerId +
-                " with selected plane: " + playerSelectedPlane, LogLevel.VERBOSE);
+                " with selected plane: " + playerSelectedPlane);
 
             Team playerTeam = mcc.interfaceLeagueCached.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId);
 
             Log.WriteLine("Finding with " + nameof(playerTeam) + ": " + playerTeam.TeamName + " with id: " + playerTeam.TeamId +
-                " on league: " + mcc.interfaceLeagueCached.LeagueCategoryName, LogLevel.VERBOSE);
+                " on league: " + mcc.interfaceLeagueCached.LeagueCategoryName);
 
             foreach (var teamKvp in mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData)
             {
                 try
                 {
-                    Log.WriteLine("Loop on: " + teamKvp.Key + " with " + teamKvp.Value, LogLevel.VERBOSE);
+                    Log.WriteLine("Loop on: " + teamKvp.Key + " with " + teamKvp.Value);
                     if (teamKvp.Key != playerTeam.TeamId)
                     {
                         continue;
                     }
 
                     Log.WriteLine("Found team: " + teamKvp.Key + " with name: " + teamKvp.Value.TeamName +
-                        " with playerId: " + playerId, LogLevel.VERBOSE);
+                        " with playerId: " + playerId);
 
                     var planeReportObject =
                         mcc.leagueMatchCached.MatchReporting.GetInterfaceReportingObjectWithTypeOfTheReportingObject(
@@ -82,14 +82,14 @@ public class PLANESELECTIONBUTTON : BaseButton
                         continue;
                     }
 
-                    Log.WriteLine("Contains: " + playerId, LogLevel.VERBOSE);
+                    Log.WriteLine("Contains: " + playerId);
 
                     var playerIdSelectedPlane = planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.FirstOrDefault(
                         x => x.Key == playerId);
 
                     var unitNameInstance = (InterfaceUnit)EnumExtensions.GetInstance(playerSelectedPlane);
 
-                    Log.WriteLine("unitNameInstance:" + unitNameInstance, LogLevel.VERBOSE);
+                    Log.WriteLine("unitNameInstance:" + unitNameInstance);
 
                     if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
                     {

@@ -24,7 +24,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
 
         Log.WriteLine("Starting to generate match initiation message on channel: with id: " +
             thisInterfaceMessage.MessageChannelId + " under category ID: " +
-            thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
+            thisInterfaceMessage.MessageCategoryId);
 
         mcc = new MatchChannelComponents(this);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)

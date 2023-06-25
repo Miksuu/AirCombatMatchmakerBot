@@ -13,7 +13,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
         ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
         Log.WriteLine("Creating event: " + nameof(MatchQueueAcceptEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
-            _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.VERBOSE);
+            _leagueCategoryIdCached + "|" + _matchChannelIdCached);
 
         base.SetupScheduledEvent(_timeFromNowToExecuteOn, _scheduledEvents);
         LeagueCategoryIdCached = _leagueCategoryIdCached;
@@ -32,15 +32,15 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
             throw new InvalidOperationException(nameof(mcc) + " was null!");
         }
 
-        Log.WriteLine("event: " + EventId + " before setting matchChannelId", LogLevel.VERBOSE);
+        Log.WriteLine("event: " + EventId + " before setting matchChannelId");
 
         ulong matchChannelId = mcc.leagueMatchCached.MatchChannelId;
 
-        Log.WriteLine("event: " + EventId + " after setting matchChannelId", LogLevel.VERBOSE);
+        Log.WriteLine("event: " + EventId + " after setting matchChannelId");
 
         await mcc.interfaceLeagueCached.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(matchChannelId);
 
-        Log.WriteLine("event: " + EventId + " after removed from bag with: " + matchChannelId, LogLevel.VERBOSE);
+        Log.WriteLine("event: " + EventId + " after removed from bag with: " + matchChannelId);
 
         // Loop through the ReportData's and put players back to queue who accepted
         // Later on, add restrictions to players who didn't accept
@@ -88,14 +88,14 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
 
         // Create the event and execute it instantly
         var newEvent = new DeleteChannelEvent(mcc.interfaceLeagueCached.LeagueCategoryId, matchChannelId, "match");
-        Log.WriteLine("event: " + EventId + " created newEvent", LogLevel.VERBOSE);
+        Log.WriteLine("event: " + EventId + " created newEvent");
         await newEvent.ExecuteTheScheduledEvent(false);
-        Log.WriteLine("event: " + EventId + " after newEvent executed", LogLevel.VERBOSE);
+        Log.WriteLine("event: " + EventId + " after newEvent executed");
 
         if (!_serialize) return;
 
         await SerializationManager.SerializeDB();
-        Log.WriteLine("event: " + EventId + " after serialization", LogLevel.VERBOSE);
+        Log.WriteLine("event: " + EventId + " after serialization");
     }
 
     public override void CheckTheScheduledEventStatus()

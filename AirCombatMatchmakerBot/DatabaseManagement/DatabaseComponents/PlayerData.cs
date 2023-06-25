@@ -19,15 +19,15 @@ public class PlayerData : logClass<PlayerData>
     public void AddAPlayerProfile(Player _Player)
     {
         Log.WriteLine("Adding a player profile: " + _Player.PlayerNickName + " (" +
-            _Player.PlayerDiscordId + ") to the PlayerIDs ConcurrentDictionary", LogLevel.VERBOSE);
+            _Player.PlayerDiscordId + ") to the PlayerIDs ConcurrentDictionary");
 
         PlayerIDs.TryAdd(_Player.PlayerDiscordId, _Player);
-        Log.WriteLine("Done adding, count is now: " + PlayerIDs.Count, LogLevel.VERBOSE);
+        Log.WriteLine("Done adding, count is now: " + PlayerIDs.Count);
     }
 
     public async Task<bool> AddNewPlayerToTheDatabaseById(ulong _playerId)
     {
-        Log.WriteLine("Start of the addnewplayer with: " + _playerId, LogLevel.VERBOSE);
+        Log.WriteLine("Start of the addnewplayer with: " + _playerId);
 
         var nickName = CheckIfNickNameIsEmptyAndReturnUsername(_playerId);
 
@@ -36,7 +36,7 @@ public class PlayerData : logClass<PlayerData>
         // Checks if the player is already in the database, just in case
         if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(_playerId))
         {
-            Log.WriteLine("Player doesn't exist in the database: " + _playerId, LogLevel.VERBOSE);
+            Log.WriteLine("Player doesn't exist in the database: " + _playerId);
 
             // Add to the profile
             Database.Instance.PlayerData.AddAPlayerProfile(new Player(_playerId, nickName));
@@ -57,28 +57,28 @@ public class PlayerData : logClass<PlayerData>
     public string CheckIfNickNameIsEmptyAndReturnUsername(ulong _id)
     {
         Log.WriteLine("Checking if nickname is empty and return username with ID: " +
-            _id, LogLevel.VERBOSE);
+            _id);
 
         try
         {
             var SocketGuildUser = GetSocketGuildUserById(_id);
 
-            Log.WriteLine("SocketGuildUser " + _id + " is not null", LogLevel.VERBOSE);
+            Log.WriteLine("SocketGuildUser " + _id + " is not null");
 
             string userName = SocketGuildUser.Username;
             string nickName = SocketGuildUser.Nickname;
 
             Log.WriteLine("Checking if " + userName + "'s (" + _id + ")" +
-                " nickName: " + nickName + " | " + " is the same", LogLevel.VERBOSE);
+                " nickName: " + nickName + " | " + " is the same");
 
             if (nickName == "" || nickName == userName || nickName == null)
             {
-                Log.WriteLine("returning userName: " + userName, LogLevel.VERBOSE);
+                Log.WriteLine("returning userName: " + userName);
                 return userName;
             }
             else
             {
-                Log.WriteLine("returning nickName " + nickName, LogLevel.VERBOSE);
+                Log.WriteLine("returning nickName " + nickName);
                 return nickName;
             }
         }
@@ -106,28 +106,28 @@ public class PlayerData : logClass<PlayerData>
     public bool CheckIfUserHasPlayerProfile(ulong _userId)
     {
         bool contains = false;
-        Log.WriteLine("Checking if " + _userId + " has a player profile.", LogLevel.VERBOSE);
+        Log.WriteLine("Checking if " + _userId + " has a player profile.");
         contains = PlayerIDs.Any(x => x.Key == _userId);
-        Log.WriteLine(_userId + " contains: " + contains, LogLevel.VERBOSE);
+        Log.WriteLine(_userId + " contains: " + contains);
         return contains;
     }
 
     public bool CheckIfPlayerDataPlayerIDsContainsKey(ulong _userId)
     {
         bool contains = false;
-        Log.WriteLine("Checking if " + _userId + " contains.", LogLevel.VERBOSE);
+        Log.WriteLine("Checking if " + _userId + " contains.");
         contains = PlayerIDs.ContainsKey(_userId);
-        Log.WriteLine(_userId + " contains: " + contains, LogLevel.VERBOSE);
+        Log.WriteLine(_userId + " contains: " + contains);
         return contains;
     }
 
     public Player GetAPlayerProfileById(ulong _playerId)
     {
-        Log.WriteLine("Getting Player by ID: " + _playerId, LogLevel.VERBOSE);
+        Log.WriteLine("Getting Player by ID: " + _playerId);
 
         Player FoundPlayer = PlayerIDs.FirstOrDefault(x => x.Key == _playerId).Value;
         Log.WriteLine("Found: " + FoundPlayer.PlayerNickName + " (" +
-            FoundPlayer.PlayerDiscordId + ")", LogLevel.VERBOSE);
+            FoundPlayer.PlayerDiscordId + ")");
 
         return FoundPlayer;
     }
@@ -138,7 +138,7 @@ public class PlayerData : logClass<PlayerData>
         if (!PlayerIDs.ContainsKey(_socketGuildUserAfter.Id))
         {
             Log.WriteLine("PlayerId's does not contain key: " + _socketGuildUserAfter.Id +
-                " disregarding (player is not registered)", LogLevel.VERBOSE);
+                " disregarding (player is not registered)");
             return;
         }
 
@@ -168,7 +168,7 @@ public class PlayerData : logClass<PlayerData>
 
     public Task DeletePlayerProfile(ulong _playerDiscordId)
     {
-        Log.WriteLine("Starting to remove the player profile: " + _playerDiscordId, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to remove the player profile: " + _playerDiscordId);
         if (!CheckIfUserHasPlayerProfile(_playerDiscordId))
         {
             Log.WriteLine("Did not find ID: " + _playerDiscordId + "in the local database.", LogLevel.DEBUG);
@@ -187,7 +187,7 @@ public class PlayerData : logClass<PlayerData>
             return Task.CompletedTask;
         }
 
-        Log.WriteLine("User found in the server", LogLevel.VERBOSE);
+        Log.WriteLine("User found in the server");
 
         Log.WriteLine("Done removing the player profile: " + _playerDiscordId, LogLevel.DEBUG);
 

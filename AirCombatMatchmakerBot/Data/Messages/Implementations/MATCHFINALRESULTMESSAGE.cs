@@ -30,7 +30,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
     public override Task<string> GenerateMessage()
     {
-        Log.WriteLine("Starting to generate the message for the match final result", LogLevel.VERBOSE);
+        Log.WriteLine("Starting to generate the message for the match final result");
 
         mcc = new MatchChannelComponents(thisInterfaceMessage.MessageChannelId);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
@@ -120,7 +120,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
             if (interfaceObject.CurrentStatus == EmojiName.YELLOWSQUARE)
             {
-                Log.WriteLine(reportDataKvp.Value.TeamName + " did not comment.", LogLevel.VERBOSE);
+                Log.WriteLine(reportDataKvp.Value.TeamName + " did not comment.");
                 continue;
             }
 

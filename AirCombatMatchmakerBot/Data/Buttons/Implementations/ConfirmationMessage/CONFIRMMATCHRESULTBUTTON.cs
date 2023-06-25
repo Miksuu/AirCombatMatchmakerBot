@@ -38,7 +38,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
             ulong componentPlayerId = _component.User.Id;
 
             Log.WriteLine("Activating button function: " + buttonName.ToString() + " by: " +
-                componentPlayerId + " in msg: " + _interfaceMessage.MessageId, LogLevel.VERBOSE);
+                componentPlayerId + " in msg: " + _interfaceMessage.MessageId);
 
             List<ReportData> reportDataTupleWithString =
                 mcc.leagueMatchCached.MatchReporting.GetTeamReportDatasOfTheMatchWithPlayerId(

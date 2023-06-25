@@ -31,15 +31,15 @@ public class PLAYERPLANE : BaseReportingObject
     public string GetTeamPlanes()
     {
         Log.WriteLine("Starting to " + nameof(GetTeamPlanes) + " with count: " +
-            teamMemberIdsWithSelectedPlanesByTheTeam.Count(), LogLevel.VERBOSE);
+            teamMemberIdsWithSelectedPlanesByTheTeam.Count());
 
         StringBuilder membersBuilder = new StringBuilder();
         foreach (var item in teamMemberIdsWithSelectedPlanesByTheTeam)
         {
             //UnitName objectValueEnum = (UnitName)Enum.Parse(typeof(UnitName), item.Value.ToString());
-            Log.WriteLine("objectValue: " + item.Value, LogLevel.VERBOSE);
+            Log.WriteLine("objectValue: " + item.Value);
             string unitNameEnumMemberValue = EnumExtensions.GetEnumMemberAttrValue(item.Value);
-            Log.WriteLine("unitNameEnumMemberValue: " + unitNameEnumMemberValue, LogLevel.VERBOSE);
+            Log.WriteLine("unitNameEnumMemberValue: " + unitNameEnumMemberValue);
             membersBuilder.Append(unitNameEnumMemberValue).Append(", ");
         }
         return membersBuilder.ToString().TrimEnd(',', ' ');

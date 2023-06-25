@@ -32,12 +32,12 @@ public class MatchScheduler : logClass<MatchScheduler>
         if (MatchSchedulerActive)
         {
             Log.WriteLine(interfaceLeagueRef.LeagueCategoryName + "' " + nameof(MatchScheduler) +
-                " already active, returning", LogLevel.VERBOSE);
+                " already active, returning");
             return;
         }
 
         Log.WriteLine("Activating " + interfaceLeagueRef.LeagueCategoryName + "' " + nameof(MatchScheduler) +
-            " with duration: " + _duration, LogLevel.VERBOSE);
+            " with duration: " + _duration);
 
         MatchSchedulerActive = true;
         new LeagueMatchSchedulerEvent(
@@ -60,11 +60,11 @@ public class MatchScheduler : logClass<MatchScheduler>
                 interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
 
             Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
-                " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.", LogLevel.VERBOSE);
+                " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
 
             if (TeamsInTheMatchmaker.Any(x => x.Key == playerTeam.TeamId))
             {
-                Log.WriteLine(_playerId + " already in the matchmaker!", LogLevel.VERBOSE);
+                Log.WriteLine(_playerId + " already in the matchmaker!");
                 return new Response("You are already in the matchmaker!", false);
             }
 
@@ -85,13 +85,13 @@ public class MatchScheduler : logClass<MatchScheduler>
             interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
 
         Log.WriteLine("Removing Team: " + playerTeam + " (" +
-            playerTeam.TeamId + ") from the queue", LogLevel.VERBOSE);
+            playerTeam.TeamId + ") from the queue");
 
         bool removed = TeamsInTheMatchmaker
             .TryRemove(new KeyValuePair<int, TeamMatchmakerData>(playerTeam.TeamId, null));
 
         Log.WriteLine("Done removing: " + removed + "the team from the queue. Count is now: " +
-            TeamsInTheMatchmaker.Count, LogLevel.VERBOSE);
+            TeamsInTheMatchmaker.Count);
 
         if (removed)
         {
@@ -100,21 +100,21 @@ public class MatchScheduler : logClass<MatchScheduler>
         }
         else
         {
-            Log.WriteLine("Failed to find team: " + playerTeam.TeamId, LogLevel.VERBOSE);
+            Log.WriteLine("Failed to find team: " + playerTeam.TeamId);
             return new Response("Could not find the team in the matchmaker!", false);
         }
     }
 
     public void CheckCurrentStateOfTheMatchmakerAndAssignMatches()
     {
-        Log.WriteLine("Starting to check the status of the matchmaker with: " + TeamsInTheMatchmaker.Count, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to check the status of the matchmaker with: " + TeamsInTheMatchmaker.Count);
 
         foreach (var teamKvp in TeamsInTheMatchmaker)
         {
             int teamId = teamKvp.Key;
             TeamMatchmakingState teamMatchmakingState = teamKvp.Value.TeamMatchmakingState;
 
-            Log.WriteLine("Looping on: " + teamId + " with state: " + teamMatchmakingState, LogLevel.VERBOSE);
+            Log.WriteLine("Looping on: " + teamId + " with state: " + teamMatchmakingState);
 
             if (teamMatchmakingState == TeamMatchmakingState.INQUEUE)
             {
@@ -149,18 +149,18 @@ public class MatchScheduler : logClass<MatchScheduler>
     {
         List<int> availableTeamIdsToChallenge = new List<int>();
 
-        Log.WriteLine("Starting to see what teams are available to challenge: " + TeamsInTheMatchmaker.Count, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to see what teams are available to challenge: " + TeamsInTheMatchmaker.Count);
 
         foreach (var teamKvp in TeamsInTheMatchmaker)
         {
             int teamId = teamKvp.Key;
             TeamMatchmakingState teamMatchmakingState = teamKvp.Value.TeamMatchmakingState;
 
-            Log.WriteLine("Looping on: " + teamId + " with state: " + teamMatchmakingState, LogLevel.VERBOSE);
+            Log.WriteLine("Looping on: " + teamId + " with state: " + teamMatchmakingState);
 
             if (teamId == _teamIdNotToLookFor)
             {
-                Log.WriteLine(teamId + " skipped", LogLevel.VERBOSE);
+                Log.WriteLine(teamId + " skipped");
                 continue;
             }
 
@@ -172,11 +172,11 @@ public class MatchScheduler : logClass<MatchScheduler>
         }
 
         // Add more proper debugging here?
-        Log.WriteLine("Returning with a count of: " + availableTeamIdsToChallenge.Count, LogLevel.VERBOSE);
+        Log.WriteLine("Returning with a count of: " + availableTeamIdsToChallenge.Count);
 
         foreach (var item in availableTeamIdsToChallenge)
         {
-            Log.WriteLine(item + " available to challenge vs: " + _teamIdNotToLookFor, LogLevel.VERBOSE);
+            Log.WriteLine(item + " available to challenge vs: " + _teamIdNotToLookFor);
         }
 
         return availableTeamIdsToChallenge;

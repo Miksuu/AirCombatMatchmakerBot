@@ -6,13 +6,13 @@ public class CommandOption
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(optionName), LogLevel.VERBOSE);
+            Log.WriteLine("Getting " + nameof(optionName));
             return optionName;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(optionName)
-                + " to: " + value, LogLevel.VERBOSE);
+                + " to: " + value);
             optionName = value;
         }
     }
@@ -21,13 +21,13 @@ public class CommandOption
     {
         get
         {
-            Log.WriteLine("Getting " + nameof(optionDescription), LogLevel.VERBOSE);
+            Log.WriteLine("Getting " + nameof(optionDescription));
             return optionDescription;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(optionDescription)
-                + " to: " + value, LogLevel.VERBOSE);
+                + " to: " + value);
             optionDescription = value;
         }
     }

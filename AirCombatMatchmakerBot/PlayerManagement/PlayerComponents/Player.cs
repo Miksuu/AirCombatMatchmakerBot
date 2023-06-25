@@ -40,7 +40,7 @@ public class Player : logClass<Player>
     public string GetPlayerIdAsMention()
     {
         Log.WriteLine("Getting player: " + PlayerNickName + " (" +
-            PlayerDiscordId + ") as a mention", LogLevel.VERBOSE);
+            PlayerDiscordId + ") as a mention");
 
         return "<@" + PlayerDiscordId.ToString() + ">";
     }

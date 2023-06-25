@@ -55,21 +55,21 @@ public static class BotReference
     public static ulong GetGuildID()
     {
         Log.WriteLine("Getting the " + nameof(GuildID) + ": " +
-            GuildID, LogLevel.VERBOSE);
+            GuildID);
         return GuildID;
     }
 
     public static bool GetConnectionState()
     {
         Log.WriteLine("Getting the " + nameof(connectionState) +
-            ": " + connectionState, LogLevel.VERBOSE);
+            ": " + connectionState);
         return connectionState;
     }
 
     public static void SetConnectionState(bool _newConnectionState)
     {
         Log.WriteLine("Setting the " + nameof(connectionState) +
-            ": " + connectionState + " to: " + _newConnectionState, LogLevel.VERBOSE);
+            ": " + connectionState + " to: " + _newConnectionState);
         connectionState = _newConnectionState;
     }
 }

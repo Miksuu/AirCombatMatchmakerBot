@@ -37,13 +37,13 @@ public abstract class BaseMessage : InterfaceMessage
         get
         {
             Log.WriteLine("Getting " + nameof(messageEmbedColor)
-                + ": " + messageEmbedColor, LogLevel.VERBOSE);
+                + ": " + messageEmbedColor);
             return messageEmbedColor;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(messageEmbedColor) +
-                messageEmbedColor + " to: " + value, LogLevel.VERBOSE);
+                messageEmbedColor + " to: " + value);
             messageEmbedColor = value;
         }
     }
@@ -77,13 +77,13 @@ public abstract class BaseMessage : InterfaceMessage
         get
         {
             Log.WriteLine("Getting " + nameof(cachedUserMessage)
-                + ": " + cachedUserMessage, LogLevel.VERBOSE);
+                + ": " + cachedUserMessage);
             return cachedUserMessage;
         }
         set
         {
             Log.WriteLine("Setting " + nameof(cachedUserMessage) +
-                cachedUserMessage + " to: " + value, LogLevel.VERBOSE);
+                cachedUserMessage + " to: " + value);
             cachedUserMessage = value;
         }
     }
@@ -127,7 +127,7 @@ public abstract class BaseMessage : InterfaceMessage
         var component = new ComponentBuilder();
 
         Log.WriteLine("Creating the channel message with id: "
-            + thisInterfaceMessage.MessageChannelId + " with categoryID: " + thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
+            + thisInterfaceMessage.MessageChannelId + " with categoryID: " + thisInterfaceMessage.MessageCategoryId);
 
         var textChannel = await _client.GetChannelAsync(thisInterfaceMessage.MessageChannelId) as ITextChannel;
         if (textChannel == null)
@@ -136,10 +136,10 @@ public abstract class BaseMessage : InterfaceMessage
             throw new InvalidOperationException(nameof(textChannel) + " was null!");
         }
 
-        Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
+        Log.WriteLine("Found text channel: " + textChannel.Name);
 
         Log.WriteLine("messageButtonNames.Count: " +
-            thisInterfaceMessage.MessageButtonNamesWithAmount.Count, LogLevel.VERBOSE);
+            thisInterfaceMessage.MessageButtonNamesWithAmount.Count);
 
         // Generates either normal buttons, or custom amount of buttons with different properties
         GenerateButtons(component, _leagueCategoryId);
@@ -263,7 +263,7 @@ public abstract class BaseMessage : InterfaceMessage
             }
         }
 
-        Log.WriteLine("Created a new message with id: " + thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
+        Log.WriteLine("Created a new message with id: " + thisInterfaceMessage.MessageId);
 
         return this;
     }
@@ -280,7 +280,7 @@ public abstract class BaseMessage : InterfaceMessage
         var component = new ComponentBuilder();
 
         Log.WriteLine("Creating the channel message with id: "
-            + thisInterfaceMessage.MessageChannelId + " with categoryID: " + thisInterfaceMessage.MessageCategoryId, LogLevel.VERBOSE);
+            + thisInterfaceMessage.MessageChannelId + " with categoryID: " + thisInterfaceMessage.MessageCategoryId);
 
         var textChannel = await _client.GetChannelAsync(thisInterfaceMessage.MessageChannelId) as ITextChannel;
         if (textChannel == null)
@@ -289,11 +289,11 @@ public abstract class BaseMessage : InterfaceMessage
             return this;
         }
 
-        Log.WriteLine("Found text channel: " + textChannel.Name, LogLevel.VERBOSE);
+        Log.WriteLine("Found text channel: " + textChannel.Name);
 
         for (int a = 0; a < _attachmentDatas.Length; a++)
         {
-            Log.WriteLine("Looping through link button for " + _attachmentDatas[a], LogLevel.VERBOSE);
+            Log.WriteLine("Looping through link button for " + _attachmentDatas[a]);
 
             //string finalCustomId = "";
 
@@ -359,7 +359,7 @@ public abstract class BaseMessage : InterfaceMessage
             }
         }
 
-        Log.WriteLine("Created a new message with id: " + thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
+        Log.WriteLine("Created a new message with id: " + thisInterfaceMessage.MessageId);
 
         return this;
     }
@@ -386,11 +386,11 @@ public abstract class BaseMessage : InterfaceMessage
             return;
         }
 
-        Log.WriteLine("Found channel: " + channel.Id, LogLevel.VERBOSE);
+        Log.WriteLine("Found channel: " + channel.Id);
 
         var embed = new EmbedBuilder();
 
-        Log.WriteLine(thisInterfaceMessage.MessageDescription, LogLevel.VERBOSE);
+        Log.WriteLine(thisInterfaceMessage.MessageDescription);
 
         // set the title, description, and color of the embedded MessageDescription
         embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
@@ -399,18 +399,18 @@ public abstract class BaseMessage : InterfaceMessage
 
         await channel.ModifyMessageAsync(thisInterfaceMessage.MessageId, m => m.Embed = embed.Build());
 
-        Log.WriteLine("Modifying the message: " + thisInterfaceMessage.MessageId + " done.", LogLevel.VERBOSE);
+        Log.WriteLine("Modifying the message: " + thisInterfaceMessage.MessageId + " done.");
     }
 
     public async Task AddContentToTheEndOfTheMessage(string _content)
     {
         Log.WriteLine("Adding content: " + _content + " to the end of the message: " +
-            thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
+            thisInterfaceMessage.MessageId);
 
         ModifyMessage(thisInterfaceMessage.MessageDescription + "\n\n" + _content);
 
         Log.WriteLine("Done adding content: " + _content + " to the end of the message: " +
-            thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
+            thisInterfaceMessage.MessageId);
     }
 
     public void GenerateAndModifyTheMessage()
@@ -454,7 +454,7 @@ public abstract class BaseMessage : InterfaceMessage
         Dictionary<string, string> _buttonsToGenerate, ButtonName _buttonTypeToGenerate,
         ComponentBuilder _component, ulong _leagueCategoryId)
     {
-        Log.WriteLine("buttons to generate count:" + _buttonsToGenerate, LogLevel.VERBOSE);
+        Log.WriteLine("buttons to generate count:" + _buttonsToGenerate);
 
         int buttonId = 0;
         foreach (var buttonToGenerateKvp in _buttonsToGenerate)
@@ -475,14 +475,14 @@ public abstract class BaseMessage : InterfaceMessage
             thisInterfaceMessage.ButtonsInTheMessage.Add(interfaceButton);
         }
 
-        Log.WriteLine("Done generating buttons", LogLevel.VERBOSE);
+        Log.WriteLine("Done generating buttons");
     }
 
     public abstract Task<string> GenerateMessage();
 
     public async Task<Discord.IMessage> GetMessageById(IMessageChannel _channel)
     {
-        Log.WriteLine("Getting IMessageChannel with id: " + thisInterfaceMessage.MessageId, LogLevel.VERBOSE);
+        Log.WriteLine("Getting IMessageChannel with id: " + thisInterfaceMessage.MessageId);
 
         var message = await _channel.GetMessageAsync(thisInterfaceMessage.MessageId);
         if (message == null)
@@ -491,7 +491,7 @@ public abstract class BaseMessage : InterfaceMessage
             throw new InvalidOperationException(nameof(message) + " was null!");
         }
 
-        Log.WriteLine("Found: " + message.Id, LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + message.Id);
         return message;
     }
 }

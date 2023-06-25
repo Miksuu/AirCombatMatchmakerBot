@@ -42,9 +42,9 @@ public class Stats : logClass<Stats>
             }
 
             var firstUnitPlane = teamPlane.TeamMemberIdsWithSelectedPlanesByTheTeam.First().Value; // Loop through every plane here on 2v2 etc
-            //Log.WriteLine("Found teamplanestring: " + teamPlaneString, LogLevel.VERBOSE);
+            //Log.WriteLine("Found teamplanestring: " + teamPlaneString);
             //UnitName unitName = (UnitName)EnumExtensions.GetInstance(teamPlaneString);
-            Log.WriteLine("Found " + nameof(firstUnitPlane) + ": " + firstUnitPlane, LogLevel.VERBOSE);
+            Log.WriteLine("Found " + nameof(firstUnitPlane) + ": " + firstUnitPlane);
 
             if (!PlaneSpecificStats.ContainsKey(firstUnitPlane))
             {

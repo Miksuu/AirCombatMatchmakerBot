@@ -57,7 +57,7 @@ public class ReportData
 
         foreach (var player in _players)
         {
-            Log.WriteLine("Adding player: " + player.PlayerDiscordId, LogLevel.VERBOSE);
+            Log.WriteLine("Adding player: " + player.PlayerDiscordId);
             var reportingObject = reportingObjects.FirstOrDefault(x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
             //var newReportObject = new ReportObject("Plane", EmojiName.REDSQUARE, true);
             reportingObject.TeamMemberIdsWithSelectedPlanesByTheTeam.TryAdd(player.PlayerDiscordId, UnitName.NOTSELECTED);
@@ -66,14 +66,14 @@ public class ReportData
 
     public BaseReportingObject FindBaseReportingObjectOfType(TypeOfTheReportingObject _typeOfTheReportingObject)
     {
-        Log.WriteLine("Finding: " + _typeOfTheReportingObject, LogLevel.VERBOSE);
+        Log.WriteLine("Finding: " + _typeOfTheReportingObject);
         var result = ReportingObjects.FirstOrDefault(x => x.GetTypeOfTheReportingObject() == _typeOfTheReportingObject);
         if (result == null)
         {
             Log.WriteLine(nameof(_typeOfTheReportingObject) + " was null!", LogLevel.CRITICAL);
             throw new InvalidOperationException(nameof(_typeOfTheReportingObject) + " was null!");
         }
-        Log.WriteLine("Found: " + result.GetTypeOfTheReportingObject(), LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + result.GetTypeOfTheReportingObject());
         return result;
     }
 }

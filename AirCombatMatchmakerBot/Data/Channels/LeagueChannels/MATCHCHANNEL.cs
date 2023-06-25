@@ -25,7 +25,7 @@ public class MATCHCHANNEL : BaseChannel
 
         Log.WriteLine("Overwriting permissions for: " + thisInterfaceChannel.ChannelName +
             " users that will be allowed access count: " +
-            _allowedUsersIdsArray.Length, LogLevel.VERBOSE);
+            _allowedUsersIdsArray.Length);
 
         listOfOverwrites.Add(new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)));
@@ -33,7 +33,7 @@ public class MATCHCHANNEL : BaseChannel
         foreach (ulong userId in _allowedUsersIdsArray)
         {
             Log.WriteLine("Adding " + userId + " to the permission allowed List on: " +
-                thisInterfaceChannel.ChannelName, LogLevel.VERBOSE);
+                thisInterfaceChannel.ChannelName);
 
             listOfOverwrites.Add(
                 new Overwrite(userId, PermissionTarget.User,

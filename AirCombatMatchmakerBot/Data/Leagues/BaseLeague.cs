@@ -103,7 +103,7 @@ public abstract class BaseLeague : InterfaceLeague
     public InterfaceCategory FindLeaguesInterfaceCategory()
     {
         Log.WriteLine("Finding interfaceCategory in: " + thisInterfaceLeague.LeagueCategoryName +
-            " with id: " + LeagueCategoryId, LogLevel.VERBOSE);
+            " with id: " + LeagueCategoryId);
 
         InterfaceCategory interfaceCategory = 
             Database.Instance.Categories.FindInterfaceCategoryWithId(LeagueCategoryId);
@@ -113,7 +113,7 @@ public abstract class BaseLeague : InterfaceLeague
             throw new InvalidOperationException(nameof(interfaceCategory) + " was null!");
         }
 
-        Log.WriteLine("Found: " + interfaceCategory.CategoryType, LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + interfaceCategory.CategoryType);
 
         return interfaceCategory;
     }
@@ -155,7 +155,7 @@ public abstract class BaseLeague : InterfaceLeague
 
     public void UpdateLeagueLeaderboard()
     {
-        Log.WriteLine("Updating leaderboard on: " + thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("Updating leaderboard on: " + thisInterfaceLeague.LeagueCategoryName);
 
         try
         {
@@ -175,7 +175,7 @@ public abstract class BaseLeague : InterfaceLeague
 
 
 
-        Log.WriteLine("Done updating leaderboard on: " + thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("Done updating leaderboard on: " + thisInterfaceLeague.LeagueCategoryName);
     }
 
     public Task<Response> RegisterUserToALeague(ulong _userId)
@@ -183,7 +183,7 @@ public abstract class BaseLeague : InterfaceLeague
         string responseMsg = string.Empty;
 
         Log.WriteLine("Registering user to league: " +
-            thisInterfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+            thisInterfaceLeague.LeagueCategoryName);
 
         InterfaceChannel foundChannel;
 
@@ -216,7 +216,7 @@ public abstract class BaseLeague : InterfaceLeague
             }
 
             Log.WriteLine("Found player: " + player.PlayerNickName +
-                " (" + player.PlayerDiscordId + ")", LogLevel.VERBOSE);
+                " (" + player.PlayerDiscordId + ")");
 
             bool playerIsInATeamAlready = LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(_userId);
 
@@ -225,7 +225,7 @@ public abstract class BaseLeague : InterfaceLeague
 
             if (!playerIsInATeamAlready)
             {
-                Log.WriteLine("The player was not found in any team in the league", LogLevel.VERBOSE);
+                Log.WriteLine("The player was not found in any team in the league");
 
                 // Create a team with unique ID and increment that ID
                 // after the data has been serialized
@@ -236,7 +236,7 @@ public abstract class BaseLeague : InterfaceLeague
 
                 if (thisInterfaceLeague.LeaguePlayerCountPerTeam < 2)
                 {
-                    Log.WriteLine("This league is solo", LogLevel.VERBOSE);
+                    Log.WriteLine("This league is solo");
                         
                     LeagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
 
@@ -280,7 +280,7 @@ public abstract class BaseLeague : InterfaceLeague
                 UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
 
                 Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + thisInterfaceLeague.LeagueCategoryName +
-                    ", had a team already active", LogLevel.VERBOSE);
+                    ", had a team already active");
                 responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) +
                     "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
                 return Task.FromResult(new Response(responseMsg, false));

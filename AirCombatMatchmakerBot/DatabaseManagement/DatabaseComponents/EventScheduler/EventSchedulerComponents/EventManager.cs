@@ -108,7 +108,7 @@ public class EventManager : logClass<EventManager>
             var scheduledEventsToRemove = ClassScheduledEvents.Where(e => e.EventId == scheduledEvent.EventId).ToList();
             foreach (var item in scheduledEventsToRemove)
             {
-                Log.WriteLine("event: " + item.EventId + " scheduledEventsToRemove: " + item.EventId, LogLevel.VERBOSE);
+                Log.WriteLine("event: " + item.EventId + " scheduledEventsToRemove: " + item.EventId);
             }
 
             RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
@@ -163,7 +163,7 @@ public class EventManager : logClass<EventManager>
                 ClassScheduledEvents.TryTake(out eventToRemove);
             }
 
-            Log.WriteLine($"{events.Count} TempQueueEvent(s) removed from ClassScheduledEvents.", LogLevel.VERBOSE);
+            Log.WriteLine($"{events.Count} TempQueueEvent(s) removed from ClassScheduledEvents.");
         }
         catch (Exception ex)
         {

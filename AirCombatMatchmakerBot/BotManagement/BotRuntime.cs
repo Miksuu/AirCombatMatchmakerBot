@@ -66,7 +66,7 @@ public class BotRuntimeManager
                 // Delete roles here
                 foreach (var item in guild.Roles)
                 {
-                    Log.WriteLine("on role: " + item.Name, LogLevel.VERBOSE);
+                    Log.WriteLine("on role: " + item.Name);
 
                     if (item.Name == "Developer" || item.Name == "Server Booster" || 
                         item.Name == "AirCombatMatchmakerBotDev" || item.Name == "Discord Me" ||

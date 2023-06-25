@@ -30,7 +30,7 @@ public class LINKBUTTON : BaseButton
     public Discord.ButtonBuilder CreateALinkButton(AttachmentData _attachmentData)
     {
         Log.WriteLine("Creating a link button: " + _attachmentData.attachmentName + " | " +
-            _attachmentData.attachmentLink, LogLevel.VERBOSE);
+            _attachmentData.attachmentLink);
 
         var button = new Discord.ButtonBuilder()
         {

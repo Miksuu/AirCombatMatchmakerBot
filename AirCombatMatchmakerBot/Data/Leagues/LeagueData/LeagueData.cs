@@ -80,7 +80,7 @@ public class LeagueData : logClass<LeagueData>
 
     public Team FindActiveTeamWithTeamId(int _teamId)
     {
-        Log.WriteLine("Starting to find team with id: " + _teamId, LogLevel.VERBOSE);
+        Log.WriteLine("Starting to find team with id: " + _teamId);
 
         Team? foundTeam = Teams.TeamsConcurrentBag.FirstOrDefault(t => t.TeamId == _teamId && t.TeamActive);
         if (foundTeam == null)
@@ -89,14 +89,14 @@ public class LeagueData : logClass<LeagueData>
             throw new InvalidOperationException(nameof(foundTeam) + " was null!");
         }
 
-        Log.WriteLine("Found team: " + foundTeam.TeamName + " with id: " + _teamId, LogLevel.VERBOSE);
+        Log.WriteLine("Found team: " + foundTeam.TeamName + " with id: " + _teamId);
 
         return foundTeam;
     }
 
     public bool CheckIfPlayerIsParcipiatingInTheLeague(ulong _playerId)
     {
-        Log.WriteLine("Checking if: " + _playerId + " is participiating in league.", LogLevel.VERBOSE);
+        Log.WriteLine("Checking if: " + _playerId + " is participiating in league.");
 
         foreach (Team team in Teams.TeamsConcurrentBag)
         {
@@ -109,10 +109,10 @@ public class LeagueData : logClass<LeagueData>
                 return true;
             }
 
-            Log.WriteLine(nameof(team) + " was not found (null), continuing", LogLevel.VERBOSE);
+            Log.WriteLine(nameof(team) + " was not found (null), continuing");
         }
 
-        Log.WriteLine("Didn't find that " + _playerId + " was participiating.", LogLevel.VERBOSE);
+        Log.WriteLine("Didn't find that " + _playerId + " was participiating.");
 
         return false;
     }

@@ -12,7 +12,7 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
         ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
         Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
-            _leagueCategoryId, LogLevel.VERBOSE);
+            _leagueCategoryId);
 
         base.SetupScheduledEvent(_timeFromNowToExecuteOn, _scheduledEvents);
         LeagueCategoryIdCached = _leagueCategoryId;

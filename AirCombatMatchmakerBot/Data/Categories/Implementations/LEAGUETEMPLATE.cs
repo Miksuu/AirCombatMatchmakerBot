@@ -22,7 +22,7 @@ public class LEAGUETEMPLATE : BaseCategory
     public override List<Overwrite> GetGuildPermissions(
         SocketGuild _guild, SocketRole _role)
     {
-        Log.WriteLine("executing permissions from LEAGUETEMPLATE", LogLevel.VERBOSE);
+        Log.WriteLine("executing permissions from LEAGUETEMPLATE");
         return new List<Overwrite>
         {
             new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,

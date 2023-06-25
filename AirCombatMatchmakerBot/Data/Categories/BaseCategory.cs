@@ -51,7 +51,7 @@ public abstract class BaseCategory : InterfaceCategory
         SocketGuild _guild, string _categoryName, SocketRole _role)
     {
         Log.WriteLine("Starting to create a new category with name: " +
-            _categoryName, LogLevel.VERBOSE);
+            _categoryName);
 
         RestCategoryChannel newCategory = await _guild.CreateCategoryChannelAsync(
             _categoryName, x => x.PermissionOverwrites = GetGuildPermissions(_guild, _role));
@@ -62,7 +62,7 @@ public abstract class BaseCategory : InterfaceCategory
         }
 
         Log.WriteLine("Created a new RestCategoryChannel with ID: " +
-            newCategory.Id, LogLevel.VERBOSE);
+            newCategory.Id);
 
         SocketCategoryChannel socketCategoryChannel =
             _guild.GetCategoryChannel(newCategory.Id);
@@ -185,11 +185,11 @@ public abstract class BaseCategory : InterfaceCategory
             Log.WriteLine("Done adding to the db. Count is now: " +
                 InterfaceChannels.Count +
                 " for the ConcurrentBag of category: " + thisInterfaceCategory.CategoryType.ToString() +
-                " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
+                " (" + _socketCategoryChannelId + ")");
         }
 
         Log.WriteLine("Done creating channel: " + interfaceChannel.ChannelId + " with name: " 
-            + interfaceChannel.ChannelName, LogLevel.VERBOSE);
+            + interfaceChannel.ChannelName);
 
         return interfaceChannel;
     }
@@ -260,11 +260,11 @@ public abstract class BaseCategory : InterfaceCategory
             Log.WriteLine("Done adding to the db. Count is now: " +
                 InterfaceChannels.Count +
                 " for the ConcurrentBag of category: " + thisInterfaceCategory.CategoryType.ToString() +
-                " (" + _socketCategoryChannelId + ")", LogLevel.VERBOSE);
+                " (" + _socketCategoryChannelId + ")");
         }
 
         Log.WriteLine("Done creating channel: " + interfaceChannel.ChannelId + " with name: "
-            + interfaceChannel.ChannelName, LogLevel.VERBOSE);
+            + interfaceChannel.ChannelName);
 
         return interfaceChannel;
     }
@@ -279,7 +279,7 @@ public abstract class BaseCategory : InterfaceCategory
     {
         InterfaceLeague interfaceLeague;
 
-        Log.WriteLine("Checking for missing matches in: " + _socketCategoryChannelId, LogLevel.VERBOSE);
+        Log.WriteLine("Checking for missing matches in: " + _socketCategoryChannelId);
 
         try
         {
@@ -292,7 +292,7 @@ public abstract class BaseCategory : InterfaceCategory
             return Task.CompletedTask;
         }
 
-        Log.WriteLine("Found InterfaceLeague: " + interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);
+        Log.WriteLine("Found InterfaceLeague: " + interfaceLeague.LeagueCategoryName);
 
         Matches matches = interfaceLeague.LeagueData.Matches;
 
@@ -300,13 +300,13 @@ public abstract class BaseCategory : InterfaceCategory
         foreach (LeagueMatch match in matches. atchesConcurrentBag)
         {
             Log.WriteLine("Looping on match id: " + match.MatchId +
-                " with channelId: " + match.MatchChannelId, LogLevel.VERBOSE);
+                " with channelId: " + match.MatchChannelId);
 
             var matchChannel = _client.GetChannelAsync(match.MatchChannelId).Result as ITextChannel;
 
             if (matchChannel != null)
             {
-                Log.WriteLine("Found " + nameof(matchChannel) + matchChannel.Name, LogLevel.VERBOSE);
+                Log.WriteLine("Found " + nameof(matchChannel) + matchChannel.Name);
                 continue;
             }
 
@@ -342,7 +342,7 @@ public abstract class BaseCategory : InterfaceCategory
     public bool FindIfInterfaceChannelExistsWithIdInTheCategory(
         ulong _idToSearchWith)
     {
-        Log.WriteLine("Getting to see if CategoryKvp exists with id: " + _idToSearchWith, LogLevel.VERBOSE);
+        Log.WriteLine("Getting to see if CategoryKvp exists with id: " + _idToSearchWith);
 
         var foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Key == _idToSearchWith);
         if (foundInterfaceChannel.Value == null)
@@ -350,14 +350,14 @@ public abstract class BaseCategory : InterfaceCategory
             return false;
         }
 
-        Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName, LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName);
         return true;
     }
 
     public InterfaceChannel FindInterfaceChannelWithIdInTheCategory(
         ulong _idToSearchWith)
     {
-        Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith, LogLevel.VERBOSE);
+        Log.WriteLine("Getting CategoryKvp with id: " + _idToSearchWith);
 
         InterfaceChannel interfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Key == _idToSearchWith).Value;
         if (interfaceChannel == null)
@@ -367,7 +367,7 @@ public abstract class BaseCategory : InterfaceCategory
             throw new InvalidOperationException(errorMsg);
         }
 
-        Log.WriteLine("Found: " + interfaceChannel.ChannelName, LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + interfaceChannel.ChannelName);
 
         return interfaceChannel;
     }
@@ -375,7 +375,7 @@ public abstract class BaseCategory : InterfaceCategory
     public InterfaceChannel FindInterfaceChannelWithNameInTheCategory(
         ChannelType _nameToSearchWith)
     {
-        Log.WriteLine("Getting CategoryKvp with name: " + _nameToSearchWith, LogLevel.VERBOSE);
+        Log.WriteLine("Getting CategoryKvp with name: " + _nameToSearchWith);
 
         InterfaceChannel interfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Value.ChannelType == _nameToSearchWith).Value;
         if (interfaceChannel == null)
@@ -384,7 +384,7 @@ public abstract class BaseCategory : InterfaceCategory
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             throw new InvalidOperationException(errorMsg);
         }
-        Log.WriteLine("Found: " + interfaceChannel.ChannelName, LogLevel.VERBOSE);
+        Log.WriteLine("Found: " + interfaceChannel.ChannelName);
         return interfaceChannel;
     }
 }

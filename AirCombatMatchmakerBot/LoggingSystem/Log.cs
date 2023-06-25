@@ -7,7 +7,7 @@ public static class Log
 {
     public static void WriteLine(
         string _message,
-        LogLevel _logLevel,
+        LogLevel _logLevel = LogLevel.VERBOSE,
         [CallerFilePath] string _filePath = "",
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)

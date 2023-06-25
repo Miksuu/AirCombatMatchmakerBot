@@ -26,7 +26,7 @@ public class JOINMATCHSCHEDULER : BaseButton
         ulong channelId = _component.Channel.Id;
 
         Log.WriteLine("Starting processing a join by: " +
-            playerId + " in channel: " + channelId, LogLevel.VERBOSE);
+            playerId + " in channel: " + channelId);
 
         lcc = new LeagueCategoryComponents(_interfaceMessage.MessageCategoryId);
         if (lcc.interfaceLeagueCached == null)
@@ -42,7 +42,7 @@ public class JOINMATCHSCHEDULER : BaseButton
         var response = matchScheduler.AddTeamToTheMatchSchedulerWithPlayerId(playerId);
 
         //_interfaceMessage.GenerateAndModifyTheMessage();
-        //Log.WriteLine("After modifying message", LogLevel.VERBOSE);
+        //Log.WriteLine("After modifying message");
 
         return response;
     }

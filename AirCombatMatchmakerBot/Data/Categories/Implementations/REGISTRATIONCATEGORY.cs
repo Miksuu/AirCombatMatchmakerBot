@@ -18,7 +18,7 @@ public class REGISTRATIONCATEGORY : BaseCategory
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
     {
-        Log.WriteLine("executing permissions from REGISTRATIONCATEGORY", LogLevel.VERBOSE);
+        Log.WriteLine("executing permissions from REGISTRATIONCATEGORY");
         return new List<Overwrite>
         {
         };

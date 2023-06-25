@@ -18,7 +18,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
         ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
         Log.WriteLine("Creating event: " + nameof(TempQueueEvent) + "|" +
-            _leagueCategoryId + "|" + _matchChannelId, LogLevel.VERBOSE);
+            _leagueCategoryId + "|" + _matchChannelId);
 
         base.SetupScheduledEvent(300, _scheduledEvents);
         LeagueCategoryIdCached = _leagueCategoryId;
@@ -62,7 +62,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
         if (!_serialize) return;
 
         await SerializationManager.SerializeDB();
-        Log.WriteLine("event: " + EventId + " after serialization", LogLevel.VERBOSE);
+        Log.WriteLine("event: " + EventId + " after serialization");
     }
 
     public override void CheckTheScheduledEventStatus()

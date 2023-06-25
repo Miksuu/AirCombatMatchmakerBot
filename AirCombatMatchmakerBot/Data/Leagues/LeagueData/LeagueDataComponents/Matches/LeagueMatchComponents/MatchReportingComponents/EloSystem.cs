@@ -90,9 +90,9 @@ public static class EloSystem
             {
                 Team databaseTeam = _interfaceLeague.LeagueData.FindActiveTeamWithTeamId(_teamsInTheMatch[t].TeamId);
                 ReportData reportData = _teamIdsWithReportData.ElementAt(t).Value;
-                Log.WriteLine(databaseTeam.TeamId + " SR before: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
+                Log.WriteLine(databaseTeam.TeamId + " SR before: " + databaseTeam.SkillRating);
                 databaseTeam.SkillRating += reportData.FinalEloDelta;
-                Log.WriteLine(databaseTeam.TeamId + " SR after: " + databaseTeam.SkillRating, LogLevel.VERBOSE);
+                Log.WriteLine(databaseTeam.TeamId + " SR after: " + databaseTeam.SkillRating);
 
                 databaseTeam.CalculateTeamStatsAfterAMatch(reportData, _teamIdsWithReportData.ElementAt(1-t).Value);
             }
@@ -164,7 +164,7 @@ public static class EloSystem
                 winnerIndex = 2;
             }
 
-            Log.WriteLine("winnerIndex is = " + winnerIndex, LogLevel.VERBOSE);
+            Log.WriteLine("winnerIndex is = " + winnerIndex);
 
             return winnerIndex;
         }

@@ -9,13 +9,13 @@ public static class UserManager
     public static async Task HandleUserJoin(SocketGuildUser _user)
     {
         Log.WriteLine("User " + _user.Username +
-            " has joined the discord with id: " + _user.Id, LogLevel.VERBOSE);
+            " has joined the discord with id: " + _user.Id);
 
         // Check if the user is already in the database
         if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(_user.Id))
         {
             Log.WriteLine("User is not in the PlayerID's ConcurrentDictionary," +
-                " disregarding any further action", LogLevel.VERBOSE);
+                " disregarding any further action");
             return;
         }
 
@@ -26,7 +26,7 @@ public static class UserManager
 
         await RoleManager.GrantUserAccess(_user.Id, "Member");
 
-        Log.WriteLine("Adding " + _user.Id + " to the cache done.", LogLevel.VERBOSE);
+        Log.WriteLine("Adding " + _user.Id + " to the cache done.");
 
         await SerializationManager.SerializeDB();
     }
@@ -60,7 +60,7 @@ public static class UserManager
 
         foreach (ulong userId in _userIds)
         {
-            Log.WriteLine("On userId:" + userId, LogLevel.VERBOSE);
+            Log.WriteLine("On userId:" + userId);
 
             await HandleUserLeave(
                "during downtime: userId: " + userId.ToString(), userId);

@@ -65,7 +65,7 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
                 "If the time above is fine, use ``/schedule accept`` command, or click the ACCEPT button below. " +
                 "Otherwise refer to the instructions: " + message.GetJumpUrl() + " to propose a new time!";
 
-            Log.WriteLine(thisInterfaceMessage.MessageDescription, LogLevel.VERBOSE);
+            Log.WriteLine(thisInterfaceMessage.MessageDescription);
 
             return thisInterfaceMessage.MessageDescription;
         }

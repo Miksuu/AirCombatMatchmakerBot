@@ -15,7 +15,7 @@ public class Admins : logClass<Admins>
 
     public bool CheckIfCommandSenderWasAnAdmin(SocketSlashCommand _command)
     {
-        Log.WriteLine("Checking if command sender: " + _command.User.Id + " is an admin.", LogLevel.VERBOSE);
+        Log.WriteLine("Checking if command sender: " + _command.User.Id + " is an admin.");
         return AdminIDs.Contains(_command.User.Id);
     }
 }

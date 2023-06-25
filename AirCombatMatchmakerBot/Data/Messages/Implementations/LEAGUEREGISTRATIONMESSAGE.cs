@@ -50,7 +50,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
             GetAllowedUnitsAsString(interfaceLeague) + "\n" +
             GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(interfaceLeague);
 
-        Log.WriteLine(returned, LogLevel.VERBOSE);
+        Log.WriteLine(returned);
 
         return Task.FromResult(returned);
     }
@@ -88,15 +88,15 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
             {
                 count++;
                 Log.WriteLine("team: " + TeamName +
-                    " is active, increased count to: " + count, LogLevel.VERBOSE);
+                    " is active, increased count to: " + count);
             }
             else
             {
-                Log.WriteLine("team: " + TeamName + " is not active", LogLevel.VERBOSE);
+                Log.WriteLine("team: " + TeamName + " is not active");
             }
         }
 
-        Log.WriteLine("Total count: " + count, LogLevel.VERBOSE);
+        Log.WriteLine("Total count: " + count);
 
         if (_interfaceLeague.LeaguePlayerCountPerTeam > 1)
         {

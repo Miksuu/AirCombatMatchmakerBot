@@ -21,7 +21,7 @@ public class BOTSTUFF : BaseCategory
 
     public override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
     {
-        Log.WriteLine("executing permissions from BOTSTUFF", LogLevel.VERBOSE);
+        Log.WriteLine("executing permissions from BOTSTUFF");
         return new List<Overwrite>
         {
             new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,

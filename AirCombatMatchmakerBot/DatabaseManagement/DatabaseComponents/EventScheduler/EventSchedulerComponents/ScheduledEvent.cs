@@ -48,15 +48,15 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
         ulong _currentUnixTime, bool _clearEventOnTheStartup = false)
     {
         Log.WriteLine("Loop on event: " + EventId + " type: " + GetType() + " with times: " +
-            _currentUnixTime + " >= " + TimeToExecuteTheEventOn, LogLevel.VERBOSE);
+            _currentUnixTime + " >= " + TimeToExecuteTheEventOn);
 
         if (_currentUnixTime >= TimeToExecuteTheEventOn)
         {
-            Log.WriteLine("Attempting to execute event: " + EventId, LogLevel.VERBOSE);
+            Log.WriteLine("Attempting to execute event: " + EventId);
 
             if (EventIsBeingExecuted && !_clearEventOnTheStartup)
             {
-                Log.WriteLine("Event: " + EventId + " was being executed already, continuing.", LogLevel.VERBOSE);
+                Log.WriteLine("Event: " + EventId + " was being executed already, continuing.");
                 return false;
             }
 
@@ -65,24 +65,24 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
             Log.WriteLine("Executing event: " + EventId, LogLevel.DEBUG);
 
             //InterfaceEventType interfaceEventType = (InterfaceEventType)scheduledEvent;
-            //Log.WriteLine("event: " + EventId + " cast", LogLevel.VERBOSE);
+            //Log.WriteLine("event: " + EventId + " cast");
             ExecuteTheScheduledEvent();
-            Log.WriteLine("event: " + EventId + " after execute await", LogLevel.VERBOSE);
+            Log.WriteLine("event: " + EventId + " after execute await");
 
             return true;
         }
         else if (_currentUnixTime % 5 == 0 && _currentUnixTime <= TimeToExecuteTheEventOn)
         {
-            Log.WriteLine("event: " + EventId + " going to check the event status", LogLevel.VERBOSE);
+            Log.WriteLine("event: " + EventId + " going to check the event status");
             CheckTheScheduledEventStatus();
         }
         else
         {
-            Log.WriteLine("event: " + EventId + " ended up in else", LogLevel.VERBOSE);
+            Log.WriteLine("event: " + EventId + " ended up in else");
         }
 
         Log.WriteLine("Done with if statement on event: " + EventId + " type: " + GetType() + " with times: " +
-            _currentUnixTime + " >= " + TimeToExecuteTheEventOn, LogLevel.VERBOSE);
+            _currentUnixTime + " >= " + TimeToExecuteTheEventOn);
 
         return false;
     }
@@ -91,7 +91,7 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
         ulong _timeFromNowToExecuteOn, ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
         Log.WriteLine("Setting " + typeof(ScheduledEvent) + "' TimeToExecuteTheEventOn: " +
-            _timeFromNowToExecuteOn + " seconds from now", LogLevel.VERBOSE);
+            _timeFromNowToExecuteOn + " seconds from now");
 
         ulong currentUnixTime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
         TimeToExecuteTheEventOn = currentUnixTime + (ulong)_timeFromNowToExecuteOn;
@@ -101,7 +101,7 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
         _scheduledEvents.Add(this);
 
         Log.WriteLine(typeof(ScheduledEvent) + "' TimeToExecuteTheEventOn is now: " +
-            TimeToExecuteTheEventOn + " with id event: " + EventId, LogLevel.VERBOSE);
+            TimeToExecuteTheEventOn + " with id event: " + EventId);
     }
 
     public abstract Task ExecuteTheScheduledEvent(bool _serialize = true);

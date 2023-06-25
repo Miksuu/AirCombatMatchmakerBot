@@ -94,7 +94,7 @@ public class Database
             return;
         }
 
-        Log.WriteLine("leagues count: " + Leagues.StoredLeagues.Count, LogLevel.VERBOSE);
+        Log.WriteLine("leagues count: " + Leagues.StoredLeagues.Count);
 
         foreach (InterfaceLeague interfaceLeague in Leagues.StoredLeagues)
         {
@@ -104,16 +104,16 @@ public class Database
             List<int> teamsToRemove = new List<int>();
             foreach (Team team in interfaceLeague.LeagueData.Teams.TeamsConcurrentBag)
             {
-                Log.WriteLine("Looping through team: " + team.TeamName + "(" + team.TeamId + ")", LogLevel.VERBOSE);
+                Log.WriteLine("Looping through team: " + team.TeamName + "(" + team.TeamId + ")");
                 if (team.Players.Any(p => p.PlayerDiscordId == _playerDiscordId))
                 {
                     Log.WriteLine("Player " + +_playerDiscordId + " is in team: " +
-                        team.TeamName + "(" + team.TeamId + ")", LogLevel.VERBOSE);
+                        team.TeamName + "(" + team.TeamId + ")");
 
                     teamsToRemove.Add(team.TeamId);
 
                 }
-                Log.WriteLine("done looping through teams: " + interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.VERBOSE);
+                Log.WriteLine("done looping through teams: " + interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Count);
             }
 
             foreach (int teamId in teamsToRemove)
@@ -197,7 +197,7 @@ public class Database
                 if (leagueRegistrationMessage.belongsToLeagueCategoryId ==
                     interfaceLeague.DiscordLeagueReferences.LeagueCategoryId)
                 {
-                    Log.WriteLine("true, modifying", LogLevel.VERBOSE);
+                    Log.WriteLine("true, modifying");
 
                     await messageKvp.Value.ModifyMessage(
                         leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague());
@@ -205,7 +205,7 @@ public class Database
                     //await messageKvp.Value.GenerateAndModifyTheMessage();
                 }
 
-                Log.WriteLine("after if", LogLevel.VERBOSE);
+                Log.WriteLine("after if");
 
                 /*
                 var MessageDescription = messageKvp.Value;
@@ -224,18 +224,18 @@ public class Database
                 }
             }
              
-            Log.WriteLine("Done looping through " + leagueRegistrationMessages.Count + " messages", LogLevel.VERBOSE);
+            Log.WriteLine("Done looping through " + leagueRegistrationMessages.Count + " messages");
 
 
-            Log.WriteLine("before updating leaderboard", LogLevel.VERBOSE);
+            Log.WriteLine("before updating leaderboard");
 
             // Updates the leaderboard after the player has been removed from the league
             interfaceLeague.UpdateLeagueLeaderboard();
 
-            Log.WriteLine("Done processing league: " + interfaceLeague.LeagueCategoryName, LogLevel.VERBOSE);*/
+            Log.WriteLine("Done processing league: " + interfaceLeague.LeagueCategoryName);*/
         }
 
-        Log.WriteLine("Done processing all leagues", LogLevel.VERBOSE);
+        Log.WriteLine("Done processing all leagues");
 
         /*
         // Remove user's access (back to the registration...)

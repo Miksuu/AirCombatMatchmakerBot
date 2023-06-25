@@ -6,7 +6,7 @@ public static class RoleManager
 {
     public static Task<string> FindRoleNameById(ulong _roleId)
     {
-        Log.WriteLine("Looking for role: " + _roleId, LogLevel.VERBOSE);
+        Log.WriteLine("Looking for role: " + _roleId);
 
         var guild = BotReference.GetGuildRef();
         if (guild == null)
@@ -65,7 +65,7 @@ public static class RoleManager
         // Add the role to the user
         await user.AddRoleAsync(role);
 
-        Log.WriteLine("Done granting role " + _roleName + " from: " + _playerId, LogLevel.VERBOSE);
+        Log.WriteLine("Done granting role " + _roleName + " from: " + _playerId);
     }
 
     public static async Task RevokeUserAccess(ulong _playerId, string _roleName)
@@ -96,13 +96,13 @@ public static class RoleManager
         // Add the role to the user
         await user.RemoveRoleAsync(role);
 
-        Log.WriteLine("Done revoking role " + _roleName + " from: " + _playerId, LogLevel.VERBOSE);
+        Log.WriteLine("Done revoking role " + _roleName + " from: " + _playerId);
     }
 
     public static async Task<SocketRole> CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt
         (SocketGuild _guild, string _roleName)
     {
-        Log.WriteLine("Checking if role exists by name: " + _roleName, LogLevel.VERBOSE);
+        Log.WriteLine("Checking if role exists by name: " + _roleName);
 
         foreach (SocketRole role in _guild.Roles)
         {
@@ -121,7 +121,7 @@ public static class RoleManager
 
         SocketRole socketRole = _guild.GetRole(newRole.Id);
         Log.WriteLine("Found socketrole: " + socketRole.Name + " with id: " +
-            socketRole.Id + " returning it.", LogLevel.VERBOSE);
+            socketRole.Id + " returning it.");
 
         return socketRole;
     }

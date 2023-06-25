@@ -28,7 +28,7 @@ public static class MessageReceiver
         }
 
         Log.WriteLine("Message: " + _socketMessage.Id + " + detected in: " +
-            _socketMessage.Channel.Id + " by: " + _socketMessage.Author.Id, LogLevel.VERBOSE);
+            _socketMessage.Channel.Id + " by: " + _socketMessage.Author.Id);
 
         //var socketMessageComponent = _socketMessage.ToComponent();
 
@@ -36,7 +36,7 @@ public static class MessageReceiver
         if (_socketMessage.Attachments.Count != 1)
         {
             Log.WriteLine("Message: " + _socketMessage.Id +
-                " contained more than 1 attachment!", LogLevel.VERBOSE);
+                " contained more than 1 attachment!");
 
             await _socketMessage.Channel.SendMessageAsync("\n" +
                 _socketMessage.Author.Mention + ", make sure only include one attachment in the message," +
@@ -68,7 +68,7 @@ public static class MessageReceiver
                 continue;
             }
 
-            Log.WriteLine("Found attachment: " + attachment.Filename, LogLevel.VERBOSE);
+            Log.WriteLine("Found attachment: " + attachment.Filename);
 
             foreach (string fileFormat in allowedFileFormats)
             {
@@ -150,7 +150,7 @@ public static class MessageReceiver
 
             await _socketMessage.DeleteAsync();
 
-            Log.WriteLine("Done deleting message from: " + smId, LogLevel.VERBOSE);
+            Log.WriteLine("Done deleting message from: " + smId);
 
             await SerializationManager.SerializeDB();
         }
