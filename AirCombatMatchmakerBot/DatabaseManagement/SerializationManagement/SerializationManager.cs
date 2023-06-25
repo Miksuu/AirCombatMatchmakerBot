@@ -4,12 +4,16 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System.Collections.Concurrent;
 using System.Runtime.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public static class SerializationManager
 {
     static string dbPath = @"C:\AirCombatMatchmakerBot\Data";
     static string dbFileName = "database.json";
     static string dbPathWithFileName = dbPath + @"\" + dbFileName;
+
+    static string dbTempFileName = "database.tmp";
+    static string dbTempPathWithFileName = dbPath + @"\" + dbTempFileName;
     //static bool serializationInProgress = false;
     static SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
@@ -18,7 +22,6 @@ public static class SerializationManager
         await semaphore.WaitAsync();
         try
         {
-
             Log.WriteLine("SERIALIZING DB", LogLevel.SERIALIZATION);
 
             if (!_circularDependency)
@@ -34,7 +37,7 @@ public static class SerializationManager
             serializer.ObjectCreationHandling = ObjectCreationHandling.Replace;
             serializer.ContractResolver = new DataMemberContractResolver();
 
-            using (StreamWriter sw = new StreamWriter(dbPathWithFileName))
+            using (StreamWriter sw = new StreamWriter(dbTempPathWithFileName))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, Database.Instance, typeof(Database));
@@ -42,6 +45,8 @@ public static class SerializationManager
                 sw.Close();
             }
 
+            // Atomic file replacement
+            File.Replace(dbTempPathWithFileName, dbPathWithFileName, null);
         }
         finally
         {
