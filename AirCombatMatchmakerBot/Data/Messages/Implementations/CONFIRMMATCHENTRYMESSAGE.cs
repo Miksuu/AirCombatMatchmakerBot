@@ -71,8 +71,8 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                     // Skips the matches that have not been scheduled
                     if (mcc.leagueMatchCached.IsAScheduledMatch)
                     {
-                        finalMessage += "Scheduled time: " +
-                            TimeService.ConvertToZuluTimeFromUnixTime(scheduledEvent.TimeToExecuteTheEventOn).ToString() + "\n";
+                        finalMessage += "**" +
+                            TimeService.ConvertToZuluTimeFromUnixTime(scheduledEvent.TimeToExecuteTheEventOn).ToString() + "**\n";
                     }
 
                     finalMessage += "Time left: " +
@@ -80,7 +80,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                 }
             }
 
-            finalMessage += "Selected plane:\n";
+            finalMessage += "\n**Selected plane**:\n";
 
             var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
 
