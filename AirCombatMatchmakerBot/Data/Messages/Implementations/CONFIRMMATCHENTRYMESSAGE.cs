@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using Discord;
 
@@ -134,23 +134,6 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
                 mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
             {
-                /*
-                // Perhaps make this an abstract method to remove each of the event type from the queue
-                // with each of derived classes having their own conditions
-                List<ScheduledEvent> scheduledEventsToRemove = new List<ScheduledEvent>();
-                foreach (ScheduledEvent scheduledEvent in mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents)
-                {
-                    if (scheduledEvent.GetType() == typeof(MatchQueueAcceptEvent))
-                    {
-                        if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
-                            scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
-                        {
-                            scheduledEventsToRemove.Add(scheduledEvent);
-                        }
-                    }
-                }*/
-
-                //mcc.leagueMatchCached.MatchEventManager.RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
                 mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(MatchQueueAcceptEvent));
                 mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
 
