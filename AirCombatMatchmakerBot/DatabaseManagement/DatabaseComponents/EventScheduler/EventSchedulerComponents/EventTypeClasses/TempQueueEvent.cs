@@ -20,7 +20,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
         Log.WriteLine("Creating event: " + nameof(TempQueueEvent) + "|" +
             _leagueCategoryId + "|" + _matchChannelId, LogLevel.VERBOSE);
 
-        base.SetupScheduledEvent(30, _scheduledEvents);
+        base.SetupScheduledEvent(300, _scheduledEvents);
         LeagueCategoryIdCached = _leagueCategoryId;
         MatchChannelIdCached = _matchChannelId;
         PlayerIdCached = _playerId;
@@ -52,7 +52,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
 
             if (!playerPlane.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(PlayerIdCached))
             {
-                Log.WriteLine("Did not contain: " + PlayerIdCached, LogLevel.CRITICAL);
+                //Log.WriteLine("Did not contain: " + PlayerIdCached, LogLevel.CRITICAL);
                 continue;
             }
 
