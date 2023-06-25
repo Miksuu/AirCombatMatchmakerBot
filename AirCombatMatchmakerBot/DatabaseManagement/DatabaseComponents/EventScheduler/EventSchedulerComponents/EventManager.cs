@@ -141,4 +141,33 @@ public class EventManager : logClass<EventManager>
             }
         }
     }
+
+    public void ClearCertainTypeOfEventsFromTheList(Type _type)
+    {
+        try
+        {
+            if (ClassScheduledEvents == null)
+            {
+                Log.WriteLine("ClassScheduledEvents is null.", LogLevel.CRITICAL);
+                throw new InvalidOperationException("ClassScheduledEvents is null.");
+            }
+
+            List<ScheduledEvent> events = ClassScheduledEvents
+                .Where(e => e.GetType() == _type)
+                .ToList();
+
+            foreach (ScheduledEvent @event in events)
+            {
+                ScheduledEvent eventToRemove = @event; // Create a temporary variable
+                ClassScheduledEvents.TryTake(out eventToRemove);
+            }
+
+            Log.WriteLine($"{events.Count} TempQueueEvent(s) removed from ClassScheduledEvents.", LogLevel.VERBOSE);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine("Error in ClearTempQueueEvents: " + ex.Message, LogLevel.ERROR);
+            throw; // Re-throw the exception to preserve the original exception stack trace
+        }
+    }
 }

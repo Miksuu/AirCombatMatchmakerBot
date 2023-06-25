@@ -113,10 +113,13 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                             continue;
                         }
 
-                        var timeLeft = scheduledEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+                        Log.WriteLine(scheduledEvent.TimeToExecuteTheEventOn.ToString(), LogLevel.VERBOSE);
 
-                        finalMessage += "(valid for: " + 
+                        //var timeLeft = scheduledEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
 
+                        //Log.WriteLine("time left:" + timeLeft, LogLevel.VERBOSE);
+
+                        finalMessage += "(valid for: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + ")";
                     }
                 }
 

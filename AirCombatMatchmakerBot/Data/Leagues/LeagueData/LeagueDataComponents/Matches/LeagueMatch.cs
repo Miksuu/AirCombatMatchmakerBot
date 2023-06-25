@@ -270,6 +270,8 @@ public class LeagueMatch : logClass<LeagueMatch>
 
         Log.WriteLine("player: " + _playerId + " on team: " + _playerTeamId + " accepted the match.", LogLevel.DEBUG);
 
+        MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
+
         InterfaceChannel _interfaceChannelTemp = Database.Instance.Categories.FindInterfaceCategoryWithId(
             Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                 MatchChannelId);

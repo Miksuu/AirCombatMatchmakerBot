@@ -102,7 +102,7 @@ public class PLANESELECTIONBUTTON : BaseButton
                     Log.WriteLine("Done modifying: " + playerId + " with plane: " +
                         planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.DEBUG);
 
-                    // Add check here that if everyone else is ready, skip the rest (unecessary processing)
+                    // Add check here that if everyone else is ready, skip the rest (unnecessary processing otherwise)
 
                     // If timeUntil is more than 20minutes, add a temp event to cancel the queue after 5min
                     var matchQueueEvent = mcc.leagueMatchCached.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent));
