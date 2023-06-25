@@ -57,11 +57,9 @@ public class PLANESELECTIONBUTTON : BaseButton
                         Log.WriteLine("Found team: " + teamKvp.Key + " with name: " + teamKvp.Value.TeamName +
                             " with playerId: " + playerId, LogLevel.VERBOSE);
 
-
                         var planeReportObject =
                             mcc.leagueMatchCached.MatchReporting.GetInterfaceReportingObjectWithTypeOfTheReportingObject(
                                 TypeOfTheReportingObject.PLAYERPLANE, playerTeam.TeamId) as PLAYERPLANE;
-
                         if (planeReportObject == null)
                         {
                             Log.WriteLine(nameof(planeReportObject) + " was null!", LogLevel.CRITICAL);
@@ -69,6 +67,11 @@ public class PLANESELECTIONBUTTON : BaseButton
                         }
 
                         Log.WriteLine(planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.Count.ToString(), LogLevel.DEBUG);
+
+                        if (planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId] != UnitName.NOTSELECTED)
+                        {
+                            return Task.FromResult(new Response("Already accepted: " + playerId, false));
+                        }
 
                         if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
                         {
@@ -96,7 +99,6 @@ public class PLANESELECTIONBUTTON : BaseButton
 
                             Log.WriteLine("Done modifying: " + playerId + " with plane: " +
                                 planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.DEBUG);
-
                         }
 
                         _interfaceMessage.GenerateAndModifyTheMessage();
@@ -117,7 +119,5 @@ public class PLANESELECTIONBUTTON : BaseButton
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return Task.FromResult(new Response(ex.Message, false));
         }
-
-
     }
 }
