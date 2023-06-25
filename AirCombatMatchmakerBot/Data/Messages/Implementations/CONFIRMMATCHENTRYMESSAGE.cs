@@ -130,6 +130,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
             mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
         {
+            /*
             // Perhaps make this an abstract method to remove each of the event type from the queue
             // with each of derived classes having their own conditions
             List<ScheduledEvent> scheduledEventsToRemove = new List<ScheduledEvent>();
@@ -143,13 +144,13 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                         scheduledEventsToRemove.Add(scheduledEvent);
                     }
                 }
-            }
+            }*/
 
-            mcc.leagueMatchCached.MatchEventManager.RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
+            //mcc.leagueMatchCached.MatchEventManager.RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
+            mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(MatchQueueAcceptEvent));
+            mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
 
             mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.REPORTINGPHASE;
-
-            mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
 
             InterfaceChannel interfaceChannel;
             try
