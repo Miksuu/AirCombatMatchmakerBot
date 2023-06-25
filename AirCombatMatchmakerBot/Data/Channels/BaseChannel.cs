@@ -102,8 +102,6 @@ public abstract class BaseChannel : InterfaceChannel
             " for category: " + thisInterfaceChannel.ChannelsCategoryId, LogLevel.DEBUG);
     }
 
-
-
     public async Task CreateAChannelForTheCategoryWithoutRole(
         SocketGuild _guild, params ulong[] _allowedUsersIdsArray)
     {
