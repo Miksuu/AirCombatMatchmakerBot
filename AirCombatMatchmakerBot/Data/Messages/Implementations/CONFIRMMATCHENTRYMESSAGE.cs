@@ -1,4 +1,4 @@
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using Discord;
 
@@ -146,7 +146,20 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                 new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
             }
 
+            if (mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.Any(x => x.GetType() == typeof(MatchQueueAcceptEvent)))
+            {
+                var matchQueueEvent =
+                    mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.FirstOrDefault(
+                        x => x.GetType() == typeof(MatchQueueAcceptEvent));
 
+                var timeLeft = matchQueueEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+
+                if (timeLeft > 1200) 
+                {
+                    finalMessage += 
+                        "\n*Note that accepting the match 20 minutes before it's beginning makes your plane selection valid only for 5 minutes!*";
+                }
+            }
 
             Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 
