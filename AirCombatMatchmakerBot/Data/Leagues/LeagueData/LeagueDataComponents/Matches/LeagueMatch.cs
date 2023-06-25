@@ -245,8 +245,9 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             Log.WriteLine("timeUntil: " + timeUntil, LogLevel.VERBOSE);
 
-            return new Response("Suggested match time to: " + suggestedScheduleDate + 
-                " that is in: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(timeUntil + currentTime), true);
+            return new Response("", true);
+            //return new Response("Suggested match time to: " + suggestedScheduleDate + 
+            //    " that is in: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(timeUntil + currentTime), true);
         }
         catch (Exception ex)
         {
