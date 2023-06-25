@@ -72,7 +72,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                     if (mcc.leagueMatchCached.IsAScheduledMatch)
                     {
                         finalMessage += "Scheduled time: " +
-                            TimeService.ConvertToDateTimeFromUnixTime(scheduledEvent.TimeToExecuteTheEventOn).ToString() + "\n";
+                            TimeService.ConvertToZuluTimeFromUnixTime(scheduledEvent.TimeToExecuteTheEventOn).ToString() + "\n";
                     }
 
                     finalMessage += "Time left: " +

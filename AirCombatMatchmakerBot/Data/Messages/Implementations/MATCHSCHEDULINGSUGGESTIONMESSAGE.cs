@@ -46,7 +46,7 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
                 return thisInterfaceMessage.MessageDescription;
             }
 
-            var requestedTime = TimeService.ConvertToDateTimeFromUnixTime(scheduleObject.RequestedSchedulingTimeInUnixTime);
+            var requestedTime = TimeService.ConvertToZuluTimeFromUnixTime(scheduleObject.RequestedSchedulingTimeInUnixTime);
 
             var teamNameThatScheduled = teamsInTheMatch.First(
                 t => t.Key == scheduleObject.TeamIdThatRequestedScheduling).Value;
