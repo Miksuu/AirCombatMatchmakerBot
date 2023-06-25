@@ -12,14 +12,14 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
         ulong _timeFromNowToExecuteOn, ulong _leagueCategoryIdCached, ulong _matchChannelIdCached,
         ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
-        Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
+        Log.WriteLine("Creating event: " + nameof(MatchQueueAcceptEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
             _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.VERBOSE);
 
         base.SetupScheduledEvent(_timeFromNowToExecuteOn, _scheduledEvents);
         LeagueCategoryIdCached = _leagueCategoryIdCached;
         MatchChannelIdCached = _matchChannelIdCached;
 
-        Log.WriteLine("Done creating event: " + EventId + " type of: " + nameof(DeleteChannelEvent) + " with: " + 
+        Log.WriteLine("Done creating event: " + EventId + " type of: " + nameof(MatchQueueAcceptEvent) + " with: " + 
             _timeFromNowToExecuteOn + "|" + _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.DEBUG);
     }
 
