@@ -44,22 +44,27 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
     public override Task<string> GenerateMessage()
     {
-        Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
-
-        mcc = new MatchChannelComponents(this);
-        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
+        try
         {
-            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
-            return Task.FromResult(nameof(mcc) + " was null!");
-        }
+            Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
 
-        string finalMessage = string.Empty;
-
-        // Add to a method inside the match
-        foreach (ScheduledEvent scheduledEvent in mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents)
-        {
-            if (scheduledEvent.GetType() == typeof(MatchQueueAcceptEvent))
+            mcc = new MatchChannelComponents(this);
+            if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
             {
+                Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+                return Task.FromResult(nameof(mcc) + " was null!");
+            }
+
+            string finalMessage = string.Empty;
+
+            // Add to a method inside the match
+            foreach (ScheduledEvent scheduledEvent in mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents)
+            {
+                if (scheduledEvent.GetType() != typeof(MatchQueueAcceptEvent))
+                {
+                    continue;
+                }
+
                 if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
                     scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
                 {
@@ -74,102 +79,100 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                         TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + "\n";
                 }
             }
-        }
 
-        finalMessage += "Selected plane:\n";
+            finalMessage += "Selected plane:\n";
 
-        var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
+            var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
 
-        int playersThatAreReady = 0;
-        foreach (var teamKvp in matchReportData)
-        {
-            PLAYERPLANE? teamPlane = teamKvp.Value.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
-            if (teamPlane == null)
+            int playersThatAreReady = 0;
+            foreach (var teamKvp in matchReportData)
             {
-                Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.CRITICAL);
-                return Task.FromResult(nameof(teamPlane) + " was null!");
-            }
-
-            foreach (var kvp in teamPlane.TeamMemberIdsWithSelectedPlanesByTheTeam)
-            {
-                string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
-
-                if (kvp.Value != UnitName.NOTSELECTED)
+                PLAYERPLANE? teamPlane = teamKvp.Value.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+                if (teamPlane == null)
                 {
-                    checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
-                    playersThatAreReady++;
+                    Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.CRITICAL);
+                    return Task.FromResult(nameof(teamPlane) + " was null!");
                 }
 
-                finalMessage += checkmark + " " + teamKvp.Value.TeamName;
-
-                if (mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.Any(e => e.GetType() == typeof(TempQueueEvent)))
+                foreach (var kvp in teamPlane.TeamMemberIdsWithSelectedPlanesByTheTeam)
                 {
-                    var listOfTempQueueEvents = mcc.leagueMatchCached.MatchEventManager.GetListOfEventsByType(typeof(TempQueueEvent));
+                    string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
 
-                    foreach (TempQueueEvent scheduledEvent in listOfTempQueueEvents)
+                    if (kvp.Value != UnitName.NOTSELECTED)
                     {
-                        if (scheduledEvent.PlayerIdCached != kvp.Key)
+                        checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
+                        playersThatAreReady++;
+                    }
+
+                    finalMessage += checkmark + " " + teamKvp.Value.TeamName;
+
+                    if (mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.Any(e => e.GetType() == typeof(TempQueueEvent)))
+                    {
+                        var listOfTempQueueEvents = mcc.leagueMatchCached.MatchEventManager.GetListOfEventsByType(typeof(TempQueueEvent));
+
+                        foreach (TempQueueEvent scheduledEvent in listOfTempQueueEvents)
                         {
-                            continue;
+                            if (scheduledEvent.PlayerIdCached != kvp.Key)
+                            {
+                                continue;
+                            }
+
+                            Log.WriteLine(scheduledEvent.TimeToExecuteTheEventOn.ToString(), LogLevel.VERBOSE);
+
+                            finalMessage += " (valid for: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + ")";
                         }
-
-                        Log.WriteLine(scheduledEvent.TimeToExecuteTheEventOn.ToString(), LogLevel.VERBOSE);
-
-                        finalMessage += " (valid for: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + ")";
                     }
+
+                    finalMessage += "\n";
                 }
-
-                finalMessage += "\n";
             }
-        }
 
-        Log.WriteLine(playersThatAreReady + " | " +
-            mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2, LogLevel.DEBUG);
+            Log.WriteLine(playersThatAreReady + " | " +
+                mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2, LogLevel.DEBUG);
 
-        // Need to move this inside the class itself
-        if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
-            mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
-        {
-            /*
-            // Perhaps make this an abstract method to remove each of the event type from the queue
-            // with each of derived classes having their own conditions
-            List<ScheduledEvent> scheduledEventsToRemove = new List<ScheduledEvent>();
-            foreach (ScheduledEvent scheduledEvent in mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents)
+            // Need to move this inside the class itself
+            if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
+                mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
             {
-                if (scheduledEvent.GetType() == typeof(MatchQueueAcceptEvent))
+                /*
+                // Perhaps make this an abstract method to remove each of the event type from the queue
+                // with each of derived classes having their own conditions
+                List<ScheduledEvent> scheduledEventsToRemove = new List<ScheduledEvent>();
+                foreach (ScheduledEvent scheduledEvent in mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents)
                 {
-                    if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
-                        scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
+                    if (scheduledEvent.GetType() == typeof(MatchQueueAcceptEvent))
                     {
-                        scheduledEventsToRemove.Add(scheduledEvent);
+                        if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
+                            scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
+                        {
+                            scheduledEventsToRemove.Add(scheduledEvent);
+                        }
                     }
-                }
-            }*/
+                }*/
 
-            //mcc.leagueMatchCached.MatchEventManager.RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
-            mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(MatchQueueAcceptEvent));
-            mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
+                //mcc.leagueMatchCached.MatchEventManager.RemoveEventsFromTheScheduledEventsBag(scheduledEventsToRemove);
+                mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(MatchQueueAcceptEvent));
+                mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
 
-            mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.REPORTINGPHASE;
+                mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.REPORTINGPHASE;
 
-            InterfaceChannel interfaceChannel;
-            try
-            {
-                interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
-                    thisInterfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                        thisInterfaceMessage.MessageChannelId);
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                return Task.FromResult(ex.Message);
+                InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                        thisInterfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                            thisInterfaceMessage.MessageChannelId);
+
+                new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
             }
 
-            new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
+
+
+            Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
+
+            return Task.FromResult(finalMessage);
         }
-
-        Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
-
-        return Task.FromResult(finalMessage);
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return Task.FromResult(ex.Message);
+        }
     }
 }
