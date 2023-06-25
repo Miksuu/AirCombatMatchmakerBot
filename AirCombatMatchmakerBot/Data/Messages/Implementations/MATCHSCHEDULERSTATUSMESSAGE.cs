@@ -5,6 +5,8 @@ using Discord;
 [DataContract]
 public class MATCHSCHEDULERSTATUSMESSAGE : BaseMessage
 {
+    LeagueCategoryComponents lcc;
+
     public MATCHSCHEDULERSTATUSMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.MATCHSCHEDULERSTATUSMESSAGE;
@@ -16,7 +18,7 @@ public class MATCHSCHEDULERSTATUSMESSAGE : BaseMessage
                 new KeyValuePair<ButtonName, int>(ButtonName.LEAVEMATCHSCHEDULER, 1),
             });
 
-        thisInterfaceMessage.MessageEmbedTitle = "[Insert league name here] match scheduler status";
+        thisInterfaceMessage.MessageEmbedTitle = "[Insert League Name] Status";
         thisInterfaceMessage.MessageDescription = "Click the buttons to join/leave";
     }
 
@@ -27,10 +29,23 @@ public class MATCHSCHEDULERSTATUSMESSAGE : BaseMessage
 
     public override Task<string> GenerateMessage()
     {
-        if (thisInterfaceMessage.MessageDescription == null)
+        try
         {
-            Log.WriteLine("MessageDescription was null!", LogLevel.CRITICAL);
-            return Task.FromResult("MessageDescription was null!");
+
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message, LogLevel.VERBOSE);
+            throw;
+        }
+
+        string finalMessage = string.Empty;
+
+        lcc = new LeagueCategoryComponents(MessageCategoryId);
+        if (lcc.interfaceLeagueCached == null)
+        {
+            Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
+            throw new InvalidOperationException(nameof(lcc) + " was null!");
         }
 
         return Task.FromResult(thisInterfaceMessage.MessageDescription);
