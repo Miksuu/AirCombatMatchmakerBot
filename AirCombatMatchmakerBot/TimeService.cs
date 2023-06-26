@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualBasic;
+using Microsoft.VisualBasic;
 using System.Globalization;
 using System.Text.Json;
 
@@ -161,10 +161,9 @@ public static class TimeService
             string timeString = _dateAndTime.Substring(6);
             DateTime currentDate = DateTime.UtcNow.Date;
             if (!TimeSpan.TryParseExact(timeString, new[] {
-                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
-                    @"hhmmss'z'", @"hhmm'z'"
-
-                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
+                @"hh\:mm'z'", @"hh'z'",
+                @"hhmm'z'"
+            }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
             {
                 return null;
             }
@@ -175,9 +174,9 @@ public static class TimeService
             string timeString = _dateAndTime.Substring(9);
             DateTime tomorrowDate = DateTime.UtcNow.Date.AddDays(1);
             if (!TimeSpan.TryParseExact(timeString, new[] {
-                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
-                    @"hhmmss'z'", @"hhmm'z'"
-                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
+                @"hh\:mm'z'", @"hh'z'",
+                @"hhmm'z'"
+            }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
             {
                 return null;
             }
@@ -188,9 +187,9 @@ public static class TimeService
             DateTime currentDate = DateTime.UtcNow.Date;
             string timeString = _dateAndTime.Replace("today", "").Trim();
             if (!TimeSpan.TryParseExact(timeString, new[] {
-                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
-                    @"hhmmss'z'", @"hhmm'z'"
-                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
+                @"hh\:mm'z'", @"hh'z'",
+                @"hhmm'z'"
+            }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
             {
                 return null;
             }
@@ -201,9 +200,9 @@ public static class TimeService
             DateTime tomorrowDate = DateTime.UtcNow.Date.AddDays(1);
             string timeString = _dateAndTime.Replace("tomorrow", "").Trim();
             if (!TimeSpan.TryParseExact(timeString, new[] {
-                    @"hh\:mm\:ss'z'", @"hh\:mm'z'", @"hh'z'",
-                    @"hhmmss'z'", @"hhmm'z'"
-                }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
+                @"hh\:mm'z'", @"hh'z'",
+                @"hhmm'z'"
+            }, CultureInfo.InvariantCulture, out TimeSpan timeComponent))
             {
                 return null;
             }
@@ -212,15 +211,15 @@ public static class TimeService
         else
         {
             bool regularFormatParse = DateTime.TryParseExact(_dateAndTime, new[] {
-                    "dd/MM/yyyy HH:mm:ss'z'", "dd/MM/yyyy HH:mm'z'", "dd/MM/yyyy HH'z'",
-                    "dd/MM/yyyy HHmmss'z'", "dd/MM/yyyy HHmm'z'",
-                    "dd.MM.yyyy HH:mm:ss'z'", "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'",
-                    "dd.MM.yyyy HHmmss'z'", "dd.MM.yyyy HHmm'z'",
-                    "HH:mm:ss'z' dd/MM/yyyy", "HH:mm'z' dd/MM/yyyy", "HH'z' dd/MM/yyyy",
-                    "HHmmss'z' dd/MM/yyyy", "HHmm'z' dd/MM/yyyy",
-                    "HH:mm:ss'z' dd.MM.yyyy", "HH:mm'z' dd.MM.yyyy", "HH'z' dd.MM.yyyy",
-                    "HHmmss'z' dd.MM.yyyy", "HHmm'z' dd.MM.yyyy"
-                },
+                "dd/MM/yyyy HH:mm'z'", "dd/MM/yyyy HH'z'",
+                "dd/MM/yyyy HHmm'z'",
+                "dd.MM.yyyy HH:mm'z'", "dd.MM.yyyy HH'z'",
+                "dd.MM.yyyy HHmm'z'",
+                "HH:mm'z' dd/MM/yyyy", "HH'z' dd/MM/yyyy",
+                "HHmm'z' dd/MM/yyyy",
+                "HH:mm'z' dd.MM.yyyy", "HH'z' dd.MM.yyyy",
+                "HHmm'z' dd.MM.yyyy"
+            },
             CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime suggestedScheduleDate);
 
             if (!regularFormatParse)
