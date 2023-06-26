@@ -228,6 +228,8 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
             {
+                await interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.MATCHSCHEDULINGSUGGESTIONMESSAGE);
+
                 StartMatchAfterSchedulingOnAnotherThread(interfaceChannel, timeUntil);
                 return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
             }
@@ -296,7 +298,6 @@ public class LeagueMatch : logClass<LeagueMatch>
                 " with timeUntil: " + _timeUntil);
 
             var client = BotReference.GetClientRef();
-
 
             // Loop through scheduling messages and delete them
             //foreach (ulong messageId in StoredScheduleMessageIds)
