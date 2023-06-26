@@ -30,7 +30,8 @@ public class ScheduleObject : logClass<ScheduleObject>
             Log.WriteLine(nameof(_requestedTime) + " was null!", LogLevel.CRITICAL);
             return;
         }
-        RequestedSchedulingTimeInUnixTime = (ulong)(_requestedTime.Value - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+
+        RequestedSchedulingTimeInUnixTime = TimeService.ConvertDateTimeToUnixTime(_requestedTime.Value);
 
         TeamIdThatRequestedScheduling = _teamId;
     }

@@ -241,8 +241,8 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             if (AlreadySuggestedTimes.Contains(suggestedScheduleDate))
             {
-                return new Response("That time, " + suggestedScheduleDate + " was already suggested before!" +
-                    " Please suggest a new time.", false);
+                return new Response("That time, " + TimeService.ConvertDateTimeToZuluTime(suggestedScheduleDate.Value) +
+                    " was already suggested before! Please suggest a new time.", false);
             }
 
             AlreadySuggestedTimes.Add(suggestedScheduleDate);
