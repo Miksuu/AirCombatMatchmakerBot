@@ -59,10 +59,17 @@ public class LeagueMatch : logClass<LeagueMatch>
         get => matchEventManager.GetValue();
         set => matchEventManager.SetValue(value);
     }
+
     public ConcurrentBag<ulong> StoredScheduleMessageIds
     {
         get => storedScheduleMessageIds.GetValue();
         set => storedScheduleMessageIds.SetValue(value);
+    }
+
+    public ConcurrentBag<DateTime?> AlreadySuggestedTimes
+    {
+        get => alreadySuggestedTimes.GetValue();
+        set => alreadySuggestedTimes.SetValue(value);
     }
 
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
@@ -75,6 +82,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logClass<EventManager> matchEventManager = new logClass<EventManager>(new EventManager());
 
     [DataMember] private logConcurrentBag<ulong> storedScheduleMessageIds = new logConcurrentBag<ulong>();
+    [DataMember] private logConcurrentBag<DateTime?> alreadySuggestedTimes = new logConcurrentBag<DateTime?>();
 
     private InterfaceLeague interfaceLeagueRef;
 
@@ -181,6 +189,8 @@ public class LeagueMatch : logClass<LeagueMatch>
             Log.WriteLine("Date suggested: " + _dateAndTime + " by: " + _playerId + " with towards id: " +
                 ScheduleObject.TeamIdThatRequestedScheduling);
 
+            var defaultEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
             var playerTeamId = interfaceLeagueRef.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(_playerId).TeamId;
 
             DateTime? suggestedScheduleDate = TimeService.GetDateTimeFromUserInput(_dateAndTime);
@@ -196,8 +206,6 @@ public class LeagueMatch : logClass<LeagueMatch>
                     return new Response("Invalid date and time format. Please provide a valid date and time.", false);
                 }
             }
-
-            var defaultEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             TimeSpan timeDifference = suggestedScheduleDate.Value - defaultEpoch;
             ulong scheduledTime = (ulong)timeDifference.TotalSeconds;
@@ -216,20 +224,28 @@ public class LeagueMatch : logClass<LeagueMatch>
                 return new Response("The date you tried to suggest was too early!", false);
             }
 
-            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
-                Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
-                    MatchChannelId);
-
             if (playerTeamId == ScheduleObject.TeamIdThatRequestedScheduling)
             {
                 return new Response("You have already suggested a date for the match!", false);
             }
+
+            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
+                    MatchChannelId);
 
             if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
             {
                 StartMatchAfterSchedulingOnAnotherThread(interfaceChannel, timeUntil);
                 return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
             }
+
+            if (AlreadySuggestedTimes.Contains(suggestedScheduleDate))
+            {
+                return new Response("That time, " + suggestedScheduleDate + " was already suggested before!" +
+                    " Please suggest a new time.", false);
+            }
+
+            AlreadySuggestedTimes.Add(suggestedScheduleDate);
 
             ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
@@ -242,8 +258,6 @@ public class LeagueMatch : logClass<LeagueMatch>
             Log.WriteLine("timeUntil: " + timeUntil);
 
             return new Response("", true);
-            //return new Response("Suggested match time to: " + suggestedScheduleDate + 
-            //    " that is in: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(timeUntil + currentTime), true);
         }
         catch (Exception ex)
         {
