@@ -60,12 +60,6 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => matchEventManager.SetValue(value);
     }
 
-    public ConcurrentBag<ulong> StoredScheduleMessageIds
-    {
-        get => storedScheduleMessageIds.GetValue();
-        set => storedScheduleMessageIds.SetValue(value);
-    }
-
     public ConcurrentBag<DateTime?> AlreadySuggestedTimes
     {
         get => alreadySuggestedTimes.GetValue();
@@ -81,7 +75,6 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logClass<bool> isAScheduledMatch = new logClass<bool>();
     [DataMember] private logClass<EventManager> matchEventManager = new logClass<EventManager>(new EventManager());
 
-    [DataMember] private logConcurrentBag<ulong> storedScheduleMessageIds = new logConcurrentBag<ulong>();
     [DataMember] private logConcurrentBag<DateTime?> alreadySuggestedTimes = new logConcurrentBag<DateTime?>();
 
     private InterfaceLeague interfaceLeagueRef;
@@ -249,11 +242,12 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
+            // Must delete before showing the new message, without the ID being saved in a variable
+            await interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.MATCHSCHEDULINGSUGGESTIONMESSAGE);
+
             var newMessage =
                 interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                     MessageName.MATCHSCHEDULINGSUGGESTIONMESSAGE).Result;
-
-            StoredScheduleMessageIds.Add(newMessage.MessageId);
 
             Log.WriteLine("timeUntil: " + timeUntil);
 
@@ -303,19 +297,20 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             var client = BotReference.GetClientRef();
 
-            // Loop through scheduling messages and delete them
-            foreach (ulong messageId in StoredScheduleMessageIds)
-            {
-                var iMessageChannel = await _interfaceChannel.GetMessageChannelById(client);
 
-                var messageToDelete = await iMessageChannel.GetMessageAsync(messageId);
-                if (messageToDelete == null)
-                {
-                    Log.WriteLine(nameof(messageToDelete) + " was null!", LogLevel.ERROR);
-                    continue;
-                }
-                await messageToDelete.DeleteAsync();
-            }
+            // Loop through scheduling messages and delete them
+            //foreach (ulong messageId in StoredScheduleMessageIds)
+            //{
+            //    var iMessageChannel = await _interfaceChannel.GetMessageChannelById(client);
+
+            //    var messageToDelete = await iMessageChannel.GetMessageAsync(messageId);
+            //    if (messageToDelete == null)
+            //    {
+            //        Log.WriteLine(nameof(messageToDelete) + " was null!", LogLevel.ERROR);
+            //        continue;
+            //    }
+            //    await messageToDelete.DeleteAsync();
+            //}
 
             MatchReporting.MatchState = MatchState.PLAYERREADYCONFIRMATIONPHASE;
 
