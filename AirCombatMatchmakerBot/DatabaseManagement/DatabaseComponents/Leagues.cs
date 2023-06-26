@@ -29,15 +29,6 @@ public class Leagues : logClass<Leagues>
         return exists;
     }
 
-    public bool CheckIfILeagueExistsByCategoryId(ulong _categoryId)
-    {
-        bool exists = false;
-        Log.WriteLine("Checking if " + _categoryId + " exists.");
-        exists = StoredLeagues.Any(x => x.LeagueCategoryId == _categoryId);
-        Log.WriteLine(_categoryId + " exists: " + exists);
-        return exists;
-    }
-
     // Might want to add a check that it exists, use the method above
     public InterfaceLeague GetILeagueByCategoryName(LeagueName _leagueCategoryName)
     {
