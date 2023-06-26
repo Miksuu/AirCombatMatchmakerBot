@@ -7,6 +7,7 @@ using System.Security;
 using Microsoft.VisualBasic;
 using Discord;
 using System.Threading.Channels;
+using System.Text.RegularExpressions;
 
 [DataContract]
 public class LeagueMatch : logClass<LeagueMatch>
@@ -138,41 +139,49 @@ public class LeagueMatch : logClass<LeagueMatch>
 
     public ulong[] GetIdsOfThePlayersInTheMatchAsArray()
     {
-        int playerCounter = 0;
-
-        // Calculate how many users need to be granted roles
-        int userAmountToGrantRolesTo = interfaceLeagueRef.LeaguePlayerCountPerTeam * 2;
-        ulong[] allowedUserIds = new ulong[userAmountToGrantRolesTo];
-
-        Log.WriteLine(nameof(allowedUserIds) + " length: " +
-            allowedUserIds.Length);
-
-        foreach (var teamKvp in TeamsInTheMatch)
+        try
         {
-            Log.WriteLine("Looping on team id: " + teamKvp.Key);
+            int playerCounter = 0;
 
-            try
+            // Calculate how many users need to be granted roles
+            int userAmountToGrantRolesTo = interfaceLeagueRef.LeaguePlayerCountPerTeam * 2;
+            ulong[] allowedUserIds = new ulong[userAmountToGrantRolesTo];
+
+            Log.WriteLine(nameof(allowedUserIds) + " length: " +
+                allowedUserIds.Length);
+
+            foreach (var teamKvp in TeamsInTheMatch)
             {
-                Team foundTeam = interfaceLeagueRef.LeagueData.Teams.FindTeamById(teamKvp.Key);
+                Log.WriteLine("Looping on team id: " + teamKvp.Key);
 
-                foreach (Player player in foundTeam.Players)
+                try
                 {
-                    allowedUserIds[playerCounter] = player.PlayerDiscordId;
-                    Log.WriteLine("Added " + allowedUserIds[playerCounter] + " to: " +
-                        nameof(allowedUserIds) + ". " + nameof(playerCounter) + " is now: " +
-                        playerCounter + 1 + " out of: " + (allowedUserIds.Length - 1).ToString());
+                    Team foundTeam = interfaceLeagueRef.LeagueData.Teams.FindTeamById(teamKvp.Key);
 
-                    playerCounter++;
+                    foreach (Player player in foundTeam.Players)
+                    {
+                        allowedUserIds[playerCounter] = player.PlayerDiscordId;
+                        Log.WriteLine("Added " + allowedUserIds[playerCounter] + " to: " +
+                            nameof(allowedUserIds) + ". " + nameof(playerCounter) + " is now: " +
+                            playerCounter + 1 + " out of: " + (allowedUserIds.Length - 1).ToString());
+
+                        playerCounter++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                    continue;
                 }
             }
-            catch (Exception ex)
-            {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                continue;
-            }
-        }
 
-        return allowedUserIds;
+            return allowedUserIds;
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message);
+            throw;
+        }
     }
 
     public async Task<Response> CreateScheduleSuggestion(ulong _playerId, string _dateAndTime)
