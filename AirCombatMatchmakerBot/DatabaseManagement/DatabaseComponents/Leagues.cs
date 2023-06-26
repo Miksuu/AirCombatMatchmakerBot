@@ -167,4 +167,85 @@ public class Leagues : logClass<Leagues>
             }
         }
     }
+
+    public List<LeagueMatch> CheckAndReturnTheListOfMatchesThatPlayersOfAMatchAreIn(LeagueMatch _match, ulong _suggestedTime)
+    {
+        try
+        {
+            // Temp, replace with logList when done
+            List<LeagueMatch> matchesThatHadTheirSchedulingTimeOverlap = new List<LeagueMatch>();
+
+            Log.WriteLine("on: " + _match.MatchId);
+
+            var players = _match.GetIdsOfThePlayersInTheMatchAsArray().ToList();
+            foreach (var playerId in players)
+            {
+                Log.WriteLine("on: " + playerId);
+                foreach (var league in StoredLeagues)
+                {
+                    Log.WriteLine("on: " + league.LeagueCategoryName);
+                    if (!league.LeagueData.CheckIfPlayerIsParcipiatingInTheLeague(playerId))
+                    {
+                        continue;
+                    }
+
+                    foreach (LeagueMatch leagueMatch in league.LeagueData.Matches.MatchesConcurrentBag)
+                    {
+                        Log.WriteLine("on match: " + leagueMatch.MatchId);
+                        if (leagueMatch.MatchId == _match.MatchId)
+                        {
+                            Log.WriteLine(leagueMatch.MatchId + "is the same match!");
+                            continue;
+                        }
+
+                        if (leagueMatch.MatchReporting.MatchState != MatchState.PLAYERREADYCONFIRMATIONPHASE)
+                        {
+                            Log.WriteLine("State was not correct one, continuing");
+                            continue;
+                        }
+
+                        Log.WriteLine("State: " + leagueMatch.MatchReporting.MatchState);
+
+                        var playersOnTheLeagueMatch = leagueMatch.GetIdsOfThePlayersInTheMatchAsArray().ToList();
+                        if (!playersOnTheLeagueMatch.Contains(playerId))
+                        {
+                            Log.WriteLine(leagueMatch.MatchId + " does not contain: " + playerId);
+                            continue;
+                        }
+
+                        Log.WriteLine(leagueMatch.MatchId + " contains: " + playerId);
+
+                        var matchQueueAcceptEvent =
+                            leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent));
+
+                        if (matchQueueAcceptEvent.TimeToExecuteTheEventOn - _suggestedTime > 900)
+                        {
+                            Log.WriteLine("Match's " + leagueMatch.MatchId + " scheduled time: " +
+                                matchQueueAcceptEvent.TimeToExecuteTheEventOn + " is fine with suggested time: " + _suggestedTime);
+                            continue;
+                        }
+
+                        Log.WriteLine("Match's " + leagueMatch.MatchId + " scheduled time: " + matchQueueAcceptEvent.TimeToExecuteTheEventOn +
+                            " was not fine with suggested time: " + _suggestedTime, LogLevel.DEBUG);
+
+                        matchesThatHadTheirSchedulingTimeOverlap.Add(leagueMatch);
+                    }
+                }
+            }
+
+            // Temp, replace with logList when done
+            foreach (var item in matchesThatHadTheirSchedulingTimeOverlap)
+            {
+                Log.WriteLine(item.MatchId + "'s time was not fine with: " + _match.MatchId +
+                    " with time: " + _suggestedTime, LogLevel.DEBUG);
+            }
+
+            return matchesThatHadTheirSchedulingTimeOverlap;
+        }
+        catch (Exception ex)
+        {
+            Log.WriteLine(ex.Message);
+            throw;
+        }
+    }
 }
