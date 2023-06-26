@@ -201,8 +201,6 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             TimeSpan timeDifference = suggestedScheduleDate.Value - defaultEpoch;
             ulong scheduledTime = (ulong)timeDifference.TotalSeconds;
-
-            bool isValidDateAndTime = true;
             ulong currentTime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
 
             if (currentTime >= scheduledTime)
