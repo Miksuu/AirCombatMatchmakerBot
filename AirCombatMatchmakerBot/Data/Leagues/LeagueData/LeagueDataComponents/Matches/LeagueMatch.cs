@@ -247,8 +247,8 @@ public class LeagueMatch : logClass<LeagueMatch>
             {
                 await interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.MATCHSCHEDULINGSUGGESTIONMESSAGE);
 
-                StartMatchAfterSchedulingOnAnotherThread(interfaceChannel, timeUntil);
-                return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
+                //StartMatchAfterSchedulingOnAnotherThread(interfaceChannel, timeUntil);
+                return AcceptMatchScheduling(_playerId, playerTeamId);
             }
 
             var suggestedScheduleDateInUnixTime = TimeService.ConvertDateTimeToUnixTime(suggestedScheduleDate.Value);
@@ -302,6 +302,10 @@ public class LeagueMatch : logClass<LeagueMatch>
 
         ulong timeUntilTemp = TimeService.CalculateTimeUntilWithUnixTime(ScheduleObject.RequestedSchedulingTimeInUnixTime);
 
+        new MatchQueueAcceptEvent(
+            timeUntilTemp + 900, interfaceLeagueRef.LeagueCategoryId,
+            _interfaceChannelTemp.ChannelId, MatchEventManager.ClassScheduledEvents);
+
         // Improved response time
         Thread secondThread = new Thread(() => StartMatchAfterSchedulingOnAnotherThread(_interfaceChannelTemp, timeUntilTemp));
         secondThread.Start();
@@ -337,10 +341,6 @@ public class LeagueMatch : logClass<LeagueMatch>
             await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMMATCHENTRYMESSAGE, true);
 
-            new MatchQueueAcceptEvent(
-                _timeUntil + 900, interfaceLeagueRef.LeagueCategoryId, _interfaceChannel.ChannelId, MatchEventManager.ClassScheduledEvents);
-
-            return;
         }
         catch (Exception ex)
         {
