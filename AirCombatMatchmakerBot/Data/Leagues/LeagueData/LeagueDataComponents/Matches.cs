@@ -31,8 +31,6 @@ public class Matches : logClass<Matches>
     public async Task CreateAMatch(
         int[] _teamsToFormMatchOn, MatchState _matchState, bool _attemptToPutTeamsBackToQueueAfterTheMatch = false)
     {
-        
-
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1]);
 
