@@ -84,7 +84,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
     [DataMember] private logConcurrentBag<ulong> alreadySuggestedTimes = new logConcurrentBag<ulong>();
 
-    private InterfaceLeague interfaceLeagueRef;
+    public InterfaceLeague interfaceLeagueRef;
 
     public LeagueMatch() { }
 
@@ -259,7 +259,12 @@ public class LeagueMatch : logClass<LeagueMatch>
             }
             AlreadySuggestedTimes.Add(suggestedScheduleDateInUnixTime);
 
-
+            var response = Database.Instance.Leagues.CheckIfListOfPlayersCanJoinMatchWithTime(
+                GetIdsOfThePlayersInTheMatchAsArray().ToList(), suggestedScheduleDateInUnixTime, _playerId);
+            if (!response.serialize)
+            {
+                return response;
+            }
 
             ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDateInUnixTime, playerTeamId)).GetValue();
 

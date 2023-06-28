@@ -1,4 +1,5 @@
 using Discord.WebSocket;
+using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
@@ -203,7 +204,8 @@ public class Leagues : logClass<Leagues>
         }
     }
 
-    public Response CheckIfListOfPlayersCanJoinMatchWithTime(List<ulong> _playerIds, ulong _suggestedTime)
+    public Response CheckIfListOfPlayersCanJoinMatchWithTime(
+        List<ulong> _playerIds, ulong _suggestedTime, ulong _suggestedByPlayerId)
     {
         Log.WriteLine("Checking with " + _playerIds.Count);
         var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
@@ -215,6 +217,7 @@ public class Leagues : logClass<Leagues>
             x => x.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
             ((x.MatchEventManager.GetEventByType(
                 typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - _suggestedTime) <= 2700)).ToList();
+        // Add some time after the match has begun
 
         Log.WriteLine("list: " + listOfMatchesClose.Count);
 
@@ -231,10 +234,20 @@ public class Leagues : logClass<Leagues>
             ulong matchUnixTime = leagueMatch.MatchEventManager.GetEventByType(
                 typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn;
 
-            // Add channel link here
-            stringOfMatches += "\nMatch " + leagueMatch.MatchId + " at " +
-                TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
-                TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime);
+            if (leagueMatch.GetIdsOfThePlayersInTheMatchAsArray().Contains(_suggestedByPlayerId))
+            {
+                // Add channel link here
+                stringOfMatches += "\nYour match " + leagueMatch.MatchId + "is at " +
+                    TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
+                    TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime);
+            }
+            else
+            {
+                // Add specific player here later instead of the "other player"
+                stringOfMatches += "\nThe other player in the match already has a match " + leagueMatch.MatchId + " at " +
+                    TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
+                    TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime);
+            }
         }
 
         return new Response(stringOfMatches, false);
