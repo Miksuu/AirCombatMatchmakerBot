@@ -36,7 +36,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         return Task.FromResult(thisInterfaceMessage.MessageDescription);
     }
 
-    public  Task<string> GenerateMessageForSpecificCategoryLeague()
+    public Task<string> GenerateMessageForSpecificCategoryLeague()
     {
         Log.WriteLine("Starting to generate the league registration message with: " +
             belongsToLeagueCategoryId, LogLevel.DEBUG);
@@ -46,13 +46,22 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         thisInterfaceMessage.MessageEmbedTitle = EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName);
 
+        string channelJumpLinks = string.Empty;
+
+        Database.Instance.Categories.GetMessageJumpUrl(belongsToLeagueCategoryId, MessageName.);
+
         string returned =
             GetAllowedUnitsAsString(interfaceLeague) + "\n" +
-            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(interfaceLeague);
+            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(interfaceLeague) + "\n";
 
         Log.WriteLine(returned);
 
         return Task.FromResult(returned);
+    }
+
+    private string GetCategoryJumpLink()
+    {
+
     }
 
     private string GetAllowedUnitsAsString(InterfaceLeague _interfaceLeague)
