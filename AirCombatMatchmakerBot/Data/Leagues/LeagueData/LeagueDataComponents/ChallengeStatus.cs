@@ -21,79 +21,77 @@ public class ChallengeStatus : logClass<ChallengeStatus>
 
     public Response AddTeamFromPlayerIdToTheQueue(ulong _playerId, InterfaceMessage _interfaceMessage)
     {
-        Team playerTeam;
         try
         {
-            playerTeam =
+            Team playerTeam =
                 interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+
+            Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
+            " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
+
+            // Add to method
+            foreach (InterfaceLeague league in Database.Instance.Leagues.StoredLeagues)
+            {
+                try
+                {
+                    Team teamToSearchFor;
+
+                    var challengeStatusOfTheTempLeague = league.LeagueData.ChallengeStatus;
+
+                    Log.WriteLine("Loop on " + nameof(league) + ": " + league.LeagueCategoryName +
+                        " with cache: " + interfaceLeagueRef.LeagueCategoryName);
+                    if (league.LeagueCategoryName == interfaceLeagueRef.LeagueCategoryName)
+                    {
+                        Log.WriteLine("on " + league.LeagueCategoryName + ", skipping");
+                        continue;
+                    }
+
+                    Log.WriteLine("Searching: " + league.LeagueCategoryName);
+
+                    if (!league.LeagueData.CheckIfPlayerIsParcipiatingInTheLeague(_playerId))
+                    {
+                        Log.WriteLine(_playerId + " is not parcipiating in this league: " +
+                            interfaceLeagueRef.LeagueCategoryName + ", disregarding");
+                        continue;
+                    }
+
+                    Log.WriteLine(_playerId + " is parcipiating in this league: " + league.LeagueCategoryName);
+                    teamToSearchFor = league.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+
+                    if (challengeStatusOfTheTempLeague.CheckIfPlayerTeamIsAlreadyInQueue(teamToSearchFor))
+                    {
+                        Log.WriteLine(_playerId + " already at queue");
+                        // Add link to the channel
+                        return new Response("You are already in the queue at another league: " + league.LeagueCategoryName, false);
+                    }
+
+                    Log.WriteLine(_playerId + " not in the queue name: " + league.LeagueCategoryName);
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                    continue;
+                    //return new Response(ex.Message, false);
+                }
+            }
+
+            string response = PostChallengeToThisLeague(playerTeam);
+            if (response == "alreadyInQueue")
+            {
+                Log.WriteLine(_playerId + " was already in the queue!");
+                return new Response("You are already in the queue!", false);
+            }
+            Log.WriteLine("response was: " + response);
+
+            _interfaceMessage.GenerateAndModifyTheMessage();
+
+            return new Response(response, true);
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return new Response(ex.Message, false);
         }
-
-        Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
-            " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
-
-        // Add to method
-        foreach (InterfaceLeague league in Database.Instance.Leagues.StoredLeagues)
-        {
-            Team teamToSearchFor;
-
-            var challengeStatusOfTheTempLeague = league.LeagueData.ChallengeStatus;
-
-            Log.WriteLine("Loop on " + nameof(league) + ": " + league.LeagueCategoryName +
-                " with cache: " + interfaceLeagueRef.LeagueCategoryName);
-            if (league.LeagueCategoryName == interfaceLeagueRef.LeagueCategoryName)
-            {
-                Log.WriteLine("on " + league.LeagueCategoryName + ", skipping");
-                continue;
-            }
-
-            Log.WriteLine("Searching: " + league.LeagueCategoryName);
-
-            if (!league.LeagueData.CheckIfPlayerIsParcipiatingInTheLeague(_playerId))
-            {
-                Log.WriteLine(_playerId + " is not parcipiating in this league: " +
-                    interfaceLeagueRef.LeagueCategoryName + ", disregarding");
-                continue;
-            }
-
-            Log.WriteLine(_playerId + " is parcipiating in this league: " + league.LeagueCategoryName);
-
-            try
-            {
-                teamToSearchFor = league.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                continue;
-                //return new Response(ex.Message, false);
-            }
-
-            if (challengeStatusOfTheTempLeague.CheckIfPlayerTeamIsAlreadyInQueue(teamToSearchFor))
-            {
-                Log.WriteLine(_playerId + " already at queue");
-                // Add link to the channel
-                return new Response("You are already in the queue at another league: " + league.LeagueCategoryName, false);
-            }
-
-            Log.WriteLine(_playerId + " not in the queue name: " + league.LeagueCategoryName);
-        }
-
-        string response = PostChallengeToThisLeague(playerTeam);
-        if (response == "alreadyInQueue")
-        {
-            Log.WriteLine(_playerId + " was already in the queue!");
-            return new Response("You are already in the queue!", false);
-        }
-        Log.WriteLine("response was: " + response);
-
-        _interfaceMessage.GenerateAndModifyTheMessage();
-
-        return new Response(response, true);
     }
 
     public void RemoveFromTeamsInTheQueue(Team _Team)
