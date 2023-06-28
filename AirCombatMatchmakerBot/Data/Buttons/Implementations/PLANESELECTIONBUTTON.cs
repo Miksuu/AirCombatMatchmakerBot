@@ -102,7 +102,29 @@ public class PLANESELECTIONBUTTON : BaseButton
                     Log.WriteLine("Done modifying: " + playerId + " with plane: " +
                         planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[playerId], LogLevel.DEBUG);
 
-                    // Add check here that if everyone else is ready, skip the rest (unnecessary processing otherwise)
+                    // Check here that if everyone else is ready, skip the rest (unnecessary processing otherwise)
+                    bool skipCheck = false;
+                    foreach (var teamMember in mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData)
+                    {
+                        if (teamMember.Key != playerTeam.TeamId)
+                        {
+                            var otherTeamPlaneReportObject =
+                                mcc.leagueMatchCached.MatchReporting.GetInterfaceReportingObjectWithTypeOfTheReportingObject(
+                                    TypeOfTheReportingObject.PLAYERPLANE, teamMember.Key) as PLAYERPLANE;
+
+                            var status = otherTeamPlaneReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.First();
+
+                            if (status.Value != UnitName.NOTSELECTED)
+                            {
+                                skipCheck = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (skipCheck)
+                    {
+                        return Task.FromResult(new Response("", true));
+                    }
 
                     // If timeUntil is more than 20minutes, add a temp event to cancel the queue after 5min
                     var matchQueueEvent = mcc.leagueMatchCached.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent));

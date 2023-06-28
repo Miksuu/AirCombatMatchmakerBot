@@ -163,11 +163,11 @@ public class EventManager : logClass<EventManager>
                 ClassScheduledEvents.TryTake(out eventToRemove);
             }
 
-            Log.WriteLine($"{events.Count} TempQueueEvent(s) removed from ClassScheduledEvents.");
+            Log.WriteLine($"{events.Count} {_type.Name}(s) removed from ClassScheduledEvents.");
         }
         catch (Exception ex)
         {
-            Log.WriteLine("Error in ClearTempQueueEvents: " + ex.Message, LogLevel.ERROR);
+            Log.WriteLine("Error in ClearCertainTypeOfEventsFromTheList: " + ex.Message, LogLevel.ERROR);
             throw; // Re-throw the exception to preserve the original exception stack trace
         }
     }
