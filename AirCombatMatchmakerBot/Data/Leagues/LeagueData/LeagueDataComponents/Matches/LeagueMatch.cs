@@ -260,7 +260,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             AlreadySuggestedTimes.Add(suggestedScheduleDateInUnixTime);
 
             var response = Database.Instance.Leagues.CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
-                GetIdsOfThePlayersInTheMatchAsArray().ToList(), suggestedScheduleDateInUnixTime, _playerId);
+                GetIdsOfThePlayersInTheMatchAsArray().ToList(), suggestedScheduleDateInUnixTime, _playerId).Result;
             if (!response.serialize)
             {
                 return response;
