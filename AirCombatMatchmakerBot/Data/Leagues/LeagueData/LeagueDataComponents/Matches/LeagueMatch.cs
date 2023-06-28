@@ -219,7 +219,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             TimeSpan timeDifference = suggestedScheduleDate.Value - defaultEpoch;
             ulong scheduledTime = (ulong)timeDifference.TotalSeconds;
-            ulong currentTime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+            ulong currentTime = TimeService.GetCurrentUnixTime();
 
             if (currentTime >= scheduledTime)
             {

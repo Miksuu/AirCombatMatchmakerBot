@@ -93,7 +93,7 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
         Log.WriteLine("Setting " + typeof(ScheduledEvent) + "' TimeToExecuteTheEventOn: " +
             _timeFromNowToExecuteOn + " seconds from now");
 
-        ulong currentUnixTime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+        ulong currentUnixTime = TimeService.GetCurrentUnixTime();
         TimeToExecuteTheEventOn = currentUnixTime + (ulong)_timeFromNowToExecuteOn;
         EventId = ++Database.Instance.EventScheduler.EventCounter;
 

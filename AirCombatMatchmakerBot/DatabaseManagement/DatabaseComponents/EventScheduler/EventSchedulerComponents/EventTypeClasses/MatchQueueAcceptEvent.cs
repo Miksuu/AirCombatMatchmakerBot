@@ -19,9 +19,11 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
         LeagueCategoryIdCached = _leagueCategoryIdCached;
         MatchChannelIdCached = _matchChannelIdCached;
 
-        Log.WriteLine("Done creating event: " + EventId + " type of: " + nameof(MatchQueueAcceptEvent) + " with: " + 
+        Log.WriteLine("Done creating event: " + EventId + " type of: " + nameof(MatchQueueAcceptEvent) + " with: " +
             _timeFromNowToExecuteOn + "|" + _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.DEBUG);
     }
+
+    [DataMember] private bool removedFromTheQueues = false;
 
     public override async Task ExecuteTheScheduledEvent(bool _serialize = true)
     {
@@ -100,15 +102,15 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
 
     public override void CheckTheScheduledEventStatus()
     {
-        mcc = new MatchChannelComponents(MatchChannelIdCached);
-        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
-        {
-            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
-            return;
-        }
-
         try
         {
+            mcc = new MatchChannelComponents(MatchChannelIdCached);
+            if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
+            {
+                Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+                return;
+            }
+
             Log.WriteLine(LeagueCategoryIdCached + " | " + MatchChannelIdCached);
 
             InterfaceMessage confirmMatchEntryMessage =

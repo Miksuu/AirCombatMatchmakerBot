@@ -25,7 +25,7 @@ public class EventScheduler : logClass<EventScheduler>
 
     public async Task CheckCurrentTimeAndExecuteScheduledEvents(bool _clearEventOnTheStartup = false)
     {
-        ulong currentUnixTime = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+        ulong currentUnixTime = TimeService.GetCurrentUnixTime();
 
         Log.WriteLine("Time: " + currentUnixTime + " with: " +
             nameof(_clearEventOnTheStartup) + ": " + _clearEventOnTheStartup);

@@ -79,7 +79,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
                         if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
                             scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
                         {
-                            var timeLeft = scheduledEvent.TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+                            var timeLeft = scheduledEvent.TimeToExecuteTheEventOn - TimeService.GetCurrentUnixTime();
 
                             finalMessage += "\n\n Match is done. Deleting this channel in " + timeLeft + " seconds!";
                         }

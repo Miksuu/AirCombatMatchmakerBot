@@ -119,7 +119,7 @@ public class DeleteChannelEvent : ScheduledEvent
             Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " +
                 confirmationMessage.MessageDescription, LogLevel.DEBUG);
 
-            //var timeLeft = TimeToExecuteTheEventOn - (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+            //var timeLeft = TimeToExecuteTheEventOn - TimeService.GetCurrentUnixTime();
 
             confirmationMessage.GenerateAndModifyTheMessage();
         }
