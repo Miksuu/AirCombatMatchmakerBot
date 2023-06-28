@@ -231,7 +231,7 @@ public class Leagues : logClass<Leagues>
         }
 
         // Add some bool to determine if "Can not join queue" or "Can not schedule"
-        string stringOfMatches = "You or the other players have these upcoming matches soon:";
+        string stringOfMatches = string.Empty;
 
         List<int> alreadyLoopedThroughMatchIds = new List<int>();
         foreach (LeagueMatch leagueMatch in listOfMatchesClose)
@@ -249,14 +249,14 @@ public class Leagues : logClass<Leagues>
             if (playerArray.Contains(_suggestedByPlayerId))
             {
                 // Add channel link here
-                stringOfMatches += "\nYour match " + leagueMatch.MatchId + " is at " +
+                stringOfMatches += "Your match " + leagueMatch.MatchId + " is at " +
                     TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
                     TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime) + ".";
             }
             else
             {
                 // Add specific player here later instead of the "other player"
-                stringOfMatches += "\nThe other player has a match " + leagueMatch.MatchId + " at " +
+                stringOfMatches += "The other player has a match " + leagueMatch.MatchId + " at " +
                     TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
                     TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime) + ".";
             }
