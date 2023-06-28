@@ -2,6 +2,7 @@ using Discord.WebSocket;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Runtime.Serialization;
+using System.Security;
 
 [DataContract]
 public class Leagues : logClass<Leagues>
@@ -204,12 +205,17 @@ public class Leagues : logClass<Leagues>
         }
     }
 
-    public string GetListOfTimesThatWontBeSuitableForScheduling(List<ulong> _listOfPlayers)
+    const ulong earliestOrLatestAllowedTimeBeforeAndAfterTheMatch = 1800;
+
+    public string GetListOfTimesThatWontBeSuitableForScheduling(LeagueMatch _leagueMatch)
     {
         string finalList = string.Empty;
+        List<ulong> matchTimes = new List<ulong>();
+
+        var listOfPlayers = _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray().ToList();
 
         var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
-            _listOfPlayers, TimeService.GetCurrentUnixTime());
+            listOfPlayers, TimeService.GetCurrentUnixTime());
 
         foreach (LeagueMatch leagueMatch in listOfLeagueMatches)
         {
@@ -219,17 +225,23 @@ public class Leagues : logClass<Leagues>
             }
 
             var matchTime = leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn;
-
+            matchTimes.Add(matchTime);
         }
+
+        var orderedMatchTimes = matchTimes.Order();
+        var currentTime = TimeService.GetCurrentUnixTime();
+        var leagueMatchScheduledTime = _leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn;
+
+        //Generate code here
+
 
         return finalList;
     }
 
+
     public Response CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
         List<ulong> _playerIds, ulong _suggestedTime, ulong _suggestedByPlayerId)
     {
-        ulong earliestOrLatestAllowedTimeBeforeAndAfterTheMatch = 1800;
-
         Log.WriteLine("Checking with " + _playerIds.Count);
         var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
             _playerIds, _suggestedTime);
