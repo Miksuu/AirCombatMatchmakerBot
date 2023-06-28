@@ -109,6 +109,8 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
 
         try
         {
+            Log.WriteLine(LeagueCategoryIdCached + " | " + MatchChannelIdCached);
+
             InterfaceMessage confirmMatchEntryMessage =
                 Database.Instance.Categories.FindInterfaceCategoryWithId(
                     LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
