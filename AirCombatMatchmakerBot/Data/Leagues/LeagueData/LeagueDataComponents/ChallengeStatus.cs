@@ -29,6 +29,14 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
             " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
 
+            // Prohibits players from joining the queue if they have a match soon
+            var responseFromLeagues = Database.Instance.Leagues.CheckIfListOfPlayersCanJoinMatchWithTime(
+                playerTeam.Players.ToList(), (ulong)DateTimeOffset.Now.ToUnixTimeSeconds());
+            if (!responseFromLeagues.serialize)
+            {
+                return new Response(responseFromLeagues.responseString, false);
+            }
+
             // Add to method
             foreach (InterfaceLeague league in Database.Instance.Leagues.StoredLeagues)
             {

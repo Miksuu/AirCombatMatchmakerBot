@@ -168,18 +168,64 @@ public class Leagues : logClass<Leagues>
         }
     }
 
-    public List<LeagueMatch> CheckAndReturnTheListOfMatchesThatPlayersOfAMatchAreIn(LeagueMatch _match, ulong _suggestedTime)
+    public Response CheckIfListOfPlayersCanJoinMatchWithTime(List<Player> _players, ulong _suggestedTime)
+    {
+        Log.WriteLine("Checking with " + _players.Count);
+        var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
+            _players, _suggestedTime);
+
+        Log.WriteLine(listOfLeagueMatches.Count.ToString());
+
+        var listOfMatchesClose = listOfLeagueMatches.Where(
+            x => x.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
+            ((x.MatchEventManager.GetEventByType(
+                typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - _suggestedTime) <= 2700)).ToList();
+
+        Log.WriteLine("list: " + listOfMatchesClose.Count);
+
+        if (listOfMatchesClose.Count <= 0)
+        {
+            return new Response("", true);
+        }
+
+        // Add some bool to determine if "Can not join queue" or "Can not schedule"
+        string stringOfMatches = "Can not join the queue! You have these upcoming matches soon:";
+
+        foreach (LeagueMatch leagueMatch in listOfMatchesClose)
+        {
+            ulong matchUnixTime = leagueMatch.MatchEventManager.GetEventByType(
+                typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn;
+
+            // Add channel link here
+            stringOfMatches += "\nMatch " + leagueMatch.MatchId + " at " +
+                TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
+                TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime);
+        }
+
+        return new Response(stringOfMatches, false);
+    }
+
+    //public List<LeagueMatch> CheckAndReturnTheListOfMatchesThatPlayersOfAMatchAreIn(LeagueMatch _match, ulong _suggestedTime)
+    //{
+    //    var players = _match.GetIdsOfThePlayersInTheMatchAsArray().ToList();
+    //}
+
+    private List<LeagueMatch> CheckAndReturnTheListOfMatchesThatListPlayersAreIn(List<Player> _players, ulong _suggestedTime)
     {
         try
         {
             // Temp, replace with logList when done
-            List<LeagueMatch> matchesThatHadTheirSchedulingTimeOverlap = new List<LeagueMatch>();
+            List<LeagueMatch> matchesThatThePlayersAreIn = new List<LeagueMatch>();
 
-            Log.WriteLine("on: " + _match.MatchId);
+            //Log.WriteLine("on: " + _match.MatchId);
 
-            var players = _match.GetIdsOfThePlayersInTheMatchAsArray().ToList();
-            foreach (var playerId in players)
+            //var players = _match.GetIdsOfThePlayersInTheMatchAsArray().ToList();
+
+            Log.WriteLine("Players count: " + _players.Count);
+
+            foreach (var player in _players)
             {
+                ulong playerId = player.PlayerDiscordId;
                 Log.WriteLine("on: " + playerId);
                 foreach (var league in StoredLeagues)
                 {
@@ -191,12 +237,12 @@ public class Leagues : logClass<Leagues>
 
                     foreach (LeagueMatch leagueMatch in league.LeagueData.Matches.MatchesConcurrentBag)
                     {
-                        Log.WriteLine("on match: " + leagueMatch.MatchId);
-                        if (leagueMatch.MatchId == _match.MatchId)
-                        {
-                            Log.WriteLine(leagueMatch.MatchId + "is the same match!");
-                            continue;
-                        }
+                        Log.WriteLine("on match: " + leagueMatch.MatchId + " with state: " + leagueMatch.MatchReporting.MatchState);
+                        //if (leagueMatch.MatchId == _match.MatchId)
+                        //{
+                        //    Log.WriteLine(leagueMatch.MatchId + "is the same match!");
+                        //    continue;
+                        //}
 
                         if (leagueMatch.MatchReporting.MatchState != MatchState.PLAYERREADYCONFIRMATIONPHASE)
                         {
@@ -218,29 +264,29 @@ public class Leagues : logClass<Leagues>
                         var matchQueueAcceptEvent =
                             leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent));
 
-                        if (matchQueueAcceptEvent.TimeToExecuteTheEventOn - _suggestedTime > 900)
-                        {
-                            Log.WriteLine("Match's " + leagueMatch.MatchId + " scheduled time: " +
-                                matchQueueAcceptEvent.TimeToExecuteTheEventOn + " is fine with suggested time: " + _suggestedTime);
-                            continue;
-                        }
+                        //if (matchQueueAcceptEvent.TimeToExecuteTheEventOn - _suggestedTime > 900)
+                        //{
+                        //    Log.WriteLine("Match's " + leagueMatch.MatchId + " scheduled time: " +
+                        //        matchQueueAcceptEvent.TimeToExecuteTheEventOn + " is fine with suggested time: " + _suggestedTime);
+                        //    continue;
+                        //}
 
                         Log.WriteLine("Match's " + leagueMatch.MatchId + " scheduled time: " + matchQueueAcceptEvent.TimeToExecuteTheEventOn +
                             " was not fine with suggested time: " + _suggestedTime, LogLevel.DEBUG);
 
-                        matchesThatHadTheirSchedulingTimeOverlap.Add(leagueMatch);
+                        matchesThatThePlayersAreIn.Add(leagueMatch);
                     }
                 }
             }
 
             // Temp, replace with logList when done
-            foreach (var item in matchesThatHadTheirSchedulingTimeOverlap)
+            foreach (var item in matchesThatThePlayersAreIn)
             {
-                Log.WriteLine(item.MatchId + "'s time was not fine with: " + _match.MatchId +
+                Log.WriteLine(item.MatchId + "'s time was not fine with: " +// _match.MatchId +
                     " with time: " + _suggestedTime, LogLevel.DEBUG);
             }
 
-            return matchesThatHadTheirSchedulingTimeOverlap;
+            return matchesThatThePlayersAreIn;
         }
         catch (Exception ex)
         {
