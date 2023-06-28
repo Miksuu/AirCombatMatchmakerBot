@@ -207,8 +207,7 @@ public class Leagues : logClass<Leagues>
     public Response CheckIfListOfPlayersCanJoinMatchWithTime(
         List<ulong> _playerIds, ulong _suggestedTime, ulong _suggestedByPlayerId)
     {
-        ulong latestAllowedTimeBeforeTheMatch = 2700;
-        ulong earliestAllowedTimeAfterTheMatch = 1800;
+        ulong earliestOrLatestAllowedTimeBeforeAndAfterTheMatch = 1800;
 
         Log.WriteLine("Checking with " + _playerIds.Count);
         var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
@@ -219,9 +218,9 @@ public class Leagues : logClass<Leagues>
         var listOfMatchesClose = listOfLeagueMatches.Where(
             x => x.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
             ((x.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - _suggestedTime)
-            <= latestAllowedTimeBeforeTheMatch) ||
+            <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch) ||
             ((_suggestedTime - x.MatchEventManager.GetEventByType(
-                typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn) <= earliestAllowedTimeAfterTheMatch)).ToList();
+                typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn) <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch)).ToList();
 
         Log.WriteLine("list: " + listOfMatchesClose.Count);
 
@@ -264,16 +263,16 @@ public class Leagues : logClass<Leagues>
             // Add suggestions to schedule at earlier/later time
             // Perhaps replace with just earliest/latest time.
             if ((leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - _suggestedTime)
-                 <= latestAllowedTimeBeforeTheMatch)
+                 <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch)
             {
                 stringOfMatches += " Matches must take place " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlaceWithTimeLeft(
-                    latestAllowedTimeBeforeTheMatch) + " before the scheduled time.";
+                    earliestOrLatestAllowedTimeBeforeAndAfterTheMatch) + " before the scheduled time.";
             }
             else if ((_suggestedTime - leagueMatch.MatchEventManager.GetEventByType(
-                typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn) <= earliestAllowedTimeAfterTheMatch)
+                typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn) <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch)
             {
                 stringOfMatches += " Matches must take place " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlaceWithTimeLeft(
-                    earliestAllowedTimeAfterTheMatch) + " after the scheduled time.";
+                    earliestOrLatestAllowedTimeBeforeAndAfterTheMatch) + " after the scheduled time.";
             }
         }
 
