@@ -168,9 +168,39 @@ public class Leagues : logClass<Leagues>
         }
     }
 
-    public void RemovePlayerFromQueuesOnceMatchIsCloseEnough()
+    public void RemovePlayersFromQueuesOnceMatchIsCloseEnough(List<ulong> _playerIds)
     {
+        List<InterfaceMessage> toBeModifiedMessages = new List<InterfaceMessage>();
 
+        foreach (var playerId in _playerIds)
+        {
+            Log.WriteLine("on: " + playerId);
+            foreach (var league in StoredLeagues)
+            {
+                Log.WriteLine("on: " + league.LeagueCategoryName);
+                if (!league.LeagueData.CheckIfPlayerIsParcipiatingInTheLeague(playerId))
+                {
+                    continue;
+                }
+
+                league.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(playerId);
+
+                InterfaceMessage interfaceMessage = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    league.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
+                        ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
+                            MessageName.CHALLENGEMESSAGE);
+
+                if (!toBeModifiedMessages.Any(x => x.MessageId == interfaceMessage.MessageId))
+                {
+                    toBeModifiedMessages.Add(interfaceMessage);
+                }
+            }
+        }
+
+        foreach (var message in toBeModifiedMessages)
+        {
+            message.GenerateAndModifyTheMessage();
+        }
     }
 
     public Response CheckIfListOfPlayersCanJoinMatchWithTime(List<Player> _players, ulong _suggestedTime)

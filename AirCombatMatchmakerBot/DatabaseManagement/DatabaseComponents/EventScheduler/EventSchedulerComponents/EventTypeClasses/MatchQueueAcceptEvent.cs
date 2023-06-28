@@ -111,6 +111,14 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
                 return;
             }
 
+            if (!removedFromTheQueues && TimeService.CalculateTimeUntilWithUnixTime(TimeToExecuteTheEventOn) <= 2700)
+            {
+                removedFromTheQueues = true;
+
+                Database.Instance.Leagues.RemovePlayersFromQueuesOnceMatchIsCloseEnough(
+                    mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray().ToList());
+            }
+
             Log.WriteLine(LeagueCategoryIdCached + " | " + MatchChannelIdCached);
 
             InterfaceMessage confirmMatchEntryMessage =

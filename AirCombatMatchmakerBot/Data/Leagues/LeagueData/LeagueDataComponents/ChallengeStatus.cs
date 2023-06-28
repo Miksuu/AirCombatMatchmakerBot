@@ -102,7 +102,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
         }
     }
 
-    public void RemoveFromTeamsInTheQueue(Team _Team)
+    public void RemoveFromTeamFromTheQueue(Team _Team)
     {
         Log.WriteLine("Removing Team: " + _Team + " (" +
             _Team.TeamId + ") from the queue");
@@ -165,7 +165,6 @@ public class ChallengeStatus : logClass<ChallengeStatus>
 
     public string RemoveChallengeFromThisLeague(ulong _playerId)
     {
-
         try
         {
             Team team =
@@ -179,7 +178,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
                 return "notInTheQueue";
             }
 
-            RemoveFromTeamsInTheQueue(team);
+            RemoveFromTeamFromTheQueue(team);
 
             string teamsInTheQueue =
                 ReturnTeamsInTheQueueOfAChallenge();
