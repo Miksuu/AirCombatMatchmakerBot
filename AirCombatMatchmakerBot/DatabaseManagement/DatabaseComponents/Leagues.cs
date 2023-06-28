@@ -217,8 +217,15 @@ public class Leagues : logClass<Leagues>
         var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
             listOfPlayers, TimeService.GetCurrentUnixTime());
 
+        List<int> alreadyLoopedThroughMatches = new List<int>();
         foreach (LeagueMatch leagueMatch in listOfLeagueMatches)
         {
+            if (alreadyLoopedThroughMatches.Contains(leagueMatch.MatchId))
+            {
+                continue;
+            }
+            alreadyLoopedThroughMatches.Add(leagueMatch.MatchId);
+
             if (leagueMatch.MatchState != MatchState.PLAYERREADYCONFIRMATIONPHASE)
             {
                 continue;
@@ -228,15 +235,26 @@ public class Leagues : logClass<Leagues>
             matchTimes.Add(matchTime);
         }
 
-        var orderedMatchTimes = matchTimes.Order();
-        var currentTime = TimeService.GetCurrentUnixTime();
-        var leagueMatchScheduledTime = _leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn;
+        var orderedMatchTimes = matchTimes.OrderBy(time => time);
+        //var currentTime = TimeService.GetCurrentUnixTime();
 
-        //Generate code here
+        if (matchTimes.Count <= 0)
+        {
+            return "";
+        }
 
+        finalList += "\n\nYou can not schedule to these times (existing matches):";
+
+        // Add before for the matches that's scheduled time is inside the currentTime - earliestOrLatestAllowedTimeBeforeAndAfterTheMatch
+        foreach (var matchTime in orderedMatchTimes)
+        {
+            finalList += "\n**" + TimeService.ConvertToZuluTimeFromUnixTime(matchTime - earliestOrLatestAllowedTimeBeforeAndAfterTheMatch) + " - " +
+                TimeService.ConvertToZuluTimeFromUnixTime(matchTime + earliestOrLatestAllowedTimeBeforeAndAfterTheMatch) + "**";
+        }
 
         return finalList;
     }
+
 
 
     public Response CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(

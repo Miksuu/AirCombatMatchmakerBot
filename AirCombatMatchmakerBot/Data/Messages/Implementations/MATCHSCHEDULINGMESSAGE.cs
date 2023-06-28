@@ -47,7 +47,7 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             thisInterfaceMessage.MessageCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(
                 thisInterfaceMessage.MessageChannelId);
 
-        Database.Instance.Leagues.GetListOfTimesThatWontBeSuitableForScheduling(leagueMatch);
+        finalMessage += Database.Instance.Leagues.GetListOfTimesThatWontBeSuitableForScheduling(leagueMatch);
 
         return Task.FromResult(finalMessage);
     }
