@@ -37,7 +37,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             }
 
             // Prohibits players from joining the queue if they have a match soon
-            var responseFromLeagues = Database.Instance.Leagues.CheckIfListOfPlayersCanJoinMatchWithTime(
+            var responseFromLeagues = Database.Instance.Leagues.CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
                 playerIdsInTheTeam, TimeService.GetCurrentUnixTime(), _playerId);
             if (!responseFromLeagues.serialize)
             {
