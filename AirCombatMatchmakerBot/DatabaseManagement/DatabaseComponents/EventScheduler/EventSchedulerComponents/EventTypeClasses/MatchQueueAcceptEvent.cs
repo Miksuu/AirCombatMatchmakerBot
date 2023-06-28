@@ -111,7 +111,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
                 return;
             }
 
-            if (!removedFromTheQueues && TimeService.CalculateTimeUntilWithUnixTime(TimeToExecuteTheEventOn) <= 2700)
+            if (!removedFromTheQueues && TimeService.CalculateTimeUntilWithUnixTime(TimeToExecuteTheEventOn) <= 1800)
             {
                 removedFromTheQueues = true;
 
