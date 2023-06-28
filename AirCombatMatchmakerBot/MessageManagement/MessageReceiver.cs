@@ -131,7 +131,7 @@ public static class MessageReceiver
                 return;
             }
 
-            if (mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.REPORTINGPHASE)
+            if (mcc.leagueMatchCached.MatchState == MatchState.REPORTINGPHASE)
             {
                 finalResponse = await mcc.leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
                     _socketMessage.Author.Id, _socketMessage.Channel.Id);

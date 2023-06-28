@@ -177,7 +177,7 @@ public class Leagues : logClass<Leagues>
         Log.WriteLine(listOfLeagueMatches.Count.ToString());
 
         var listOfMatchesClose = listOfLeagueMatches.Where(
-            x => x.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
+            x => x.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
             ((x.MatchEventManager.GetEventByType(
                 typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - _suggestedTime) <= 2700)).ToList();
 
@@ -237,20 +237,20 @@ public class Leagues : logClass<Leagues>
 
                     foreach (LeagueMatch leagueMatch in league.LeagueData.Matches.MatchesConcurrentBag)
                     {
-                        Log.WriteLine("on match: " + leagueMatch.MatchId + " with state: " + leagueMatch.MatchReporting.MatchState);
+                        Log.WriteLine("on match: " + leagueMatch.MatchId + " with state: " + leagueMatch.MatchState);
                         //if (leagueMatch.MatchId == _match.MatchId)
                         //{
                         //    Log.WriteLine(leagueMatch.MatchId + "is the same match!");
                         //    continue;
                         //}
 
-                        if (leagueMatch.MatchReporting.MatchState != MatchState.PLAYERREADYCONFIRMATIONPHASE)
+                        if (leagueMatch.MatchState != MatchState.PLAYERREADYCONFIRMATIONPHASE)
                         {
                             Log.WriteLine("State was not correct one, continuing");
                             continue;
                         }
 
-                        Log.WriteLine("State: " + leagueMatch.MatchReporting.MatchState);
+                        Log.WriteLine("State: " + leagueMatch.MatchState);
 
                         var playersOnTheLeagueMatch = leagueMatch.GetIdsOfThePlayersInTheMatchAsArray().ToList();
                         if (!playersOnTheLeagueMatch.Contains(playerId))

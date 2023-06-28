@@ -10,7 +10,7 @@ public abstract class BaseMatchCommand : BaseCommand
         = new Dictionary<MatchState, string>();
 
     // If not null, overrides the Dictionary above and uses that to check if the matchstate from the method
-    // call equals the current match state from mcc.leagueMatchCached.MatchReporting.Matchstate
+    // call equals the current match state from mcc.leagueMatchCached.MatchState
     protected (MatchState, string) matchStateAllowedWithMessage;
 
     protected Response CheckThatPlayerIsInTheMatchAndReturnResponseFromMatchStatesThatAreNotAllowed(
@@ -24,7 +24,7 @@ public abstract class BaseMatchCommand : BaseCommand
             return new Response(errorMsg, false);
         }
 
-        MatchState matchState = mcc.leagueMatchCached.MatchReporting.MatchState;
+        MatchState matchState = mcc.leagueMatchCached.MatchState;
 
         if (!mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray().Contains(_commandPlayerId))
         {
@@ -33,7 +33,7 @@ public abstract class BaseMatchCommand : BaseCommand
             return new Response("That's not your match to comment on!", false);
         }
 
-        Log.WriteLine("Starting to check: " + mcc.leagueMatchCached.MatchReporting.MatchState);
+        Log.WriteLine("Starting to check: " + mcc.leagueMatchCached.MatchState);
 
         // Check if matchStateAllowedWithMessage is set and if the current match state matches
         if (matchStateAllowedWithMessage.Item2 != null && matchStateAllowedWithMessage.Item1 != matchState)

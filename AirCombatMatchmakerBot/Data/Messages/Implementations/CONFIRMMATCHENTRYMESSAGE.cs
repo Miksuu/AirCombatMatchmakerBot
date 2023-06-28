@@ -132,12 +132,12 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
             // Need to move this inside the class itself
             if (playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
-                mcc.leagueMatchCached.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
+                mcc.leagueMatchCached.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
             {
                 mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(MatchQueueAcceptEvent));
                 mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
 
-                mcc.leagueMatchCached.MatchReporting.MatchState = MatchState.REPORTINGPHASE;
+                mcc.leagueMatchCached.MatchState = MatchState.REPORTINGPHASE;
 
                 InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
                         thisInterfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(

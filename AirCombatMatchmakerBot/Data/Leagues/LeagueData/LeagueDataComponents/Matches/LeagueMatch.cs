@@ -60,6 +60,11 @@ public class LeagueMatch : logClass<LeagueMatch>
         get => matchEventManager.GetValue();
         set => matchEventManager.SetValue(value);
     }
+    public MatchState MatchState
+    {
+        get => matchState.GetValue();
+        set => matchState.SetValue(value);
+    }
 
     public ConcurrentBag<ulong> AlreadySuggestedTimes
     {
@@ -75,6 +80,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logClass<ScheduleObject> scheduleObject = new logClass<ScheduleObject>(new ScheduleObject());
     [DataMember] private logClass<bool> isAScheduledMatch = new logClass<bool>();
     [DataMember] private logClass<EventManager> matchEventManager = new logClass<EventManager>(new EventManager());
+    [DataMember] private logClass<MatchState> matchState = new logClass<MatchState>();
 
     [DataMember] private logConcurrentBag<ulong> alreadySuggestedTimes = new logConcurrentBag<ulong>();
 
@@ -131,7 +137,9 @@ public class LeagueMatch : logClass<LeagueMatch>
         MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
         Database.Instance.Leagues.LeaguesMatchCounter++;
 
-        MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague, _matchState);
+        MatchState = _matchState;
+
+        MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague);
 
         Log.WriteLine("Constructed a new match with teams ids: " + TeamsInTheMatch.ElementAt(0) +
             TeamsInTheMatch.ElementAt(1) + " with matchId of: " + MatchId, LogLevel.DEBUG);
@@ -324,7 +332,7 @@ public class LeagueMatch : logClass<LeagueMatch>
             //    await messageToDelete.DeleteAsync();
             //}
 
-            MatchReporting.MatchState = MatchState.PLAYERREADYCONFIRMATIONPHASE;
+            MatchState = MatchState.PLAYERREADYCONFIRMATIONPHASE;
 
             await _interfaceChannel.CreateAMessageForTheChannelFromMessageName(
                 MessageName.CONFIRMMATCHENTRYMESSAGE, true);
@@ -367,7 +375,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     {
         try
         {
-            MatchReporting.MatchState = MatchState.MATCHDONE;
+            MatchState = MatchState.MATCHDONE;
 
             AttachmentData[] attachmentDatas;
             InterfaceMessage interfaceMessage;

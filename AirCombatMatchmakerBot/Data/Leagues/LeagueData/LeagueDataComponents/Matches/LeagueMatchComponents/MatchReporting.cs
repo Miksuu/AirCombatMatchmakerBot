@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
@@ -10,11 +10,6 @@ public class MatchReporting : logClass<MatchReporting>
     {
         get => teamIdsWithReportData.GetValue();
         set => teamIdsWithReportData.SetValue(value);
-    }
-    public MatchState MatchState
-    {
-        get => matchState.GetValue();
-        set => matchState.SetValue(value);
     }
 
     public string FinalResultForConfirmation
@@ -37,7 +32,6 @@ public class MatchReporting : logClass<MatchReporting>
 
     [DataMember] private logConcurrentDictionary<int, ReportData> teamIdsWithReportData =
         new logConcurrentDictionary<int, ReportData>();
-    [DataMember] private logClass<MatchState> matchState = new logClass<MatchState>();
     [DataMember] private logString finalResultForConfirmation = new logString();
     [DataMember] private logString finalMessageForMatchReportingChannel = new logString();
     [DataMember] private logString finalResultTitleForConfirmation = new logString();
@@ -47,11 +41,9 @@ public class MatchReporting : logClass<MatchReporting>
     public MatchReporting() { }
 
     public MatchReporting(
-        ConcurrentDictionary<int, string> _teamsInTheMatch, InterfaceLeague _interfaceLeague, MatchState _matchState)
+        ConcurrentDictionary<int, string> _teamsInTheMatch, InterfaceLeague _interfaceLeague)
     {
         interfaceLeagueRef = _interfaceLeague;
-
-        MatchState = _matchState;
 
         foreach (var teamKvp in _teamsInTheMatch)
         {
@@ -106,6 +98,9 @@ public class MatchReporting : logClass<MatchReporting>
         try
         {
             string response = string.Empty;
+
+            MatchState matchState = Database.Instance.Leagues.GetILeagueByCategoryId(
+                _leagueCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState;
 
             Log.WriteLine("Processing player's sent " + nameof(BaseReportingObject) + " in league: " +
                 interfaceLeagueRef.LeagueCategoryName + " by: " + _playerId + " with data: " +
@@ -269,20 +264,22 @@ public class MatchReporting : logClass<MatchReporting>
     private (string, bool, InterfaceChannel?) CheckIfMatchCanBeSentToConfirmation(
         ulong _leagueCategoryId, ulong _messageChannelId)
     {
-        InterfaceChannel interfaceChannel;
         try
         {
-            interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            MatchState matchState = Database.Instance.Leagues.GetILeagueByCategoryId(
+                _leagueCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState;
+
+            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
                 _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
 
             bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown(interfaceChannel);
 
             Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
-                " state: " + MatchState.ToString(), LogLevel.DEBUG);
+                " state: " + matchState.ToString(), LogLevel.DEBUG);
 
             if (confirmationMessageCanBeShown)
             {
-                MatchState = MatchState.CONFIRMATIONPHASE;
+                matchState = MatchState.CONFIRMATIONPHASE;
             }
 
 

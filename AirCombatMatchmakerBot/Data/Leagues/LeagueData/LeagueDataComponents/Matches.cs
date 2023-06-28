@@ -120,7 +120,7 @@ public class Matches : logClass<Matches>
         await _interfaceChannel.PostChannelMessages(client);
 
         // Schedule the match queue timeout (if the players don't accept it in the time), only if the match is in the
-        if (_leagueMatch.MatchReporting.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
+        if (_leagueMatch.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
         {
             new MatchQueueAcceptEvent(
                 30, interfaceLeagueRef.LeagueCategoryId,
