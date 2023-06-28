@@ -51,14 +51,6 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
             var teamNameThatScheduled = teamsInTheMatch.First(
                 t => t.Key == scheduleObject.TeamIdThatRequestedScheduling).Value;
 
-            var messageToFind = Database.Instance.Categories.FindInterfaceCategoryWithId(
-                mcc.interfaceLeagueCached.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                    mcc.leagueMatchCached.MatchChannelId).FindInterfaceMessageWithNameInTheChannel(
-                        MessageName.MATCHSCHEDULINGMESSAGE);
-            var client = BotReference.GetClientRef();
-            var channel = client.GetChannel(mcc.leagueMatchCached.MatchChannelId) as IMessageChannel;
-            var message = await channel.GetMessageAsync(messageToFind.MessageId);
-
             thisInterfaceMessage.MessageDescription +=
                 "**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**\n\n" +
                 "If the time above is fine, use ``/schedule accept`` command, or click the ACCEPT button below. " +
