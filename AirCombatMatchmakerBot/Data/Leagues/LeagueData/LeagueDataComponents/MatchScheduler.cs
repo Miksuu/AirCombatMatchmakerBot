@@ -187,7 +187,7 @@ public class MatchScheduler : logClass<MatchScheduler>
             if (teamMatchmakingState == TeamMatchmakingState.INQUEUE)
             {
                 // Reverse for-loop to search for the highest priority from the top team
-                for (int priorityInt = teamKvp.Value.TeamMissedMatchesFromScheduler; priorityInt >= 0; priorityInt++)
+                for (int priorityInt = teamKvp.Value.TeamMissedMatchesFromScheduler; priorityInt >= 0; priorityInt--)
                 {
                     Log.WriteLine("Loop on priority: " + priorityInt);
 
