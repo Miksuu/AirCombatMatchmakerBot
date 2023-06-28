@@ -61,7 +61,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => matchEventManager.SetValue(value);
     }
 
-    public ConcurrentBag<DateTime?> AlreadySuggestedTimes
+    public ConcurrentBag<ulong> AlreadySuggestedTimes
     {
         get => alreadySuggestedTimes.GetValue();
         set => alreadySuggestedTimes.SetValue(value);
@@ -76,7 +76,7 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logClass<bool> isAScheduledMatch = new logClass<bool>();
     [DataMember] private logClass<EventManager> matchEventManager = new logClass<EventManager>(new EventManager());
 
-    [DataMember] private logConcurrentBag<DateTime?> alreadySuggestedTimes = new logConcurrentBag<DateTime?>();
+    [DataMember] private logConcurrentBag<ulong> alreadySuggestedTimes = new logConcurrentBag<ulong>();
 
     private InterfaceLeague interfaceLeagueRef;
 
@@ -243,13 +243,15 @@ public class LeagueMatch : logClass<LeagueMatch>
                 return new Response("Accepted scheduled match to: " + suggestedScheduleDate, true);
             }
 
-            if (AlreadySuggestedTimes.Contains(suggestedScheduleDate))
+            var suggestedScheduleDateInUnixTime = TimeService.ConvertDateTimeToUnixTime(suggestedScheduleDate.Value);
+
+            if (AlreadySuggestedTimes.Contains(suggestedScheduleDateInUnixTime))
             {
                 return new Response("That time, " + TimeService.ConvertDateTimeToZuluTime(suggestedScheduleDate.Value) +
                     " was already suggested before! Please suggest a new time.", false);
             }
 
-            AlreadySuggestedTimes.Add(suggestedScheduleDate);
+            AlreadySuggestedTimes.Add(suggestedScheduleDateInUnixTime);
 
             ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 
