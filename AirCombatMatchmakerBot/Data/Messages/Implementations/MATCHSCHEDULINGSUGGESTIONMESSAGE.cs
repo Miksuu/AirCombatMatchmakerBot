@@ -51,7 +51,6 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
             var teamNameThatScheduled = teamsInTheMatch.First(
                 t => t.Key == scheduleObject.TeamIdThatRequestedScheduling).Value;
 
-            // Refactor this?
             var messageToFind = Database.Instance.Categories.FindInterfaceCategoryWithId(
                 mcc.interfaceLeagueCached.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
                     mcc.leagueMatchCached.MatchChannelId).FindInterfaceMessageWithNameInTheChannel(
@@ -63,13 +62,15 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
             thisInterfaceMessage.MessageDescription +=
                 "**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**\n\n" +
                 "If the time above is fine, use ``/schedule accept`` command, or click the ACCEPT button below. " +
-                "Otherwise refer to the instructions: " + message.GetJumpUrl() + " to propose a new time!";
+                "Otherwise refer to the instructions: " + Database.Instance.Categories.GetMessageJumpUrl(
+                    mcc.interfaceLeagueCached.LeagueCategoryId, mcc.leagueMatchCached.MatchChannelId, 
+                    MessageName.MATCHSCHEDULINGMESSAGE) + " to propose a new time!";
 
             Log.WriteLine(thisInterfaceMessage.MessageDescription);
 
             return thisInterfaceMessage.MessageDescription;
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return Task.FromResult(ex.Message).Result;

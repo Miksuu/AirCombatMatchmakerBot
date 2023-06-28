@@ -299,16 +299,8 @@ public class Leagues : logClass<Leagues>
             var playerArray = leagueMatch.GetIdsOfThePlayersInTheMatchAsArray();
             if (playerArray.Contains(_suggestedByPlayerId))
             {
-                // Refactor this?
-                var messageToFind = Database.Instance.Categories.FindInterfaceCategoryWithId(
-                    leagueMatch.interfaceLeagueRef.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                        leagueMatch.MatchChannelId).FindInterfaceMessageWithNameInTheChannel(
-                            MessageName.MATCHSTARTMESSAGE);
-                var client = BotReference.GetClientRef();
-                var channel = client.GetChannel(leagueMatch.MatchChannelId) as IMessageChannel;
-                var message = await channel.GetMessageAsync(messageToFind.MessageId);
-
-                stringOfMatches += "Your match " + message.GetJumpUrl() + " is at " +
+                stringOfMatches += "Your match " + Database.Instance.Categories.GetMessageJumpUrl(
+                    leagueMatch.interfaceLeagueRef.LeagueCategoryId, leagueMatch.MatchChannelId, MessageName.MATCHSTARTMESSAGE) + " is at " +
                     TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
                     TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime) + ".";
             }

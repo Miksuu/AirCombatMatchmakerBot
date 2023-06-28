@@ -240,9 +240,9 @@ public abstract class BaseLeague : InterfaceLeague
                         
                     LeagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
 
-                    responseMsg = "Registration complete on: " +
-                        EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
-                        " You can look for a match in: <#" + challengeChannelId + ">";
+                    //responseMsg = "Registration complete on: " +
+                    //    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
+                    //    " You can look for a match in: <#" + challengeChannelId + ">";
                 }
                 else
                 {
@@ -270,9 +270,9 @@ public abstract class BaseLeague : InterfaceLeague
 
                 UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
 
-                responseMsg = "You have rejoined: " +
-                    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
-                    " You can look for a match in: <#" + challengeChannelId + ">";
+                //responseMsg = "You have rejoined: " +
+                //    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
+                //    " You can look for a match in: <#" + challengeChannelId + ">";
             }
             else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
             {
@@ -281,8 +281,8 @@ public abstract class BaseLeague : InterfaceLeague
 
                 Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + thisInterfaceLeague.LeagueCategoryName +
                     ", had a team already active");
-                responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) +
-                    "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
+                //responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) +
+                //    "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
                 return Task.FromResult(new Response(responseMsg, false));
             }
         }

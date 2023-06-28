@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
+using Discord;
 
 [DataContract]
 public class Categories : logClass<Categories>
@@ -127,5 +128,23 @@ public class Categories : logClass<Categories>
         CreatedCategoriesWithChannels.TryRemove(_id, out InterfaceCategory? _ic);
         Log.WriteLine("Done removing, count is now: " +
             CreatedCategoriesWithChannels.Count);
+    }
+
+    public async Task<string> GetMessageJumpUrl(
+    ulong _leagueCategoryId, ulong _matchChannelId, MessageName _messageName)
+    {
+        Log.WriteLine("Getting jump URL with: " + _leagueCategoryId +
+            " | " + _matchChannelId + " | " + _messageName);
+
+        var messageToFind = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                _matchChannelId).FindInterfaceMessageWithNameInTheChannel(
+                    _messageName);
+        var client = BotReference.GetClientRef();
+        var channel = client.GetChannel(_matchChannelId) as IMessageChannel;
+        var message = await channel.GetMessageAsync(messageToFind.MessageId);
+        string jumpUrl = message.GetJumpUrl();
+        Log.WriteLine("Found: " + jumpUrl, LogLevel.DEBUG);
+        return jumpUrl;
     }
 }
