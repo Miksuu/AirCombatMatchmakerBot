@@ -203,11 +203,11 @@ public class Leagues : logClass<Leagues>
         }
     }
 
-    public Response CheckIfListOfPlayersCanJoinMatchWithTime(List<Player> _players, ulong _suggestedTime)
+    public Response CheckIfListOfPlayersCanJoinMatchWithTime(List<ulong> _playerIds, ulong _suggestedTime)
     {
-        Log.WriteLine("Checking with " + _players.Count);
+        Log.WriteLine("Checking with " + _playerIds.Count);
         var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
-            _players, _suggestedTime);
+            _playerIds, _suggestedTime);
 
         Log.WriteLine(listOfLeagueMatches.Count.ToString());
 
@@ -245,7 +245,8 @@ public class Leagues : logClass<Leagues>
     //    var players = _match.GetIdsOfThePlayersInTheMatchAsArray().ToList();
     //}
 
-    private List<LeagueMatch> CheckAndReturnTheListOfMatchesThatListPlayersAreIn(List<Player> _players, ulong _suggestedTime)
+    private List<LeagueMatch> CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
+        List<ulong> _playersIds, ulong _suggestedTime)
     {
         try
         {
@@ -256,11 +257,10 @@ public class Leagues : logClass<Leagues>
 
             //var players = _match.GetIdsOfThePlayersInTheMatchAsArray().ToList();
 
-            Log.WriteLine("Players count: " + _players.Count);
+            Log.WriteLine("Players count: " + _playersIds.Count);
 
-            foreach (var player in _players)
+            foreach (var playerId in _playersIds)
             {
-                ulong playerId = player.PlayerDiscordId;
                 Log.WriteLine("on: " + playerId);
                 foreach (var league in StoredLeagues)
                 {

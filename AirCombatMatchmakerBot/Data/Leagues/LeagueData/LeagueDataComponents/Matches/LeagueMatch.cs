@@ -252,14 +252,14 @@ public class LeagueMatch : logClass<LeagueMatch>
             }
 
             var suggestedScheduleDateInUnixTime = TimeService.ConvertDateTimeToUnixTime(suggestedScheduleDate.Value);
-
             if (AlreadySuggestedTimes.Contains(suggestedScheduleDateInUnixTime))
             {
                 return new Response("That time, " + TimeService.ConvertDateTimeToZuluTime(suggestedScheduleDate.Value) +
                     " was already suggested before! Please suggest a new time.", false);
             }
-
             AlreadySuggestedTimes.Add(suggestedScheduleDateInUnixTime);
+
+
 
             ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
 

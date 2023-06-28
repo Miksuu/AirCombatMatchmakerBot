@@ -23,15 +23,22 @@ public class ChallengeStatus : logClass<ChallengeStatus>
     {
         try
         {
+            List<ulong> playerIdsInTheTeam = new List<ulong>();
+
             Team playerTeam =
                 interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
 
             Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
             " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
 
+            foreach (Player player in playerTeam.Players.ToList())
+            {
+                playerIdsInTheTeam.Add(player.PlayerDiscordId);
+            }
+
             // Prohibits players from joining the queue if they have a match soon
             var responseFromLeagues = Database.Instance.Leagues.CheckIfListOfPlayersCanJoinMatchWithTime(
-                playerTeam.Players.ToList(), TimeService.GetCurrentUnixTime());
+                playerIdsInTheTeam, TimeService.GetCurrentUnixTime());
             if (!responseFromLeagues.serialize)
             {
                 return new Response(responseFromLeagues.responseString, false);
