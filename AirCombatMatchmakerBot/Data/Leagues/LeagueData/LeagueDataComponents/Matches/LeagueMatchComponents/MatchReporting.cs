@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
@@ -100,19 +100,18 @@ public class MatchReporting : logClass<MatchReporting>
     }
 
     public async Task<Response> ProcessPlayersSentReportObject(
-        ulong _playerId, string _reportedObjectByThePlayer,
-        TypeOfTheReportingObject _typeOfTheReportingObject, ulong _leagueCategoryId, ulong _messageChannelId)
+        ulong _playerId, string _reportedObjectByThePlayer, TypeOfTheReportingObject _typeOfTheReportingObject,
+        ulong _leagueCategoryId, ulong _messageChannelId)
     {
-        string response = string.Empty;
-        Team reportingTeam;
-
-        Log.WriteLine("Processing player's sent " + nameof(BaseReportingObject) + " in league: " +
-            interfaceLeagueRef.LeagueCategoryName + " by: " + _playerId + " with data: " +
-            _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
-
         try
         {
-            reportingTeam = interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
+            string response = string.Empty;
+
+            Log.WriteLine("Processing player's sent " + nameof(BaseReportingObject) + " in league: " +
+                interfaceLeagueRef.LeagueCategoryName + " by: " + _playerId + " with data: " +
+                _reportedObjectByThePlayer + " of type: " + _typeOfTheReportingObject, LogLevel.DEBUG);
+
+            Team reportingTeam = interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(
                 _playerId);
 
             // First time pressing the report button for the team
@@ -129,7 +128,7 @@ public class MatchReporting : logClass<MatchReporting>
                 var interfaceReportingObject =
                     GetInterfaceReportingObjectWithTypeOfTheReportingObject(_typeOfTheReportingObject, reportingTeam.TeamId).thisReportingObject;
 
-                if (!interfaceReportingObject.AllowedMatchStatesToProcessOn.Contains(MatchState))
+                if (!interfaceReportingObject.AllowedMatchStatesToProcessOn.Contains(matchState))
                 {
                     return new Response("That's not allowed at this stage of the reporting!", false);
                 }
@@ -144,73 +143,59 @@ public class MatchReporting : logClass<MatchReporting>
                         _reportedObjectByThePlayer, TeamIdsWithReportData, reportingTeam.TeamId);
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-            return new Response(ex.Message, false);
-        }
+            InterfaceChannel interfaceChannel =
+                Database.Instance.Categories.FindInterfaceCategoryWithId(
+                    _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                        _messageChannelId);
 
-        InterfaceChannel interfaceChannel =
-            Database.Instance.Categories.FindInterfaceCategoryWithId(
-                _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                    _messageChannelId);
-
-        // If the match is on the confirmation phase,
-        // edit that MessageDescription instead of the reporting status MessageDescription which would be null
-        MessageName messageNameToEdit = MessageName.REPORTINGSTATUSMESSAGE;
-        if (MatchState == MatchState.CONFIRMATIONPHASE)
-        {
-            messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
-
-            try
+            // If the match is on the confirmation phase,
+            // edit that MessageDescription instead of the reporting status MessageDescription which would be null
+            MessageName messageNameToEdit = MessageName.REPORTINGSTATUSMESSAGE;
+            if (matchState == MatchState.CONFIRMATIONPHASE)
             {
+                messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
+
+
                 var interfaceMessage = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
                     MessageName.MATCHFINALRESULTMESSAGE);
 
                 FinalResultForConfirmation = interfaceMessage.GenerateMessage().Result;
                 // Must be called after GenerateMessage() since it's defined there
                 FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                return new Response(ex.Message, false);
-            }
-        }
 
-        try
-        {
+            }
+
+
             InterfaceMessage messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
                             messageNameToEdit);
             messageToEdit.GenerateAndModifyTheMessage();
+
+
+            foreach (var reportedTeamKvp in TeamIdsWithReportData)
+            {
+                Log.WriteLine("Reported team: " + reportedTeamKvp.Key +
+                    " with value: " + reportedTeamKvp.Value);
+            }
+
+            int reportedTeamsCount = TeamIdsWithReportData.Count;
+
+            Log.WriteLine("Reported teams count: " + reportedTeamsCount);
+
+            if (reportedTeamsCount > 2)
+            {
+                Log.WriteLine("Count was: " + reportedTeamsCount + ", Error!", LogLevel.ERROR);
+
+                // Maybe handle the error
+                return Task.FromResult(new Response("Couldn't post comment", false)).Result;
+            }
+
+            return Task.FromResult(new Response(response, true)).Result;
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return new Response(ex.Message, false);
         }
-
-
-        foreach (var reportedTeamKvp in TeamIdsWithReportData)
-        {
-            Log.WriteLine("Reported team: " + reportedTeamKvp.Key +
-                " with value: " + reportedTeamKvp.Value);
-        }
-
-        int reportedTeamsCount = TeamIdsWithReportData.Count;
-
-        Log.WriteLine("Reported teams count: " + reportedTeamsCount);
-
-        if (reportedTeamsCount > 2)
-        {
-            Log.WriteLine("Count was: " + reportedTeamsCount + ", Error!", LogLevel.ERROR);
-
-            // Maybe handle the error
-            return Task.FromResult(new Response("Couldn't post comment", false)).Result;
-        }
-
-        return Task.FromResult(new Response(response, true)).Result;
     }
 
     public async Task<Response> PrepareFinalMatchResult(ulong _playerId, ulong _messageChannelId)
