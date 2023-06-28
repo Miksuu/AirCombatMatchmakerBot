@@ -254,14 +254,14 @@ public class LeagueMatch : logClass<LeagueMatch>
             var suggestedScheduleDateInUnixTime = TimeService.ConvertDateTimeToUnixTime(suggestedScheduleDate.Value);
             if (AlreadySuggestedTimes.Contains(suggestedScheduleDateInUnixTime))
             {
-                return new Response("That time, " + TimeService.ConvertDateTimeToZuluTime(suggestedScheduleDate.Value) +
+                return new Response("That time, " + TimeService.ConvertToZuluTimeFromUnixTime(suggestedScheduleDateInUnixTime) +
                     " was already suggested before! Please suggest a new time.", false);
             }
             AlreadySuggestedTimes.Add(suggestedScheduleDateInUnixTime);
 
 
 
-            ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDate, playerTeamId)).GetValue();
+            ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDateInUnixTime, playerTeamId)).GetValue();
 
             // Must delete before showing the new message, without the ID being saved in a variable
             await interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.MATCHSCHEDULINGSUGGESTIONMESSAGE);

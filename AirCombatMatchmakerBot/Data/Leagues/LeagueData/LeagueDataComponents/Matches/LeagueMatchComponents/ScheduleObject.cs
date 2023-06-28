@@ -21,18 +21,12 @@ public class ScheduleObject : logClass<ScheduleObject>
 
 
     public ScheduleObject() { }
-    public ScheduleObject(DateTime? _requestedTime, int _teamId)
+    public ScheduleObject(ulong _requestedTime, int _teamId)
     {
-        Log.WriteLine("Creating a new " + nameof(ScheduleObject) + " by: " + _teamId, LogLevel.DEBUG);
+        Log.WriteLine("Creating a new " + nameof(ScheduleObject) + " by: " + _teamId +
+            " with time: " + _requestedTime, LogLevel.DEBUG);
 
-        if (!_requestedTime.HasValue)
-        {
-            Log.WriteLine(nameof(_requestedTime) + " was null!", LogLevel.CRITICAL);
-            return;
-        }
-
-        RequestedSchedulingTimeInUnixTime = TimeService.ConvertDateTimeToUnixTime(_requestedTime.Value);
-
+        RequestedSchedulingTimeInUnixTime = _requestedTime;
         TeamIdThatRequestedScheduling = _teamId;
     }
 
