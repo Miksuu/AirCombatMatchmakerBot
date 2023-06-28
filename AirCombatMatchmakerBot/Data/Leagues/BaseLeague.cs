@@ -180,124 +180,120 @@ public abstract class BaseLeague : InterfaceLeague
 
     public Task<Response> RegisterUserToALeague(ulong _userId)
     {
-        string responseMsg = string.Empty;
-
-        Log.WriteLine("Registering user to league: " +
-            thisInterfaceLeague.LeagueCategoryName);
-
-        InterfaceChannel foundChannel;
-
         try
         {
-            foundChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            string responseMsg = string.Empty;
+
+            Log.WriteLine("Registering user to league: " +
+                thisInterfaceLeague.LeagueCategoryName);
+
+            InterfaceChannel foundChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
                 LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
                     ChannelType.CHALLENGE);
+
+            // Check that the player is in the PlayerData
+            // (should be, he doesn't see this button before, except if hes admin)
+            if (Database.Instance.PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(
+                _userId))
+            {
+                Player player = Database.Instance.PlayerData.GetAPlayerProfileById(
+                    _userId);
+                if (player.PlayerDiscordId == 0)
+                {
+                    string errorMsg = "Player's: " + player.PlayerNickName + " id was 0!";
+                    Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                    return Task.FromResult(new Response(errorMsg, false));
+                }
+
+                Log.WriteLine("Found player: " + player.PlayerNickName +
+                    " (" + player.PlayerDiscordId + ")");
+
+                bool playerIsInATeamAlready = LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(_userId);
+
+                bool playerIsInActiveTeamAlready = LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
+                    _userId).TeamActive;
+
+                if (!playerIsInATeamAlready)
+                {
+                    Log.WriteLine("The player was not found in any team in the league");
+
+                    // Create a team with unique ID and increment that ID
+                    // after the data has been serialized
+                    Team newTeam = new Team(
+                        new ConcurrentBag<Player> { player },
+                        player.PlayerNickName,
+                        LeagueData.Teams.CurrentTeamInt);
+
+                    if (thisInterfaceLeague.LeaguePlayerCountPerTeam < 2)
+                    {
+                        Log.WriteLine("This league is solo");
+
+                        LeagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
+
+                        //responseMsg = "Registration complete on: " +
+                        //    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
+                        //    " You can look for a match in: <#" + challengeChannelId + ">";
+                    }
+                    else
+                    {
+                        // Not implemented yet
+                        string errorMsg =
+                            "This league is team based with number of players per team: " + leaguePlayerCountPerTeam;
+                        Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                        return Task.FromResult(new Response(errorMsg, false));
+                    }
+
+                    // Add the role for the player for the specific league and set him teamActive
+                    UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+
+                    Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
+                        LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
+
+                    LeagueData.Teams.IncrementCurrentTeamInt();
+                }
+                else if (playerIsInATeamAlready && !playerIsInActiveTeamAlready)
+                {
+                    // Need to handle team related behaviour better later
+
+                    Log.WriteLine("The player was already in a team in that league!" +
+                        " Setting him active", LogLevel.DEBUG);
+
+                    UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+
+                    //responseMsg = "You have rejoined: " +
+                    //    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
+                    //    " You can look for a match in: <#" + challengeChannelId + ">";
+                }
+                else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
+                {
+                    // Temp fix for fast clickers of two different leagues they can just press it again to receive the role
+                    UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+
+                    Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + thisInterfaceLeague.LeagueCategoryName +
+                        ", had a team already active");
+                    //responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) +
+                    //    "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
+                    return Task.FromResult(new Response(responseMsg, false));
+                }
+            }
+            else
+            {
+                responseMsg = "Error joining the league! Press the register button first!" +
+                    " (only admins should be able to see this)";
+                Log.WriteLine("Player: " + _userId +
+                    " tried to join a league before registering", LogLevel.WARNING);
+                return Task.FromResult(new Response(responseMsg, false));
+            }
+
+            UpdateLeagueLeaderboard();
+
+            return Task.FromResult(new Response(responseMsg, true));
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return Task.FromResult(new Response(ex.Message, false));
         }
-
-        ulong challengeChannelId = foundChannel.ChannelId;
-
-        // Check that the player is in the PlayerData
-        // (should be, he doesn't see this button before, except if hes admin)
-        if (Database.Instance.PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(
-            _userId))
-        {
-            Player player = Database.Instance.PlayerData.GetAPlayerProfileById(
-                _userId);
-            if (player.PlayerDiscordId == 0)
-            {
-                string errorMsg = "Player's: " + player.PlayerNickName + " id was 0!";
-                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                return Task.FromResult(new Response(errorMsg, false));
-            }
-
-            Log.WriteLine("Found player: " + player.PlayerNickName +
-                " (" + player.PlayerDiscordId + ")");
-
-            bool playerIsInATeamAlready = LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(_userId);
-
-            bool playerIsInActiveTeamAlready = LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
-                _userId).TeamActive;
-
-            if (!playerIsInATeamAlready)
-            {
-                Log.WriteLine("The player was not found in any team in the league");
-
-                // Create a team with unique ID and increment that ID
-                // after the data has been serialized
-                Team newTeam = new Team(
-                    new ConcurrentBag<Player> { player },
-                    player.PlayerNickName,
-                    LeagueData.Teams.CurrentTeamInt);
-
-                if (thisInterfaceLeague.LeaguePlayerCountPerTeam < 2)
-                {
-                    Log.WriteLine("This league is solo");
-                        
-                    LeagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
-
-                    //responseMsg = "Registration complete on: " +
-                    //    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
-                    //    " You can look for a match in: <#" + challengeChannelId + ">";
-                }
-                else
-                {
-                    // Not implemented yet
-                    string errorMsg = 
-                        "This league is team based with number of players per team: " + leaguePlayerCountPerTeam;
-                    Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                    return Task.FromResult(new Response(errorMsg, false));
-                }
-
-                // Add the role for the player for the specific league and set him teamActive
-                UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
-
-                Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
-                    LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
-
-                LeagueData.Teams.IncrementCurrentTeamInt();
-            }
-            else if (playerIsInATeamAlready && !playerIsInActiveTeamAlready)
-            {
-                // Need to handle team related behaviour better later
-
-                Log.WriteLine("The player was already in a team in that league!" +
-                    " Setting him active", LogLevel.DEBUG);
-
-                UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
-
-                //responseMsg = "You have rejoined: " +
-                //    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
-                //    " You can look for a match in: <#" + challengeChannelId + ">";
-            }
-            else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
-            {
-                // Temp fix for fast clickers of two different leagues they can just press it again to receive the role
-                UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
-
-                Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + thisInterfaceLeague.LeagueCategoryName +
-                    ", had a team already active");
-                //responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) +
-                //    "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
-                return Task.FromResult(new Response(responseMsg, false));
-            }
-        }
-        else
-        {
-            responseMsg = "Error joining the league! Press the register button first!" +
-                " (only admins should be able to see this)";
-            Log.WriteLine("Player: " + _userId +
-                " tried to join a league before registering", LogLevel.WARNING);
-            return Task.FromResult(new Response(responseMsg, false));
-        }
-
-        UpdateLeagueLeaderboard();
-
-        return Task.FromResult(new Response(responseMsg, true));
     }
 
     public void HandleLeaguesAndItsMatchesEvents(ulong _currentUnixTime)
