@@ -204,7 +204,28 @@ public class Leagues : logClass<Leagues>
         }
     }
 
-    public Response CheckIfListOfPlayersCanJoinMatchWithTime(
+    public string GetListOfTimesThatWontBeSuitableForScheduling(List<ulong> _listOfPlayers)
+    {
+        string finalList = string.Empty;
+
+        var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
+            _listOfPlayers, TimeService.GetCurrentUnixTime());
+
+        foreach (LeagueMatch leagueMatch in listOfLeagueMatches)
+        {
+            if (leagueMatch.MatchState != MatchState.PLAYERREADYCONFIRMATIONPHASE)
+            {
+                continue;
+            }
+
+            var matchTime = leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn;
+
+        }
+
+        return finalList;
+    }
+
+    public Response CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
         List<ulong> _playerIds, ulong _suggestedTime, ulong _suggestedByPlayerId)
     {
         ulong earliestOrLatestAllowedTimeBeforeAndAfterTheMatch = 1800;
