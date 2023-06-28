@@ -168,6 +168,11 @@ public class Leagues : logClass<Leagues>
         }
     }
 
+    public void RemovePlayerFromQueuesOnceMatchIsCloseEnough()
+    {
+
+    }
+
     public Response CheckIfListOfPlayersCanJoinMatchWithTime(List<Player> _players, ulong _suggestedTime)
     {
         Log.WriteLine("Checking with " + _players.Count);

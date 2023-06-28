@@ -152,8 +152,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                     mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.FirstOrDefault(
                         x => x.GetType() == typeof(MatchQueueAcceptEvent));
 
-                var timeLeft = matchQueueEvent.TimeToExecuteTheEventOn - TimeService.GetCurrentUnixTime();
-
+                var timeLeft = TimeService.CalculateTimeUntilWithUnixTime(matchQueueEvent.TimeToExecuteTheEventOn);
                 if (timeLeft > 1200) 
                 {
                     finalMessage += 
