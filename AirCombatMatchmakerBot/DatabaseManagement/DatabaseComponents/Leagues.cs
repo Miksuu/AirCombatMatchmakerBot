@@ -207,6 +207,9 @@ public class Leagues : logClass<Leagues>
     public Response CheckIfListOfPlayersCanJoinMatchWithTime(
         List<ulong> _playerIds, ulong _suggestedTime, ulong _suggestedByPlayerId)
     {
+        ulong latestAllowedTimeBeforeTheMatch = 2700;
+        ulong earliestAllowedTimeAfterTheMatch = 1800;
+
         Log.WriteLine("Checking with " + _playerIds.Count);
         var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
             _playerIds, _suggestedTime);
@@ -215,9 +218,10 @@ public class Leagues : logClass<Leagues>
 
         var listOfMatchesClose = listOfLeagueMatches.Where(
             x => x.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
-            ((x.MatchEventManager.GetEventByType(
-                typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - _suggestedTime) <= 2700)).ToList();
-        // Add some time after the match has begun
+            ((x.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - _suggestedTime)
+            <= latestAllowedTimeBeforeTheMatch) ||
+            ((_suggestedTime - x.MatchEventManager.GetEventByType(
+                typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn) <= earliestAllowedTimeAfterTheMatch)).ToList();
 
         Log.WriteLine("list: " + listOfMatchesClose.Count);
 
@@ -227,36 +231,54 @@ public class Leagues : logClass<Leagues>
         }
 
         // Add some bool to determine if "Can not join queue" or "Can not schedule"
-        string stringOfMatches = "Can not join the queue! You have these upcoming matches soon:";
+        string stringOfMatches = "You or the other players have these upcoming matches soon:";
 
+        List<int> alreadyLoopedThroughMatchIds = new List<int>();
         foreach (LeagueMatch leagueMatch in listOfMatchesClose)
         {
+            if (alreadyLoopedThroughMatchIds.Contains(leagueMatch.MatchId))
+            {
+                continue;
+            }
+            alreadyLoopedThroughMatchIds.Add(leagueMatch.MatchId);
+
             ulong matchUnixTime = leagueMatch.MatchEventManager.GetEventByType(
                 typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn;
 
-            if (leagueMatch.GetIdsOfThePlayersInTheMatchAsArray().Contains(_suggestedByPlayerId))
+            var playerArray = leagueMatch.GetIdsOfThePlayersInTheMatchAsArray();
+            if (playerArray.Contains(_suggestedByPlayerId))
             {
                 // Add channel link here
-                stringOfMatches += "\nYour match " + leagueMatch.MatchId + "is at " +
+                stringOfMatches += "\nYour match " + leagueMatch.MatchId + " is at " +
                     TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
-                    TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime);
+                    TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime) + ".";
             }
             else
             {
                 // Add specific player here later instead of the "other player"
-                stringOfMatches += "\nThe other player in the match already has a match " + leagueMatch.MatchId + " at " +
+                stringOfMatches += "\nThe other player has a match " + leagueMatch.MatchId + " at " +
                     TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
-                    TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime);
+                    TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime) + ".";
+            }
+
+            // Add suggestions to schedule at earlier/later time
+            // Perhaps replace with just earliest/latest time.
+            if ((leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - _suggestedTime)
+                 <= latestAllowedTimeBeforeTheMatch)
+            {
+                stringOfMatches += " Matches must take place " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlaceWithTimeLeft(
+                    latestAllowedTimeBeforeTheMatch) + " before the scheduled time.";
+            }
+            else if ((_suggestedTime - leagueMatch.MatchEventManager.GetEventByType(
+                typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn) <= earliestAllowedTimeAfterTheMatch)
+            {
+                stringOfMatches += " Matches must take place " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlaceWithTimeLeft(
+                    earliestAllowedTimeAfterTheMatch) + " after the scheduled time.";
             }
         }
 
         return new Response(stringOfMatches, false);
     }
-
-    //public List<LeagueMatch> CheckAndReturnTheListOfMatchesThatPlayersOfAMatchAreIn(LeagueMatch _match, ulong _suggestedTime)
-    //{
-    //    var players = _match.GetIdsOfThePlayersInTheMatchAsArray().ToList();
-    //}
 
     private List<LeagueMatch> CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
         List<ulong> _playersIds, ulong _suggestedTime)
