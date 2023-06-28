@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Discord;
+using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
 [DataContract]
@@ -105,33 +106,51 @@ public class MatchScheduler : logClass<MatchScheduler>
         Log.WriteLine("Starting to check the status of the matchmaker with: " + TeamsInTheMatchmaker.Count);
 
         // Sort teams based on TeamMissedMatchesFromScheduler in descending order
-        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler);
+        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(
+            x => x.Value.TeamMissedMatchesFromScheduler);
+
+        Log.WriteLine("Looping through teams (Count: " + sortedTeams.Count() + ")");
 
         foreach (var teamKvp in sortedTeams)
         {
             int teamId = teamKvp.Key;
             TeamMatchmakingState teamMatchmakingState = teamKvp.Value.TeamMatchmakingState;
 
-            Log.WriteLine("Looping on: " + teamId + " with state: " + teamMatchmakingState);
+            Log.WriteLine("Looping on: " + teamId + " with state: " + teamMatchmakingState +
+                " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
-            if (teamMatchmakingState == TeamMatchmakingState.INQUEUE)
+            if (teamMatchmakingState != TeamMatchmakingState.INQUEUE)
             {
-                var availableTeamsToChallenge = GetAvailableTeamsToChallenge(teamId);
+                Log.WriteLine("Team: " + teamId + " not in the queue");
+                continue;
+            }
 
-                if (availableTeamsToChallenge.Count > 0)
+            var foundTeam = GetAvailableTeamToChallenge(teamId);
+
+            if (foundTeam == 0)
+            {
+                Log.WriteLine("No teams found to challenge, returning", LogLevel.DEBUG);
+                continue;
+            }
+
+            var foundTeamKvp = TeamsInTheMatchmaker.First(x => x.Key == foundTeam);
+
+            foreach (var teamKvpToIncrement in sortedTeams)
+            {
+                if ((teamKvpToIncrement.Key == foundTeamKvp.Key && foundTeamKvp.Value.TeamMatchmakingState == TeamMatchmakingState.INQUEUE) ||
+                    (teamKvpToIncrement.Key == teamKvp.Key && teamKvp.Value.TeamMatchmakingState == TeamMatchmakingState.INQUEUE))
                 {
-                    int randomTeamId = GetRandomTeamId(availableTeamsToChallenge);
-
-                    Log.WriteLine("Matching two teams together - Team 1: " + randomTeamId + ", Team 2: " + teamId);
-
-                    MatchTwoTeamsTogether(TeamsInTheMatchmaker.First(x => x.Key == randomTeamId), teamKvp);
-                }
-                else
-                {
-                    Log.WriteLine("No teams were available to challenge from: " + teamId + ", continuing", LogLevel.DEBUG);
+                    Log.WriteLine("not incrementing: " + teamKvpToIncrement.Key + " with state: " + teamKvpToIncrement.Value.TeamMatchmakingState);
                     continue;
                 }
+
+                Log.WriteLine("Incrementing teamId: " + teamKvp.Key + " with value:" + teamKvp.Value.TeamMissedMatchesFromScheduler +
+                    " and state: " + teamKvp.Value.TeamMatchmakingState);
+
+                teamKvp.Value.TeamMissedMatchesFromScheduler++;
             }
+
+            MatchTwoTeamsTogether(foundTeamKvp, teamKvp);
         }
     }
 
@@ -139,21 +158,25 @@ public class MatchScheduler : logClass<MatchScheduler>
     {
         Random random = new Random();
         int index = random.Next(_teamIds.Count);
+        var foundTeamId = _teamIds[index];
+        Log.WriteLine("Found teamId: " + foundTeamId + " from amount of: " + _teamIds.Count);
         return _teamIds[index];
     }
 
-    private List<int> GetAvailableTeamsToChallenge(int _teamIdNotToLookFor)
+    private int GetAvailableTeamToChallenge(int _teamIdNotToLookFor)
     {
-        List<int> availableTeamIdsToChallenge = new List<int>();
-
         Log.WriteLine("Starting to see what teams are available to challenge: " + TeamsInTheMatchmaker.Count);
 
-        foreach (var teamKvp in TeamsInTheMatchmaker)
+        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler);
+
+        foreach (var teamKvp in sortedTeams)
         {
             int teamId = teamKvp.Key;
-            TeamMatchmakingState teamMatchmakingState = teamKvp.Value.TeamMatchmakingState;
+            TeamMatchmakerData teamMatchmakerData = teamKvp.Value;
+            TeamMatchmakingState teamMatchmakingState = teamMatchmakerData.TeamMatchmakingState;
 
-            Log.WriteLine("Looping on: " + teamId + " with state: " + teamMatchmakingState);
+            Log.WriteLine("Looping on: " + teamId + " with state: " + teamMatchmakingState +
+                " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
             if (teamId == _teamIdNotToLookFor)
             {
@@ -163,32 +186,59 @@ public class MatchScheduler : logClass<MatchScheduler>
 
             if (teamMatchmakingState == TeamMatchmakingState.INQUEUE)
             {
-                Log.WriteLine("Found team: " + teamId + " adding them to the list", LogLevel.DEBUG);
-                availableTeamIdsToChallenge.Add(teamId);
+                // Reverse for-loop to search for the highest priority from the top team
+                for (int priorityInt = teamKvp.Value.TeamMissedMatchesFromScheduler; priorityInt >= 0; priorityInt++)
+                {
+                    Log.WriteLine("Loop on priority: " + priorityInt);
+
+                    var samePriorityTeams =
+                        sortedTeams.Where(
+                            x => x.Value.TeamMissedMatchesFromScheduler == priorityInt && x.Key != teamKvp.Key).Select(
+                                x => x.Key).ToList();
+
+                    if (samePriorityTeams.Count() == 1)
+                    {
+                        Log.WriteLine("Count was 1 with team: " + teamId);
+                        return teamId;
+                    }
+                    else if (samePriorityTeams.Count() >= 2)
+                    {
+                        Log.WriteLine("Count was: " + samePriorityTeams.Count());
+                        return GetRandomTeamId(samePriorityTeams);
+                    }
+                    else
+                    {
+                        Log.WriteLine("End of " + priorityInt + ", did not find.");
+                        continue;
+                    }
+                }
             }
         }
 
-        // Add more proper debugging here?
-        Log.WriteLine("Returning with a count of: " + availableTeamIdsToChallenge.Count);
+        Log.WriteLine("Reached end of the loops");
 
-        foreach (var item in availableTeamIdsToChallenge)
-        {
-            Log.WriteLine(item + " available to challenge vs: " + _teamIdNotToLookFor);
-        }
-
-        return availableTeamIdsToChallenge;
+        return 0;
     }
 
     private async void MatchTwoTeamsTogether
         (KeyValuePair<int, TeamMatchmakerData> _foundOpponentTeam, KeyValuePair<int, TeamMatchmakerData> _seekingTeam)
     {
+        Log.WriteLine("Matching found opponent: " + _foundOpponentTeam.Key + " [" + _foundOpponentTeam.Value.TeamMissedMatchesFromScheduler +
+            "] vs seeker:" + _seekingTeam.Key + +_foundOpponentTeam.Value.TeamMissedMatchesFromScheduler +
+            "]", LogLevel.DEBUG);
+
+        Log.WriteLine("Teams left the matchmaker: ", LogLevel.VERBOSE);
+        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler);
+        foreach (var item in sortedTeams)
+        {
+            Log.WriteLine("[" + item.Value.TeamMissedMatchesFromScheduler + "] id: " + item.Key + " | " + item.Value.TeamMatchmakingState);
+        }
+
         // Create a method to enter a team in to a match
         _foundOpponentTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH;
         _seekingTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH;
         _foundOpponentTeam.Value.TeamMissedMatchesFromScheduler = 0;
         _seekingTeam.Value.TeamMissedMatchesFromScheduler = 0;
-
-        Log.WriteLine("Matching found opponent: " + _foundOpponentTeam.Key + " vs seeker:" + _seekingTeam.Key, LogLevel.DEBUG);
 
         int[] teams = new int[2]
         {
