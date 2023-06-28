@@ -19,15 +19,17 @@ public static class Log
 
         string callerMethod = ": " + _memberName + "()";
         if (_memberName == "") callerMethod = string.Empty;
+        string scriptName = Path.GetFileName(_filePath);
+
 
         string logMessageRaw = (date + " " + time + " {Thread: " + System.Environment.CurrentManagedThreadId + "} - [LOG | " + _logLevel + "] " +
             LogLevelNormalization.logLevelNormalizationStrings[_logLevel] + " " +
-            Path.GetFileName(_filePath) +callerMethod +
+            scriptName + callerMethod +
             ", line " + _lineNumber + ": " + _message);
 
         string logMessageColor = logMessageRaw.Pastel(GetColorCode(_logLevel));
 
-        WriteToFileLogFile(_logLevel, logMessageRaw);
+        WriteToFileLogFile(_logLevel, logMessageRaw, scriptName);
 
         Console.WriteLine(logMessageColor);
 
@@ -57,13 +59,18 @@ public static class Log
         return Color.Default;
     }
 
-    private static void WriteToFileLogFile(LogLevel _logLevel, string _logMessage)
+    private static void WriteToFileLogFile(LogLevel _logLevel, string _logMessage, string _scriptName)
     {
         // Move to some other class that is more accessible
         string logsDir = @"C:\AirCombatMatchmakerBot\Logs\";
 
         CheckIfDirectoryExistsAndAppendToTheFile(logsDir, _logLevel.ToString(), _logMessage);
         CheckIfDirectoryExistsAndAppendToTheFile(logsDir, "EVERYTHING", _logMessage);
+
+        if (_scriptName == "MatchScheduler.cs")
+        {
+            CheckIfDirectoryExistsAndAppendToTheFile(logsDir, _scriptName, _logMessage);
+        }
     }
 
 
