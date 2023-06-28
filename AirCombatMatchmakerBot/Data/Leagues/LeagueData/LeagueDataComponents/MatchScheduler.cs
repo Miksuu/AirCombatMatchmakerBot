@@ -47,11 +47,6 @@ public class MatchScheduler : logClass<MatchScheduler>
              " with duration: " + _duration, LogLevel.DEBUG);
     }
 
-    public void DeActivateMatchScheduler()
-    {
-
-    }
-
     public Response AddTeamToTheMatchSchedulerWithPlayerId(ulong _playerId)// InterfaceMessage _interfaceMessage)
     {
         try
@@ -109,7 +104,10 @@ public class MatchScheduler : logClass<MatchScheduler>
     {
         Log.WriteLine("Starting to check the status of the matchmaker with: " + TeamsInTheMatchmaker.Count);
 
-        foreach (var teamKvp in TeamsInTheMatchmaker)
+        // Sort teams based on TeamMissedMatchesFromScheduler in descending order
+        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler);
+
+        foreach (var teamKvp in sortedTeams)
         {
             int teamId = teamKvp.Key;
             TeamMatchmakingState teamMatchmakingState = teamKvp.Value.TeamMatchmakingState;
@@ -120,18 +118,17 @@ public class MatchScheduler : logClass<MatchScheduler>
             {
                 var availableTeamsToChallenge = GetAvailableTeamsToChallenge(teamId);
 
-                //Log.WriteLine("Available teams to match for: " + teamId + ": " + availableTeamsToChallenge)
-
-                // Add some mechanic here to avoid matching against same teams constantly, if there's multiple choices?
                 if (availableTeamsToChallenge.Count > 0)
                 {
                     int randomTeamId = GetRandomTeamId(availableTeamsToChallenge);
+
+                    Log.WriteLine("Matching two teams together - Team 1: " + randomTeamId + ", Team 2: " + teamId);
+
                     MatchTwoTeamsTogether(TeamsInTheMatchmaker.First(x => x.Key == randomTeamId), teamKvp);
                 }
                 else
                 {
-                    Log.WriteLine("No teams were available to challenge to from: " + teamId + ", continuing", LogLevel.DEBUG);
-                    // Might use return here to save performance before skill based matchmaking is added, unnecessary?
+                    Log.WriteLine("No teams were available to challenge from: " + teamId + ", continuing", LogLevel.DEBUG);
                     continue;
                 }
             }
@@ -185,8 +182,11 @@ public class MatchScheduler : logClass<MatchScheduler>
     private async void MatchTwoTeamsTogether
         (KeyValuePair<int, TeamMatchmakerData> _foundOpponentTeam, KeyValuePair<int, TeamMatchmakerData> _seekingTeam)
     {
+        // Create a method to enter a team in to a match
         _foundOpponentTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH;
-        _seekingTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH; 
+        _seekingTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH;
+        _foundOpponentTeam.Value.TeamMissedMatchesFromScheduler = 0;
+        _seekingTeam.Value.TeamMissedMatchesFromScheduler = 0;
 
         Log.WriteLine("Matching found opponent: " + _foundOpponentTeam.Key + " vs seeker:" + _seekingTeam.Key, LogLevel.DEBUG);
 
