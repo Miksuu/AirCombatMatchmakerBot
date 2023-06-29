@@ -184,33 +184,36 @@ public class MatchScheduler : logClass<MatchScheduler>
                 continue;
             }
 
-            if (teamMatchmakingState == TeamMatchmakingState.INQUEUE)
+            if (teamMatchmakingState != TeamMatchmakingState.INQUEUE)
             {
-                // Reverse for-loop to search for the highest priority from the top team
-                for (int priorityInt = teamKvp.Value.TeamMissedMatchesFromScheduler; priorityInt >= 0; priorityInt--)
+                Log.WriteLine(teamId + "Not in queue, skipping");
+                continue;
+            }
+
+            // Reverse for-loop to search for the highest priority from the top team
+            for (int priorityInt = teamKvp.Value.TeamMissedMatchesFromScheduler; priorityInt >= 0; priorityInt--)
+            {
+                Log.WriteLine("Loop on priority: " + priorityInt);
+
+                var samePriorityTeams =
+                    sortedTeams.Where(
+                        x => x.Value.TeamMissedMatchesFromScheduler == priorityInt && x.Key != teamKvp.Key).Select(
+                            x => x.Key).ToList();
+
+                if (samePriorityTeams.Count() == 1)
                 {
-                    Log.WriteLine("Loop on priority: " + priorityInt);
-
-                    var samePriorityTeams =
-                        sortedTeams.Where(
-                            x => x.Value.TeamMissedMatchesFromScheduler == priorityInt && x.Key != teamKvp.Key).Select(
-                                x => x.Key).ToList();
-
-                    if (samePriorityTeams.Count() == 1)
-                    {
-                        Log.WriteLine("Count was 1 with team: " + teamId);
-                        return teamId;
-                    }
-                    else if (samePriorityTeams.Count() >= 2)
-                    {
-                        Log.WriteLine("Count was: " + samePriorityTeams.Count());
-                        return GetRandomTeamId(samePriorityTeams);
-                    }
-                    else
-                    {
-                        Log.WriteLine("End of " + priorityInt + ", did not find.");
-                        continue;
-                    }
+                    Log.WriteLine("Count was 1 with team: " + teamId);
+                    return teamId;
+                }
+                else if (samePriorityTeams.Count() >= 2)
+                {
+                    Log.WriteLine("Count was: " + samePriorityTeams.Count());
+                    return GetRandomTeamId(samePriorityTeams);
+                }
+                else
+                {
+                    Log.WriteLine("End of " + priorityInt + ", did not find.");
+                    continue;
                 }
             }
         }
