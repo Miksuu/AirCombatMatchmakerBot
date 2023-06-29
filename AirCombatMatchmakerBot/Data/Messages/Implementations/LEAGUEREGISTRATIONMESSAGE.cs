@@ -36,7 +36,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         return Task.FromResult(thisInterfaceMessage.MessageDescription);
     }
 
-    public Task<string> GenerateMessageForSpecificCategoryLeague()
+    public async Task<string> GenerateMessageForSpecificCategoryLeague()
     {
         Log.WriteLine("Starting to generate the league registration message with: " +
             belongsToLeagueCategoryId, LogLevel.DEBUG);
@@ -48,20 +48,24 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         string channelJumpLinks = string.Empty;
 
-        Database.Instance.Categories.GetMessageJumpUrl(belongsToLeagueCategoryId, MessageName.);
+        var category = Database.Instance.Categories.FindInterfaceCategoryWithId(belongsToLeagueCategoryId);
 
         string returned =
             GetAllowedUnitsAsString(interfaceLeague) + "\n" +
-            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(interfaceLeague) + "\n";
+            GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(interfaceLeague) + "\n\n" +
+            await GetCategoryJumpUrl(category, ChannelType.MATCHSCHEDULERCHANNEL, MessageName.MATCHSCHEDULERSTATUSMESSAGE) + "\n" +
+            await GetCategoryJumpUrl(category, ChannelType.CHALLENGE, MessageName.CHALLENGEMESSAGE); ;
 
         Log.WriteLine(returned);
 
-        return Task.FromResult(returned);
+        return returned;
     }
 
-    private string GetCategoryJumpLink()
+    private async Task<string> GetCategoryJumpUrl(InterfaceCategory _interfaceCategory, ChannelType _channelType, MessageName _messageName)
     {
+        var channelId = _interfaceCategory.FindInterfaceChannelWithNameInTheCategory(_channelType).ChannelId;
 
+        return await Database.Instance.Categories.GetMessageJumpUrl(belongsToLeagueCategoryId, channelId, _messageName);
     }
 
     private string GetAllowedUnitsAsString(InterfaceLeague _interfaceLeague)

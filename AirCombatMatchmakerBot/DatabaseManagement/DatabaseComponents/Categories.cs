@@ -131,17 +131,17 @@ public class Categories : logClass<Categories>
     }
 
     public async Task<string> GetMessageJumpUrl(
-    ulong _leagueCategoryId, ulong _matchChannelId, MessageName _messageName)
+    ulong _leagueCategoryId, ulong _channelId, MessageName _messageName)
     {
         Log.WriteLine("Getting jump URL with: " + _leagueCategoryId +
-            " | " + _matchChannelId + " | " + _messageName);
+            " | " + _channelId + " | " + _messageName);
 
         var messageToFind = Database.Instance.Categories.FindInterfaceCategoryWithId(
             _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                _matchChannelId).FindInterfaceMessageWithNameInTheChannel(
+                _channelId).FindInterfaceMessageWithNameInTheChannel(
                     _messageName);
         var client = BotReference.GetClientRef();
-        var channel = client.GetChannel(_matchChannelId) as IMessageChannel;
+        var channel = client.GetChannel(_channelId) as IMessageChannel;
         var message = await channel.GetMessageAsync(messageToFind.MessageId);
         string jumpUrl = message.GetJumpUrl();
         Log.WriteLine("Found: " + jumpUrl, LogLevel.DEBUG);
