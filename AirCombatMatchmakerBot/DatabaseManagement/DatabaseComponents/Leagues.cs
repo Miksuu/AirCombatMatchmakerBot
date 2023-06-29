@@ -2,6 +2,7 @@ using Discord;
 using Discord.WebSocket;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Text.RegularExpressions;
@@ -258,6 +259,26 @@ public class Leagues : logClass<Leagues>
         return finalList;
     }
 
+    private List<LeagueMatch> GetListOfMatchesClose(List<LeagueMatch> _listOfLeagueMatches)
+    {
+        var listOfMatchesClose = _listOfLeagueMatches.Where(
+            x => x.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
+            ((x.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - TimeService.GetCurrentUnixTime())
+            <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch)).ToList(); ;
+
+        return listOfMatchesClose;
+    }
+
+    private List<LeagueMatch> GetListOfMatchesAfter(List<LeagueMatch> _listOfLeagueMatches)
+    {
+        var listOfMatchesAfter = _listOfLeagueMatches.Where(
+            x => x.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
+            ((x.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - TimeService.GetCurrentUnixTime())
+            <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch)).ToList();
+
+        return listOfMatchesAfter;
+    }
+
     public async Task<Response> CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
         List<ulong> _playerIds, ulong _suggestedTime, ulong _suggestedByPlayerId)
     {
@@ -265,18 +286,13 @@ public class Leagues : logClass<Leagues>
         var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
             _playerIds, _suggestedTime);
 
-        Log.WriteLine(listOfLeagueMatches.Count.ToString());
+        List<LeagueMatch> listOfMatchesCombined =
+            GetListOfMatchesClose(listOfLeagueMatches).Concat(
+            GetListOfMatchesAfter(listOfLeagueMatches)).ToList();
 
-        var listOfMatchesClose = listOfLeagueMatches.Where(
-            x => x.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
-            ((x.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - _suggestedTime)
-            <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch) ||
-            ((_suggestedTime - x.MatchEventManager.GetEventByType(
-                typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn) <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch)).ToList();
+        Log.WriteLine("list: " + listOfMatchesCombined.Count);
 
-        Log.WriteLine("list: " + listOfMatchesClose.Count);
-
-        if (listOfMatchesClose.Count <= 0)
+        if (listOfMatchesCombined.Count <= 0)
         {
             return new Response("", true);
         }
@@ -285,7 +301,7 @@ public class Leagues : logClass<Leagues>
         string stringOfMatches = string.Empty;
 
         List<int> alreadyLoopedThroughMatchIds = new List<int>();
-        foreach (LeagueMatch leagueMatch in listOfMatchesClose)
+        foreach (LeagueMatch leagueMatch in listOfMatchesCombined)
         {
             if (alreadyLoopedThroughMatchIds.Contains(leagueMatch.MatchId))
             {
