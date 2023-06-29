@@ -40,54 +40,58 @@ public class CHALLENGEMESSAGE : BaseMessage
 
             Log.WriteLine("Full league name: " + leagueName);
 
-            if (createdCategoriesKvp.Value.InterfaceChannels.Any(
+            if (!createdCategoriesKvp.Value.InterfaceChannels.Any(
                     x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId))
             {
-                ulong channelIdToLookFor =
-                    createdCategoriesKvp.Value.InterfaceChannels.FirstOrDefault(
-                        x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId).Value.ChannelId;
+                continue;
+            }
 
-                Log.WriteLine("Looping on league: " + leagueName +
-                    " looking for id: " + channelIdToLookFor);
+            ulong channelIdToLookFor =
+                createdCategoriesKvp.Value.InterfaceChannels.FirstOrDefault(
+                    x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId).Value.ChannelId;
 
-                if (thisInterfaceMessage.MessageChannelId == channelIdToLookFor)
+            Log.WriteLine("Looping on league: " + leagueName +
+                " looking for id: " + channelIdToLookFor);
+
+            if (thisInterfaceMessage.MessageChannelId != channelIdToLookFor)
+            {
+                continue;
+            }
+
+            Log.WriteLine("Found: " + channelIdToLookFor +
+                " is league: " + leagueName, LogLevel.DEBUG);
+
+
+            thisInterfaceMessage.MessageEmbedTitle = leagueName + " challenge.";
+            string challengeMessage = "Players In The Queue: \n";
+
+            //Log.WriteLine("id: " + thisInterfaceMessage.MessageCategoryId, LogLevel.WARNING);
+
+            var leagueCategory =
+                Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
+            if (leagueCategory == null)
+            {
+                Log.WriteLine(nameof(leagueCategory) + " was null!", LogLevel.ERROR);
+                return Task.FromResult("");
+            }
+
+            foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
+            {
+                try
                 {
-                    Log.WriteLine("Found: " + channelIdToLookFor +
-                        " is league: " + leagueName, LogLevel.DEBUG);
-
-
-                    thisInterfaceMessage.MessageEmbedTitle = leagueName + " challenge.";
-                    string challengeMessage = "Players In The Queue: \n";
-
-                    //Log.WriteLine("id: " + thisInterfaceMessage.MessageCategoryId, LogLevel.WARNING);
-
-                    var leagueCategory =
-                        Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
-                    if (leagueCategory == null)
-                    {
-                        Log.WriteLine(nameof(leagueCategory) + " was null!", LogLevel.ERROR);
-                        return Task.FromResult("");
-                    }
-
-                    foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
-                    {
-                        try
-                        {
-                            var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
-                            challengeMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
-                        }
-                        catch(Exception ex)
-                        {
-                            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-                            continue;
-                        }
-                    }
-
-                    Log.WriteLine("Challenge message generated: " + challengeMessage);
-
-                    return Task.FromResult(challengeMessage);
+                    var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
+                    challengeMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                    continue;
                 }
             }
+
+            Log.WriteLine("Challenge message generated: " + challengeMessage);
+
+            return Task.FromResult(challengeMessage);
         }
 
         Log.WriteLine("Did not find a channel id to generate a challenge" +
