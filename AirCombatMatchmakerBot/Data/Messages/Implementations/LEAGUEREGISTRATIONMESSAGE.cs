@@ -46,22 +46,20 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         thisInterfaceMessage.MessageEmbedTitle = EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName);
 
-        string channelJumpLinks = string.Empty;
-
         var category = Database.Instance.Categories.FindInterfaceCategoryWithId(belongsToLeagueCategoryId);
 
         string returned =
             GetAllowedUnitsAsString(interfaceLeague) + "\n" +
             GetIfTheLeagueHasPlayersOrTeamsAndCountFromInterface(interfaceLeague) + "\n\n" +
-            await GetCategoryJumpUrl(category, ChannelType.MATCHSCHEDULERCHANNEL, MessageName.MATCHSCHEDULERSTATUSMESSAGE) + "\n" +
-            await GetCategoryJumpUrl(category, ChannelType.CHALLENGE, MessageName.CHALLENGEMESSAGE); ;
+            await GetChannelSpecificJumpUrl(category, ChannelType.MATCHSCHEDULERCHANNEL, MessageName.MATCHSCHEDULERSTATUSMESSAGE) + "\n" +
+            await GetChannelSpecificJumpUrl(category, ChannelType.CHALLENGE, MessageName.CHALLENGEMESSAGE); ;
 
         Log.WriteLine(returned);
 
         return returned;
     }
 
-    private async Task<string> GetCategoryJumpUrl(InterfaceCategory _interfaceCategory, ChannelType _channelType, MessageName _messageName)
+    private async Task<string> GetChannelSpecificJumpUrl(InterfaceCategory _interfaceCategory, ChannelType _channelType, MessageName _messageName)
     {
         var channelId = _interfaceCategory.FindInterfaceChannelWithNameInTheCategory(_channelType).ChannelId;
 
