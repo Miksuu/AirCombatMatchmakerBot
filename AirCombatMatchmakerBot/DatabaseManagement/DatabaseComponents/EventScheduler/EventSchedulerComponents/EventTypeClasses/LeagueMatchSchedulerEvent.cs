@@ -36,7 +36,7 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
         }
     }
 
-    public override void CheckTheScheduledEventStatus()
+    public override async void CheckTheScheduledEventStatus()
     {
         try
         {
@@ -45,6 +45,27 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
             {
                 Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
                 throw new InvalidOperationException(nameof(lcc) + " was null!");
+            }
+
+            var channel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                lcc.interfaceLeagueCached.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
+                    ChannelType.CHALLENGE);
+
+            if (!channel.InterfaceMessagesWithIds.Any(x => x.Value.MessageName == MessageName.CHALLENGEMESSAGE))
+            {
+                Log.WriteLine(nameof(MessageName.CHALLENGEMESSAGE) + " didn't exist yet.", LogLevel.DEBUG);
+                return;
+            }
+
+            var challengeMessageAsInterface = channel.FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
+
+            CHALLENGEMESSAGE challengeMessageClass = challengeMessageAsInterface as CHALLENGEMESSAGE;
+
+            bool updateTheMessage = await challengeMessageClass.UpdateTeamsThatHaveMatchesClose();
+
+            if (updateTheMessage)
+            {
+                challengeMessageAsInterface.GenerateAndModifyTheMessage();
             }
 
             lcc.interfaceLeagueCached.LeagueData.MatchScheduler.CheckCurrentStateOfTheMatchmakerAndAssignMatches();

@@ -14,6 +14,16 @@ public class EventManager : logClass<EventManager>
 
     [DataMember] private logConcurrentBag<ScheduledEvent> classScheduledEvents = new logConcurrentBag<ScheduledEvent>();
 
+    public ulong GetTimeOfEventOfType(Type _eventType)
+    {
+        return GetEventByType(_eventType).TimeToExecuteTheEventOn;
+    }
+
+    public ulong GetTimeUntilEventOfType(Type _eventType)
+    {
+        return GetEventByType(_eventType).TimeToExecuteTheEventOn - TimeService.GetCurrentUnixTime();
+    }
+
     public ScheduledEvent GetEventByType(Type _eventType)
     {
         try

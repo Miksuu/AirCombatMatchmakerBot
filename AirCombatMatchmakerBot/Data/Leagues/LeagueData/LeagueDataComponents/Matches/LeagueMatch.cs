@@ -107,42 +107,50 @@ public class LeagueMatch : logClass<LeagueMatch>
     public LeagueMatch(InterfaceLeague _interfaceLeague, int[] _teamsToFormMatchOn,
         MatchState _matchState, bool _attemptToPutTeamsBackToQueueAfterTheMatch = false)
     {
-        IsAScheduledMatch = _attemptToPutTeamsBackToQueueAfterTheMatch;
-        SetInterfaceLeagueReferencesForTheMatch(_interfaceLeague);
-
-        int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
-        MatchLeague = _interfaceLeague.LeagueCategoryName;
-
-        Log.WriteLine("Teams to from the match on: " + _teamsToFormMatchOn[0] +
-            ", " + _teamsToFormMatchOn[1] + " scheduled match: " + _attemptToPutTeamsBackToQueueAfterTheMatch, LogLevel.DEBUG);
-
-        // Add the team's name to the ConcurrentDictionary as a value
-        foreach (int teamId in _teamsToFormMatchOn)
+        try
         {
-            Team foundTeam =
-                _interfaceLeague.LeagueData.Teams.FindTeamById(teamId);
+            IsAScheduledMatch = _attemptToPutTeamsBackToQueueAfterTheMatch;
+            SetInterfaceLeagueReferencesForTheMatch(_interfaceLeague);
 
-            Log.WriteLine("Found team: " + foundTeam.TeamId, LogLevel.DEBUG);
+            int leagueTeamSize = _interfaceLeague.LeaguePlayerCountPerTeam;
+            MatchLeague = _interfaceLeague.LeagueCategoryName;
 
-            TeamsInTheMatch.TryAdd(teamId, foundTeam.GetTeamInAString(false, leagueTeamSize));
+            Log.WriteLine("Teams to from the match on: " + _teamsToFormMatchOn[0] +
+                ", " + _teamsToFormMatchOn[1] + " scheduled match: " + _attemptToPutTeamsBackToQueueAfterTheMatch, LogLevel.DEBUG);
 
-            Log.WriteLine("Count is now: " + TeamsInTheMatch.Count, LogLevel.DEBUG);
+            // Add the team's name to the ConcurrentDictionary as a value
+            foreach (int teamId in _teamsToFormMatchOn)
+            {
+                Team foundTeam =
+                    _interfaceLeague.LeagueData.Teams.FindTeamById(teamId);
+
+                Log.WriteLine("Found team: " + foundTeam.TeamId, LogLevel.DEBUG);
+
+                TeamsInTheMatch.TryAdd(teamId, foundTeam.GetTeamInAString(false, leagueTeamSize));
+
+                Log.WriteLine("Count is now: " + TeamsInTheMatch.Count, LogLevel.DEBUG);
+            }
+
+            foreach (var item in TeamsInTheMatch)
+            {
+                Log.WriteLine("final teamsInTheMatch: " + item.Key, LogLevel.DEBUG);
+            }
+
+            MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
+            Database.Instance.Leagues.LeaguesMatchCounter++;
+
+            MatchState = _matchState;
+
+            MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague);
+
+            Log.WriteLine("Constructed a new match with teams ids: " + TeamsInTheMatch.ElementAt(0) +
+                TeamsInTheMatch.ElementAt(1) + " with matchId of: " + MatchId, LogLevel.DEBUG);
         }
-
-        foreach (var item in TeamsInTheMatch)
+        catch(Exception ex) 
         {
-            Log.WriteLine("final teamsInTheMatch: " + item.Key, LogLevel.DEBUG);
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            throw;
         }
-
-        MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
-        Database.Instance.Leagues.LeaguesMatchCounter++;
-
-        MatchState = _matchState;
-
-        MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague);
-
-        Log.WriteLine("Constructed a new match with teams ids: " + TeamsInTheMatch.ElementAt(0) +
-            TeamsInTheMatch.ElementAt(1) + " with matchId of: " + MatchId, LogLevel.DEBUG);
     }
 
     public ulong[] GetIdsOfThePlayersInTheMatchAsArray()

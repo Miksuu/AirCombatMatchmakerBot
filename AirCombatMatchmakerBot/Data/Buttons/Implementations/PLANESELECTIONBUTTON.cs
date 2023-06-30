@@ -127,8 +127,8 @@ public class PLANESELECTIONBUTTON : BaseButton
                     }
 
                     // If timeUntil is more than 20minutes, add a temp event to cancel the queue after 5min
-                    var matchQueueEvent = mcc.leagueMatchCached.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent));
-                    var timeUntil = TimeService.CalculateTimeUntilWithUnixTime(matchQueueEvent.TimeToExecuteTheEventOn);
+                    var timeUntil = TimeService.CalculateTimeUntilWithUnixTime(
+                        mcc.leagueMatchCached.MatchEventManager.GetTimeUntilEventOfType(typeof(MatchQueueAcceptEvent)));
                     if (timeUntil > 1200)
                     {
                         new TempQueueEvent(

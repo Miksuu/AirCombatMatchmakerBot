@@ -366,40 +366,48 @@ public abstract class BaseMessage : InterfaceMessage
 
     public async void ModifyMessage(string _newContent)
     {
-        thisInterfaceMessage.MessageDescription = _newContent;
-
-        Log.WriteLine("Modifying a message on channel id: " + thisInterfaceMessage.MessageChannelId +
-            " that has msg id: " + thisInterfaceMessage.MessageId + " with content: " + thisInterfaceMessage.MessageDescription +
-            " with new content:" + _newContent, LogLevel.DEBUG);
-
-        var client = BotReference.GetClientRef();
-        if (client == null)
+        try
         {
-            Exceptions.BotClientRefNull();
-            return;
-        }
+            thisInterfaceMessage.MessageDescription = _newContent;
 
-        var channel = await client.GetChannelAsync(thisInterfaceMessage.MessageChannelId) as ITextChannel;
-        if (channel == null)
+            Log.WriteLine("Modifying a message on channel id: " + thisInterfaceMessage.MessageChannelId +
+                " that has msg id: " + thisInterfaceMessage.MessageId + " with content: " + thisInterfaceMessage.MessageDescription +
+                " with new content:" + _newContent, LogLevel.DEBUG);
+
+            var client = BotReference.GetClientRef();
+            if (client == null)
+            {
+                Exceptions.BotClientRefNull();
+                return;
+            }
+
+            var channel = await client.GetChannelAsync(thisInterfaceMessage.MessageChannelId) as ITextChannel;
+            if (channel == null)
+            {
+                Log.WriteLine(nameof(channel) + " was null!", LogLevel.CRITICAL);
+                return;
+            }
+
+            Log.WriteLine("Found channel: " + channel.Id);
+
+            var embed = new EmbedBuilder();
+
+            Log.WriteLine(thisInterfaceMessage.MessageDescription);
+
+            // set the title, description, and color of the embedded MessageDescription
+            embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
+                 .WithDescription(thisInterfaceMessage.MessageDescription)
+                 .WithColor(messageEmbedColor);
+
+            await channel.ModifyMessageAsync(thisInterfaceMessage.MessageId, m => m.Embed = embed.Build());
+
+            Log.WriteLine("Modifying the message: " + thisInterfaceMessage.MessageId + " done.");
+        }
+        catch (Exception ex) 
         {
-            Log.WriteLine(nameof(channel) + " was null!", LogLevel.CRITICAL);
-            return;
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            throw;
         }
-
-        Log.WriteLine("Found channel: " + channel.Id);
-
-        var embed = new EmbedBuilder();
-
-        Log.WriteLine(thisInterfaceMessage.MessageDescription);
-
-        // set the title, description, and color of the embedded MessageDescription
-        embed.WithTitle(thisInterfaceMessage.MessageEmbedTitle)
-             .WithDescription(thisInterfaceMessage.MessageDescription)
-             .WithColor(messageEmbedColor);
-
-        await channel.ModifyMessageAsync(thisInterfaceMessage.MessageId, m => m.Embed = embed.Build());
-
-        Log.WriteLine("Modifying the message: " + thisInterfaceMessage.MessageId + " done.");
     }
 
     public async Task AddContentToTheEndOfTheMessage(string _content)

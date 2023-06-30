@@ -35,99 +35,120 @@ public class CHALLENGEMESSAGE : BaseMessage
 
     public override Task<string> GenerateMessage()
     {
-        Log.WriteLine("Generating a challenge queue message with _channelId: " +
-            thisInterfaceMessage.MessageChannelId + " on category: " + thisInterfaceMessage.MessageCategoryId);
-
-        foreach (var createdCategoriesKvp in
-            Database.Instance.Categories.CreatedCategoriesWithChannels)
+        try
         {
-            Log.WriteLine("On league: " +
-                createdCategoriesKvp.Value.CategoryType);
+            Log.WriteLine("Generating a challenge queue message with _channelId: " +
+                thisInterfaceMessage.MessageChannelId + " on category: " + thisInterfaceMessage.MessageCategoryId);
 
-            string leagueName =
-                EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryType);
-
-            Log.WriteLine("Full league name: " + leagueName);
-
-            if (!createdCategoriesKvp.Value.InterfaceChannels.Any(
-                    x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId))
+            foreach (var createdCategoriesKvp in
+                Database.Instance.Categories.CreatedCategoriesWithChannels)
             {
-                continue;
+                Log.WriteLine("On league: " +
+                    createdCategoriesKvp.Value.CategoryType);
+
+                string leagueName =
+                    EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryType);
+
+                Log.WriteLine("Full league name: " + leagueName);
+
+                if (!createdCategoriesKvp.Value.InterfaceChannels.Any(
+                        x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId))
+                {
+                    continue;
+                }
+
+                ulong channelIdToLookFor =
+                    createdCategoriesKvp.Value.InterfaceChannels.FirstOrDefault(
+                        x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId).Value.ChannelId;
+
+                Log.WriteLine("Looping on league: " + leagueName +
+                    " looking for id: " + channelIdToLookFor);
+
+                if (thisInterfaceMessage.MessageChannelId != channelIdToLookFor)
+                {
+                    continue;
+                }
+
+                Log.WriteLine("Found: " + channelIdToLookFor +
+                    " is league: " + leagueName, LogLevel.DEBUG);
+
+
+                thisInterfaceMessage.MessageEmbedTitle = leagueName + " challenge.";
+                string challengeMessage = "Players In The Queue: \n";
+
+                var leagueCategory =
+                    Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
+
+                foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
+                {
+                    try
+                    {
+                        var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
+                        challengeMessage += "[" + team.SkillRating + "] " + team.TeamName;
+
+                        if (TeamsThatHaveMatchesCloses.ContainsKey(teamInt))
+                        {
+                            challengeMessage += TeamsThatHaveMatchesCloses[teamInt];
+                        }
+
+                        challengeMessage += "\n";
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                        continue;
+                    }
+                }
+
+                Log.WriteLine("Challenge message generated: " + challengeMessage);
+
+                return Task.FromResult(challengeMessage);
             }
 
-            ulong channelIdToLookFor =
-                createdCategoriesKvp.Value.InterfaceChannels.FirstOrDefault(
-                    x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId).Value.ChannelId;
+            Log.WriteLine("Did not find a channel id to generate a challenge" +
+                " queue message on!", LogLevel.ERROR);
 
-            Log.WriteLine("Looping on league: " + leagueName +
-                " looking for id: " + channelIdToLookFor);
+            return Task.FromResult(string.Empty);
+        }
+        catch(Exception ex) 
+        {
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            throw;
+        }
+    }
 
-            if (thisInterfaceMessage.MessageChannelId != channelIdToLookFor)
-            {
-                continue;
-            }
-
-            Log.WriteLine("Found: " + channelIdToLookFor +
-                " is league: " + leagueName, LogLevel.DEBUG);
-
-
-            thisInterfaceMessage.MessageEmbedTitle = leagueName + " challenge.";
-            string challengeMessage = "Players In The Queue: \n";
+    public async Task<bool> UpdateTeamsThatHaveMatchesClose()
+    {
+        try
+        {
+            bool updateTheMessage = false;
 
             var leagueCategory =
                 Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
-            if (leagueCategory == null)
-            {
-                Log.WriteLine(nameof(leagueCategory) + " was null!", LogLevel.ERROR);
-                return Task.FromResult("");
-            }
+
+            TeamsThatHaveMatchesCloses.Clear();
 
             foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
             {
-                try
-                {
-                    var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
-                    challengeMessage += "[" + team.SkillRating + "] " + team.TeamName;
+                var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
+                var times = await team.GetMatchesThatAreCloseToTeamsMembers(600);
 
-                    if (TeamsThatHaveMatchesCloses.ContainsKey(teamInt))
-                    {
-                        challengeMessage + "["
-                    }
-
-                    challengeMessage += "\n";
-                }
-                catch (Exception ex)
+                if (times == "")
                 {
-                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                     continue;
                 }
+
+                updateTheMessage = true;
+
+                TeamsThatHaveMatchesCloses.TryAdd(teamInt, times);
             }
 
-            Log.WriteLine("Challenge message generated: " + challengeMessage);
-
-            return Task.FromResult(challengeMessage);
+            return updateTheMessage;
         }
-
-        Log.WriteLine("Did not find a channel id to generate a challenge" +
-            " queue message on!", LogLevel.ERROR);
-
-        return Task.FromResult(string.Empty);
-    }
-
-    public async Task GetTeamsThatHaveMatchesCloses()
-    {
-        var leagueCategory =
-            Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
-        if (leagueCategory == null)
+        catch (Exception ex)
         {
-            Log.WriteLine(nameof(leagueCategory) + " was null!", LogLevel.ERROR);
-            return;
-        }
-
-        foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
-        {
-            var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
-            await team.GetMatchesThatAreCloseToTeamsMembers();
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            throw;
         }
     }
 }

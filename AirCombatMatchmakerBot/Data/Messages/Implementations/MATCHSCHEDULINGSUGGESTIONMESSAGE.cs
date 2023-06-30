@@ -54,7 +54,7 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
             thisInterfaceMessage.MessageDescription +=
                 "**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**\n\n" +
                 "If the time above is fine, use ``/schedule accept`` command, or click the ACCEPT button below. " +
-                "Otherwise refer to the instructions: " + Database.Instance.Categories.GetMessageJumpUrl(
+                "Otherwise refer to the instructions: " + await Database.Instance.Categories.GetMessageJumpUrl(
                     mcc.interfaceLeagueCached.LeagueCategoryId, mcc.leagueMatchCached.MatchChannelId, 
                     MessageName.MATCHSCHEDULINGMESSAGE) + " to propose a new time!";
 

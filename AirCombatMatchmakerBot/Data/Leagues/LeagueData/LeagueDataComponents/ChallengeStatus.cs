@@ -19,7 +19,7 @@ public class ChallengeStatus : logClass<ChallengeStatus>
 
     public ChallengeStatus() { }
 
-    public Response AddTeamFromPlayerIdToTheQueue(ulong _playerId, InterfaceMessage _interfaceMessage)
+    public async Task<Response> AddTeamFromPlayerIdToTheQueue(ulong _playerId, InterfaceMessage _interfaceMessage)
     {
         try
         {
@@ -98,7 +98,10 @@ public class ChallengeStatus : logClass<ChallengeStatus>
             }
             Log.WriteLine("response was: " + response);
 
-            _interfaceMessage.GenerateAndModifyTheMessage();
+            CHALLENGEMESSAGE challengeMessage = _interfaceMessage as CHALLENGEMESSAGE;
+            await challengeMessage.UpdateTeamsThatHaveMatchesClose();
+
+            challengeMessage.GenerateAndModifyTheMessage();
 
             return new Response(response, true);
         }

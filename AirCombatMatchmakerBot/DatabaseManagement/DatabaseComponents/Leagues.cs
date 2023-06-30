@@ -235,7 +235,7 @@ public class Leagues : logClass<Leagues>
                 continue;
             }
 
-            var matchTime = leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn;
+            var matchTime = leagueMatch.MatchEventManager.GetTimeOfEventOfType(typeof(MatchQueueAcceptEvent));
             matchTimes.Add(matchTime);
         }
 
@@ -259,12 +259,12 @@ public class Leagues : logClass<Leagues>
         return finalList;
     }
 
-    public List<LeagueMatch> GetListOfMatchesClose(List<LeagueMatch> _listOfLeagueMatches)
+    public List<LeagueMatch> GetListOfMatchesClose(List<LeagueMatch> _listOfLeagueMatches, ulong _timeOffset = 0)
     {
         var listOfMatchesClose = _listOfLeagueMatches.Where(
             x => x.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
-            ((x.MatchEventManager.GetTimeUntilEventOfType(typeof(MatchQueueAcceptEvent)))
-            <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch)).ToList(); ;
+            (x.MatchEventManager.GetTimeUntilEventOfType(typeof(MatchQueueAcceptEvent))
+            <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch + _timeOffset)).ToList();
 
         return listOfMatchesClose;
     }
@@ -273,7 +273,7 @@ public class Leagues : logClass<Leagues>
     {
         var listOfMatchesAfter = _listOfLeagueMatches.Where(
             x => x.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
-            ((x.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - TimeService.GetCurrentUnixTime())
+            (x.MatchEventManager.GetTimeUntilEventOfType(typeof(MatchQueueAcceptEvent))
             <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch)).ToList();
 
         return listOfMatchesAfter;
@@ -315,7 +315,7 @@ public class Leagues : logClass<Leagues>
             var playerArray = leagueMatch.GetIdsOfThePlayersInTheMatchAsArray();
             if (playerArray.Contains(_suggestedByPlayerId))
             {
-                stringOfMatches += "Your match " + Database.Instance.Categories.GetMessageJumpUrl(
+                stringOfMatches += "Your match " + await Database.Instance.Categories.GetMessageJumpUrl(
                     leagueMatch.interfaceLeagueRef.LeagueCategoryId, leagueMatch.MatchChannelId, MessageName.MATCHSTARTMESSAGE) + " is at " +
                     TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
                     TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime) + ".";
@@ -330,7 +330,7 @@ public class Leagues : logClass<Leagues>
 
             // Add suggestions to schedule at earlier/later time
             // Perhaps replace with just earliest/latest time.
-            if ((leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - _suggestedTime)
+            if ((leagueMatch.MatchEventManager.GetTimeOfEventOfType(typeof(MatchQueueAcceptEvent)) - _suggestedTime)
                  <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch)
             {
                 stringOfMatches += " Matches must take place " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlaceWithTimeLeft(
@@ -398,8 +398,6 @@ public class Leagues : logClass<Leagues>
 
                         Log.WriteLine(leagueMatch.MatchId + " contains: " + playerId);
 
-                        var matchQueueAcceptEvent =
-                            leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent));
 
                         //if (matchQueueAcceptEvent.TimeToExecuteTheEventOn - _suggestedTime > 900)
                         //{
@@ -408,7 +406,7 @@ public class Leagues : logClass<Leagues>
                         //    continue;
                         //}
 
-                        Log.WriteLine("Match's " + leagueMatch.MatchId + " scheduled time: " + matchQueueAcceptEvent.TimeToExecuteTheEventOn +
+                        Log.WriteLine("Match's " + leagueMatch.MatchId + " scheduled time: " + leagueMatch.MatchEventManager.GetTimeOfEventOfType(typeof(MatchQueueAcceptEvent)) +
                             " was not fine with suggested time: " + _suggestedTime, LogLevel.DEBUG);
 
                         matchesThatThePlayersAreIn.Add(leagueMatch);

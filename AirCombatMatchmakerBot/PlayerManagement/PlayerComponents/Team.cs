@@ -154,9 +154,9 @@ public class Team
     }
 
     // Add 2v2, 3v3 etc functionality here
-    public async Task<string> GetMatchesThatAreCloseToTeamsMembers()
+    public async Task<string> GetMatchesThatAreCloseToTeamsMembers(ulong _timeOffset = 0)
     {
-        string generatedJumpUrls = string.Empty;
+        string generatedJumpUrlsWithTime = string.Empty;
 
         var listOfPlayers = Players.ToList();
 
@@ -169,15 +169,18 @@ public class Team
         var listOfLeagueMatches = Database.Instance.Leagues.CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
             listOfPlayersInUlong, TimeService.GetCurrentUnixTime());
 
-        var listOfMatchesClose = Database.Instance.Leagues.GetListOfMatchesClose(listOfLeagueMatches);
+        var listOfMatchesClose = Database.Instance.Leagues.GetListOfMatchesClose(listOfLeagueMatches, _timeOffset);
 
         foreach (LeagueMatch leagueMatch in listOfMatchesClose)
         {
-            generatedJumpUrls += leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent).) await Database.Instance.Categories.GetMessageJumpUrl(
+            var timeLeft = TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlaceWithTimeLeft(
+                leagueMatch.MatchEventManager.GetTimeUntilEventOfType(typeof(MatchQueueAcceptEvent)));
+
+            generatedJumpUrlsWithTime += " [" + timeLeft + " until " + await Database.Instance.Categories.GetMessageJumpUrl(
                     leagueMatch.interfaceLeagueRef.LeagueCategoryId, leagueMatch.MatchChannelId,
-                    MessageName.MATCHSTARTMESSAGE);
+                    MessageName.MATCHSTARTMESSAGE) + "]";
         }
 
-        return generatedJumpUrls;
+        return generatedJumpUrlsWithTime;
     }
 }
