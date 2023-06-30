@@ -107,25 +107,30 @@ public class MatchScheduler : logClass<MatchScheduler>
 
         // Sort teams based on TeamMissedMatchesFromScheduler in descending order
         var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(
-            x => x.Value.TeamMissedMatchesFromScheduler);
+            x => x.Value.TeamMissedMatchesFromScheduler).ToList();
 
         Log.WriteLine("Looping through teams (Count: " + sortedTeams.Count() + ")");
 
+        var addedTeamsToTheMatches = new List<int>();
         foreach (var teamKvp in sortedTeams)
         {
-            int teamId = teamKvp.Key;
-            TeamMatchmakingState teamMatchmakingState = teamKvp.Value.TeamMatchmakingState;
-
-            Log.WriteLine("Looping on: " + teamId + " with state: " + teamMatchmakingState +
+            Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState +
                 " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
-            if (teamMatchmakingState != TeamMatchmakingState.INQUEUE)
+            if (addedTeamsToTheMatches.Contains(teamKvp.Key))
             {
-                Log.WriteLine("Team: " + teamId + " not in the queue");
+                Log.WriteLine(teamKvp.Key +
+                    "was already in the mm with count of teams that have been added: " + addedTeamsToTheMatches.Count);
                 continue;
             }
 
-            var foundTeam = GetAvailableTeamToChallenge(teamId);
+            if (teamKvp.Value.TeamMatchmakingState != TeamMatchmakingState.INQUEUE)
+            {
+                Log.WriteLine("Team: " + teamKvp.Key + " not in the queue");
+                continue;
+            }
+
+            var foundTeam = GetAvailableTeamToChallenge(teamKvp.Key);
 
             if (foundTeam == 0)
             {
@@ -137,8 +142,8 @@ public class MatchScheduler : logClass<MatchScheduler>
 
             foreach (var teamKvpToIncrement in sortedTeams)
             {
-                if ((teamKvpToIncrement.Key == foundTeamKvp.Key && foundTeamKvp.Value.TeamMatchmakingState == TeamMatchmakingState.INQUEUE) ||
-                    (teamKvpToIncrement.Key == teamKvp.Key && teamKvp.Value.TeamMatchmakingState == TeamMatchmakingState.INQUEUE))
+                if ((teamKvpToIncrement.Key == foundTeamKvp.Key || teamKvpToIncrement.Key == teamKvp.Key) &&
+                    teamKvpToIncrement.Value.TeamMatchmakingState != TeamMatchmakingState.INQUEUE)
                 {
                     Log.WriteLine("not incrementing: " + teamKvpToIncrement.Key + " with state: " + teamKvpToIncrement.Value.TeamMatchmakingState);
                     continue;
@@ -149,6 +154,9 @@ public class MatchScheduler : logClass<MatchScheduler>
 
                 teamKvp.Value.TeamMissedMatchesFromScheduler++;
             }
+
+            addedTeamsToTheMatches.Add(foundTeamKvp.Key);
+            addedTeamsToTheMatches.Add(teamKvp.Key);
 
             MatchTwoTeamsTogether(foundTeamKvp, teamKvp);
         }

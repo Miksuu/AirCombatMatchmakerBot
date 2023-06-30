@@ -40,7 +40,7 @@ public class Matches : logClass<Matches>
         }
 
         LeagueMatch newMatch = new(
-            interfaceLeagueRef, _teamsToFormMatchOn, _matchState, _attemptToPutTeamsBackToQueueAfterTheMatch);
+        interfaceLeagueRef, _teamsToFormMatchOn, _matchState, _attemptToPutTeamsBackToQueueAfterTheMatch);
 
         MatchesConcurrentBag.Add(newMatch);
         Log.WriteLine("Added match channel id: " + newMatch.MatchId + " to the MatchesConcurrentBag, count is now: " +
@@ -99,7 +99,7 @@ public class Matches : logClass<Matches>
 
             return interfaceChannel;
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.ERROR);
             throw new InvalidOperationException(ex.Message);
@@ -124,7 +124,7 @@ public class Matches : logClass<Matches>
                 30, interfaceLeagueRef.LeagueCategoryId,
                 _interfaceChannel.ChannelId, _leagueMatch.MatchEventManager.ClassScheduledEvents);
         }
-        
+
         await SerializationManager.SerializeDB();
 
         Log.WriteLine("DONE CREATING A MATCH CHANNEL!");

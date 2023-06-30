@@ -109,6 +109,9 @@ public class LeagueMatch : logClass<LeagueMatch>
     {
         try
         {
+            Log.WriteLine("Starting of LeagueMatch ctor: " + _teamsToFormMatchOn.Length + " state: " +
+                _matchState + " with bool:" + AttemptToPutTheTeamsBackToTheQueueAfterTheMatch);
+
             IsAScheduledMatch = _attemptToPutTeamsBackToQueueAfterTheMatch;
             SetInterfaceLeagueReferencesForTheMatch(_interfaceLeague);
 
@@ -116,11 +119,12 @@ public class LeagueMatch : logClass<LeagueMatch>
             MatchLeague = _interfaceLeague.LeagueCategoryName;
 
             Log.WriteLine("Teams to from the match on: " + _teamsToFormMatchOn[0] +
-                ", " + _teamsToFormMatchOn[1] + " scheduled match: " + _attemptToPutTeamsBackToQueueAfterTheMatch, LogLevel.DEBUG);
+                ", " + _teamsToFormMatchOn[1] + " scheduled match: " + _attemptToPutTeamsBackToQueueAfterTheMatch, LogLevel.VERBOSE);
 
             // Add the team's name to the ConcurrentDictionary as a value
             foreach (int teamId in _teamsToFormMatchOn)
             {
+                Log.WriteLine("Starting to loop: " + teamId);
                 Team foundTeam =
                     _interfaceLeague.LeagueData.Teams.FindTeamById(teamId);
 
@@ -133,15 +137,23 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             foreach (var item in TeamsInTheMatch)
             {
-                Log.WriteLine("final teamsInTheMatch: " + item.Key, LogLevel.DEBUG);
+                Log.WriteLine("final teamsInTheMatch: " + item.Key + " with count: " +TeamsInTheMatch.Count, LogLevel.VERBOSE);
             }
 
-            MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
+            Log.WriteLine("before incrementing to: " + Database.Instance.Leagues.LeaguesMatchCounter + " with: " + TeamsInTheMatch.Count);
+
+            MatchId = Database.Instance.Leagues.LeaguesMatchCounter++;
             Database.Instance.Leagues.LeaguesMatchCounter++;
+
+            Log.WriteLine("incremented to: " + Database.Instance.Leagues.LeaguesMatchCounter + " with: " + TeamsInTheMatch.Count);
 
             MatchState = _matchState;
 
+            Log.WriteLine("before MatchReporting ctor" + TeamsInTheMatch.Count);
+
             MatchReporting = new MatchReporting(TeamsInTheMatch, _interfaceLeague);
+
+            Log.WriteLine("after MatchReporting ctor" + TeamsInTheMatch.Count);
 
             Log.WriteLine("Constructed a new match with teams ids: " + TeamsInTheMatch.ElementAt(0) +
                 TeamsInTheMatch.ElementAt(1) + " with matchId of: " + MatchId, LogLevel.DEBUG);
