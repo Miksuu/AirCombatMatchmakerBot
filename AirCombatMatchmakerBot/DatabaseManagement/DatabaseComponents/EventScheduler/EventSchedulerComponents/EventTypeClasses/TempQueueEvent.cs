@@ -76,16 +76,10 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
 
         try
         {
-            InterfaceMessage confirmMatchEntryMessage =
-                Database.Instance.Categories.FindInterfaceCategoryWithId(
-                    LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
-                        MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannel(
-                            MessageName.CONFIRMMATCHENTRYMESSAGE);
-
-            Log.WriteLine("Found: " + confirmMatchEntryMessage.MessageId + " with content: " +
-                confirmMatchEntryMessage.MessageDescription, LogLevel.DEBUG);
-
-            confirmMatchEntryMessage.GenerateAndModifyTheMessage();
+            Database.Instance.Categories.FindInterfaceCategoryWithId(
+                LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
+                    MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannelAndUpdateItIfItExists(
+                        MessageName.CONFIRMMATCHENTRYMESSAGE);
         }
         catch (Exception ex)
         {

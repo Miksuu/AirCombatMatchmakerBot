@@ -33,6 +33,9 @@ public interface InterfaceChannel
     public Task PostChannelMessages(DiscordSocketClient _client);
     public InterfaceMessage FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName);
+    public void FindInterfaceMessageWithNameInTheChannelAndUpdateItIfItExists(
+        MessageName _messageName);
+
     public Task<IMessageChannel> GetMessageChannelById(DiscordSocketClient _client);
     public Task<string> DeleteMessagesInAChannelWithMessageName(MessageName _messageNameToDelete);
     public Task DeleteThisChannel(

@@ -361,6 +361,34 @@ public abstract class BaseChannel : InterfaceChannel
         return interfaceMessage;
     }
 
+    // Since the messages are not in sync with the Event processing thread, only update it if it exists
+    // SHOULD BE ONLY CALLED FROM Events
+    public void FindInterfaceMessageWithNameInTheChannelAndUpdateItIfItExists(
+        MessageName _messageName)
+    {
+        Log.WriteLine("Getting MessageName with name: " + _messageName);
+
+        if (!thisInterfaceChannel.InterfaceMessagesWithIds.Any(
+            x => x.Value.MessageName == _messageName))
+        {
+            Log.WriteLine(_messageName + " didn't exist yet", LogLevel.DEBUG);
+            return;
+        }
+
+        var interfaceMessage = thisInterfaceChannel.InterfaceMessagesWithIds.FirstOrDefault(
+            x => x.Value.MessageName == _messageName).Value;
+        if (interfaceMessage == null)
+        {
+            string errorMsg = nameof(interfaceMessage) + " was null! with name: " + _messageName;
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            throw new InvalidOperationException(errorMsg);
+        }
+
+        Log.WriteLine("Found: " + interfaceMessage.MessageName);
+
+        interfaceMessage.GenerateAndModifyTheMessage();
+    }
+
     // Finds all messages with that messageName
     public List<InterfaceMessage> FindAllInterfaceMessagesWithNameInTheChannel(
         MessageName _messageName)

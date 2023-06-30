@@ -99,7 +99,7 @@ public class DeleteChannelEvent : ScheduledEvent
 
             await SerializationManager.SerializeDB();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return;
@@ -110,18 +110,11 @@ public class DeleteChannelEvent : ScheduledEvent
     {
         try
         {
-            InterfaceMessage confirmationMessage =
-                Database.Instance.Categories.FindInterfaceCategoryWithId(
-                    LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
-                        MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannel(
-                            MessageName.CONFIRMATIONMESSAGE);
+            Database.Instance.Categories.FindInterfaceCategoryWithId(
+                LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
+                    MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannelAndUpdateItIfItExists(
+                        MessageName.CONFIRMATIONMESSAGE);
 
-            Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " +
-                confirmationMessage.MessageDescription, LogLevel.DEBUG);
-
-            //var timeLeft = TimeToExecuteTheEventOn - TimeService.GetCurrentUnixTime();
-
-            confirmationMessage.GenerateAndModifyTheMessage();
         }
         catch (Exception ex)
         {
