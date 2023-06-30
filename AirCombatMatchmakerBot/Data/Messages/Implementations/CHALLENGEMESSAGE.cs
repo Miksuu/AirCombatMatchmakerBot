@@ -5,6 +5,13 @@ using Discord;
 [DataContract]
 public class CHALLENGEMESSAGE : BaseMessage
 {
+    [IgnoreDataMember]
+    ConcurrentDictionary<int, string> TeamsThatHaveMatchesCloses
+    {
+        get => teamsThatHaveMatchesCloses.GetValue();
+        set => teamsThatHaveMatchesCloses.SetValue(value);
+    }
+
     public CHALLENGEMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.CHALLENGEMESSAGE;
@@ -23,6 +30,8 @@ public class CHALLENGEMESSAGE : BaseMessage
     {
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
+
+    private logConcurrentDictionary<int, string> teamsThatHaveMatchesCloses = new logConcurrentDictionary<int, string>();
 
     public override Task<string> GenerateMessage()
     {
@@ -65,8 +74,6 @@ public class CHALLENGEMESSAGE : BaseMessage
             thisInterfaceMessage.MessageEmbedTitle = leagueName + " challenge.";
             string challengeMessage = "Players In The Queue: \n";
 
-            //Log.WriteLine("id: " + thisInterfaceMessage.MessageCategoryId, LogLevel.WARNING);
-
             var leagueCategory =
                 Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
             if (leagueCategory == null)
@@ -80,7 +87,14 @@ public class CHALLENGEMESSAGE : BaseMessage
                 try
                 {
                     var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
-                    challengeMessage += "[" + team.SkillRating + "] " + team.TeamName + "\n";
+                    challengeMessage += "[" + team.SkillRating + "] " + team.TeamName;
+
+                    if (TeamsThatHaveMatchesCloses.ContainsKey(teamInt))
+                    {
+                        challengeMessage + "["
+                    }
+
+                    challengeMessage += "\n";
                 }
                 catch (Exception ex)
                 {
@@ -98,5 +112,22 @@ public class CHALLENGEMESSAGE : BaseMessage
             " queue message on!", LogLevel.ERROR);
 
         return Task.FromResult(string.Empty);
+    }
+
+    public async Task GetTeamsThatHaveMatchesCloses()
+    {
+        var leagueCategory =
+            Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
+        if (leagueCategory == null)
+        {
+            Log.WriteLine(nameof(leagueCategory) + " was null!", LogLevel.ERROR);
+            return;
+        }
+
+        foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
+        {
+            var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
+            await team.GetMatchesThatAreCloseToTeamsMembers();
+        }
     }
 }

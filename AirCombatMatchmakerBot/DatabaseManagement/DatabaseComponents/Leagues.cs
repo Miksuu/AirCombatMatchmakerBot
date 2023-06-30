@@ -259,11 +259,11 @@ public class Leagues : logClass<Leagues>
         return finalList;
     }
 
-    private List<LeagueMatch> GetListOfMatchesClose(List<LeagueMatch> _listOfLeagueMatches)
+    public List<LeagueMatch> GetListOfMatchesClose(List<LeagueMatch> _listOfLeagueMatches)
     {
         var listOfMatchesClose = _listOfLeagueMatches.Where(
             x => x.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE &&
-            ((x.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn - TimeService.GetCurrentUnixTime())
+            ((x.MatchEventManager.GetTimeUntilEventOfType(typeof(MatchQueueAcceptEvent)))
             <= earliestOrLatestAllowedTimeBeforeAndAfterTheMatch)).ToList(); ;
 
         return listOfMatchesClose;
@@ -347,7 +347,7 @@ public class Leagues : logClass<Leagues>
         return new Response(stringOfMatches, false);
     }
 
-    private List<LeagueMatch> CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
+    public List<LeagueMatch> CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
         List<ulong> _playersIds, ulong _suggestedTime)
     {
         try

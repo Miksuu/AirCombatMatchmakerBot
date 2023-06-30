@@ -152,4 +152,32 @@ public class Team
         Log.WriteLine("Getting team: " + teamName + " with id: " + teamId + " stats.");
         return TeamStats.CalculateAndReturnTotalStatValuesAsString();
     }
+
+    // Add 2v2, 3v3 etc functionality here
+    public async Task<string> GetMatchesThatAreCloseToTeamsMembers()
+    {
+        string generatedJumpUrls = string.Empty;
+
+        var listOfPlayers = Players.ToList();
+
+        List<ulong> listOfPlayersInUlong = new List<ulong>();
+        foreach (var player in listOfPlayers)
+        {
+            listOfPlayersInUlong.Add(player.PlayerDiscordId);
+        }
+
+        var listOfLeagueMatches = Database.Instance.Leagues.CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
+            listOfPlayersInUlong, TimeService.GetCurrentUnixTime());
+
+        var listOfMatchesClose = Database.Instance.Leagues.GetListOfMatchesClose(listOfLeagueMatches);
+
+        foreach (LeagueMatch leagueMatch in listOfMatchesClose)
+        {
+            generatedJumpUrls += leagueMatch.MatchEventManager.GetEventByType(typeof(MatchQueueAcceptEvent).) await Database.Instance.Categories.GetMessageJumpUrl(
+                    leagueMatch.interfaceLeagueRef.LeagueCategoryId, leagueMatch.MatchChannelId,
+                    MessageName.MATCHSTARTMESSAGE);
+        }
+
+        return generatedJumpUrls;
+    }
 }
