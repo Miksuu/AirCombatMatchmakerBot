@@ -238,15 +238,8 @@ public class MatchScheduler : logClass<MatchScheduler>
             Log.WriteLine("[" + item.Value.TeamMissedMatchesFromScheduler + "] id: " + item.Key + " | " + item.Value.TeamMatchmakingState);
         }
 
-        // Create a method to enter a team in to a match
-        _foundOpponentTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH;
-        _seekingTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH;
-
-        _foundOpponentTeam.Value.TeamThatWasFoughtPreviously = _seekingTeam.Key;
-        _seekingTeam.Value.TeamThatWasFoughtPreviously = _foundOpponentTeam.Key;
-
-        _foundOpponentTeam.Value.TeamMissedMatchesFromScheduler = 0;
-        _seekingTeam.Value.TeamMissedMatchesFromScheduler = 0;
+        _foundOpponentTeam.Value.SetValuesOnFindingAMatch(_seekingTeam.Key);
+        _seekingTeam.Value.SetValuesOnFindingAMatch(_foundOpponentTeam.Key);
 
         int[] teams = new int[2]
         {

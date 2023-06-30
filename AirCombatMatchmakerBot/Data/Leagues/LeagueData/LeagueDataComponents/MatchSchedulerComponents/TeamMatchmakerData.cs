@@ -27,4 +27,11 @@ public class TeamMatchmakerData : logClass<MatchScheduler>
     [DataMember] private logClass<int> teamThatWasFoughtPreviously = new logClass<int>();
 
     public TeamMatchmakerData() { }
+
+    public void SetValuesOnFindingAMatch(int _opposingTeamKey)
+    {
+        TeamMatchmakingState = TeamMatchmakingState.INMATCH;
+        TeamThatWasFoughtPreviously = _opposingTeamKey;
+        TeamMissedMatchesFromScheduler = 0;
+    }
 }
