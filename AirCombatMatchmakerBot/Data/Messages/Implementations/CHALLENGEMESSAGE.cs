@@ -6,10 +6,10 @@ using Discord;
 public class CHALLENGEMESSAGE : BaseMessage
 {
     [IgnoreDataMember]
-    ConcurrentDictionary<int, string> TeamsThatHaveMatchesCloses
+    ConcurrentDictionary<int, string> TeamsThatHaveMatchesClose
     {
-        get => teamsThatHaveMatchesCloses.GetValue();
-        set => teamsThatHaveMatchesCloses.SetValue(value);
+        get => teamsThatHaveMatchesClose.GetValue();
+        set => teamsThatHaveMatchesClose.SetValue(value);
     }
 
     public CHALLENGEMESSAGE()
@@ -31,7 +31,7 @@ public class CHALLENGEMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    private logConcurrentDictionary<int, string> teamsThatHaveMatchesCloses = new logConcurrentDictionary<int, string>();
+    private logConcurrentDictionary<int, string> teamsThatHaveMatchesClose = new logConcurrentDictionary<int, string>();
 
     public override Task<string> GenerateMessage()
     {
@@ -86,9 +86,9 @@ public class CHALLENGEMESSAGE : BaseMessage
                         var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
                         challengeMessage += "[" + team.SkillRating + "] " + team.TeamName;
 
-                        if (TeamsThatHaveMatchesCloses.ContainsKey(teamInt))
+                        if (TeamsThatHaveMatchesClose.ContainsKey(teamInt))
                         {
-                            challengeMessage += TeamsThatHaveMatchesCloses[teamInt];
+                            challengeMessage += TeamsThatHaveMatchesClose[teamInt];
                         }
 
                         challengeMessage += "\n";
@@ -98,6 +98,11 @@ public class CHALLENGEMESSAGE : BaseMessage
                         Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                         continue;
                     }
+                }
+
+                if (teamsThatHaveMatchesClose.Count() > 0)
+                {
+                    challengeMessage += "*Players will be removed from the queue 30 minutes before their scheduled match.*"; 
                 }
 
                 Log.WriteLine("Challenge message generated: " + challengeMessage);
@@ -126,7 +131,7 @@ public class CHALLENGEMESSAGE : BaseMessage
             var leagueCategory =
                 Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
 
-            TeamsThatHaveMatchesCloses.Clear();
+            TeamsThatHaveMatchesClose.Clear();
 
             foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
             {
@@ -140,7 +145,7 @@ public class CHALLENGEMESSAGE : BaseMessage
 
                 updateTheMessage = true;
 
-                TeamsThatHaveMatchesCloses.TryAdd(teamInt, times);
+                TeamsThatHaveMatchesClose.TryAdd(teamInt, times);
             }
 
             return updateTheMessage;
