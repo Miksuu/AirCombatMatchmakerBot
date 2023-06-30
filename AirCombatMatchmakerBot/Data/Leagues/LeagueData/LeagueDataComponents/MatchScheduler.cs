@@ -197,7 +197,8 @@ public class MatchScheduler : logClass<MatchScheduler>
 
                 var samePriorityTeams =
                     sortedTeams.Where(
-                        x => x.Value.TeamMissedMatchesFromScheduler == priorityInt && x.Key != teamKvp.Key).Select(
+                        x => x.Value.TeamMissedMatchesFromScheduler ==
+                        priorityInt && x.Key != teamId && x.Key != teamMatchmakerData.TeamThatWasFoughtPreviously).Select(
                             x => x.Key).ToList();
 
                 if (samePriorityTeams.Count() == 1)
@@ -240,6 +241,10 @@ public class MatchScheduler : logClass<MatchScheduler>
         // Create a method to enter a team in to a match
         _foundOpponentTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH;
         _seekingTeam.Value.TeamMatchmakingState = TeamMatchmakingState.INMATCH;
+
+        _foundOpponentTeam.Value.TeamThatWasFoughtPreviously = _seekingTeam.Key;
+        _seekingTeam.Value.TeamThatWasFoughtPreviously = _foundOpponentTeam.Key;
+
         _foundOpponentTeam.Value.TeamMissedMatchesFromScheduler = 0;
         _seekingTeam.Value.TeamMissedMatchesFromScheduler = 0;
 

@@ -16,8 +16,15 @@ public class TeamMatchmakerData : logClass<MatchScheduler>
         set => teamMissedMatchesFromScheduler.SetValue(value);
     }
 
+    public int TeamThatWasFoughtPreviously
+    {
+        get => teamThatWasFoughtPreviously.GetValue();
+        set => teamThatWasFoughtPreviously.SetValue(value);
+    }
+
     [DataMember] private logClass<TeamMatchmakingState> teamMatchmakingState = new logClass<TeamMatchmakingState>();
     [DataMember] private logClass<int> teamMissedMatchesFromScheduler = new logClass<int>();
+    [DataMember] private logClass<int> teamThatWasFoughtPreviously = new logClass<int>();
 
     public TeamMatchmakerData() { }
 }
