@@ -48,8 +48,8 @@ public abstract class BaseChannel : InterfaceChannel
 
     [DataMember] protected logClass<ChannelType> channelType = new logClass<ChannelType>();
     [DataMember] protected logString channelName = new logString();
-    [DataMember] protected logClass<ulong> channelId = new logClass<ulong>();
-    [DataMember] protected logClass<ulong> channelsCategoryId = new logClass<ulong>();
+    [DataMember] protected logVar<ulong> channelId = new logVar<ulong>();
+    [DataMember] protected logVar<ulong> channelsCategoryId = new logVar<ulong>();
     [DataMember] protected logConcurrentDictionary<MessageName, bool> channelMessages = new logConcurrentDictionary<MessageName, bool>();
     [DataMember] protected logConcurrentDictionary<ulong, InterfaceMessage> interfaceMessagesWithIds = new logConcurrentDictionary<ulong, InterfaceMessage>();
     protected InterfaceChannel thisInterfaceChannel;

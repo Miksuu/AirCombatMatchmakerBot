@@ -24,7 +24,7 @@ public class Leagues : logClass<Leagues>
     }
 
     [DataMember] private logConcurrentBag<InterfaceLeague> storedLeagues = new logConcurrentBag<InterfaceLeague>();
-    [DataMember] private logClass<int> leaguesMatchCounter = new logClass<int>(1);
+    [DataMember] private logVar<int> leaguesMatchCounter = new logVar<int>(1);
 
     public bool CheckIfILeagueExistsByCategoryName(LeagueName _leagueCategoryName)
     {

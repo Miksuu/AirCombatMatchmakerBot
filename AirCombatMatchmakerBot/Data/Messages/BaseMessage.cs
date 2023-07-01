@@ -97,9 +97,9 @@ public abstract class BaseMessage : InterfaceMessage
     [DataMember] protected logString messageDescription = new logString(); // Not necessary for embed
     protected Discord.Color messageEmbedColor = Discord.Color.Default;
 
-    [DataMember] protected logClass<ulong> messageId = new logClass<ulong>();
-    [DataMember] protected logClass<ulong> messageChannelId = new logClass<ulong>();
-    [DataMember] protected logClass<ulong> messageCategoryId = new logClass<ulong>();
+    [DataMember] protected logVar<ulong> messageId = new logVar<ulong>();
+    [DataMember] protected logVar<ulong> messageChannelId = new logVar<ulong>();
+    [DataMember] protected logVar<ulong> messageCategoryId = new logVar<ulong>();
     [DataMember] protected logConcurrentBag<InterfaceButton> buttonsInTheMessage = new logConcurrentBag<InterfaceButton>();
 
     protected bool mentionMatchPlayers { get; set; }

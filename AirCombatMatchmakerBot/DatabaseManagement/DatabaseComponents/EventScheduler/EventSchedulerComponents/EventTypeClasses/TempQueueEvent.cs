@@ -29,7 +29,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
             "|" + _leagueCategoryId + "|" + _matchChannelId, LogLevel.DEBUG);
     }
 
-    [DataMember] private logClass<ulong> playerIdCached = new logClass<ulong>();
+    [DataMember] private logVar<ulong> playerIdCached = new logVar<ulong>();
 
     public override async Task ExecuteTheScheduledEvent(bool _serialize = true)
     {

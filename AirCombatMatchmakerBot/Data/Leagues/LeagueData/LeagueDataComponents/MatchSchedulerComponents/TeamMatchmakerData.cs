@@ -23,8 +23,8 @@ public class TeamMatchmakerData : logClass<MatchScheduler>
     }
 
     [DataMember] private logClass<TeamMatchmakingState> teamMatchmakingState = new logClass<TeamMatchmakingState>();
-    //[DataMember] private logClass<int> teamMissedMatchesFromScheduler = new logClass<int>();
-    [DataMember] private logClass<int> teamThatWasFoughtPreviously = new logClass<int>();
+    //[DataMember] private logVar<int> teamMissedMatchesFromScheduler = new logVar<int>();
+    [DataMember] private logVar<int> teamThatWasFoughtPreviously = new logVar<int>();
 
     public TeamMatchmakerData() { }
 

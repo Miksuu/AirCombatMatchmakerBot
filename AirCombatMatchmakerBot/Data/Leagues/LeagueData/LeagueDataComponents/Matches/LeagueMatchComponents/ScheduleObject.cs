@@ -16,8 +16,8 @@ public class ScheduleObject : logClass<ScheduleObject>
         set => teamIdThatRequestedScheduling.SetValue(value);
     }
 
-    [DataMember] private logClass<ulong> requestedSchedulingTimeInUnixTime = new logClass<ulong>();
-    [DataMember] private logClass<int> teamIdThatRequestedScheduling = new logClass<int>();
+    [DataMember] private logVar<ulong> requestedSchedulingTimeInUnixTime = new logVar<ulong>();
+    [DataMember] private logVar<int> teamIdThatRequestedScheduling = new logVar<int>();
 
 
     public ScheduleObject() { }

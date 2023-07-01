@@ -47,14 +47,14 @@ public class StatValues : logClass<StatValues>
 
     // Add plane specific stats to see how the player performs against each of the enemy planes
 
-    [DataMember] private logClass<int> wins = new logClass<int>();
-    [DataMember] private logClass<int> losses = new logClass<int>();
-    [DataMember] private logClass<int> kills = new logClass<int>();
-    [DataMember] private logClass<int> deaths = new logClass<int>();
-    [DataMember] private logClass<int> streak = new logClass<int>();
+    [DataMember] private logVar<int> wins = new logVar<int>();
+    [DataMember] private logVar<int> losses = new logVar<int>();
+    [DataMember] private logVar<int> kills = new logVar<int>();
+    [DataMember] private logVar<int> deaths = new logVar<int>();
+    [DataMember] private logVar<int> streak = new logVar<int>();
 
-    private logClass<float> winLoseRatio = new logClass<float>();
-    private logClass<float> killDeathRatio = new logClass<float>();
+    private logVar<float> winLoseRatio = new logVar<float>();
+    private logVar<float> killDeathRatio = new logVar<float>();
 
     public StatValues() 
     {

@@ -36,7 +36,7 @@ public abstract class BaseCategory : InterfaceCategory
     [DataMember] protected logClass<CategoryType> categoryType = new logClass<CategoryType>(new CategoryType());
     protected logConcurrentBag<ChannelType> channelTypes = new logConcurrentBag<ChannelType>();
     [DataMember] protected logConcurrentDictionary<ulong, InterfaceChannel> interfaceChannels = new logConcurrentDictionary<ulong, InterfaceChannel>();
-    [DataMember] protected logClass<ulong> socketCategoryChannelId = new logClass<ulong>();
+    [DataMember] protected logVar<ulong> socketCategoryChannelId = new logVar<ulong>();
 
     protected InterfaceCategory thisInterfaceCategory;
 

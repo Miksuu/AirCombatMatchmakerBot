@@ -26,7 +26,7 @@ public class MatchScheduler : logClass<MatchScheduler>
 
     [DataMember] private logConcurrentDictionary<int, TeamMatchmakerData> teamsInTheMatchmaker =
         new logConcurrentDictionary<int, TeamMatchmakerData>();
-    [DataMember] private logClass<bool> matchSchedulerActive = new logClass<bool>();
+    [DataMember] private logVar<bool> matchSchedulerActive = new logVar<bool>();
     //[DataMember] private logConcurrentBag<int> addedTeamsToTheMatches = new logConcurrentBag<int>();
 
     // Doesn't need to be serialized, it's gotten from a class that loads the data from it's serialization

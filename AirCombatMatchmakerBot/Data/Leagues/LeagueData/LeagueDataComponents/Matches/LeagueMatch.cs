@@ -73,12 +73,12 @@ public class LeagueMatch : logClass<LeagueMatch>
     }
 
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
-    [DataMember] private logClass<int> matchId = new logClass<int>();
-    [DataMember] private logClass<ulong> matchChannelId = new logClass<ulong>();
+    [DataMember] private logVar<int> matchId = new logVar<int>();
+    [DataMember] private logVar<ulong> matchChannelId = new logVar<ulong>();
     [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
     [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>(new LeagueName());
     [DataMember] private logClass<ScheduleObject> scheduleObject = new logClass<ScheduleObject>(new ScheduleObject());
-    [DataMember] private logClass<bool> isAScheduledMatch = new logClass<bool>();
+    [DataMember] private logVar<bool> isAScheduledMatch = new logVar<bool>();
     [DataMember] private logClass<EventManager> matchEventManager = new logClass<EventManager>(new EventManager());
     [DataMember] private logClass<MatchState> matchState = new logClass<MatchState>();
 

@@ -3,16 +3,16 @@ using System.Runtime.Serialization;
 using System.Text;
 
 [DataContract]
-public class logClass<T> 
+public class logVar<T> 
 {
     [DataMember] private T? _value;
 
-    public logClass()
+    public logVar()
     {
         _value = default(T);
     }
 
-    public logClass(T?_initialValue = default(T))
+    public logVar(T?_initialValue = default(T))
     {
         if (_initialValue == null)
         {
@@ -29,8 +29,8 @@ public class logClass<T>
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Getting " + _value?.GetType() + ": " + _memberName,
-                     LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
+        Log.WriteLine("Getting " + _value?.GetType() + " " + _memberName + ": " +
+                    _value, LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
         return _value;
     }
 
@@ -39,7 +39,7 @@ public class logClass<T>
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Setting " + _value?.GetType() + ": " + _memberName +
+        Log.WriteLine("Setting " + _value?.GetType() + " " + _memberName + ": " +
             " TO: " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
         _value = value;
     }

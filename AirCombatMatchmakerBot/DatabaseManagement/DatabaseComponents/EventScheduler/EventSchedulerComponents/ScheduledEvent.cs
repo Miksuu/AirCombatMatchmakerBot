@@ -36,11 +36,11 @@ public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventT
         set => matchChannelIdCached.SetValue(value);
     }
 
-    [DataMember] protected logClass<ulong> timeToExecuteTheEventOn = new logClass<ulong>();
-    [DataMember] protected logClass<int> eventId = new logClass<int>();
-    [DataMember] protected logClass<bool> eventIsBeingExecuted = new logClass<bool>();
-    [DataMember] protected logClass<ulong> leagueCategoryIdCached = new logClass<ulong>();
-    [DataMember] protected logClass<ulong> matchChannelIdCached = new logClass<ulong>();
+    [DataMember] protected logVar<ulong> timeToExecuteTheEventOn = new logVar<ulong>();
+    [DataMember] protected logVar<int> eventId = new logVar<int>();
+    [DataMember] protected logVar<bool> eventIsBeingExecuted = new logVar<bool>();
+    [DataMember] protected logVar<ulong> leagueCategoryIdCached = new logVar<ulong>();
+    [DataMember] protected logVar<ulong> matchChannelIdCached = new logVar<ulong>();
 
     public ScheduledEvent() { }
 

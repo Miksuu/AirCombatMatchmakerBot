@@ -18,8 +18,8 @@ public class EventScheduler : logClass<EventScheduler>
         set => eventCounter.SetValue(value);
     }
 
-    [DataMember] private logClass<ulong> lastUnixTimeExecutedOn = new logClass<ulong>();
-    [DataMember] private logClass<int> eventCounter = new logClass<int>();
+    [DataMember] private logVar<ulong> lastUnixTimeExecutedOn = new logVar<ulong>();
+    [DataMember] private logVar<int> eventCounter = new logVar<int>();
 
     public EventScheduler() { }
 
