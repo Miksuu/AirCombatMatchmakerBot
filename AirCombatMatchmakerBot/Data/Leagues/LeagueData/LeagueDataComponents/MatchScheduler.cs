@@ -153,6 +153,7 @@ public class MatchScheduler : logClass<MatchScheduler>
         for (int t = 0; t < teamsArray.Length; t++)
         {
             teamsArray[t].Value.SetValuesOnFindingAMatch(teamsArray[1 - t].Key);
+            Log.WriteLine("Setting values on team: " + teamsArray[t].Key);
         }
 
         await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(
@@ -160,8 +161,9 @@ public class MatchScheduler : logClass<MatchScheduler>
             MatchState.SCHEDULINGPHASE,
             true
         );
-    }
 
+        Log.WriteLine("Match creation request sent for teams: " + teamsArray[0].Key + " and " + teamsArray[1].Key);
+    }
 
     public int GetRandomTeamId(List<int> _teamIds)
     {
