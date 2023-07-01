@@ -316,7 +316,6 @@ public class MatchReporting : logClass<MatchReporting>
         bool[] scoreFound = new bool[TeamIdsWithReportData.Count];
         for (int i = 0; i < TeamIdsWithReportData.Count; i++)
         {
-
             bool found = int.TryParse(
                 TeamIdsWithReportData.ElementAt(i).Value.FindBaseReportingObjectOfType(
                     TypeOfTheReportingObject.REPORTEDSCORE).thisReportingObject.ObjectValue, out int _foundScore);

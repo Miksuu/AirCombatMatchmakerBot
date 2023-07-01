@@ -116,6 +116,7 @@ public class MatchScheduler : logClass<MatchScheduler>
         var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(
             x => x.Value.TeamMissedMatchesFromScheduler).ToList();
 
+        sortedTeams.RemoveAll(x => x.Value.TeamMatchmakingState == TeamMatchmakingState.INMATCH);
         if (sortedTeams.Count < 2)
         {
             return;
@@ -128,20 +129,9 @@ public class MatchScheduler : logClass<MatchScheduler>
             Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState +
                 " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
-            //if (AddedTeamsToTheMatches.Contains(teamKvp.Key))
-            //{
-            //    Log.WriteLine(teamKvp.Key +
-            //        "was already in the mm with count of teams that have been added: " + AddedTeamsToTheMatches.Count);
-            //    continue;
-            //}
-
-            if (teamKvp.Value.TeamMatchmakingState != TeamMatchmakingState.INQUEUE)
-            {
-                Log.WriteLine("Team: " + teamKvp.Key + " not in the queue");
-                continue;
-            }
-
             var foundTeam = GetAvailableTeamToChallenge(teamKvp.Key);
+
+            Log.WriteLine("Team: " + foundTeam + " not in the queue");
 
             if (foundTeam == 0)
             {
@@ -163,11 +153,8 @@ public class MatchScheduler : logClass<MatchScheduler>
                 Log.WriteLine("Incrementing teamId: " + teamKvp.Key + " with value:" + teamKvp.Value.TeamMissedMatchesFromScheduler +
                     " and state: " + teamKvp.Value.TeamMatchmakingState);
 
-                teamKvp.Value.TeamMissedMatchesFromScheduler++;
+                TeamsInTheMatchmaker.First(x => x.Key == teamKvp.Key).Value.TeamMissedMatchesFromScheduler++;
             }
-
-            //AddedTeamsToTheMatches.Add(foundTeamKvp.Key);
-            //AddedTeamsToTheMatches.Add(teamKvp.Key);
 
             if (foundTeamKvp.Key == teamKvp.Key)
             {
@@ -187,40 +174,50 @@ public class MatchScheduler : logClass<MatchScheduler>
         return _teamIds[index];
     }
 
-    private int GetAvailableTeamToChallenge(int _teamIdNotToLookFor)
+    private int GetAvailableTeamToChallenge(int _teamIdSearching)
     {
         Log.WriteLine("Starting to see what teams are available to challenge: " + TeamsInTheMatchmaker.Count);
 
+        var teamSearching = TeamsInTheMatchmaker.First(x => x.Key == _teamIdSearching);
+
         var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler).ToList();
-        sortedTeams.RemoveAll(pair => pair.Key == _teamIdNotToLookFor);
+        Log.WriteLine("Sorted teams count before removal: " + sortedTeams.Count);
+        sortedTeams.RemoveAll(pair => pair.Key == _teamIdSearching);
+        Log.WriteLine("Sorted teams count after removal of same teams: " + sortedTeams.Count);
+        sortedTeams.RemoveAll(pair => pair.Value.TeamMatchmakingState == TeamMatchmakingState.INMATCH);
+        Log.WriteLine("Sorted teams count after removal of inmatch teams: " + sortedTeams.Count);
+        sortedTeams.RemoveAll(pair => pair.Key == teamSearching.Value.TeamThatWasFoughtPreviously);
+        Log.WriteLine("Sorted teams count after removal of teams that has been fought previously just before this match: " + sortedTeams.Count);
+
+
+
+        Log.WriteLine("Team searching: " + teamSearching.Key + " with prio:" + teamSearching.Value.TeamMissedMatchesFromScheduler +
+            " that fought previously against: " + teamSearching.Value.TeamThatWasFoughtPreviously);
+
+        var highestPrio = TeamsInTheMatchmaker.Max(x => x.Value.TeamMissedMatchesFromScheduler);
 
         foreach (var teamKvp in sortedTeams)
         {
             Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState +
                 " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
-            if (teamKvp.Key == _teamIdNotToLookFor)
-            {
-                Log.WriteLine(teamKvp.Key + " skipped");
-                continue;
-            }
-
-            if (teamKvp.Value.TeamMatchmakingState != TeamMatchmakingState.INQUEUE)
-            {
-                Log.WriteLine(teamKvp.Key + "Not in queue, skipping");
-                continue;
-            }
-
             // Reverse for-loop to search for the highest priority from the top team
-            for (int priorityInt = teamKvp.Value.TeamMissedMatchesFromScheduler; priorityInt >= 0; priorityInt--)
+            for (int priorityInt = highestPrio; priorityInt >= 0; priorityInt--)
             {
                 Log.WriteLine("Loop on priority: " + priorityInt);
 
                 var samePriorityTeams =
                     sortedTeams.Where(
                         x => x.Value.TeamMissedMatchesFromScheduler ==
-                        priorityInt && x.Key != teamKvp.Key && x.Key != teamKvp.Value.TeamThatWasFoughtPreviously).Select(
+                        priorityInt && x.Key != teamKvp.Key).Select(
                             x => x.Key).ToList();
+
+                Log.WriteLine(samePriorityTeams.Count.ToString());
+
+                //if (samePriorityTeams.Contains(teamKvp.Value.TeamThatWasFoughtPreviously))
+                //{
+                //    samePriorityTeams.RemoveAll(x => x == teamKvp.Value.TeamThatWasFoughtPreviously);
+                //}
 
                 if (samePriorityTeams.Count() == 1)
                 {
