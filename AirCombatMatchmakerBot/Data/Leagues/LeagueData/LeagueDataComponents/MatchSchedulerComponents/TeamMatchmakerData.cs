@@ -10,11 +10,11 @@ public class TeamMatchmakerData : logClass<MatchScheduler>
         set => teamMatchmakingState.SetValue(value);
     }
 
-    public int TeamMissedMatchesFromScheduler
-    {
-        get => teamMissedMatchesFromScheduler.GetValue();
-        set => teamMissedMatchesFromScheduler.SetValue(value);
-    }
+    //public int TeamMissedMatchesFromScheduler
+    //{
+    //    get => teamMissedMatchesFromScheduler.GetValue();
+    //    set => teamMissedMatchesFromScheduler.SetValue(value);
+    //}
 
     public int TeamThatWasFoughtPreviously
     {
@@ -23,7 +23,7 @@ public class TeamMatchmakerData : logClass<MatchScheduler>
     }
 
     [DataMember] private logClass<TeamMatchmakingState> teamMatchmakingState = new logClass<TeamMatchmakingState>();
-    [DataMember] private logClass<int> teamMissedMatchesFromScheduler = new logClass<int>();
+    //[DataMember] private logClass<int> teamMissedMatchesFromScheduler = new logClass<int>();
     [DataMember] private logClass<int> teamThatWasFoughtPreviously = new logClass<int>();
 
     public TeamMatchmakerData() { }
@@ -32,6 +32,6 @@ public class TeamMatchmakerData : logClass<MatchScheduler>
     {
         TeamMatchmakingState = TeamMatchmakingState.INMATCH;
         TeamThatWasFoughtPreviously = _opposingTeamKey;
-        TeamMissedMatchesFromScheduler = 0;
+        //TeamMissedMatchesFromScheduler = 0;
     }
 }

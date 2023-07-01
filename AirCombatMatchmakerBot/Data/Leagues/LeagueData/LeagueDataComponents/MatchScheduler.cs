@@ -113,20 +113,20 @@ public class MatchScheduler : logClass<MatchScheduler>
         Log.WriteLine("Starting to check the status of the matchmaker with: " + TeamsInTheMatchmaker.Count);
 
         // Sort teams based on TeamMissedMatchesFromScheduler in descending order
-        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler).ToList();
+        //var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler).ToList();
 
-        sortedTeams.RemoveAll(x => x.Value.TeamMatchmakingState == TeamMatchmakingState.INMATCH);
-        if (sortedTeams.Count < 2)
+        //sortedTeams.RemoveAll(x => x.Value.TeamMatchmakingState == TeamMatchmakingState.INMATCH);
+        //if (sortedTeams.Count < 2)
+        //{
+        //    return;
+        //}
+
+        Log.WriteLine("Starting to loop through teams (Count: " + TeamsInTheMatchmaker.Count + ")");
+
+        foreach (var teamKvp in TeamsInTheMatchmaker)
         {
-            return;
-        }
-
-        Log.WriteLine("Starting to loop through teams (Count: " + sortedTeams.Count + ")");
-
-        foreach (var teamKvp in sortedTeams)
-        {
-            Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState +
-                " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
+            Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState);
+                //" with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
             var foundTeam = GetAvailableTeamToChallenge(teamKvp.Key);
 
@@ -140,10 +140,10 @@ public class MatchScheduler : logClass<MatchScheduler>
 
             var foundTeamKvp = TeamsInTheMatchmaker.First(x => x.Key == foundTeam);
 
-            Log.WriteLine("Incrementing teamId: " + foundTeamKvp.Key + " with value: " + foundTeamKvp.Value.TeamMissedMatchesFromScheduler +
+            Log.WriteLine("Incrementing teamId: " + foundTeamKvp.Key + " with value: " + //foundTeamKvp.Value.TeamMissedMatchesFromScheduler +
                 " and state: " + foundTeamKvp.Value.TeamMatchmakingState);
 
-            TeamsInTheMatchmaker.First(x => x.Key == foundTeamKvp.Key).Value.TeamMissedMatchesFromScheduler++;
+            //TeamsInTheMatchmaker.First(x => x.Key == foundTeamKvp.Key).Value.TeamMissedMatchesFromScheduler++;
 
             MatchTwoTeamsTogether(foundTeamKvp, teamKvp);
 
@@ -174,8 +174,8 @@ public class MatchScheduler : logClass<MatchScheduler>
 
         foreach (var teamKvp in sortedTeams)
         {
-            Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState +
-                " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
+            Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState);// +
+              //  " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
             if (teamKvp.Value.TeamThatWasFoughtPreviously == _teamIdSearching)
             {
@@ -192,16 +192,16 @@ public class MatchScheduler : logClass<MatchScheduler>
     private async void MatchTwoTeamsTogether
         (KeyValuePair<int, TeamMatchmakerData> _foundOpponentTeam, KeyValuePair<int, TeamMatchmakerData> _seekingTeam)
     {
-        Log.WriteLine("Matching found opponent: " + _foundOpponentTeam.Key + " [" + _foundOpponentTeam.Value.TeamMissedMatchesFromScheduler +
-            "] vs seeker:" + _seekingTeam.Key + +_foundOpponentTeam.Value.TeamMissedMatchesFromScheduler +
+        Log.WriteLine("Matching found opponent: " + _foundOpponentTeam.Key + " [" + //_foundOpponentTeam.Value.TeamMissedMatchesFromScheduler +
+            "] vs seeker:" + _seekingTeam.Key + //_foundOpponentTeam.Value.TeamMissedMatchesFromScheduler +
             "]", LogLevel.DEBUG);
 
-        Log.WriteLine("Teams left the matchmaker: ", LogLevel.VERBOSE);
-        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler);
-        foreach (var item in sortedTeams)
-        {
-            Log.WriteLine("[" + item.Value.TeamMissedMatchesFromScheduler + "] id: " + item.Key + " | " + item.Value.TeamMatchmakingState);
-        }
+        //Log.WriteLine("Teams left the matchmaker: ", LogLevel.VERBOSE);
+        //var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler);
+        //foreach (var item in sortedTeams)
+        //{
+        //    Log.WriteLine("[" + item.Value.TeamMissedMatchesFromScheduler + "] id: " + item.Key + " | " + item.Value.TeamMatchmakingState);
+        //}
 
         _foundOpponentTeam.Value.SetValuesOnFindingAMatch(_seekingTeam.Key);
         _seekingTeam.Value.SetValuesOnFindingAMatch(_foundOpponentTeam.Key);
