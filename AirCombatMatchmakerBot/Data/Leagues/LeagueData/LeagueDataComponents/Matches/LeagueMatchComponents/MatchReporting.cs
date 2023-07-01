@@ -262,20 +262,17 @@ public class MatchReporting : logClass<MatchReporting>
     {
         try
         {
-            MatchState matchState = Database.Instance.Leagues.GetILeagueByCategoryId(
-                _leagueCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState;
-
             InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
                 _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
 
             bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown(interfaceChannel);
 
-            Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown +
-                " state: " + matchState.ToString(), LogLevel.DEBUG);
+            Log.WriteLine("Message can be shown: " + confirmationMessageCanBeShown, LogLevel.DEBUG);
 
             if (confirmationMessageCanBeShown)
             {
-                matchState = MatchState.CONFIRMATIONPHASE;
+                Database.Instance.Leagues.GetILeagueByCategoryId(
+               _leagueCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState = MatchState.CONFIRMATIONPHASE;
             }
 
             return ("", confirmationMessageCanBeShown, interfaceChannel);
