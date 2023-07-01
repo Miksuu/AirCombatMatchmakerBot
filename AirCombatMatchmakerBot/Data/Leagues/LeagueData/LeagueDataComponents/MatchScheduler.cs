@@ -112,21 +112,16 @@ public class MatchScheduler : logClass<MatchScheduler>
     {
         Log.WriteLine("Starting to check the status of the matchmaker with: " + TeamsInTheMatchmaker.Count);
 
-        // Sort teams based on TeamMissedMatchesFromScheduler in descending order
-        //var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler).ToList();
-
-        //sortedTeams.RemoveAll(x => x.Value.TeamMatchmakingState == TeamMatchmakingState.INMATCH);
-        //if (sortedTeams.Count < 2)
-        //{
-        //    return;
-        //}
-
-        Log.WriteLine("Starting to loop through teams (Count: " + TeamsInTheMatchmaker.Count + ")");
-
         foreach (var teamKvp in TeamsInTheMatchmaker)
         {
+            if (teamKvp.Value.TeamMatchmakingState != TeamMatchmakingState.INQUEUE)
+            {
+                continue;
+            }
+
+            var teamsToMatch = new List<KeyValuePair<int, TeamMatchmakerData>>();
+
             Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState);
-                //" with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
             var foundTeam = GetAvailableTeamToChallenge(teamKvp.Key);
 
@@ -140,15 +135,31 @@ public class MatchScheduler : logClass<MatchScheduler>
 
             var foundTeamKvp = TeamsInTheMatchmaker.First(x => x.Key == foundTeam);
 
-            Log.WriteLine("Incrementing teamId: " + foundTeamKvp.Key + " with value: " + //foundTeamKvp.Value.TeamMissedMatchesFromScheduler +
-                " and state: " + foundTeamKvp.Value.TeamMatchmakingState);
+            teamsToMatch.Add(teamKvp);
+            teamsToMatch.Add(foundTeamKvp);
 
-            //TeamsInTheMatchmaker.First(x => x.Key == foundTeamKvp.Key).Value.TeamMissedMatchesFromScheduler++;
-
-            MatchTwoTeamsTogether(foundTeamKvp, teamKvp);
+            MatchTwoTeamsTogether(teamsToMatch);
 
             break;
         }
+    }
+
+    private async void MatchTwoTeamsTogether(List<KeyValuePair<int, TeamMatchmakerData>> _teamsToMatch)
+    {
+        Log.WriteLine("Matching found opponent: " + _teamsToMatch[0].Key + " vs seeker: " + _teamsToMatch[1].Key, LogLevel.DEBUG);
+
+        var teamsArray = _teamsToMatch.ToArray();
+
+        for (int t = 0; t < teamsArray.Length; t++)
+        {
+            teamsArray[t].Value.SetValuesOnFindingAMatch(teamsArray[1 - t].Key);
+        }
+
+        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(
+            teamsArray.Select(x => x.Key).ToArray(),
+            MatchState.SCHEDULINGPHASE,
+            true
+        );
     }
 
 
@@ -187,31 +198,5 @@ public class MatchScheduler : logClass<MatchScheduler>
 
         Log.WriteLine("No available team found for: " + _teamIdSearching);
         return 0;
-    }
-
-    private async void MatchTwoTeamsTogether
-        (KeyValuePair<int, TeamMatchmakerData> _foundOpponentTeam, KeyValuePair<int, TeamMatchmakerData> _seekingTeam)
-    {
-        Log.WriteLine("Matching found opponent: " + _foundOpponentTeam.Key + " [" + //_foundOpponentTeam.Value.TeamMissedMatchesFromScheduler +
-            "] vs seeker:" + _seekingTeam.Key + //_foundOpponentTeam.Value.TeamMissedMatchesFromScheduler +
-            "]", LogLevel.DEBUG);
-
-        //Log.WriteLine("Teams left the matchmaker: ", LogLevel.VERBOSE);
-        //var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler);
-        //foreach (var item in sortedTeams)
-        //{
-        //    Log.WriteLine("[" + item.Value.TeamMissedMatchesFromScheduler + "] id: " + item.Key + " | " + item.Value.TeamMatchmakingState);
-        //}
-
-        _foundOpponentTeam.Value.SetValuesOnFindingAMatch(_seekingTeam.Key);
-        _seekingTeam.Value.SetValuesOnFindingAMatch(_foundOpponentTeam.Key);
-
-        int[] teams = new int[2]
-        {
-            _foundOpponentTeam.Key,
-            _seekingTeam.Key,
-        };
-
-        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE, true);
     }
 }
