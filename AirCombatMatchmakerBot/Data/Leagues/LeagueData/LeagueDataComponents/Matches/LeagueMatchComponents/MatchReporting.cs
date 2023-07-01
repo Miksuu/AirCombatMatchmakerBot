@@ -115,27 +115,29 @@ public class MatchReporting : logClass<MatchReporting>
                 Log.WriteLine("Key wasn't found! by player:" + _playerId, LogLevel.WARNING);
                 return new Response("", false);
             }
-
-            Log.WriteLine("Key was, the team is not their first time reporting.");
-
-            var interfaceReportingObject =
-                GetInterfaceReportingObjectWithTypeOfTheReportingObject(_typeOfTheReportingObject, reportingTeam.TeamId).thisReportingObject;
-
-            if (!interfaceReportingObject.AllowedMatchStatesToProcessOn.Contains(matchState))
-            {
-                return new Response("That's not allowed at this stage of the reporting!", false);
-            }
-
-            if (_reportedObjectByThePlayer == "-")
-            {
-                interfaceReportingObject.CancelTheReportingObjectAction();
-            }
+            // Replacing the result
             else
             {
-                interfaceReportingObject.ProcessTheReportingObjectAction(
-                    _reportedObjectByThePlayer, TeamIdsWithReportData, reportingTeam.TeamId);
-            }
+                Log.WriteLine("Key was, the team is not their first time reporting.");
 
+                var interfaceReportingObject =
+                    GetInterfaceReportingObjectWithTypeOfTheReportingObject(_typeOfTheReportingObject, reportingTeam.TeamId).thisReportingObject;
+
+                if (!interfaceReportingObject.AllowedMatchStatesToProcessOn.Contains(matchState))
+                {
+                    return new Response("That's not allowed at this stage of the reporting!", false);
+                }
+
+                if (_reportedObjectByThePlayer == "-")
+                {
+                    interfaceReportingObject.CancelTheReportingObjectAction();
+                }
+                else
+                {
+                    interfaceReportingObject.ProcessTheReportingObjectAction(
+                        _reportedObjectByThePlayer, TeamIdsWithReportData, reportingTeam.TeamId);
+                }
+            }
             InterfaceChannel interfaceChannel =
                 Database.Instance.Categories.FindInterfaceCategoryWithId(
                     _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
@@ -143,10 +145,11 @@ public class MatchReporting : logClass<MatchReporting>
 
             // If the match is on the confirmation phase,
             // edit that MessageDescription instead of the reporting status MessageDescription which would be null
-            //MessageName messageNameToEdit = MessageName.REPORTINGSTATUSMESSAGE;
+            MessageName messageNameToEdit = MessageName.REPORTINGSTATUSMESSAGE;
             if (matchState == MatchState.CONFIRMATIONPHASE)
             {
-                //    messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
+                messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
+
 
                 var interfaceMessage = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
                     MessageName.MATCHFINALRESULTMESSAGE);
@@ -155,12 +158,13 @@ public class MatchReporting : logClass<MatchReporting>
                 // Must be called after GenerateMessage() since it's defined there
                 FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
-                interfaceMessage.GenerateAndModifyTheMessage();
             }
 
-            //InterfaceMessage messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
-            //                messageNameToEdit);
-            //messageToEdit.GenerateAndModifyTheMessage();
+
+            InterfaceMessage messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
+                            messageNameToEdit);
+            messageToEdit.GenerateAndModifyTheMessage();
+
 
             foreach (var reportedTeamKvp in TeamIdsWithReportData)
             {
