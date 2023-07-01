@@ -153,7 +153,7 @@ public class MatchReporting : logClass<MatchReporting>
                 FinalResultForConfirmation = interfaceMessage.GenerateMessage().Result;
                 // Must be called after GenerateMessage() since it's defined there
                 FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
-
+                interfaceMessage.GenerateAndModifyTheMessage();
             }
             else if (matchState == MatchState.REPORTINGPHASE)
             {
