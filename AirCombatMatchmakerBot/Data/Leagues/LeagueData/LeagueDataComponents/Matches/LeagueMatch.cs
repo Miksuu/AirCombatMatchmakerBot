@@ -110,7 +110,7 @@ public class LeagueMatch : logClass<LeagueMatch>
         try
         {
             Log.WriteLine("Starting of LeagueMatch ctor: " + _teamsToFormMatchOn.Length + " state: " +
-                _matchState + " with bool:" + AttemptToPutTheTeamsBackToTheQueueAfterTheMatch);
+                _matchState + " with bool:" + IsAScheduledMatch);
 
             IsAScheduledMatch = _attemptToPutTeamsBackToQueueAfterTheMatch;
             SetInterfaceLeagueReferencesForTheMatch(_interfaceLeague);

@@ -18,9 +18,16 @@ public class MatchScheduler : logClass<MatchScheduler>
         set => matchSchedulerActive.SetValue(value);
     }
 
+    public ConcurrentBag<int> AddedTeamsToTheMatches
+    {
+        get => addedTeamsToTheMatches.GetValue();
+        set => addedTeamsToTheMatches.SetValue(value);
+    }
+
     [DataMember] private logConcurrentDictionary<int, TeamMatchmakerData> teamsInTheMatchmaker =
         new logConcurrentDictionary<int, TeamMatchmakerData>();
     [DataMember] private logClass<bool> matchSchedulerActive = new logClass<bool>();
+    [DataMember] private logConcurrentBag<int> addedTeamsToTheMatches = new logConcurrentBag<int>();
 
     // Doesn't need to be serialized, it's gotten from a class that loads the data from it's serialization
     public InterfaceLeague interfaceLeagueRef;
@@ -109,18 +116,22 @@ public class MatchScheduler : logClass<MatchScheduler>
         var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(
             x => x.Value.TeamMissedMatchesFromScheduler).ToList();
 
-        Log.WriteLine("Looping through teams (Count: " + sortedTeams.Count() + ")");
+        if (sortedTeams.Count < 2)
+        {
+            return;
+        } 
 
-        var addedTeamsToTheMatches = new List<int>();
+        Log.WriteLine("Starting to loop through teams (Count: " + sortedTeams.Count() + ")");
+
         foreach (var teamKvp in sortedTeams)
         {
             Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState +
                 " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
-            if (addedTeamsToTheMatches.Contains(teamKvp.Key))
+            if (AddedTeamsToTheMatches.Contains(teamKvp.Key))
             {
                 Log.WriteLine(teamKvp.Key +
-                    "was already in the mm with count of teams that have been added: " + addedTeamsToTheMatches.Count);
+                    "was already in the mm with count of teams that have been added: " + AddedTeamsToTheMatches.Count);
                 continue;
             }
 
@@ -155,8 +166,8 @@ public class MatchScheduler : logClass<MatchScheduler>
                 teamKvp.Value.TeamMissedMatchesFromScheduler++;
             }
 
-            addedTeamsToTheMatches.Add(foundTeamKvp.Key);
-            addedTeamsToTheMatches.Add(teamKvp.Key);
+            AddedTeamsToTheMatches.Add(foundTeamKvp.Key);
+            AddedTeamsToTheMatches.Add(teamKvp.Key);
 
             MatchTwoTeamsTogether(foundTeamKvp, teamKvp);
         }
@@ -255,6 +266,6 @@ public class MatchScheduler : logClass<MatchScheduler>
             _seekingTeam.Key,
         };
 
-        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE, true);
+        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE, true, this);
     }
 }
