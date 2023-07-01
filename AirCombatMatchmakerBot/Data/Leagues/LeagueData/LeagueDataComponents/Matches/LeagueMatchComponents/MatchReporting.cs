@@ -145,12 +145,8 @@ public class MatchReporting : logClass<MatchReporting>
 
             // If the match is on the confirmation phase,
             // edit that MessageDescription instead of the reporting status MessageDescription which would be null
-            MessageName messageNameToEdit = MessageName.REPORTINGSTATUSMESSAGE;
             if (matchState == MatchState.CONFIRMATIONPHASE)
             {
-                messageNameToEdit = MessageName.MATCHFINALRESULTMESSAGE;
-
-
                 var interfaceMessage = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
                     MessageName.MATCHFINALRESULTMESSAGE);
 
@@ -159,12 +155,12 @@ public class MatchReporting : logClass<MatchReporting>
                 FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
 
             }
-
-
-            InterfaceMessage messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
-                            messageNameToEdit);
-            messageToEdit.GenerateAndModifyTheMessage();
-
+            else if (matchState == MatchState.REPORTINGPHASE)
+            {
+                InterfaceMessage messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
+                MessageName.REPORTINGSTATUSMESSAGE);
+                messageToEdit.GenerateAndModifyTheMessage();
+            }
 
             foreach (var reportedTeamKvp in TeamIdsWithReportData)
             {
@@ -281,7 +277,6 @@ public class MatchReporting : logClass<MatchReporting>
             {
                 matchState = MatchState.CONFIRMATIONPHASE;
             }
-
 
             return ("", confirmationMessageCanBeShown, interfaceChannel);
         }
