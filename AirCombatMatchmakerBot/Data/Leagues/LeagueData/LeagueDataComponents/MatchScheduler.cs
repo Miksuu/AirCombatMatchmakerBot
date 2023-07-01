@@ -113,16 +113,15 @@ public class MatchScheduler : logClass<MatchScheduler>
         Log.WriteLine("Starting to check the status of the matchmaker with: " + TeamsInTheMatchmaker.Count);
 
         // Sort teams based on TeamMissedMatchesFromScheduler in descending order
-        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(
-            x => x.Value.TeamMissedMatchesFromScheduler).ToList();
+        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler).ToList();
 
         sortedTeams.RemoveAll(x => x.Value.TeamMatchmakingState == TeamMatchmakingState.INMATCH);
         if (sortedTeams.Count < 2)
         {
             return;
-        } 
+        }
 
-        Log.WriteLine("Starting to loop through teams (Count: " + sortedTeams.Count() + ")");
+        Log.WriteLine("Starting to loop through teams (Count: " + sortedTeams.Count + ")");
 
         foreach (var teamKvp in sortedTeams)
         {
@@ -141,29 +140,17 @@ public class MatchScheduler : logClass<MatchScheduler>
 
             var foundTeamKvp = TeamsInTheMatchmaker.First(x => x.Key == foundTeam);
 
-            foreach (var teamKvpToIncrement in sortedTeams)
-            {
-                if ((teamKvpToIncrement.Key == foundTeamKvp.Key || teamKvpToIncrement.Key == teamKvp.Key) &&
-                    teamKvpToIncrement.Value.TeamMatchmakingState != TeamMatchmakingState.INQUEUE)
-                {
-                    Log.WriteLine("not incrementing: " + teamKvpToIncrement.Key + " with state: " + teamKvpToIncrement.Value.TeamMatchmakingState);
-                    continue;
-                }
+            Log.WriteLine("Incrementing teamId: " + foundTeamKvp.Key + " with value: " + foundTeamKvp.Value.TeamMissedMatchesFromScheduler +
+                " and state: " + foundTeamKvp.Value.TeamMatchmakingState);
 
-                Log.WriteLine("Incrementing teamId: " + teamKvp.Key + " with value:" + teamKvp.Value.TeamMissedMatchesFromScheduler +
-                    " and state: " + teamKvp.Value.TeamMatchmakingState);
-
-                TeamsInTheMatchmaker.First(x => x.Key == teamKvp.Key).Value.TeamMissedMatchesFromScheduler++;
-            }
-
-            if (foundTeamKvp.Key == teamKvp.Key)
-            {
-                Log.WriteLine("teamId was the same: " + foundTeamKvp.Key, LogLevel.CRITICAL);
-            }
+            TeamsInTheMatchmaker.First(x => x.Key == foundTeamKvp.Key).Value.TeamMissedMatchesFromScheduler++;
 
             MatchTwoTeamsTogether(foundTeamKvp, teamKvp);
+
+            break;
         }
     }
+
 
     public int GetRandomTeamId(List<int> _teamIds)
     {
@@ -180,65 +167,25 @@ public class MatchScheduler : logClass<MatchScheduler>
 
         var teamSearching = TeamsInTheMatchmaker.First(x => x.Key == _teamIdSearching);
 
-        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler).ToList();
-        Log.WriteLine("Sorted teams count before removal: " + sortedTeams.Count);
-        sortedTeams.RemoveAll(pair => pair.Key == _teamIdSearching);
-        Log.WriteLine("Sorted teams count after removal of same teams: " + sortedTeams.Count);
-        sortedTeams.RemoveAll(pair => pair.Value.TeamMatchmakingState == TeamMatchmakingState.INMATCH);
-        Log.WriteLine("Sorted teams count after removal of inmatch teams: " + sortedTeams.Count);
-        sortedTeams.RemoveAll(pair => pair.Key == teamSearching.Value.TeamThatWasFoughtPreviously);
-        Log.WriteLine("Sorted teams count after removal of teams that has been fought previously just before this match: " + sortedTeams.Count);
+        var sortedTeams = TeamsInTheMatchmaker
+            .Where(x => x.Value.TeamMatchmakingState == TeamMatchmakingState.INQUEUE && x.Key != _teamIdSearching).ToList();
 
-
-
-        Log.WriteLine("Team searching: " + teamSearching.Key + " with prio:" + teamSearching.Value.TeamMissedMatchesFromScheduler +
-            " that fought previously against: " + teamSearching.Value.TeamThatWasFoughtPreviously);
-
-        var highestPrio = TeamsInTheMatchmaker.Max(x => x.Value.TeamMissedMatchesFromScheduler);
+        Log.WriteLine("Sorted teams count: " + sortedTeams.Count);
 
         foreach (var teamKvp in sortedTeams)
         {
             Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState +
                 " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
-            // Reverse for-loop to search for the highest priority from the top team
-            for (int priorityInt = highestPrio; priorityInt >= 0; priorityInt--)
+            if (teamKvp.Value.TeamThatWasFoughtPreviously == _teamIdSearching)
             {
-                Log.WriteLine("Loop on priority: " + priorityInt);
-
-                var samePriorityTeams =
-                    sortedTeams.Where(
-                        x => x.Value.TeamMissedMatchesFromScheduler ==
-                        priorityInt && x.Key != teamKvp.Key).Select(
-                            x => x.Key).ToList();
-
-                Log.WriteLine(samePriorityTeams.Count.ToString());
-
-                //if (samePriorityTeams.Contains(teamKvp.Value.TeamThatWasFoughtPreviously))
-                //{
-                //    samePriorityTeams.RemoveAll(x => x == teamKvp.Value.TeamThatWasFoughtPreviously);
-                //}
-
-                if (samePriorityTeams.Count() == 1)
-                {
-                    Log.WriteLine("Count was 1 with team: " + teamKvp.Key);
-                    return teamKvp.Key;
-                }
-                else if (samePriorityTeams.Count() >= 2)
-                {
-                    Log.WriteLine("Count was: " + samePriorityTeams.Count());
-                    return GetRandomTeamId(samePriorityTeams);
-                }
-                else
-                {
-                    Log.WriteLine("End of " + priorityInt + ", did not find.");
-                    continue;
-                }
+                continue;
             }
+
+            return teamKvp.Key;
         }
 
-        Log.WriteLine("Reached end of the loops");
-
+        Log.WriteLine("No available team found for: " + _teamIdSearching);
         return 0;
     }
 
