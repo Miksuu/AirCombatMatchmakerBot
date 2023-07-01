@@ -37,9 +37,9 @@ public class logConcurrentBag<T> : IEnumerable<T> where T : notnull
             {
                 finalValueForTheProperty = concurrentBag.ToString();
             }
-            else if (concurrentBag is logClass<T> logClass)
+            else if (concurrentBag is logVar<T> logVar)
             {
-                finalValueForTheProperty = logClass.GetParameter();
+                finalValueForTheProperty = logVar.GetParameter();
             }
 
             membersBuilder.Append(finalValueForTheProperty).Append(", ");

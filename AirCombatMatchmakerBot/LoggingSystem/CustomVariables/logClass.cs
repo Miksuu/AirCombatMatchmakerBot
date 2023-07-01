@@ -29,7 +29,7 @@ public class logClass<T>
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Getting " + _value?.GetType() + ": " + _memberName,
+        Log.WriteLine("Getting " + _memberName,
                      LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
         return _value;
     }
@@ -39,13 +39,8 @@ public class logClass<T>
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Setting " + _value?.GetType() + ": " + _memberName +
+        Log.WriteLine("Setting " + _memberName +
             " TO: " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
         _value = value;
-    }
-
-    public string GetParameter()
-    {
-        return _value?.ToString() ?? "[null]";
     }
 }

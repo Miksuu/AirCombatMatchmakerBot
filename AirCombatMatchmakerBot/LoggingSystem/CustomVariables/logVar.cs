@@ -39,7 +39,7 @@ public class logVar<T>
         [CallerMemberName] string _memberName = "",
         [CallerLineNumber] int _lineNumber = 0)
     {
-        Log.WriteLine("Setting " + _value?.GetType() + " " + _memberName + ": " +
+        Log.WriteLine("Setting " + _value?.GetType() + " " + _memberName + " " + _value +
             " TO: " + value, LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
         _value = value;
     }

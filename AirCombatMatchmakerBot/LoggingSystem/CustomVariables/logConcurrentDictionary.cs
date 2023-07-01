@@ -32,18 +32,18 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
             {
                 finalValueForTheProperty = kvp.Key.ToString();
             }
-            else if (kvp.Key is logClass<TKey> keyLogClass)
+            else if (kvp.Key is logVar<TKey> keyLogVar)
             {
-                finalValueForTheProperty = keyLogClass.GetParameter();
+                finalValueForTheProperty = keyLogVar.GetParameter();
             }
 
             if (kvp.Value?.GetType() is Type valueType && regularVariableTypes.Contains(valueType))
             {
                 finalValueForTheProperty = kvp.Value.ToString();
             }
-            else if (kvp.Value is logClass<TValue> valueLogClass)
+            else if (kvp.Value is logVar<TValue> valueLogVar)
             {
-                finalValueForTheProperty = valueLogClass.GetParameter();
+                finalValueForTheProperty = valueLogVar.GetParameter();
             }
 
 
@@ -72,7 +72,7 @@ public class logConcurrentDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TK
         Log.WriteLine("Setting ConcurrentDictionary " + _memberName + " with count: " +_values.Count +
             " that has members of: " + GetParameter()+ " TO: " + " with count: " +
             values.Count + " that has members of: " + GetParameter(),
-            LogLevel.GET_VERBOSE, _filePath, "", _lineNumber);
+            LogLevel.SET_VERBOSE, _filePath, "", _lineNumber);
         _values = values;
     }
 
