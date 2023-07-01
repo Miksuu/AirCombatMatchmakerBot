@@ -30,7 +30,7 @@ public class Matches : logClass<Matches>
 
     public async Task CreateAMatch(
         int[] _teamsToFormMatchOn, MatchState _matchState,
-        bool _attemptToPutTeamsBackToQueueAfterTheMatch = false, MatchScheduler? _matchScheduler = null)
+        bool _attemptToPutTeamsBackToQueueAfterTheMatch = false)
     {
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
             _teamsToFormMatchOn[1]);
@@ -47,14 +47,14 @@ public class Matches : logClass<Matches>
         Log.WriteLine("Added match channel id: " + newMatch.MatchId + " to the MatchesConcurrentBag, count is now: " +
             MatchesConcurrentBag.Count);
 
-        if (_matchScheduler != null)
-        {
-            while (_matchScheduler.AddedTeamsToTheMatches.TryTake(out int element) &&
-                (!element.Equals(_teamsToFormMatchOn.ElementAt(0)) && !element.Equals(_teamsToFormMatchOn.ElementAt(1))))
-            {
-                _matchScheduler.AddedTeamsToTheMatches.Add(element);
-            }
-        }
+        //if (_matchScheduler != null)
+        //{
+        //    while (_matchScheduler.AddedTeamsToTheMatches.TryTake(out int element) &&
+        //        (!element.Equals(_teamsToFormMatchOn.ElementAt(0)) && !element.Equals(_teamsToFormMatchOn.ElementAt(1))))
+        //    {
+        //        _matchScheduler.AddedTeamsToTheMatches.Add(element);
+        //    }
+        //}
 
         InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, _matchState);
 

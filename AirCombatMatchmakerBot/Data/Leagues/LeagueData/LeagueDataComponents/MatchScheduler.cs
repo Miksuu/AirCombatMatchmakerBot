@@ -18,16 +18,16 @@ public class MatchScheduler : logClass<MatchScheduler>
         set => matchSchedulerActive.SetValue(value);
     }
 
-    public ConcurrentBag<int> AddedTeamsToTheMatches
-    {
-        get => addedTeamsToTheMatches.GetValue();
-        set => addedTeamsToTheMatches.SetValue(value);
-    }
+    //public ConcurrentBag<int> AddedTeamsToTheMatches
+    //{
+    //    get => addedTeamsToTheMatches.GetValue();
+    //    set => addedTeamsToTheMatches.SetValue(value);
+    //}
 
     [DataMember] private logConcurrentDictionary<int, TeamMatchmakerData> teamsInTheMatchmaker =
         new logConcurrentDictionary<int, TeamMatchmakerData>();
     [DataMember] private logClass<bool> matchSchedulerActive = new logClass<bool>();
-    [DataMember] private logConcurrentBag<int> addedTeamsToTheMatches = new logConcurrentBag<int>();
+    //[DataMember] private logConcurrentBag<int> addedTeamsToTheMatches = new logConcurrentBag<int>();
 
     // Doesn't need to be serialized, it's gotten from a class that loads the data from it's serialization
     public InterfaceLeague interfaceLeagueRef;
@@ -128,12 +128,12 @@ public class MatchScheduler : logClass<MatchScheduler>
             Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState +
                 " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
-            if (AddedTeamsToTheMatches.Contains(teamKvp.Key))
-            {
-                Log.WriteLine(teamKvp.Key +
-                    "was already in the mm with count of teams that have been added: " + AddedTeamsToTheMatches.Count);
-                continue;
-            }
+            //if (AddedTeamsToTheMatches.Contains(teamKvp.Key))
+            //{
+            //    Log.WriteLine(teamKvp.Key +
+            //        "was already in the mm with count of teams that have been added: " + AddedTeamsToTheMatches.Count);
+            //    continue;
+            //}
 
             if (teamKvp.Value.TeamMatchmakingState != TeamMatchmakingState.INQUEUE)
             {
@@ -166,8 +166,13 @@ public class MatchScheduler : logClass<MatchScheduler>
                 teamKvp.Value.TeamMissedMatchesFromScheduler++;
             }
 
-            AddedTeamsToTheMatches.Add(foundTeamKvp.Key);
-            AddedTeamsToTheMatches.Add(teamKvp.Key);
+            //AddedTeamsToTheMatches.Add(foundTeamKvp.Key);
+            //AddedTeamsToTheMatches.Add(teamKvp.Key);
+
+            if (foundTeamKvp.Key == teamKvp.Key)
+            {
+                Log.WriteLine("teamId was the same: " + foundTeamKvp.Key, LogLevel.CRITICAL);
+            }
 
             MatchTwoTeamsTogether(foundTeamKvp, teamKvp);
         }
@@ -186,26 +191,23 @@ public class MatchScheduler : logClass<MatchScheduler>
     {
         Log.WriteLine("Starting to see what teams are available to challenge: " + TeamsInTheMatchmaker.Count);
 
-        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler);
+        var sortedTeams = TeamsInTheMatchmaker.OrderByDescending(x => x.Value.TeamMissedMatchesFromScheduler).ToList();
+        sortedTeams.RemoveAll(pair => pair.Key == _teamIdNotToLookFor);
 
         foreach (var teamKvp in sortedTeams)
         {
-            int teamId = teamKvp.Key;
-            TeamMatchmakerData teamMatchmakerData = teamKvp.Value;
-            TeamMatchmakingState teamMatchmakingState = teamMatchmakerData.TeamMatchmakingState;
-
-            Log.WriteLine("Looping on: " + teamId + " with state: " + teamMatchmakingState +
+            Log.WriteLine("Looping on: " + teamKvp.Key + " with state: " + teamKvp.Value.TeamMatchmakingState +
                 " with priority: " + teamKvp.Value.TeamMissedMatchesFromScheduler);
 
-            if (teamId == _teamIdNotToLookFor)
+            if (teamKvp.Key == _teamIdNotToLookFor)
             {
-                Log.WriteLine(teamId + " skipped");
+                Log.WriteLine(teamKvp.Key + " skipped");
                 continue;
             }
 
-            if (teamMatchmakingState != TeamMatchmakingState.INQUEUE)
+            if (teamKvp.Value.TeamMatchmakingState != TeamMatchmakingState.INQUEUE)
             {
-                Log.WriteLine(teamId + "Not in queue, skipping");
+                Log.WriteLine(teamKvp.Key + "Not in queue, skipping");
                 continue;
             }
 
@@ -217,13 +219,13 @@ public class MatchScheduler : logClass<MatchScheduler>
                 var samePriorityTeams =
                     sortedTeams.Where(
                         x => x.Value.TeamMissedMatchesFromScheduler ==
-                        priorityInt && x.Key != teamId && x.Key != teamMatchmakerData.TeamThatWasFoughtPreviously).Select(
+                        priorityInt && x.Key != teamKvp.Key && x.Key != teamKvp.Value.TeamThatWasFoughtPreviously).Select(
                             x => x.Key).ToList();
 
                 if (samePriorityTeams.Count() == 1)
                 {
-                    Log.WriteLine("Count was 1 with team: " + teamId);
-                    return teamId;
+                    Log.WriteLine("Count was 1 with team: " + teamKvp.Key);
+                    return teamKvp.Key;
                 }
                 else if (samePriorityTeams.Count() >= 2)
                 {
@@ -266,6 +268,6 @@ public class MatchScheduler : logClass<MatchScheduler>
             _seekingTeam.Key,
         };
 
-        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE, true, this);
+        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teams, MatchState.SCHEDULINGPHASE, true);
     }
 }

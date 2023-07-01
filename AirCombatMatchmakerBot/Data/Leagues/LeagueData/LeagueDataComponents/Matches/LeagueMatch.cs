@@ -142,7 +142,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             Log.WriteLine("before incrementing to: " + Database.Instance.Leagues.LeaguesMatchCounter + " with: " + TeamsInTheMatch.Count);
 
-            MatchId = Database.Instance.Leagues.LeaguesMatchCounter++;
+            MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
             Database.Instance.Leagues.LeaguesMatchCounter++;
 
             Log.WriteLine("incremented to: " + Database.Instance.Leagues.LeaguesMatchCounter + " with: " + TeamsInTheMatch.Count);
