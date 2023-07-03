@@ -85,4 +85,52 @@ public static class TacviewManager
 
         return Task.FromResult(tacviewResults);
     }
+
+    public async static void HandleAcmiUrlOnToTacview(string _acmiUrl, SocketMessage _socketMessage)
+    {
+        Log.WriteLine("acmiUrl detected: " + _acmiUrl, LogLevel.DEBUG);
+
+        MatchChannelComponents mcc = new MatchChannelComponents(_socketMessage.Channel.Id);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
+        {
+            Log.WriteLine(nameof(mcc.interfaceLeagueCached) + " or " +
+                nameof(mcc.leagueMatchCached) + " was null!", LogLevel.CRITICAL);
+            return;
+        }
+
+        // Process the tacview file, and delete the original MessageDescription by the user
+        var finalResponse = mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
+            _socketMessage.Author.Id, _acmiUrl,
+                TypeOfTheReportingObject.TACVIEWLINK,
+                mcc.interfaceLeagueCached.LeagueCategoryId,
+                _socketMessage.Channel.Id).Result;
+
+        if (!finalResponse.serialize)
+        {
+            return;
+        }
+
+        if (mcc.leagueMatchCached.MatchState == MatchState.REPORTINGPHASE)
+        {
+            finalResponse = await mcc.leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
+                _socketMessage.Author.Id, _socketMessage.Channel.Id);
+
+            if (!finalResponse.serialize)
+            {
+                return;
+            }
+        }
+
+        await SaveTacviewFromUserUpload(
+            mcc.interfaceLeagueCached.LeagueCategoryName,
+            mcc.leagueMatchCached.MatchId, _socketMessage);
+
+        ulong smId = _socketMessage.Author.Id;
+
+        await _socketMessage.DeleteAsync();
+
+        Log.WriteLine("Done deleting message from: " + smId);
+
+        await SerializationManager.SerializeDB();
+    }
 }

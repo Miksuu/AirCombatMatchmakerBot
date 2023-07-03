@@ -1,4 +1,5 @@
 using Discord.WebSocket;
+using System.Globalization;
 
 public static class FileManager
 {
@@ -112,5 +113,26 @@ public static class FileManager
         Log.WriteLine("Deleting: " + _filePath);
         File.Delete(_filePath);
         Log.WriteLine("Done deleting: " + _filePath);
+    }
+
+    public static string GetFileTypeOfAnFile(string _fileName)
+    {
+        Log.WriteLine("Getting " + _fileName + "'s file type", LogLevel.DEBUG);
+
+        string fileType = Path.GetExtension(_fileName);
+
+        if (string.IsNullOrEmpty(fileType))
+        {
+            Log.WriteLine("FileType was null or empty!", LogLevel.CRITICAL);
+            return "";
+        }
+
+        Log.WriteLine("Was not null, trimming " + fileType);
+
+        fileType = fileType.TrimStart('.');
+
+        Log.WriteLine("Returning: " + fileType, LogLevel.DEBUG);
+
+        return fileType;
     }
 }
