@@ -21,7 +21,7 @@ public class ProgramRuntime
         await client.LoginAsync(TokenType.Bot, token);
         await client.StartAsync();
 
-        this.client.Ready += async () =>
+        client.Ready += async () =>
         {
             if (!BotReference.GetConnectionState())
             {
@@ -39,7 +39,6 @@ public class ProgramRuntime
                 // !!!
 
                 SetupProgramListenersAndSchedulers();
-
             }
             else
             {
@@ -48,7 +47,7 @@ public class ProgramRuntime
         };
 
         // Receiving the tacview files
-        this.client.MessageReceived += async (_socketMessage) =>
+        client.MessageReceived += async (_socketMessage) =>
         {
             await MessageReceiver.ReceiveMessage(_socketMessage);
         };
