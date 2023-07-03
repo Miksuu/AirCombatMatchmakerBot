@@ -31,64 +31,11 @@ public class BotRuntimeManager
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
-                
-                var guild = BotReference.GetGuildRef();
-                foreach (var cat in guild.CategoryChannels)
-                {
-                    if (cat.Name.ToLower().Contains("main-category")) continue;
-
-                    Log.WriteLine("deleting category: " + cat.Name, LogLevel.DEBUG);
-                    await cat.DeleteAsync();
-                }
-
-                foreach (SocketGuildChannel item in guild.Channels)
-                {
-                    Log.WriteLine(item.Name, LogLevel.DEBUG);
-
-                    if (item.Name == "info" || item.Name == "test" || item.Name == "main-category")
-                    {
-                        continue;
-                    }
-                    await item.DeleteAsync();
-                }
-
-                // Delete the old tacviews so it doesn't throw error from old files
-                string tacviewPathToDelete = @"C:\AirCombatMatchmakerBot\Data\Tacviews";
-                if (Directory.Exists(tacviewPathToDelete)) Directory.Delete(tacviewPathToDelete, true);
-
-                string logsPathToDelete = @"C:\AirCombatMatchmakerBot\Logs";
-                if (Directory.Exists(tacviewPathToDelete)) Directory.Delete(logsPathToDelete, true);
-
-                // Delete db here
-
-                await SerializationManager.HandleDatabaseCreationOrLoading("0");
-                
-                // Delete roles here
-                foreach (var item in guild.Roles)
-                {
-                    Log.WriteLine("on role: " + item.Name);
-
-                    if (item.Name == "Developer" || item.Name == "Server Booster" || 
-                        item.Name == "AirCombatMatchmakerBotDev" || item.Name == "Discord Me" ||
-                        item.Name == "@everyone" || item.Name == "@here")
-                    {
-                        continue;
-                    }
-
-                    Log.WriteLine("Deleting role: " + item.Name, LogLevel.DEBUG);
-
-                    await item.DeleteAsync();
-                }
+                DevTools.DeleteAllCategoriesChannelsAndRoles();
 
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
-
-                /*
-                foreach (var item in guild.Emotes)
-                {
-                    Log.WriteLine("Emoji: " + item.Name + " id: " + item.Id, LogLevel.DEBUG);
-                }*/
 
                 // Creates the categories and the channels from the interfaces
                 // (dependant on the data from CreateLeaguesOnStartupIfNecessary())

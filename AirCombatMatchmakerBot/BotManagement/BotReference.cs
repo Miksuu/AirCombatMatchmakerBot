@@ -33,23 +33,21 @@ public static class BotReference
         return clientRef;
     }
 
-    public static SocketGuild? GetGuildRef()
+    public static SocketGuild GetGuildRef()
     {
         if (clientRef == null)
         {
             Exceptions.BotClientRefNull();
-            return null;
+            throw new InvalidOperationException(Exceptions.BotClientRefNull());
         }
 
-        if (guildRef != null)
-        {
-            return guildRef;
-        }
-        else
+        if (guildRef == null)
         {
             guildRef = clientRef.GetGuild(GuildID);
-            return guildRef;
+
         }
+
+        return guildRef;
     }
 
     public static ulong GetGuildID()
