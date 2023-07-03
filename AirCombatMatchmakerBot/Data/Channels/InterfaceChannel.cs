@@ -33,6 +33,8 @@ public interface InterfaceChannel
     public Task PostChannelMessages(DiscordSocketClient _client);
     public InterfaceMessage FindInterfaceMessageWithNameInTheChannel(
         MessageName _messageName);
+
+    public InterfaceMessage FindInterfaceMessageWithIdInTheChannel(ulong _messageId);
     public void FindInterfaceMessageWithNameInTheChannelAndUpdateItIfItExists(
         MessageName _messageName);
 

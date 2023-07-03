@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using Discord;
+using Discord.WebSocket;
 
 [DataContract]
 public class Categories : logClass<Categories>
@@ -33,6 +34,21 @@ public class Categories : logClass<Categories>
         if (interfaceCategory == null)
         {
             string errorMsg = nameof(interfaceCategory) + " was null! with id: " + _channelIdToSearchWith;
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            throw new InvalidOperationException(errorMsg);
+        }
+        Log.WriteLine("Found: " + interfaceCategory.CategoryType);
+        return interfaceCategory;
+    }
+
+    public InterfaceCategory FindInterfaceCategoryWithChannelId(
+        ulong _channelId)
+    {
+        Log.WriteLine("Getting CategoryKvp with channel id: " + _channelId);
+        InterfaceCategory interfaceCategory = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Value.InterfaceChannels.ContainsKey(_channelId)).Value;
+        if (interfaceCategory == null)
+        {
+            string errorMsg = nameof(interfaceCategory) + " was null! with channel id: " + _channelId;
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             throw new InvalidOperationException(errorMsg);
         }
@@ -73,43 +89,6 @@ public class Categories : logClass<Categories>
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             throw new InvalidOperationException(ex.Message);
         }
-    }
-
-    public InterfaceMessage FindInterfaceMessageWithComponentChannelIdAndMessageId(
-        ulong _componentChannelId, ulong _componentMessageId)
-    {
-        Log.WriteLine("Getting CategoryKvp with channel id: " + _componentChannelId);
-        foreach (var createdCategory in createdCategoriesWithChannels)
-        {
-            Log.WriteLine("Looping on: " + createdCategory.Value.CategoryType);
-
-            var interfaceChannelTemp = createdCategory.Value.InterfaceChannels.FirstOrDefault(
-                    x => x.Value.ChannelId == _componentChannelId);
-            if (interfaceChannelTemp.Key == 0 || interfaceChannelTemp.Value == null)
-            {
-                Log.WriteLine("Was null, continuing...");
-                continue;
-            }
-
-            Log.WriteLine("Found " + nameof(interfaceChannelTemp) + ":" + interfaceChannelTemp.Value.ChannelName + " with id: " +
-                interfaceChannelTemp.Key);
-
-            var interfaceMessageKvp =
-                interfaceChannelTemp.Value.InterfaceMessagesWithIds.FirstOrDefault(
-                    x => x.Value.MessageId == _componentMessageId);
-            if (interfaceMessageKvp.Key == 0 || interfaceMessageKvp.Value == null)
-            {
-                Log.WriteLine(nameof(interfaceMessageKvp) + " was null!", LogLevel.CRITICAL);
-                continue;
-            }
-
-            Log.WriteLine("Found " + nameof(interfaceMessageKvp) + ":" + interfaceMessageKvp.Value.MessageName + " with id: " +
-                interfaceMessageKvp.Key);
-
-            return interfaceMessageKvp.Value;
-        }
-        
-        throw new InvalidOperationException("null FindInterfaceMessageWithComponentChannelIdAndMessageId");
     }
 
     public void AddToCreatedCategoryWithChannelWithUlongAndInterfaceCategory(

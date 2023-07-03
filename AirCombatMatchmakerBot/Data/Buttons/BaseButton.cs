@@ -56,7 +56,6 @@ public abstract class BaseButton : InterfaceButton
         set => buttonCustomId.SetValue(value);
     }
 
-
     bool InterfaceButton.EphemeralResponse
     {
         get
@@ -123,6 +122,35 @@ public abstract class BaseButton : InterfaceButton
     }
 
     protected abstract string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId);
+
+    public async void CallButtonActivation(SocketMessageComponent _component, InterfaceMessage _interfaceMessage)
+    {
+        try
+        {
+            var response = ActivateButtonFunction(_component, _interfaceMessage).Result;
+
+            // Only serialize when the interaction was something that needs to be serialized (defined in ActivateButtonFunction())
+            if (response.serialize)
+            {
+                await SerializationManager.SerializeDB();
+            }
+
+            Log.WriteLine(response.responseString + " | " + response.serialize, LogLevel.VERBOSE);
+
+            await _component.RespondAsync(response.responseString, ephemeral: thisInterfaceButton.EphemeralResponse);
+        }
+        catch (Exception ex)
+        {
+            if (ex.Message.Contains("error 50006"))
+            {
+                Log.WriteLine("skipped empty message try-catch");
+                return;
+            }
+
+            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            return;
+        }
+    }
 
     public abstract Task<Response> ActivateButtonFunction(
          SocketMessageComponent _component, InterfaceMessage _interfaceMessage);

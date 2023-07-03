@@ -14,12 +14,12 @@ public static class DevTools
     // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
     // !!!
 
-    public static void DeleteAllCategoriesChannelsAndRoles()
+    public async static Task DeleteAllCategoriesChannelsAndRoles()
     {
         socketGuild = BotReference.GetGuildRef();
 
-        DeleteCategories(new List<string> { "main-category" });
-        DeleteChannels(new List<string> { "info", "test" });
+        await DeleteCategories(new List<string> { "main-category" });
+        await DeleteChannels(new List<string> { "info", "test", "main-category" });
 
         FileManager.DeleteDirectoryIfItExists(TacviewManager.tacviewsPath);
         FileManager.DeleteDirectoryIfItExists(Log.logsPath);
@@ -29,7 +29,7 @@ public static class DevTools
         DeleteRoles(new List<string> { "Developer", "Server Booster", "AirCombatMatchmakerBotDev", "Discord Me", "@everyone", "@here" });
     }
 
-    private async static void DeleteCategories(List<string> _categoriesNotToDelete)
+    private async static Task DeleteCategories(List<string> _categoriesNotToDelete)
     {
         Log.WriteLine("Deleting all categories with count: " + _categoriesNotToDelete.Count, LogLevel.DEBUG);
         foreach (SocketCategoryChannel category in socketGuild.CategoryChannels)
@@ -50,7 +50,7 @@ public static class DevTools
         Log.WriteLine("Done deleting all categories");
     }
 
-    private async static void DeleteChannels(List<string> _channelsNotToDelete)
+    private async static Task DeleteChannels(List<string> _channelsNotToDelete)
     {
         Log.WriteLine("Deleting all channels with count: " + _channelsNotToDelete.Count, LogLevel.DEBUG);
         foreach (SocketGuildChannel channel in socketGuild.Channels)

@@ -35,4 +35,6 @@ public interface InterfaceMessage
     public abstract Task<string> GenerateMessage();
     public void GenerateAndModifyTheMessage();
     public Task<Discord.IMessage> GetMessageById(IMessageChannel _channel);
+
+    public InterfaceButton FindButtonWithComponentDataCustomIdInTheMessage(string _componentDataCustomId);
 }

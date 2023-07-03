@@ -361,6 +361,24 @@ public abstract class BaseChannel : InterfaceChannel
         return interfaceMessage;
     }
 
+    public InterfaceMessage FindInterfaceMessageWithIdInTheChannel(
+        ulong _messageId)
+    {
+        Log.WriteLine("Getting MessageName with id: " + _messageId);
+
+        var interfaceMessage = thisInterfaceChannel.InterfaceMessagesWithIds.FirstOrDefault(
+            x => x.Value.MessageId == _messageId).Value;
+        if (interfaceMessage == null)
+        {
+            string errorMsg = nameof(interfaceMessage) + " was null! with id: " + _messageId;
+            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            throw new InvalidOperationException(errorMsg);
+        }
+
+        Log.WriteLine("Found: " + interfaceMessage.MessageName);
+        return interfaceMessage;
+    }
+
     // Since the messages are not in sync with the Event processing thread, only update it if it exists
     // SHOULD BE ONLY CALLED FROM Events
     public void FindInterfaceMessageWithNameInTheChannelAndUpdateItIfItExists(

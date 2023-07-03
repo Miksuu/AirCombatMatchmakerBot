@@ -16,6 +16,8 @@ public interface InterfaceButton
     public Discord.ButtonBuilder CreateTheButton(
         string _customId, int _buttonIndex, ulong _buttonCategoryId,
         ulong _leagueCategoryId = 0);
+
+    public void CallButtonActivation(SocketMessageComponent _component, InterfaceMessage _interfaceMessage);
     public abstract Task<Response> ActivateButtonFunction(
         SocketMessageComponent _component, InterfaceMessage _interfaceMessage);
 

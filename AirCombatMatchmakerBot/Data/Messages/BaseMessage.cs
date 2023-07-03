@@ -89,7 +89,8 @@ public abstract class BaseMessage : InterfaceMessage
     }
 
     [DataMember] protected logEnum<MessageName> messageName = new logEnum<MessageName>();
-    [DataMember] protected logConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount =
+    [DataMember]
+    protected logConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount =
         new logConcurrentDictionary<ButtonName, int>();
 
     // Embed properties
@@ -115,8 +116,8 @@ public abstract class BaseMessage : InterfaceMessage
 
     // If the component is not null, this is a reply
     public async Task<InterfaceMessage> CreateTheMessageAndItsButtonsOnTheBaseClass(
-        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, bool _embed, 
-        bool _displayMessage = true, ulong _leagueCategoryId = 0, 
+        DiscordSocketClient _client, InterfaceChannel _interfaceChannel, bool _embed,
+        bool _displayMessage = true, ulong _leagueCategoryId = 0,
         SocketMessageComponent? _component = null, bool _ephemeral = true,
         params string[] _files)
     {
@@ -156,7 +157,7 @@ public abstract class BaseMessage : InterfaceMessage
 
             // Pass league id as parameter here
             leagueRegistrationMessage.belongsToLeagueCategoryId = _leagueCategoryId;
-            
+
             messageForGenerating = leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague().Result;
         }
         else
@@ -403,7 +404,7 @@ public abstract class BaseMessage : InterfaceMessage
 
             Log.WriteLine("Modifying the message: " + thisInterfaceMessage.MessageId + " done.");
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             throw;
@@ -501,5 +502,21 @@ public abstract class BaseMessage : InterfaceMessage
 
         Log.WriteLine("Found: " + message.Id);
         return message;
+    }
+
+    public InterfaceButton FindButtonWithComponentDataCustomIdInTheMessage(string _componentDataCustomId)
+    {
+        InterfaceButton? foundButton = thisInterfaceMessage.ButtonsInTheMessage.FirstOrDefault(
+            b => b.ButtonCustomId == _componentDataCustomId);
+        if (foundButton == null)
+        {
+            Log.WriteLine(nameof(foundButton) + " was null", LogLevel.CRITICAL);
+            throw new InvalidOperationException(nameof(foundButton) + " was null!");
+        }
+
+        Log.WriteLine("Found the specific button: " + foundButton.ButtonName +
+            " with label: " + foundButton.ButtonLabel, LogLevel.DEBUG);
+
+        return foundButton;
     }
 }

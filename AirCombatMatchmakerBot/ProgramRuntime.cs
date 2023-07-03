@@ -14,7 +14,7 @@ public class ProgramRuntime
         await SerializationManager.DeSerializeDB();
 
         // Set up client and return it
-        var client = BotReference.SetClientRefAndReturnIt();
+        client = BotReference.SetClientRefAndReturnIt();
 
         // Reads token from the same directory as the .exe
         var token = File.ReadAllText("token.txt");
@@ -32,7 +32,7 @@ public class ProgramRuntime
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
-                DevTools.DeleteAllCategoriesChannelsAndRoles();
+                await DevTools.DeleteAllCategoriesChannelsAndRoles();
 
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES

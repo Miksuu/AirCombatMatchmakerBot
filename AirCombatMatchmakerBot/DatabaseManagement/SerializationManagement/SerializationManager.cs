@@ -15,6 +15,8 @@ public static class SerializationManager
 
     public static async Task SerializeDB(bool _circularDependency = false)
     {
+
+
         await semaphore.WaitAsync();
         try
         {
@@ -40,6 +42,8 @@ public static class SerializationManager
                 writer.Close();
                 sw.Close();
             }
+
+            FileManager.CheckIfFileAndPathExistsAndCreateItIfNecessary(Database.dbPath, Database.dbFileName);
 
             // Atomic file replacement
             File.Replace(dbTempPathWithFileName, Database.dbPathWithFileName, null);
