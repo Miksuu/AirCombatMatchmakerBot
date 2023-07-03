@@ -178,7 +178,7 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Done updating leaderboard on: " + thisInterfaceLeague.LeagueCategoryName);
     }
 
-    public Task<Response> RegisterUserToALeague(ulong _userId)
+    public async Task<Response> RegisterUserToALeague(ulong _userId)
     {
         try
         {
@@ -202,7 +202,7 @@ public abstract class BaseLeague : InterfaceLeague
                 {
                     string errorMsg = "Player's: " + player.PlayerNickName + " id was 0!";
                     Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                    return Task.FromResult(new Response(errorMsg, false));
+                    return new Response(errorMsg, false);
                 }
 
                 Log.WriteLine("Found player: " + player.PlayerNickName +
@@ -240,11 +240,11 @@ public abstract class BaseLeague : InterfaceLeague
                         string errorMsg =
                             "This league is team based with number of players per team: " + leaguePlayerCountPerTeam;
                         Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-                        return Task.FromResult(new Response(errorMsg, false));
+                        return new Response(errorMsg, false);
                     }
 
                     // Add the role for the player for the specific league and set him teamActive
-                    UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
 
                     Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
                         LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
@@ -258,7 +258,7 @@ public abstract class BaseLeague : InterfaceLeague
                     Log.WriteLine("The player was already in a team in that league!" +
                         " Setting him active", LogLevel.DEBUG);
 
-                    UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
 
                     //responseMsg = "You have rejoined: " +
                     //    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
@@ -267,13 +267,13 @@ public abstract class BaseLeague : InterfaceLeague
                 else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
                 {
                     // Temp fix for fast clickers of two different leagues they can just press it again to receive the role
-                    UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
 
                     Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + thisInterfaceLeague.LeagueCategoryName +
                         ", had a team already active");
                     //responseMsg = "You are already part of " + EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) +
                     //    "\n" + " You can look for a match in: <#" + challengeChannelId + ">";
-                    return Task.FromResult(new Response(responseMsg, false));
+                    return new Response(responseMsg, false);
                 }
             }
             else
@@ -282,17 +282,17 @@ public abstract class BaseLeague : InterfaceLeague
                     " (only admins should be able to see this)";
                 Log.WriteLine("Player: " + _userId +
                     " tried to join a league before registering", LogLevel.WARNING);
-                return Task.FromResult(new Response(responseMsg, false));
+                return new Response(responseMsg, false);
             }
 
             UpdateLeagueLeaderboard();
 
-            return Task.FromResult(new Response(responseMsg, true));
+            return new Response(responseMsg, true);
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
-            return Task.FromResult(new Response(ex.Message, false));
+            return new Response(ex.Message, false);
         }
     }
 
