@@ -1,14 +1,15 @@
 ﻿using Discord.WebSocket;
 
-public class TacviewManager
+public static class TacviewManager
 {
+    public static string tacviewsPath = @"C:\AirCombatMatchmakerBot\Data\Tacviews\";
+
     public static Task SaveTacviewFromUserUpload(
     LeagueName _leagueName, int _matchId, SocketMessage _message)
     {
         Log.WriteLine("Saving tacview from user upload on league: " + _leagueName + ", on matchId:" +
             _matchId + ", from user: " + _message.Author.Id);
-        string pathToCreate = @"C:\AirCombatMatchmakerBot\Data\Tacviews\" +
-            _leagueName.ToString() + @"\" + _matchId.ToString();
+        string pathToCreate = tacviewsPath + _leagueName.ToString() + @"\" + _matchId.ToString();
 
         string fileName = "Match-" + _matchId + "_" + _message.Author.Id.ToString() + ".acmi";
         FileManager.SaveFileAttachment(_message, pathToCreate, fileName);
@@ -25,7 +26,7 @@ public class TacviewManager
         Log.WriteLine("Getting tacview from user upload on league: " +
             _interfaceLeague.LeagueCategoryName + ", on matchId:" + _matchId);
 
-        string pathToLookFor = @"C:\AirCombatMatchmakerBot\Data\Tacviews\" +
+        string pathToLookFor = tacviewsPath +
             _interfaceLeague.LeagueCategoryName.ToString() + @"\" + _matchId.ToString() + @"\";
 
         if (!Directory.Exists(pathToLookFor))

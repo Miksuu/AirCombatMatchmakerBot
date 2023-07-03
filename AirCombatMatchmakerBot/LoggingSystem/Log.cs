@@ -5,6 +5,8 @@ using System.Runtime.CompilerServices;
 
 public static class Log
 {
+    public static string logsPath = @"C:\AirCombatMatchmakerBot\Logs\";
+
     public static void WriteLine(
         string _message,
         LogLevel _logLevel = LogLevel.VERBOSE,
@@ -61,15 +63,12 @@ public static class Log
 
     private static void WriteToFileLogFile(LogLevel _logLevel, string _logMessage, string _scriptName)
     {
-        // Move to some other class that is more accessible
-        string logsDir = @"C:\AirCombatMatchmakerBot\Logs\";
-
-        CheckIfDirectoryExistsAndAppendToTheFile(logsDir, _logLevel.ToString(), _logMessage);
-        CheckIfDirectoryExistsAndAppendToTheFile(logsDir, "EVERYTHING", _logMessage);
+        CheckIfDirectoryExistsAndAppendToTheFile(logsPath, _logLevel.ToString(), _logMessage);
+        CheckIfDirectoryExistsAndAppendToTheFile(logsPath, "EVERYTHING", _logMessage);
 
         if (_scriptName == "MatchScheduler.cs")
         {
-            CheckIfDirectoryExistsAndAppendToTheFile(logsDir, _scriptName, _logMessage);
+            CheckIfDirectoryExistsAndAppendToTheFile(logsPath, _scriptName, _logMessage);
         }
     }
 

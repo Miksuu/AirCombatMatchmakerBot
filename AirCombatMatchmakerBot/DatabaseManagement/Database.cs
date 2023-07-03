@@ -65,6 +65,11 @@ public class Database
     private static Database? instance;
     private static readonly object padlock = new object();
 
+    // File paths
+    public static string dbPath = @"C:\AirCombatMatchmakerBot\Data";
+    public static string dbFileName = "database.json";
+    public static string dbPathWithFileName = dbPath + @"\" + dbFileName;
+
     // The Database components
     [DataMember] private PlayerData playerData = new PlayerData();
     [DataMember] private Admins admins = new Admins();

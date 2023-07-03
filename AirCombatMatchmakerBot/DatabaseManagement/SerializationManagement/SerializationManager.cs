@@ -8,12 +8,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public static class SerializationManager
 {
-    static string dbPath = @"C:\AirCombatMatchmakerBot\Data";
-    static string dbFileName = "database.json";
-    static string dbPathWithFileName = dbPath + @"\" + dbFileName;
-
     static string dbTempFileName = "database.tmp";
-    static string dbTempPathWithFileName = dbPath + @"\" + dbTempFileName;
+    static string dbTempPathWithFileName = Database.dbPath + @"\" + dbTempFileName;
     //static bool serializationInProgress = false;
     static SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
@@ -46,7 +42,7 @@ public static class SerializationManager
             }
 
             // Atomic file replacement
-            File.Replace(dbTempPathWithFileName, dbPathWithFileName, null);
+            File.Replace(dbTempPathWithFileName, Database.dbPathWithFileName, null);
         }
         finally
         {
@@ -114,9 +110,9 @@ public static class SerializationManager
     {
         Log.WriteLine("DESERIALIZATION STARTING!", LogLevel.SERIALIZATION);
 
-        FileManager.CheckIfFileAndPathExistsAndCreateItIfNecessary(dbPath, dbFileName);
+        FileManager.CheckIfFileAndPathExistsAndCreateItIfNecessary(Database.dbPath, Database.dbFileName);
 
-        string json = File.ReadAllText(dbPathWithFileName);
+        string json = File.ReadAllText(Database.dbPathWithFileName);
 
         HandleDatabaseCreationOrLoading(json);
 

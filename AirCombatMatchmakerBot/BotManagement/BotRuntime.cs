@@ -81,7 +81,6 @@ public class BotRuntimeManager
                 client.GuildMemberUpdated -= Database.Instance.PlayerData.HandleRegisteredMemberUpdated;
                 client.UserLeft -= UserManager.HandleUserLeaveDelegate;
 
-
                 client.UserJoined += UserManager.HandleUserJoin;
                 client.ButtonExecuted += ButtonHandler.HandleButtonPress;
                 //client.MessageUpdated += UserManager.MessageUpdated;

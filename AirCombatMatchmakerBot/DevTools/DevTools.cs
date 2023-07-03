@@ -8,50 +8,31 @@ using System.Threading.Tasks;
 
 public static class DevTools
 {
+    private static SocketGuild socketGuild;
+
     // !!!
     // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
     // !!!
 
-    public async static void DeleteAllCategoriesChannelsAndRoles()
+    public static void DeleteAllCategoriesChannelsAndRoles()
     {
-        var guild = BotReference.GetGuildRef();
+        socketGuild = BotReference.GetGuildRef();
 
-        DeleteCategories(guild, new List<string> { "main-category" });
-        DeleteChannels(guild, new List<string> { "info", "test" });
+        DeleteCategories(new List<string> { "main-category" });
+        DeleteChannels(new List<string> { "info", "test" });
 
-        // Delete the old tacviews so it doesn't throw error from old files
-        string tacviewPathToDelete = @"C:\AirCombatMatchmakerBot\Data\Tacviews";
-        if (Directory.Exists(tacviewPathToDelete)) Directory.Delete(tacviewPathToDelete, true);
+        FileManager.DeleteDirectoryIfItExists(TacviewManager.tacviewsPath);
+        FileManager.DeleteDirectoryIfItExists(Log.logsPath);
 
-        string logsPathToDelete = @"C:\AirCombatMatchmakerBot\Logs";
-        if (Directory.Exists(logsPathToDelete)) Directory.Delete(logsPathToDelete, true);
+        DeleteDatabase();
 
-        // Delete db here
-        File.Delete(@"C:\AirCombatMatchmakerBot\Data\database.json");
-        await SerializationManager.HandleDatabaseCreationOrLoading("0");
-
-        // Delete roles here
-        foreach (var item in guild.Roles)
-        {
-            Log.WriteLine("on role: " + item.Name);
-
-            if (item.Name == "Developer" || item.Name == "Server Booster" ||
-                item.Name == "AirCombatMatchmakerBotDev" || item.Name == "Discord Me" ||
-                item.Name == "@everyone" || item.Name == "@here")
-            {
-                continue;
-            }
-
-            Log.WriteLine("Deleting role: " + item.Name, LogLevel.DEBUG);
-
-            await item.DeleteAsync();
-        }
+        DeleteRoles(new List<string> { "Developer", "Server Booster", "AirCombatMatchmakerBotDev", "Discord Me", "@everyone", "@here" });
     }
 
-    private async static void DeleteCategories(SocketGuild _guild, List<string> _categoriesNotToDelete)
+    private async static void DeleteCategories(List<string> _categoriesNotToDelete)
     {
-        Log.WriteLine("Deleting all categories with count: " + _categoriesNotToDelete.Count);
-        foreach (var category in _guild.CategoryChannels)
+        Log.WriteLine("Deleting all categories with count: " + _categoriesNotToDelete.Count, LogLevel.DEBUG);
+        foreach (SocketCategoryChannel category in socketGuild.CategoryChannels)
         {
             Log.WriteLine("Looping on category : " + category.Name);
 
@@ -65,18 +46,20 @@ public static class DevTools
             await category.DeleteAsync();
             Log.WriteLine("done deleting category: " + category.Name, LogLevel.DEBUG);
         }
+
+        Log.WriteLine("Done deleting all categories");
     }
 
-    private async static void DeleteChannels(SocketGuild _guild, List<string> _channelsNotToDelete)
+    private async static void DeleteChannels(List<string> _channelsNotToDelete)
     {
-        Log.WriteLine("Deleting all categories with count: " + _channelsNotToDelete.Count);
-        foreach (SocketGuildChannel channel in _guild.Channels)
+        Log.WriteLine("Deleting all channels with count: " + _channelsNotToDelete.Count, LogLevel.DEBUG);
+        foreach (SocketGuildChannel channel in socketGuild.Channels)
         {
             Log.WriteLine("Looping on channel : " + channel.Name);
-            Log.WriteLine(channel.Name, LogLevel.DEBUG);
 
             if (_channelsNotToDelete.Contains(channel.Name))
             {
+                Log.WriteLine("Wont delete: " + channel.Name);
                 continue;
             }
 
@@ -84,6 +67,38 @@ public static class DevTools
             await channel.DeleteAsync();
             Log.WriteLine("done deleting channel: " + channel.Name, LogLevel.DEBUG);
         }
+
+        Log.WriteLine("Done deleting all channels", LogLevel.DEBUG);
+    }
+
+    private async static void DeleteRoles(List<string> _rolesNotToDelete)
+    {
+        Log.WriteLine("Deleting all roles with count: " + _rolesNotToDelete.Count, LogLevel.DEBUG);
+        // Delete roles here
+        foreach (SocketRole role in socketGuild.Roles)
+        {
+            Log.WriteLine("on role: " + role.Name);
+
+            if (_rolesNotToDelete.Contains(role.Name))
+            {
+                Log.WriteLine("Wont delete: " + role.Name);
+                continue;
+            }
+
+            Log.WriteLine("Deleting role: " + role.Name);
+            await role.DeleteAsync();
+            Log.WriteLine("done deleting role: " + role.Name, LogLevel.DEBUG);
+        }
+
+        Log.WriteLine("Done deleting all roles", LogLevel.DEBUG);
+    }
+
+    private async static void DeleteDatabase()
+    {
+        Log.WriteLine("Deleting database", LogLevel.DEBUG);
+        FileManager.DeleteFileIfItExists(Database.dbPathWithFileName);
+        await SerializationManager.HandleDatabaseCreationOrLoading("0");
+        Log.WriteLine("Done deleting database", LogLevel.DEBUG);
     }
 
     // !!!
