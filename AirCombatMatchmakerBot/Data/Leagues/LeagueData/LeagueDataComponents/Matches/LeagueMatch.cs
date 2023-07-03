@@ -76,11 +76,11 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logVar<int> matchId = new logVar<int>();
     [DataMember] private logVar<ulong> matchChannelId = new logVar<ulong>();
     [DataMember] private MatchReporting matchReporting = new MatchReporting();
-    [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>();
+    [DataMember] private logEnum<LeagueName> matchLeague = new logEnum<LeagueName>();
     [DataMember] private ScheduleObject scheduleObject = new ScheduleObject();
     [DataMember] private logVar<bool> isAScheduledMatch = new logVar<bool>();
     [DataMember] private EventManager matchEventManager = new EventManager();
-    [DataMember] private logClass<MatchState> matchState = new logClass<MatchState>();
+    [DataMember] private logEnum<MatchState> matchState = new logEnum<MatchState>();
 
     [DataMember] private logConcurrentBag<ulong> alreadySuggestedTimes = new logConcurrentBag<ulong>();
 

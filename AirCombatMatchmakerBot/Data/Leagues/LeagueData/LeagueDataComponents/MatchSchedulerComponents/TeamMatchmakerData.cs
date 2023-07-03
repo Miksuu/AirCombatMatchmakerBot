@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class TeamMatchmakerData : logClass<MatchScheduler>
+public class TeamMatchmakerData : logClass<TeamMatchmakerData>
 {
     public TeamMatchmakingState TeamMatchmakingState
     {
@@ -22,7 +22,7 @@ public class TeamMatchmakerData : logClass<MatchScheduler>
         set => teamThatWasFoughtPreviously.SetValue(value);
     }
 
-    [DataMember] private logClass<TeamMatchmakingState> teamMatchmakingState = new logClass<TeamMatchmakingState>();
+    [DataMember] private logEnum<TeamMatchmakingState> teamMatchmakingState = new logEnum<TeamMatchmakingState>();
     //[DataMember] private logVar<int> teamMissedMatchesFromScheduler = new logVar<int>();
     [DataMember] private logVar<int> teamThatWasFoughtPreviously = new logVar<int>();
 
