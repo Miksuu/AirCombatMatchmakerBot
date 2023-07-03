@@ -66,15 +66,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
     private async void InitMessageModifyOnSecondThread(InterfaceMessage _interfaceMessage)
     {
-        LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = _interfaceMessage as LEAGUEREGISTRATIONMESSAGE;
-        if (leagueRegistrationMessage == null)
-        {
-            string errorMsg = nameof(leagueRegistrationMessage) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
-            return;
-        }
-
-        _interfaceMessage.GenerateAndModifyTheMessage();
+        _interfaceMessage.GenerateAndModifyTheMessage(_interfaceMessage.MessageCategoryId);
 
         await SerializationManager.SerializeDB();
     }
