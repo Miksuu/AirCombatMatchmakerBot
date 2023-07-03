@@ -46,7 +46,7 @@ public class Team
     [DataMember] private logConcurrentBag<Player> players = new logConcurrentBag<Player>();    
     [DataMember] private logVar<float> skillRating = new logVar<float>(1600f);
     [DataMember] private logVar<bool> teamActive = new logVar<bool>();
-    [DataMember] private logClass<Stats> teamStats = new logClass<Stats>(new Stats());
+    [DataMember] private Stats teamStats = new Stats();
 
     public Team(){ }
 

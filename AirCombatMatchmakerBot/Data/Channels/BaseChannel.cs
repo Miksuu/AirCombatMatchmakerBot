@@ -46,7 +46,7 @@ public abstract class BaseChannel : InterfaceChannel
         set => interfaceMessagesWithIds.SetValue(value);
     }
 
-    [DataMember] protected logClass<ChannelType> channelType = new logClass<ChannelType>();
+    [DataMember] protected logEnum<ChannelType> channelType = new logEnum<ChannelType>();
     [DataMember] protected logString channelName = new logString();
     [DataMember] protected logVar<ulong> channelId = new logVar<ulong>();
     [DataMember] protected logVar<ulong> channelsCategoryId = new logVar<ulong>();

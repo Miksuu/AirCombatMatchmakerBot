@@ -23,7 +23,7 @@ public class Player : logClass<Player>
 
     [DataMember] private logVar<ulong> playerDiscordId = new logVar<ulong>();
     [DataMember] private logString playerNickName = new logString();
-    [DataMember] private logClass<Stats> playerStats = new logClass<Stats>(new Stats());
+    [DataMember] private Stats playerStats = new Stats();
 
     public Player()
     {

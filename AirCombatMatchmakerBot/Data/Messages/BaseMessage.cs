@@ -88,7 +88,7 @@ public abstract class BaseMessage : InterfaceMessage
         }
     }
 
-    [DataMember] protected logClass<MessageName> messageName = new logClass<MessageName>(new MessageName());
+    [DataMember] protected logEnum<MessageName> messageName = new logEnum<MessageName>();
     [DataMember] protected logConcurrentDictionary<ButtonName, int> messageButtonNamesWithAmount =
         new logConcurrentDictionary<ButtonName, int>();
 

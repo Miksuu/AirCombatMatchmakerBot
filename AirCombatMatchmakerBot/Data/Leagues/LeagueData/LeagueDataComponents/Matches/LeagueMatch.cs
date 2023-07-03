@@ -75,11 +75,11 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logVar<int> matchId = new logVar<int>();
     [DataMember] private logVar<ulong> matchChannelId = new logVar<ulong>();
-    [DataMember] private logClass<MatchReporting> matchReporting = new logClass<MatchReporting>(new MatchReporting());
-    [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>(new LeagueName());
-    [DataMember] private logClass<ScheduleObject> scheduleObject = new logClass<ScheduleObject>(new ScheduleObject());
+    [DataMember] private MatchReporting matchReporting = new MatchReporting();
+    [DataMember] private logClass<LeagueName> matchLeague = new logClass<LeagueName>();
+    [DataMember] private ScheduleObject scheduleObject = new ScheduleObject();
     [DataMember] private logVar<bool> isAScheduledMatch = new logVar<bool>();
-    [DataMember] private logClass<EventManager> matchEventManager = new logClass<EventManager>(new EventManager());
+    [DataMember] private EventManager matchEventManager = new EventManager();
     [DataMember] private logClass<MatchState> matchState = new logClass<MatchState>();
 
     [DataMember] private logConcurrentBag<ulong> alreadySuggestedTimes = new logConcurrentBag<ulong>();
@@ -286,7 +286,7 @@ public class LeagueMatch : logClass<LeagueMatch>
                 return response;
             }
 
-            ScheduleObject = new logClass<ScheduleObject>(new ScheduleObject(suggestedScheduleDateInUnixTime, playerTeamId)).GetValue();
+            ScheduleObject = new ScheduleObject(suggestedScheduleDateInUnixTime, playerTeamId);
 
             // Must delete before showing the new message, without the ID being saved in a variable
             await interfaceChannel.DeleteMessagesInAChannelWithMessageName(MessageName.MATCHSCHEDULINGSUGGESTIONMESSAGE);

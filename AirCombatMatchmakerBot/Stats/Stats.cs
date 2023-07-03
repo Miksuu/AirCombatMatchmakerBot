@@ -21,7 +21,7 @@ public class Stats : logClass<Stats>
     private logConcurrentDictionary<UnitName, StatValues> planeSpecificStats =
         new logConcurrentDictionary<UnitName, StatValues>();
 
-    private logClass<StatValues> totalStatValuesCached = new logClass<StatValues>(new StatValues());
+    private StatValues totalStatValuesCached = new StatValues();
 
     public Stats()
     {

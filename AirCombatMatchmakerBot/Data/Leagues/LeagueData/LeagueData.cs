@@ -28,10 +28,10 @@ public class LeagueData : logClass<LeagueData>
         set => matches.SetValue(value);
     }
 
-    [DataMember] private logClass<Teams> teams = new logClass<Teams>(new Teams());
-    [DataMember] private logClass<ChallengeStatus> challengeStatus = new logClass<ChallengeStatus>(new ChallengeStatus());
-    [DataMember] private logClass<MatchScheduler> matchScheduler = new logClass<MatchScheduler>(new MatchScheduler());
-    [DataMember] private logClass<Matches> matches = new logClass<Matches>(new Matches());
+    [DataMember] private Teams teams = new Teams();
+    [DataMember] private ChallengeStatus challengeStatus = new ChallengeStatus();
+    [DataMember] private MatchScheduler matchScheduler = new MatchScheduler();
+    [DataMember] private Matches matches = new Matches();
 
     public InterfaceLeague interfaceLeagueRef;
 

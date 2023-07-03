@@ -41,9 +41,9 @@ public abstract class BaseReportingObject : InterfaceReportingObject
     }
 
     [DataMember] private logClass<TypeOfTheReportingObject> typeOfTheReportingObject =
-        new logClass<TypeOfTheReportingObject>(new TypeOfTheReportingObject());
-    [DataMember] private logClass<EmojiName> currentStatus = new logClass<EmojiName>(new EmojiName());
-    [DataMember] private logClass<EmojiName> cachedDefaultStatus = new logClass<EmojiName>(new EmojiName());
+        new logClass<TypeOfTheReportingObject>();
+    [DataMember] private logClass<EmojiName> currentStatus = new logClass<EmojiName>();
+    [DataMember] private logClass<EmojiName> cachedDefaultStatus = new logClass<EmojiName>();
     [DataMember] private logVar<bool> hiddenBeforeConfirmation = new logVar<bool>();
     [DataMember] private logString objectValue = new logString();
     logConcurrentBag<MatchState> allowedMatchStatesToProcessOn = new logConcurrentBag<MatchState>(); // This could be just a logList

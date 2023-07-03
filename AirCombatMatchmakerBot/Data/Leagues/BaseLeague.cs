@@ -70,11 +70,11 @@ public abstract class BaseLeague : InterfaceLeague
     }
 
     // Generated based on the implementation
-    [DataMember] protected logClass<LeagueName> leagueCategoryName = new logClass<LeagueName>(new LeagueName());
-    [DataMember] protected logClass<Era> leagueEra = new logClass<Era>(new Era());
+    [DataMember] protected logEnum<LeagueName> leagueCategoryName = new logEnum<LeagueName>();
+    [DataMember] protected logEnum<Era> leagueEra = new logEnum<Era>();
     [DataMember] protected logVar<int> leaguePlayerCountPerTeam = new logVar<int>();
     [DataMember] protected logConcurrentBag<UnitName> leagueUnits = new logConcurrentBag<UnitName>();
-    [DataMember] protected logClass<LeagueData> leagueData = new logClass<LeagueData>(new LeagueData());
+    [DataMember] protected LeagueData leagueData = new LeagueData();
 
     // The reference to the category created by the system
     [DataMember] private logVar<ulong> leagueCategoryId = new logVar<ulong>();
@@ -89,7 +89,7 @@ public abstract class BaseLeague : InterfaceLeague
     [DataMember] private logVar<ulong> leagueRegistrationMessageId = new logVar<ulong>();
 
     // Events to loop through in the specific league
-    [DataMember] private logClass<EventManager> leagueEventManager = new logClass<EventManager>(new EventManager());
+    [DataMember] private EventManager leagueEventManager = new EventManager();
 
     protected InterfaceLeague thisInterfaceLeague;
 
