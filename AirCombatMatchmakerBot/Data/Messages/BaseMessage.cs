@@ -145,25 +145,8 @@ public abstract class BaseMessage : InterfaceMessage
         // Generates either normal buttons, or custom amount of buttons with different properties
         GenerateButtons(component, _leagueCategoryId);
 
-        // Add this as inherited button method
-        if (thisInterfaceMessage.MessageName == MessageName.LEAGUEREGISTRATIONMESSAGE)
-        {
-            LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = this as LEAGUEREGISTRATIONMESSAGE;
-            if (leagueRegistrationMessage == null)
-            {
-                Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
-                throw new InvalidOperationException(nameof(LEAGUEREGISTRATIONMESSAGE) + " was null!");
-            }
 
-            // Pass league id as parameter here
-            leagueRegistrationMessage.belongsToLeagueCategoryId = _leagueCategoryId;
-
-            messageForGenerating = leagueRegistrationMessage.GenerateMessageForSpecificCategoryLeague().Result;
-        }
-        else
-        {
-            messageForGenerating = "\n" + GenerateMessage().Result;
-        }
+        messageForGenerating = "\n" + GenerateMessage(_leagueCategoryId).Result;
 
         if (_displayMessage)
         {
@@ -487,7 +470,7 @@ public abstract class BaseMessage : InterfaceMessage
         Log.WriteLine("Done generating buttons");
     }
 
-    public abstract Task<string> GenerateMessage();
+    public abstract Task<string> GenerateMessage(ulong _messageCategoryId = 0);
 
     public async Task<Discord.IMessage> GetMessageById(IMessageChannel _channel)
     {

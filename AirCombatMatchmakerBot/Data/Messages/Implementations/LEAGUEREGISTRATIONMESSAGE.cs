@@ -25,21 +25,20 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override Task<string> GenerateMessage()
-    {
-        if (thisInterfaceMessage.MessageDescription == null)
-        {
-            Log.WriteLine("MessageDescription was null!", LogLevel.CRITICAL);
-            return Task.FromResult("MessageDescription was null!");
-        }
-
-        return Task.FromResult(thisInterfaceMessage.MessageDescription);
-    }
-
-    public async Task<string> GenerateMessageForSpecificCategoryLeague()
+    public async override Task<string> GenerateMessage(ulong _messageCategoryId = 0)
     {
         Log.WriteLine("Starting to generate the league registration message with: " +
             belongsToLeagueCategoryId, LogLevel.DEBUG);
+
+        LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = this as LEAGUEREGISTRATIONMESSAGE;
+        if (leagueRegistrationMessage == null)
+        {
+            Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
+            throw new InvalidOperationException(nameof(LEAGUEREGISTRATIONMESSAGE) + " was null!");
+        }
+
+        // Pass league id as parameter here
+        leagueRegistrationMessage.belongsToLeagueCategoryId = _messageCategoryId;
 
         InterfaceLeague interfaceLeague =
             Database.Instance.Leagues.GetILeagueByCategoryId(belongsToLeagueCategoryId);

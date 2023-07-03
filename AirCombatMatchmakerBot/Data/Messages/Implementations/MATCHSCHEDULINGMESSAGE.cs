@@ -23,7 +23,7 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override Task<string> GenerateMessage()
+    public override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
     {
         string finalMessage = "Enter the time you would be able to play the match on in format: \n " +
             "``/schedule 27.11.2022 1030z``\n" + "Instead of using the date 27.11.2022 you can use: [today, tomorrow]," +

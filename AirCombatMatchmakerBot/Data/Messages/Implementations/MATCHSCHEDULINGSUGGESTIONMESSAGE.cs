@@ -26,7 +26,7 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public async override Task<string> GenerateMessage()
+    public async override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
     {
         try
         {

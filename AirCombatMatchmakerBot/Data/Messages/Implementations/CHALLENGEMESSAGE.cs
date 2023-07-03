@@ -33,7 +33,7 @@ public class CHALLENGEMESSAGE : BaseMessage
 
     private logConcurrentDictionary<int, string> teamsThatHaveMatchesClose = new logConcurrentDictionary<int, string>();
 
-    public override Task<string> GenerateMessage()
+    public override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
     {
         try
         {

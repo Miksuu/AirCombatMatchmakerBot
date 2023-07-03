@@ -21,7 +21,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override Task<string> GenerateMessage()
+    public override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
     {
         string finalMessage = string.Empty;
         List<Team> sortedTeamListByElo = new List<Team>();

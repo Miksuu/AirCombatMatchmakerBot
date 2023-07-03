@@ -32,7 +32,7 @@ public interface InterfaceMessage
         SocketMessageComponent? _component = null, bool _ephemeral = true);
     public void ModifyMessage(string _newContent);
     public Task AddContentToTheEndOfTheMessage(string _content);
-    public abstract Task<string> GenerateMessage();
+    public abstract Task<string> GenerateMessage(ulong _messageCategoryId = 0);
     public void GenerateAndModifyTheMessage();
     public Task<Discord.IMessage> GetMessageById(IMessageChannel _channel);
 

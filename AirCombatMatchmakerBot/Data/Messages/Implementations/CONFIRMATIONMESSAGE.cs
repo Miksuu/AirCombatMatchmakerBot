@@ -32,7 +32,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override Task<string> GenerateMessage()
+    public override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
     {
         Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
 

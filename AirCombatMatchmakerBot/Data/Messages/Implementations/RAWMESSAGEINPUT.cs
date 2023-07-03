@@ -23,7 +23,7 @@ public class RAWMESSAGEINPUT : BaseMessage
         base.GenerateRegularButtons(_component, _leagueCategoryId);
     }
 
-    public override Task<string> GenerateMessage()
+    public override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
     {
         if (thisInterfaceMessage.MessageDescription == null)
         {
