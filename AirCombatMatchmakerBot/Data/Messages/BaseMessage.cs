@@ -405,9 +405,10 @@ public abstract class BaseMessage : InterfaceMessage
             thisInterfaceMessage.MessageId);
     }
 
-    public void GenerateAndModifyTheMessage()
+    public void GenerateAndModifyTheMessage(ulong _messageCategoryId = 0)
     {
-        ModifyMessage(GenerateMessage().Result);
+        Log.WriteLine(_messageCategoryId.ToString());
+        ModifyMessage(GenerateMessage(_messageCategoryId).Result);
     }
 
     protected abstract void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId);

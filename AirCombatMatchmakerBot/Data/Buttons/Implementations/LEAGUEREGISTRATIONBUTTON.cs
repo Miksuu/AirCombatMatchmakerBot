@@ -58,15 +58,15 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         if (response.serialize)
         {
             // Improved response time
-            new Thread(() => InitMessageModifyOnSecondThread(_interfaceMessage)).Start();
+            new Thread(() => InitMessageModifyOnSecondThread(_interfaceMessage, ulong.Parse(splitStrings[0]))).Start();
         }
 
         return Task.FromResult(response);
     }
 
-    private async void InitMessageModifyOnSecondThread(InterfaceMessage _interfaceMessage)
+    private async void InitMessageModifyOnSecondThread(InterfaceMessage _interfaceMessage, ulong _leagueCategoryId)
     {
-        _interfaceMessage.GenerateAndModifyTheMessage(_interfaceMessage.MessageCategoryId);
+        _interfaceMessage.GenerateAndModifyTheMessage(_leagueCategoryId);
 
         await SerializationManager.SerializeDB();
     }

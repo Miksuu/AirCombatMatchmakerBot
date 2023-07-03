@@ -124,8 +124,8 @@ public static class CategoryAndChannelManager
                 }
             }
 
-            SocketRole? role = RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
-                        _guild, finalCategoryName).Result;
+            SocketRole? role = await RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(
+                        _guild, finalCategoryName);
 
             Log.WriteLine("Role is named: " + role.Name + " with ID: " + role.Id);
 

@@ -24,9 +24,9 @@ public static class DevTools
         FileManager.DeleteDirectoryIfItExists(TacviewManager.tacviewsPath);
         FileManager.DeleteDirectoryIfItExists(Log.logsPath);
 
-        DeleteDatabase();
+        await DeleteDatabase();
 
-        DeleteRoles(new List<string> { "Developer", "Server Booster", "AirCombatMatchmakerBotDev", "Discord Me", "@everyone", "@here" });
+        await DeleteRoles(new List<string> { "Developer", "Server Booster", "AirCombatMatchmakerBotDev", "Discord Me", "@everyone", "@here" });
     }
 
     private async static Task DeleteCategories(List<string> _categoriesNotToDelete)
@@ -71,7 +71,7 @@ public static class DevTools
         Log.WriteLine("Done deleting all channels", LogLevel.DEBUG);
     }
 
-    private async static void DeleteRoles(List<string> _rolesNotToDelete)
+    private async static Task DeleteRoles(List<string> _rolesNotToDelete)
     {
         Log.WriteLine("Deleting all roles with count: " + _rolesNotToDelete.Count, LogLevel.DEBUG);
         // Delete roles here
@@ -93,7 +93,7 @@ public static class DevTools
         Log.WriteLine("Done deleting all roles", LogLevel.DEBUG);
     }
 
-    private async static void DeleteDatabase()
+    private async static Task DeleteDatabase()
     {
         Log.WriteLine("Deleting database", LogLevel.DEBUG);
         FileManager.DeleteFileIfItExists(Database.dbPathWithFileName);

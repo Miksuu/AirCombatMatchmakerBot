@@ -30,15 +30,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         Log.WriteLine("Starting to generate the league registration message with: " +
             belongsToLeagueCategoryId, LogLevel.DEBUG);
 
-        LEAGUEREGISTRATIONMESSAGE? leagueRegistrationMessage = this as LEAGUEREGISTRATIONMESSAGE;
-        if (leagueRegistrationMessage == null)
-        {
-            Log.WriteLine(nameof(leagueRegistrationMessage) + " was null!", LogLevel.CRITICAL);
-            throw new InvalidOperationException(nameof(LEAGUEREGISTRATIONMESSAGE) + " was null!");
-        }
-
-        // Pass league id as parameter here
-        leagueRegistrationMessage.belongsToLeagueCategoryId = _messageCategoryId;
+        belongsToLeagueCategoryId = _messageCategoryId;
 
         InterfaceLeague interfaceLeague =
             Database.Instance.Leagues.GetILeagueByCategoryId(belongsToLeagueCategoryId);
