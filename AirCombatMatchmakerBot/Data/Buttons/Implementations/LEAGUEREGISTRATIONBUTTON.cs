@@ -66,7 +66,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
     private async void InitMessageModifyOnSecondThread(InterfaceMessage _interfaceMessage)
     {
-        _interfaceMessage.GenerateAndModifyTheMessage();
+        _interfaceMessage.GenerateAndModifyTheMessage(_interfaceMessage.MessageCategoryId);
 
         await SerializationManager.SerializeDB();
     }
