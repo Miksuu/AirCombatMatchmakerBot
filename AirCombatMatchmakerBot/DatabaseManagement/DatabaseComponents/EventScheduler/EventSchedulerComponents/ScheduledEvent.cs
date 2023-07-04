@@ -4,7 +4,7 @@ using System.Diagnostics.Tracing;
 using System.Runtime.Serialization;
 
 [DataContract]
-public abstract class ScheduledEvent : logClass<ScheduledEvent>, InterfaceEventType
+public abstract class ScheduledEvent : InterfaceEventType
 {
     public ulong TimeToExecuteTheEventOn
     {

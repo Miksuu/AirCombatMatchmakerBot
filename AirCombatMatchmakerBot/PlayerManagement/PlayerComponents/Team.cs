@@ -35,18 +35,12 @@ public class Team
         set => teamActive.SetValue(value);
     }
 
-    public Stats TeamStats
-    {
-        get => teamStats.GetValue();
-        set => teamStats.SetValue(value);
-    }
-
     [DataMember] private logVar<int> teamId = new logVar<int>();
     [DataMember] private logString teamName = new logString();
     [DataMember] private logConcurrentBag<Player> players = new logConcurrentBag<Player>();    
     [DataMember] private logVar<float> skillRating = new logVar<float>(1600f);
     [DataMember] private logVar<bool> teamActive = new logVar<bool>();
-    [DataMember] private Stats teamStats = new Stats();
+    [DataMember] public Stats TeamStats = new Stats();
 
     public Team(){ }
 

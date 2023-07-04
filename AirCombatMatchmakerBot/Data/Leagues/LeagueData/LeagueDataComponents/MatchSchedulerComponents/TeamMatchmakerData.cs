@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class TeamMatchmakerData : logClass<TeamMatchmakerData>
+public class TeamMatchmakerData
 {
     public TeamMatchmakingState TeamMatchmakingState
     {

@@ -32,12 +32,6 @@ public abstract class BaseLeague : InterfaceLeague
         set => leagueUnits.SetValue(value);
     }
 
-    public LeagueData LeagueData
-    {
-        get => leagueData.GetValue();
-        set => leagueData.SetValue(value);
-    }
-
     public ulong LeagueCategoryId
     {
         get => leagueCategoryId.GetValue();
@@ -62,19 +56,15 @@ public abstract class BaseLeague : InterfaceLeague
         get => leagueRegistrationMessageId.GetValue();
         set => leagueRegistrationMessageId.SetValue(value);
     }
-
-    public EventManager LeagueEventManager
-    {
-        get => leagueEventManager.GetValue();
-        set => leagueEventManager.SetValue(value);
-    }
+    LeagueData InterfaceLeague.LeagueData { get => leagueData; set => leagueData = value; }
+    EventManager InterfaceLeague.LeagueEventManager { get => leagueEventManager; set => leagueEventManager = value; }
 
     // Generated based on the implementation
     [DataMember] protected logEnum<LeagueName> leagueCategoryName = new logEnum<LeagueName>();
     [DataMember] protected logEnum<Era> leagueEra = new logEnum<Era>();
     [DataMember] protected logVar<int> leaguePlayerCountPerTeam = new logVar<int>();
     [DataMember] protected logConcurrentBag<UnitName> leagueUnits = new logConcurrentBag<UnitName>();
-    [DataMember] protected LeagueData leagueData = new LeagueData();
+    [DataMember] private LeagueData leagueData = new LeagueData();
 
     // The reference to the category created by the system
     [DataMember] private logVar<ulong> leagueCategoryId = new logVar<ulong>();
@@ -208,9 +198,9 @@ public abstract class BaseLeague : InterfaceLeague
                 Log.WriteLine("Found player: " + player.PlayerNickName +
                     " (" + player.PlayerDiscordId + ")");
 
-                bool playerIsInATeamAlready = LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(_userId);
+                bool playerIsInATeamAlready = thisInterfaceLeague.LeagueData.Teams.CheckIfPlayerIsAlreadyInATeamById(_userId);
 
-                bool playerIsInActiveTeamAlready = LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
+                bool playerIsInActiveTeamAlready = thisInterfaceLeague.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
                     _userId).TeamActive;
 
                 if (!playerIsInATeamAlready)
@@ -222,13 +212,13 @@ public abstract class BaseLeague : InterfaceLeague
                     Team newTeam = new Team(
                         new ConcurrentBag<Player> { player },
                         player.PlayerNickName,
-                        LeagueData.Teams.CurrentTeamInt);
+                        thisInterfaceLeague.LeagueData.Teams.CurrentTeamInt);
 
                     if (thisInterfaceLeague.LeaguePlayerCountPerTeam < 2)
                     {
                         Log.WriteLine("This league is solo");
 
-                        LeagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
+                        thisInterfaceLeague.LeagueData.Teams.AddToConcurrentBagOfTeams(newTeam);
 
                         //responseMsg = "Registration complete on: " +
                         //    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
@@ -247,9 +237,9 @@ public abstract class BaseLeague : InterfaceLeague
                     await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
 
                     Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
-                        LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
+                        thisInterfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
 
-                    LeagueData.Teams.IncrementCurrentTeamInt();
+                    thisInterfaceLeague.LeagueData.Teams.IncrementCurrentTeamInt();
                 }
                 else if (playerIsInATeamAlready && !playerIsInActiveTeamAlready)
                 {
@@ -298,9 +288,9 @@ public abstract class BaseLeague : InterfaceLeague
 
     public void HandleLeaguesAndItsMatchesEvents(ulong _currentUnixTime)
     {
-        LeagueEventManager.HandleEvents(_currentUnixTime);
+        thisInterfaceLeague.LeagueEventManager.HandleEvents(_currentUnixTime);
 
-        foreach (LeagueMatch leagueMatch in LeagueData.Matches.MatchesConcurrentBag)
+        foreach (LeagueMatch leagueMatch in  thisInterfaceLeague.LeagueData.Matches.MatchesConcurrentBag)
         {
             leagueMatch.MatchEventManager.HandleEvents(_currentUnixTime);
         }

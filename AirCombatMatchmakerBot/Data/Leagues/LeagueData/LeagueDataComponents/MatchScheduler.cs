@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Runtime.Serialization;
 
 [DataContract]
-public class MatchScheduler : logClass<MatchScheduler>
+public class MatchScheduler
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<int, TeamMatchmakerData> TeamsInTheMatchmaker

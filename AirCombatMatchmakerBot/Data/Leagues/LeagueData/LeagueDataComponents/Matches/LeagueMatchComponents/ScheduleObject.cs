@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class ScheduleObject : logClass<ScheduleObject>
+public class ScheduleObject
 {
     public ulong RequestedSchedulingTimeInUnixTime
     {

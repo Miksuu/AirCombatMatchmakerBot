@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Channels;
 
 [DataContract]
-public class Leagues : logClass<Leagues>
+public class Leagues
 {
     public ConcurrentBag<InterfaceLeague> StoredLeagues
     {

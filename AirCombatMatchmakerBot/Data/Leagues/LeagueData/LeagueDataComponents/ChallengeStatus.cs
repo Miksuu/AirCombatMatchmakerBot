@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading.Channels;
 
 [DataContract]
-public class ChallengeStatus : logClass<ChallengeStatus>
+public class ChallengeStatus
 {
     public ConcurrentBag<int> TeamsInTheQueue
     {

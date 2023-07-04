@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class Player : logClass<Player>
+public class Player
 {   
     public ulong PlayerDiscordId
     {
@@ -15,15 +15,9 @@ public class Player : logClass<Player>
         set => playerNickName.SetValue(value);
     }
 
-    public Stats PlayerStats
-    {
-        get => playerStats.GetValue();
-        set => playerStats.SetValue(value);
-    }
-
     [DataMember] private logVar<ulong> playerDiscordId = new logVar<ulong>();
     [DataMember] private logString playerNickName = new logString();
-    [DataMember] private Stats playerStats = new Stats();
+    [DataMember] public Stats PlayerStats = new Stats();
 
     public Player()
     {

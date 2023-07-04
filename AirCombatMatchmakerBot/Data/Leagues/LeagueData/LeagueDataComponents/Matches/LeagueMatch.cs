@@ -10,7 +10,7 @@ using System.Threading.Channels;
 using System.Text.RegularExpressions;
 
 [DataContract]
-public class LeagueMatch : logClass<LeagueMatch>
+public class LeagueMatch
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<int, string> TeamsInTheMatch
@@ -31,22 +31,10 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => matchChannelId.SetValue(value);
     }
 
-    public MatchReporting MatchReporting
-    {
-        get => matchReporting.GetValue();
-        set => matchReporting.SetValue(value);
-    }
-
     public LeagueName MatchLeague
     {
         get => matchLeague.GetValue();
         set => matchLeague.SetValue(value);
-    }
-
-    public ScheduleObject ScheduleObject
-    {
-        get => scheduleObject.GetValue();
-        set => scheduleObject.SetValue(value);
     }
 
     public bool IsAScheduledMatch
@@ -55,11 +43,6 @@ public class LeagueMatch : logClass<LeagueMatch>
         set => isAScheduledMatch.SetValue(value);
     }
 
-    public EventManager MatchEventManager
-    {
-        get => matchEventManager.GetValue();
-        set => matchEventManager.SetValue(value);
-    }
     public MatchState MatchState
     {
         get => matchState.GetValue();
@@ -75,11 +58,11 @@ public class LeagueMatch : logClass<LeagueMatch>
     [DataMember] private logConcurrentDictionary<int, string> teamsInTheMatch = new logConcurrentDictionary<int, string>();
     [DataMember] private logVar<int> matchId = new logVar<int>();
     [DataMember] private logVar<ulong> matchChannelId = new logVar<ulong>();
-    [DataMember] private MatchReporting matchReporting = new MatchReporting();
+    [DataMember] public MatchReporting MatchReporting = new MatchReporting();
     [DataMember] private logEnum<LeagueName> matchLeague = new logEnum<LeagueName>();
-    [DataMember] private ScheduleObject scheduleObject = new ScheduleObject();
+    [DataMember] public ScheduleObject ScheduleObject = new ScheduleObject();
     [DataMember] private logVar<bool> isAScheduledMatch = new logVar<bool>();
-    [DataMember] private EventManager matchEventManager = new EventManager();
+    [DataMember] public EventManager MatchEventManager = new EventManager();
     [DataMember] private logEnum<MatchState> matchState = new logEnum<MatchState>();
 
     [DataMember] private logConcurrentBag<ulong> alreadySuggestedTimes = new logConcurrentBag<ulong>();

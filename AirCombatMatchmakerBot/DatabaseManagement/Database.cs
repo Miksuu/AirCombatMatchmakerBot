@@ -5,37 +5,6 @@ using System.Runtime.Serialization;
 [DataContract]
 public class Database
 {
-    public PlayerData PlayerData
-    {
-        get => playerData.GetValue();
-        set => playerData.SetValue(value);
-    }
-    public Admins Admins
-    {
-        get => admins.GetValue();
-        set => admins.SetValue(value);
-    }
-    public CachedUsers CachedUsers
-    {
-        get => cachedUsers.GetValue();
-        set => cachedUsers.SetValue(value);
-    }
-    public Categories Categories
-    {
-        get => categories.GetValue();
-        set => categories.SetValue(value);
-    }
-    public Leagues Leagues
-    {
-        get => leagues.GetValue();
-        set => leagues.SetValue(value);
-    }
-    public EventScheduler EventScheduler
-    {
-        get => eventScheduler.GetValue();
-        set => eventScheduler.SetValue(value);
-    }
-
     public ConcurrentBag<LeagueMatch> ArchivedLeagueMatches
     {
         get => archivedLeagueMatches.GetValue();
@@ -71,12 +40,12 @@ public class Database
     public static string dbPathWithFileName = dbPath + @"\" + dbFileName;
 
     // The Database components
-    [DataMember] private PlayerData playerData = new PlayerData();
-    [DataMember] private Admins admins = new Admins();
-    [DataMember] private CachedUsers cachedUsers = new CachedUsers();
-    [DataMember] private Categories categories = new Categories();
-    [DataMember] private Leagues leagues = new Leagues();
-    [DataMember] private EventScheduler eventScheduler = new EventScheduler();
+    [DataMember] public PlayerData PlayerData = new PlayerData();
+    [DataMember] public Admins Admins = new Admins();
+    [DataMember] public CachedUsers CachedUsers = new CachedUsers();
+    [DataMember] public Categories Categories = new Categories();
+    [DataMember] public Leagues Leagues = new Leagues();
+    [DataMember] public EventScheduler EventScheduler = new EventScheduler();
     [DataMember] private logConcurrentBag<LeagueMatch> archivedLeagueMatches = new logConcurrentBag<LeagueMatch>();
 
     public async Task RemovePlayerFromTheDatabase(ulong _playerDiscordId)

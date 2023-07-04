@@ -4,8 +4,8 @@ using System.ComponentModel.Design;
 using System.Runtime.Serialization;
 
 [DataContract]
-public class EventScheduler : logClass<EventScheduler>
-{
+public class EventScheduler 
+{ 
     public ulong LastUnixTimeCheckedOn
     {
         get => lastUnixTimeExecutedOn.GetValue();

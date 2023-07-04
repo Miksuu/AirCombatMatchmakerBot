@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class Stats : logClass<Stats>
+public class Stats
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<UnitName, StatValues> PlaneSpecificStats
@@ -11,17 +11,11 @@ public class Stats : logClass<Stats>
         set => planeSpecificStats.SetValue(value);
     }
 
-    public StatValues TotalStatValuesCached
-    {
-        get => totalStatValuesCached.GetValue();
-        set => totalStatValuesCached.SetValue(value);
-    }
-
     [DataMember]
     private logConcurrentDictionary<UnitName, StatValues> planeSpecificStats =
         new logConcurrentDictionary<UnitName, StatValues>();
 
-    private StatValues totalStatValuesCached = new StatValues();
+    public StatValues TotalStatValuesCached = new StatValues();
 
     public Stats()
     {

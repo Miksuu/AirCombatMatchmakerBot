@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 
 [DataContract]
-public class Teams : logClass<Teams>
+public class Teams
 {
     public ConcurrentBag<Team> TeamsConcurrentBag
     {

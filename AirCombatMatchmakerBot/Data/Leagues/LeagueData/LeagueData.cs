@@ -2,36 +2,12 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class LeagueData : logClass<LeagueData>
+public class LeagueData
 {
-    public Teams Teams
-    {
-        get => teams.GetValue();
-        set => teams.SetValue(value);
-    }
-
-    public ChallengeStatus ChallengeStatus
-    {
-        get => challengeStatus.GetValue();
-        set => challengeStatus.SetValue(value);
-    }
-
-    public MatchScheduler MatchScheduler
-    {
-        get => matchScheduler.GetValue();
-        set => matchScheduler.SetValue(value);
-    }
-
-    public Matches Matches
-    {
-        get => matches.GetValue();
-        set => matches.SetValue(value);
-    }
-
-    [DataMember] private Teams teams = new Teams();
-    [DataMember] private ChallengeStatus challengeStatus = new ChallengeStatus();
-    [DataMember] private MatchScheduler matchScheduler = new MatchScheduler();
-    [DataMember] private Matches matches = new Matches();
+    [DataMember] public Teams Teams = new Teams();
+    [DataMember] public ChallengeStatus ChallengeStatus = new ChallengeStatus();
+    [DataMember] public MatchScheduler MatchScheduler = new MatchScheduler();
+    [DataMember] public Matches Matches = new Matches();
 
     public InterfaceLeague interfaceLeagueRef;
 

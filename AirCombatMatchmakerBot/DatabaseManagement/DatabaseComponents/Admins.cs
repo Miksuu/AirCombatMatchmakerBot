@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 
 [DataContract]
-public class Admins : logClass<Admins>
+public class Admins
 {
     ConcurrentBag<ulong> AdminIDs
     {

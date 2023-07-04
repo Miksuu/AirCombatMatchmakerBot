@@ -4,7 +4,7 @@ using Discord;
 using Discord.WebSocket;
 
 [DataContract]
-public class Categories : logClass<Categories>
+public class Categories
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<ulong, InterfaceCategory> CreatedCategoriesWithChannels

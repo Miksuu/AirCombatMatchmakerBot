@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 [DataContract]
-public class EventManager : logClass<EventManager>
+public class EventManager
 {
     public ConcurrentBag<ScheduledEvent> ClassScheduledEvents
     {

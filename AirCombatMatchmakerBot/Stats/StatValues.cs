@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 
 [DataContract]
-public class StatValues : logClass<StatValues>
+public class StatValues
 {
     public int Wins
     {
