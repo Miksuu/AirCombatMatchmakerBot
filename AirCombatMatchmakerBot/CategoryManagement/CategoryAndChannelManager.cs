@@ -83,6 +83,13 @@ public static class CategoryAndChannelManager
                 return;
             }
 
+            SocketRole? role = await RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(_guild, finalCategoryName);
+            if (role == null)
+            {
+                Log.WriteLine(nameof(role).ToString() + " was null!", LogLevel.CRITICAL);
+                return;
+            }
+
             InterfaceLeague? interfaceLeague = null;
             if (_categoryType == CategoryType.LEAGUETEMPLATE)
             {
@@ -93,7 +100,7 @@ public static class CategoryAndChannelManager
                     return;
                 }
 
-                interfaceLeague = GetOrCreateLeague(leagueInterface, socketCategoryChannel.Id);
+                interfaceLeague = GetOrCreateLeague(leagueInterface, socketCategoryChannel.Id, role.Id);
                 if (interfaceLeague == null)
                 {
                     Log.WriteLine(nameof(interfaceLeague).ToString() + " was null!", LogLevel.CRITICAL);
@@ -101,12 +108,7 @@ public static class CategoryAndChannelManager
                 }
             }
 
-            SocketRole? role = await RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(_guild, finalCategoryName);
-            if (role == null)
-            {
-                Log.WriteLine(nameof(role).ToString() + " was null!", LogLevel.CRITICAL);
-                return;
-            }
+
 
             if (Database.Instance.Categories.FindIfInterfaceCategoryExistsWithCategoryId(socketCategoryChannel.Id))
             {
@@ -215,7 +217,7 @@ public static class CategoryAndChannelManager
         }
     }
 
-    private static InterfaceLeague? GetOrCreateLeague(InterfaceLeague _leagueInterface, ulong _socketCategoryChannelId)
+    private static InterfaceLeague? GetOrCreateLeague(InterfaceLeague _leagueInterface, ulong _socketCategoryChannelId, ulong _roleId)
     {
         if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(_leagueInterface.LeagueCategoryName))
         {
@@ -237,6 +239,7 @@ public static class CategoryAndChannelManager
         }
         else
         {
+            _leagueInterface.LeagueRoleId = _roleId;
             _leagueInterface.LeagueCategoryId = _socketCategoryChannelId;
             Database.Instance.Leagues.AddToStoredLeagues(_leagueInterface);
             _leagueInterface.LeagueData.SetReferences(_leagueInterface);
