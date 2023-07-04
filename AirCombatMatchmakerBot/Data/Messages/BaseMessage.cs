@@ -145,7 +145,6 @@ public abstract class BaseMessage : InterfaceMessage
         // Generates either normal buttons, or custom amount of buttons with different properties
         GenerateButtons(component, _leagueCategoryId);
 
-
         messageForGenerating = "\n" + GenerateMessage(_leagueCategoryId).Result;
 
         if (_displayMessage)
