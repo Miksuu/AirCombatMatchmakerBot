@@ -350,7 +350,22 @@ public abstract class BaseCategory : InterfaceCategory
             return false;
         }
 
-        Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelName);
+        Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelId);
+        return true;
+    }
+
+    public bool FindIfInterfaceChannelExistsWithNameInTheCategory(
+        ChannelType _nameToSearchWith)
+    {
+        Log.WriteLine("Getting to see if CategoryKvp exists with name: " + _nameToSearchWith);
+
+        var foundInterfaceChannel = InterfaceChannels.FirstOrDefault(x => x.Value.ChannelType == _nameToSearchWith);
+        if (foundInterfaceChannel.Value == null)
+        {
+            return false;
+        }
+
+        Log.WriteLine("Found: " + foundInterfaceChannel.Value.ChannelType);
         return true;
     }
 

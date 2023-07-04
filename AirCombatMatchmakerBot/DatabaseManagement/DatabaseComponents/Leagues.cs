@@ -191,7 +191,7 @@ public class Leagues : logClass<Leagues>
 
                 league.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(playerId);
 
-                InterfaceMessage interfaceMessage = Database.Instance.Categories.FindInterfaceCategoryWithId(
+                InterfaceMessage interfaceMessage = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                     league.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
                         ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
                             MessageName.CHALLENGEMESSAGE);

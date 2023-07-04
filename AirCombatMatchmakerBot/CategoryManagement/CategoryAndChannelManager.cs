@@ -1,3 +1,4 @@
+using Discord;
 using Discord.WebSocket;
 
 public static class CategoryAndChannelManager
@@ -105,6 +106,11 @@ public static class CategoryAndChannelManager
             {
                 Log.WriteLine(nameof(role).ToString() + " was null!", LogLevel.CRITICAL);
                 return;
+            }
+
+            if (Database.Instance.Categories.FindIfInterfaceCategoryExistsWithCategoryId(socketCategoryChannel.Id))
+            {
+                interfaceCategory = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(socketCategoryChannel.Id);
             }
 
             await interfaceCategory.CreateChannelsForTheCategory(socketCategoryChannel.Id, _client, role);
@@ -221,7 +227,7 @@ public static class CategoryAndChannelManager
             }
 
             interfaceLeague.LeagueData.ChallengeStatus.TeamsInTheQueue.Clear();
-            var message = Database.Instance.Categories.FindInterfaceCategoryWithId(interfaceLeague.LeagueCategoryId)
+            var message = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(interfaceLeague.LeagueCategoryId)
                 .FindInterfaceChannelWithNameInTheCategory(ChannelType.CHALLENGE)
                 .FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
             message.GenerateAndModifyTheMessage();

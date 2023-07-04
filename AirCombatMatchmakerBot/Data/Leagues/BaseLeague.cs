@@ -106,7 +106,7 @@ public abstract class BaseLeague : InterfaceLeague
             " with id: " + LeagueCategoryId);
 
         InterfaceCategory interfaceCategory = 
-            Database.Instance.Categories.FindInterfaceCategoryWithId(LeagueCategoryId);
+            Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
@@ -124,7 +124,7 @@ public abstract class BaseLeague : InterfaceLeague
         try
         {
             InterfaceCategory leagueCategory =
-                Database.Instance.Categories.FindInterfaceCategoryWithId(LeagueCategoryId);
+                Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
 
             InterfaceChannel matchReportsChannelInterface =
                 leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
@@ -160,7 +160,7 @@ public abstract class BaseLeague : InterfaceLeague
         try
         {
             InterfaceMessage leagueStatusMessage =
-                Database.Instance.Categories.FindInterfaceCategoryWithId(
+                Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                     LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(ChannelType.LEAGUESTATUS).
                         FindInterfaceMessageWithNameInTheChannel(
                             MessageName.LEAGUESTATUSMESSAGE);
@@ -187,7 +187,7 @@ public abstract class BaseLeague : InterfaceLeague
             Log.WriteLine("Registering user to league: " +
                 thisInterfaceLeague.LeagueCategoryName);
 
-            InterfaceChannel foundChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            InterfaceChannel foundChannel = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
                     ChannelType.CHALLENGE);
 

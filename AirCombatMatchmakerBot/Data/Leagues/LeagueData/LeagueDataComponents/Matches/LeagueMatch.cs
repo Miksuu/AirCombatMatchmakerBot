@@ -259,7 +259,7 @@ public class LeagueMatch : logClass<LeagueMatch>
                 return new Response("You have already suggested a date for the match!", false);
             }
 
-            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelId);
 
@@ -321,7 +321,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
         Log.WriteLine("player: " + _playerId + " on team: " + _playerTeamId + " accepted the match.", LogLevel.DEBUG);
 
-        InterfaceChannel _interfaceChannelTemp = Database.Instance.Categories.FindInterfaceCategoryWithId(
+        InterfaceChannel _interfaceChannelTemp = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
             Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                 MatchChannelId);
 
@@ -412,7 +412,7 @@ public class LeagueMatch : logClass<LeagueMatch>
 
             Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 
-            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 interfaceLeagueRef.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelId);
 

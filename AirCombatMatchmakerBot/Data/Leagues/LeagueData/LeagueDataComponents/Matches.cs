@@ -78,7 +78,7 @@ public class Matches : logClass<Matches>
             Log.WriteLine("Starting to create a new match channel: " +
                 overriddenMatchName);
 
-            var dbRegularCategory = Database.Instance.Categories.FindInterfaceCategoryWithId(categoryKvp.LeagueCategoryId);
+            var dbRegularCategory = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(categoryKvp.LeagueCategoryId);
 
             // Prepare the match with the ID of the current new match
             InterfaceChannel interfaceChannel = await dbRegularCategory.CreateSpecificChannelFromChannelTypeWithoutRole(

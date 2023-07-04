@@ -76,7 +76,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
 
         try
         {
-            Database.Instance.Categories.FindInterfaceCategoryWithId(
+            Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannelAndUpdateItIfItExists(
                         MessageName.CONFIRMMATCHENTRYMESSAGE);

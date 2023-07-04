@@ -37,7 +37,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         thisInterfaceMessage.MessageEmbedTitle = EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName);
 
-        var category = Database.Instance.Categories.FindInterfaceCategoryWithId(belongsToLeagueCategoryId);
+        var category = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(belongsToLeagueCategoryId);
 
         string returned =
             GetAllowedUnitsAsString(interfaceLeague) + "\n" +

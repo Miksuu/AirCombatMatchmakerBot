@@ -156,7 +156,7 @@ public class Database
 
             try
             {
-                var challengeMessage = Categories.FindInterfaceCategoryWithId(
+                var challengeMessage = Categories.FindInterfaceCategoryWithCategoryId(
                     interfaceLeague.LeagueCategoryId).
                         FindInterfaceChannelWithNameInTheCategory(
                             ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(

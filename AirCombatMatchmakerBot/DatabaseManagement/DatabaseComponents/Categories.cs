@@ -26,19 +26,34 @@ public class Categories : logClass<Categories>
     [DataMember] private logConcurrentDictionary<ulong, ulong> matchChannelsIdWithCategoryId =
         new logConcurrentDictionary<ulong, ulong>();
 
-    public InterfaceCategory FindInterfaceCategoryWithId(
-        ulong _channelIdToSearchWith)
+    public InterfaceCategory FindInterfaceCategoryWithCategoryId(
+        ulong _categoryIdToSearchWith)
     {
-        Log.WriteLine("Getting CategoryKvp with id: " + _channelIdToSearchWith);
-        InterfaceCategory interfaceCategory = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Key == _channelIdToSearchWith).Value;
+        Log.WriteLine("Getting CategoryKvp with id: " + _categoryIdToSearchWith);
+        InterfaceCategory interfaceCategory = CreatedCategoriesWithChannels.FirstOrDefault(x => x.Key == _categoryIdToSearchWith).Value;
         if (interfaceCategory == null)
         {
-            string errorMsg = nameof(interfaceCategory) + " was null! with id: " + _channelIdToSearchWith;
+            string errorMsg = nameof(interfaceCategory) + " was null! with id: " + _categoryIdToSearchWith;
             Log.WriteLine(errorMsg, LogLevel.CRITICAL);
             throw new InvalidOperationException(errorMsg);
         }
         Log.WriteLine("Found: " + interfaceCategory.CategoryType);
         return interfaceCategory;
+    }
+    public bool FindIfInterfaceCategoryExistsWithCategoryId(
+        ulong _categoryIdToSearchWith)
+    {
+        Log.WriteLine("Getting if CategoryKvp exists with id: " + _categoryIdToSearchWith);
+        bool exists = CreatedCategoriesWithChannels.Any(x => x.Key == _categoryIdToSearchWith);
+        if (!exists)
+        {
+            Log.WriteLine(nameof(InterfaceCategory) + " did not exist! with id: " +
+                _categoryIdToSearchWith, LogLevel.CRITICAL);
+
+            return false;
+        }
+        Log.WriteLine("Found: " + _categoryIdToSearchWith);
+        return true;
     }
 
     public InterfaceCategory FindInterfaceCategoryWithChannelId(
@@ -115,7 +130,7 @@ public class Categories : logClass<Categories>
         Log.WriteLine("Getting jump URL with: " + _leagueCategoryId +
             " | " + _channelId + " | " + _messageName);
 
-        var messageToFind = Database.Instance.Categories.FindInterfaceCategoryWithId(
+        var messageToFind = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
             _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
                 _channelId).FindInterfaceMessageWithNameInTheChannel(
                     _messageName);

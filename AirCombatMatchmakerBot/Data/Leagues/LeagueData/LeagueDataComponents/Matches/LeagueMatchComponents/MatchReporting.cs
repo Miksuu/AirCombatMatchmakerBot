@@ -139,7 +139,7 @@ public class MatchReporting : logClass<MatchReporting>
                 }
             }
             InterfaceChannel interfaceChannel =
-                Database.Instance.Categories.FindInterfaceCategoryWithId(
+                Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                     _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
                         _messageChannelId);
 
@@ -262,7 +262,7 @@ public class MatchReporting : logClass<MatchReporting>
     {
         try
         {
-            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithId(
+            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
 
             bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown(interfaceChannel);
