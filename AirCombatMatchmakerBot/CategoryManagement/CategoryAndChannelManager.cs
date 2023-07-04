@@ -92,7 +92,7 @@ public static class CategoryAndChannelManager
                     return;
                 }
 
-                interfaceLeague = GetOrCreateLeague(leagueInterface);
+                interfaceLeague = GetOrCreateLeague(leagueInterface, socketCategoryChannel.Id);
                 if (interfaceLeague == null)
                 {
                     Log.WriteLine(nameof(interfaceLeague).ToString() + " was null!", LogLevel.CRITICAL);
@@ -209,7 +209,7 @@ public static class CategoryAndChannelManager
         }
     }
 
-    private static InterfaceLeague? GetOrCreateLeague(InterfaceLeague _leagueInterface)
+    private static InterfaceLeague? GetOrCreateLeague(InterfaceLeague _leagueInterface, ulong _socketCategoryChannelId)
     {
         if (Database.Instance.Leagues.CheckIfILeagueExistsByCategoryName(_leagueInterface.LeagueCategoryName))
         {
@@ -231,6 +231,7 @@ public static class CategoryAndChannelManager
         }
         else
         {
+            _leagueInterface.LeagueCategoryId = _socketCategoryChannelId;
             Database.Instance.Leagues.AddToStoredLeagues(_leagueInterface);
             _leagueInterface.LeagueData.SetReferences(_leagueInterface);
             return _leagueInterface;
