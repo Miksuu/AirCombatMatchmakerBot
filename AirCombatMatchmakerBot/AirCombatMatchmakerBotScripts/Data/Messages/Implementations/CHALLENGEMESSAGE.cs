@@ -41,7 +41,7 @@ public class CHALLENGEMESSAGE : BaseMessage
                 thisInterfaceMessage.MessageChannelId + " on category: " + thisInterfaceMessage.MessageCategoryId);
 
             foreach (var createdCategoriesKvp in
-                Database.Instance.Categories.CreatedCategoriesWithChannels)
+                DiscordBotDatabase.Instance.Categories.CreatedCategoriesWithChannels)
             {
                 Log.WriteLine("On league: " +
                     createdCategoriesKvp.Value.CategoryType);

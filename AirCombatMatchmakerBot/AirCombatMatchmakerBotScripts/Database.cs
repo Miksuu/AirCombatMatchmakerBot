@@ -49,6 +49,7 @@ public class Database
 
     // The Database components
     [DataMember] public Leagues Leagues = new Leagues();
+    [DataMember] public PlayerData PlayerData = new PlayerData();
 
     [DataMember] public logConcurrentDictionary<ulong, ulong> matchChannelsIdWithCategoryId =
     new logConcurrentDictionary<ulong, ulong>();

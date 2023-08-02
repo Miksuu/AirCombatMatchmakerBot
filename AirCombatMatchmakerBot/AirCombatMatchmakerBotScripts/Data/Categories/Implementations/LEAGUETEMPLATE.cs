@@ -20,12 +20,14 @@ public class LEAGUETEMPLATE : BaseCategory
     }
 
     public override List<Overwrite> GetGuildPermissions(
-        SocketGuild _guild, SocketRole _role)
+        SocketRole _role)
     {
+        var guild = BotReference.GetGuildRef();
+
         Log.WriteLine("executing permissions from LEAGUETEMPLATE");
         return new List<Overwrite>
         {
-            new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
+            new Overwrite(guild.EveryoneRole.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)),
 
             new Overwrite(_role.Id, PermissionTarget.Role,

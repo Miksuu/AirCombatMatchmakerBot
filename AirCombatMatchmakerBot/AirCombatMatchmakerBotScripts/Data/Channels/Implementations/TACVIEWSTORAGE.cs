@@ -11,7 +11,7 @@ public class TACVIEWSTORAGE : BaseChannel
     }
 
     public override List<Overwrite> GetGuildPermissions(
-        SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray)
+        SocketRole _role, params ulong[] _allowedUsersIdsArray)
     {
         return new List<Overwrite>
         {

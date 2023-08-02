@@ -19,15 +19,17 @@ public class MATCHCHANNEL : BaseChannel
     }
 
     public override List<Overwrite> GetGuildPermissions(
-        SocketGuild _guild, SocketRole _role, params ulong[] _allowedUsersIdsArray)
+        SocketRole _role, params ulong[] _allowedUsersIdsArray)
     {
+        var guild = BotReference.GetGuildRef();
+
         List<Overwrite> listOfOverwrites = new List<Overwrite>();
 
         Log.WriteLine("Overwriting permissions for: " + thisInterfaceChannel.ChannelName +
             " users that will be allowed access count: " +
             _allowedUsersIdsArray.Length);
 
-        listOfOverwrites.Add(new Overwrite(_guild.EveryoneRole.Id, PermissionTarget.Role,
+        listOfOverwrites.Add(new Overwrite(guild.EveryoneRole.Id, PermissionTarget.Role,
                 new OverwritePermissions(viewChannel: PermValue.Deny)));
 
         foreach (ulong userId in _allowedUsersIdsArray)

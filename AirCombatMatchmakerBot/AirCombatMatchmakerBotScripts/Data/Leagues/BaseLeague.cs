@@ -95,8 +95,8 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Finding interfaceCategory in: " + thisInterfaceLeague.LeagueCategoryName +
             " with id: " + LeagueCategoryId);
 
-        InterfaceCategory interfaceCategory = 
-            Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
+        InterfaceCategory interfaceCategory =
+            DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
@@ -114,7 +114,7 @@ public abstract class BaseLeague : InterfaceLeague
         try
         {
             InterfaceCategory leagueCategory =
-                Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
+                DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
 
             InterfaceChannel matchReportsChannelInterface =
                 leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
@@ -150,7 +150,7 @@ public abstract class BaseLeague : InterfaceLeague
         try
         {
             InterfaceMessage leagueStatusMessage =
-                Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+                DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                     LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(ChannelType.LEAGUESTATUS).
                         FindInterfaceMessageWithNameInTheChannel(
                             MessageName.LEAGUESTATUSMESSAGE);
@@ -177,7 +177,7 @@ public abstract class BaseLeague : InterfaceLeague
             Log.WriteLine("Registering user to league: " +
                 thisInterfaceLeague.LeagueCategoryName);
 
-            InterfaceChannel foundChannel = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            InterfaceChannel foundChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
                     ChannelType.CHALLENGE);
 

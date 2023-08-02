@@ -16,7 +16,7 @@ public class REGISTRATIONCATEGORY : BaseCategory
         };
     }
 
-    public override List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role)
+    public override List<Overwrite> GetGuildPermissions(SocketRole _role)
     {
         Log.WriteLine("executing permissions from REGISTRATIONCATEGORY");
         return new List<Overwrite>
