@@ -1,0 +1,3 @@
+[submodule "AirCombatMatchmakerBot/DiscordBotFramework"]
+	path = AirCombatMatchmakerBot/DiscordBotFramework
+	url = https://github.com/Miksuu/DiscordBotFramework.git
