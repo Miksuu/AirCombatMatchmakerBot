@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Leagues\LeagueData\LeagueDataComponents\MatchSchedulerComponents\TeamMatchmakerDataComponents\" />
+    <Folder Include="AirCombatMatchmakerBotScript\Data\Leagues\LeagueData\LeagueDataComponents\MatchSchedulerComponents\TeamMatchmakerDataComponents\" />
   </ItemGroup>
 
 </Project>
