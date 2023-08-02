@@ -7,6 +7,13 @@ using System.Runtime.Serialization;
 [DataContract]
 public class Database
 {
+    [IgnoreDataMember]
+    public ConcurrentDictionary<ulong, ulong> MatchChannelsIdWithCategoryId
+    {
+        get => matchChannelsIdWithCategoryId.GetValue();
+        set => matchChannelsIdWithCategoryId.SetValue(value);
+    }
+
     public static Database Instance
     {
         get
@@ -41,5 +48,8 @@ public class Database
     public static string dbTempPathWithFileName = DiscordBotDatabase.dbPathWithFileName + @"\" + dbTempFileName;
 
     // The Database components
-    [DataMember] public Leagues leagues = new Leagues();
+    [DataMember] public Leagues Leagues = new Leagues();
+
+    [DataMember] public logConcurrentDictionary<ulong, ulong> matchChannelsIdWithCategoryId =
+    new logConcurrentDictionary<ulong, ulong>();
 }
