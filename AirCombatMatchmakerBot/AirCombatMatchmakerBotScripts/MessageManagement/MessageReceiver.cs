@@ -18,7 +18,7 @@ public static class MessageReceiver
         if (!Database.Instance.MatchChannelsIdWithCategoryId.ContainsKey(
             _socketMessage.Channel.Id))
         {
-            Log.WriteLine("Is not in " + nameof(DiscordBotDatabase.Instance.Categories.MatchChannelsIdWithCategoryId) + ", returning");
+            Log.WriteLine("Is not in " + nameof(Database.Instance.MatchChannelsIdWithCategoryId) + ", returning");
             return;
         }
 
