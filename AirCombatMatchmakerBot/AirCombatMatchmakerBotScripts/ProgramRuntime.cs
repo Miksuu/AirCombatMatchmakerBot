@@ -32,7 +32,7 @@ public class ProgramRuntime
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
-                //await DevTools.DeleteAllCategoriesChannelsAndRoles();
+                await DevTools.DeleteAllCategoriesChannelsAndRoles();
 
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
