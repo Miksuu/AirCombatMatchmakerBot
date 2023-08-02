@@ -77,7 +77,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
 
             if (addTeamBackToTheQueue)
             {
-                InterfaceMessage interfaceMessage = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+                InterfaceMessage interfaceMessage = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                     mcc.interfaceLeagueCached.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
                         ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(MessageName.CHALLENGEMESSAGE);
 
@@ -119,7 +119,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
                     mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray().ToList());
             }
 
-            Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannelAndUpdateItIfItExists(
                         MessageName.CONFIRMMATCHENTRYMESSAGE);

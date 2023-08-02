@@ -14,6 +14,12 @@ public class Database
         set => matchChannelsIdWithCategoryId.SetValue(value);
     }
 
+    public ConcurrentBag<LeagueMatch> ArchivedLeagueMatches
+    {
+        get => archivedLeagueMatches.GetValue();
+        set => archivedLeagueMatches.SetValue(value);
+    }
+
     public static Database Instance
     {
         get
@@ -48,9 +54,13 @@ public class Database
     public static string dbTempPathWithFileName = DiscordBotDatabase.dbPathWithFileName + @"\" + dbTempFileName;
 
     // The Database components
+    [DataMember] public CachedUsers CachedUsers = new CachedUsers();
     [DataMember] public Leagues Leagues = new Leagues();
     [DataMember] public PlayerData PlayerData = new PlayerData();
 
-    [DataMember] public logConcurrentDictionary<ulong, ulong> matchChannelsIdWithCategoryId =
+    [DataMember]
+    public logConcurrentDictionary<ulong, ulong> matchChannelsIdWithCategoryId =
     new logConcurrentDictionary<ulong, ulong>();
+    [DataMember]
+    public logConcurrentBag<LeagueMatch> archivedLeagueMatches = new logConcurrentBag<LeagueMatch>();
 }

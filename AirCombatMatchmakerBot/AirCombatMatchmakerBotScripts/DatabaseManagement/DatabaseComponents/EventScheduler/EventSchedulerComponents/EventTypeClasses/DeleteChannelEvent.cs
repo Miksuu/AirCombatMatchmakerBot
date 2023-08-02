@@ -67,7 +67,7 @@ public class DeleteChannelEvent : ScheduledEvent
                 categoryId + "|" + channelId + "|" + nameMustContain);
 
             InterfaceCategory interfaceCategory =
-                Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(categoryId);
+                DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(categoryId);
 
             Log.WriteLine("Event: " + EventId + " before " +
                 nameof(interfaceCategory.FindIfInterfaceChannelExistsWithIdInTheCategory));
@@ -110,7 +110,7 @@ public class DeleteChannelEvent : ScheduledEvent
     {
         try
         {
-            Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannelAndUpdateItIfItExists(
                         MessageName.CONFIRMATIONMESSAGE);

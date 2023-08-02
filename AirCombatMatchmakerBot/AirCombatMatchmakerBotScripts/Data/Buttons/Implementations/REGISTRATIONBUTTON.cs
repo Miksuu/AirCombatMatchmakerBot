@@ -30,7 +30,7 @@ public class REGISTRATIONBUTTON : BaseButton
 
         try
         {
-            registrationChannel = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            registrationChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithNameInTheCategory(
                     ChannelType.LEAGUEREGISTRATION);
             registrationChannelCheck = "\n\n Check <#" + registrationChannel.ChannelId + "> for all the available leagues!";

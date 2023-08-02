@@ -170,7 +170,7 @@ public class Team
             var timeLeft = TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlaceWithTimeLeft(
                 leagueMatch.MatchEventManager.GetTimeUntilEventOfType(typeof(MatchQueueAcceptEvent)));
 
-            generatedJumpUrlsWithTime += " [" + timeLeft + " until " + await Database.Instance.Categories.GetMessageJumpUrl(
+            generatedJumpUrlsWithTime += " [" + timeLeft + " until " + await DiscordBotDatabase.Instance.Categories.GetMessageJumpUrl(
                     leagueMatch.interfaceLeagueRef.LeagueCategoryId, leagueMatch.MatchChannelId,
                     MessageName.MATCHSTARTMESSAGE) + "]";
         }

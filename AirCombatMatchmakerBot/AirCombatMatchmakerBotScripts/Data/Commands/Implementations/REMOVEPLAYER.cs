@@ -28,9 +28,9 @@ public class REMOVEPLAYER : BaseCommand
             return new Response("Command input was invalid!", false);
         }
 
-        await Database.Instance.RemovePlayerFromTheDatabase(playerToBeRemoved);
+        //await Database.Instance.RemovePlayerFromTheDatabase(playerToBeRemoved);
 
-        Log.WriteLine("playerToBeRemoved: " + playerToBeRemoved, LogLevel.DEBUG);
+        Log.WriteLine("playerToBeRemoved: " + playerToBeRemoved, LogLevel.WARNING);
 
         return new Response("Player: " + playerToBeRemoved + " removed succesfully!", true);
     }

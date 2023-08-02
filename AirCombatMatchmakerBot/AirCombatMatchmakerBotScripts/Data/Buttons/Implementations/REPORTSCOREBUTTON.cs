@@ -36,7 +36,7 @@ public class REPORTSCOREBUTTON : BaseButton
             ulong playerId = _component.User.Id;
             int playerReportedResult = int.Parse(splitStrings[1]);
             InterfaceMessage reportingStatusMessage =
-                Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+                DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                     _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
                         _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
                             MessageName.REPORTINGSTATUSMESSAGE);

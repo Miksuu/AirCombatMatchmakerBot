@@ -51,7 +51,7 @@ public static class TacviewManager
             try
             {
                 InterfaceChannel interfaceChannel =
-                Database.Instance.Categories.FindInterfaceChannelInsideACategoryWithNames(
+                DiscordBotDatabase.Instance.Categories.FindInterfaceChannelInsideACategoryWithNames(
                     CategoryType.BOTSTUFF, ChannelType.TACVIEWSTORAGE);
 
                 cachedUserMessage =

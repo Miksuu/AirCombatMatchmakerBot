@@ -142,7 +142,7 @@ public class Leagues
                             {
                                 findLeagueCategoryType = GetILeagueByString(storedLeagueString);
 
-                                interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryByCategoryName(
+                                interfaceChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryByCategoryName(
                                     CategoryType.REGISTRATIONCATEGORY).FindInterfaceChannelWithNameInTheCategory(
                                         ChannelType.LEAGUEREGISTRATION);
                             }
@@ -191,7 +191,7 @@ public class Leagues
 
                 league.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(playerId);
 
-                InterfaceMessage interfaceMessage = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+                InterfaceMessage interfaceMessage = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                     league.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
                         ChannelType.CHALLENGE).FindInterfaceMessageWithNameInTheChannel(
                             MessageName.CHALLENGEMESSAGE);
@@ -315,7 +315,7 @@ public class Leagues
             var playerArray = leagueMatch.GetIdsOfThePlayersInTheMatchAsArray();
             if (playerArray.Contains(_suggestedByPlayerId))
             {
-                stringOfMatches += "Your match " + await Database.Instance.Categories.GetMessageJumpUrl(
+                stringOfMatches += "Your match " + await DiscordBotDatabase.Instance.Categories.GetMessageJumpUrl(
                     leagueMatch.interfaceLeagueRef.LeagueCategoryId, leagueMatch.MatchChannelId, MessageName.MATCHSTARTMESSAGE) + " is at " +
                     TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
                     TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime) + ".";

@@ -3,7 +3,7 @@ using Discord.WebSocket;
 
 public class ProgramRuntime
 {
-    DiscordSocketClient client;
+    static public EventManager eventManager;
 
     public async Task ProgramRuntimeTask()
     {
@@ -14,7 +14,7 @@ public class ProgramRuntime
         await SerializationManager.DeSerializeDB();
 
         // Set up client and return it
-        client = BotReference.SetClientRefAndReturnIt();
+        DiscordSocketClient client = BotReference.SetClientRefAndReturnIt();
 
         // Reads token from the same directory as the .exe
         var token = File.ReadAllText("token.txt");
@@ -23,9 +23,9 @@ public class ProgramRuntime
 
         client.Ready += async () =>
         {
-            if (!BotReference.GetConnectionState())
+            if (!BotReference.Instance.ConnectionState)
             {
-                BotReference.SetConnectionState(true);
+                BotReference.Instance.ConnectionState = true;
                 Log.WriteLine("Bot is connected!", LogLevel.DEBUG);
 
                 // !!!
@@ -72,20 +72,22 @@ public class ProgramRuntime
 
         await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
 
-        await Database.Instance.EventScheduler.CheckCurrentTimeAndExecuteScheduledEvents(true);
+        await DiscordBotDatabase.Instance.EventScheduler.CheckCurrentTimeAndExecuteScheduledEvents(true);
 
-        await SerializationManager.SerializeUsersOnTheServer();
+        //await SerializationManager.SerializeUsersOnTheServer();
         await SerializationManager.SerializeDB();
 
         await CommandHandler.InstallCommandsAsync();
 
-        Thread secondThread = new Thread(Database.Instance.EventScheduler.EventSchedulerLoop);
+        Thread secondThread = new Thread(DiscordBotDatabase.Instance.EventScheduler.EventSchedulerLoop);
         secondThread.Start();
     }
 
     private void HandleBotReconnection() 
     { 
         Log.WriteLine("Bot was already connected!", LogLevel.WARNING);
+
+        var client = BotReference.GetClientRef();
 
         client.UserJoined -= UserManager.HandleUserJoin;
         client.ButtonExecuted -= ButtonHandler.HandleButtonPress;
@@ -98,6 +100,8 @@ public class ProgramRuntime
 
     private void SetupListeners()
     {
+        var client = BotReference.GetClientRef();
+
         client.UserJoined += UserManager.HandleUserJoin;
         client.ButtonExecuted += ButtonHandler.HandleButtonPress;
 

@@ -78,7 +78,7 @@ public class Matches
             Log.WriteLine("Starting to create a new match channel: " +
                 overriddenMatchName);
 
-            var dbRegularCategory = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(categoryKvp.LeagueCategoryId);
+            var dbRegularCategory = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(categoryKvp.LeagueCategoryId);
 
             // Prepare the match with the ID of the current new match
             InterfaceChannel interfaceChannel = await dbRegularCategory.CreateSpecificChannelFromChannelTypeWithoutRole(
@@ -88,10 +88,10 @@ public class Matches
 
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
-            if (!Database.Instance.Categories.MatchChannelsIdWithCategoryId.ContainsKey(
+            if (!Database.Instance.MatchChannelsIdWithCategoryId.ContainsKey(
                 interfaceChannel.ChannelId))
             {
-                Database.Instance.Categories.MatchChannelsIdWithCategoryId.TryAdd(
+                Database.Instance.MatchChannelsIdWithCategoryId.TryAdd(
                     interfaceChannel.ChannelId, categoryKvp.LeagueCategoryId);
             }
 
@@ -118,14 +118,7 @@ public class Matches
 
     public async void InitChannelOnSecondThread(LeagueMatch _leagueMatch, InterfaceChannel _interfaceChannel)
     {
-        var client = BotReference.GetClientRef();
-        if (client == null)
-        {
-            Exceptions.BotClientRefNull();
-            return;
-        }
-
-        await _interfaceChannel.PostChannelMessages(client);
+        await _interfaceChannel.PostChannelMessages();
 
         // Schedule the match queue timeout (if the players don't accept it in the time), only if the match is in the
         if (_leagueMatch.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)

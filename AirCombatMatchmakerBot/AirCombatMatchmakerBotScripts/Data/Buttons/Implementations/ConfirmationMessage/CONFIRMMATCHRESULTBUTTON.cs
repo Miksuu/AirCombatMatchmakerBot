@@ -75,7 +75,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
     private void FindAndGenerateAndModifyConfirmationMessageOnAnotherThread(InterfaceMessage _interfaceMessage)
     {
         InterfaceMessage confirmationMessage =
-        Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+        DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
             _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
                 _interfaceMessage.MessageChannelId).FindInterfaceMessageWithNameInTheChannel(
                     MessageName.CONFIRMATIONMESSAGE);

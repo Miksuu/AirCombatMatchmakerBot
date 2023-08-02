@@ -242,8 +242,8 @@ public class LeagueMatch
                 return new Response("You have already suggested a date for the match!", false);
             }
 
-            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
-                Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
+            InterfaceChannel interfaceChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+                Database.Instance.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelId);
 
             if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
@@ -304,8 +304,8 @@ public class LeagueMatch
 
         Log.WriteLine("player: " + _playerId + " on team: " + _playerTeamId + " accepted the match.", LogLevel.DEBUG);
 
-        InterfaceChannel _interfaceChannelTemp = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
-            Database.Instance.Categories.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
+        InterfaceChannel _interfaceChannelTemp = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            Database.Instance.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                 MatchChannelId);
 
         ulong timeUntilTemp = TimeService.CalculateTimeUntilWithUnixTime(ScheduleObject.RequestedSchedulingTimeInUnixTime);
@@ -395,7 +395,7 @@ public class LeagueMatch
 
             Log.WriteLine("Final result for the confirmation was null, but during player removal", LogLevel.DEBUG);
 
-            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            InterfaceChannel interfaceChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 interfaceLeagueRef.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelId);
 

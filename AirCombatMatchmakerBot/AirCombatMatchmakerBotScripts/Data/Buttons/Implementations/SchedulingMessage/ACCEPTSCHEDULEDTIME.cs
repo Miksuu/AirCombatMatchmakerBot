@@ -40,7 +40,7 @@ public class ACCEPTSCHEDULEDTIME : BaseButton
         // If the interaction was succesfull, start removing the message, perhaps move to another thread to improve responsibility
         if (response.serialize)
         {
-            await Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            await DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 mcc.interfaceLeagueCached.LeagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
                     mcc.leagueMatchCached.MatchChannelId).DeleteMessagesInAChannelWithMessageName(MessageName.MATCHSCHEDULINGMESSAGE);
         }

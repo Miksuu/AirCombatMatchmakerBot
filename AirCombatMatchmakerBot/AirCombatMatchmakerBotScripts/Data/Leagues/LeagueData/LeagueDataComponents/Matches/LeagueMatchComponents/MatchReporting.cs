@@ -139,7 +139,7 @@ public class MatchReporting
                 }
             }
             InterfaceChannel interfaceChannel =
-                Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+                DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                     _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
                         _messageChannelId);
 
@@ -262,7 +262,7 @@ public class MatchReporting
     {
         try
         {
-            InterfaceChannel interfaceChannel = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            InterfaceChannel interfaceChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
                 _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
 
             bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown(interfaceChannel);
