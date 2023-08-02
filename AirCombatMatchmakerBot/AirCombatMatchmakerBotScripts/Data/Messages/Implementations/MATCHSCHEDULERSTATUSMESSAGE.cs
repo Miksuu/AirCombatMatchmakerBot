@@ -57,4 +57,9 @@ public class MATCHSCHEDULERSTATUSMESSAGE : BaseMessage
             throw;
         }
     }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
+    }
 }

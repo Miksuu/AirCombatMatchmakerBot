@@ -102,7 +102,7 @@ public class CHALLENGEMESSAGE : BaseMessage
 
                 if (teamsThatHaveMatchesClose.Count() > 0)
                 {
-                    challengeMessage += "*Players will be removed from the queue 30 minutes before their scheduled match.*"; 
+                    challengeMessage += "*Players will be removed from the queue 30 minutes before their scheduled match.*";
                 }
 
                 Log.WriteLine("Challenge message generated: " + challengeMessage);
@@ -115,7 +115,7 @@ public class CHALLENGEMESSAGE : BaseMessage
 
             return Task.FromResult(string.Empty);
         }
-        catch(Exception ex) 
+        catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             throw;
@@ -155,5 +155,11 @@ public class CHALLENGEMESSAGE : BaseMessage
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             throw;
         }
+    }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
+        //return "Last updated at: " + DateTime.UtcNow.ToLongTimeString() + " " + DateTime.UtcNow.ToLongDateString() + " (GMT+0)";
     }
 }

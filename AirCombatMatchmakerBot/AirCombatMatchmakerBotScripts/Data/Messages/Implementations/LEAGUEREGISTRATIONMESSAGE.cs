@@ -37,7 +37,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         thisInterfaceMessage.MessageEmbedTitle = EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName);
 
-        var category = Database.Instance.Categories.FindInterfaceCategoryWithCategoryId(belongsToLeagueCategoryId);
+        var category = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(belongsToLeagueCategoryId);
 
         string returned =
             GetAllowedUnitsAsString(interfaceLeague) + "\n" +
@@ -54,7 +54,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
     {
         var channelId = _interfaceCategory.FindInterfaceChannelWithNameInTheCategory(_channelType).ChannelId;
 
-        return await Database.Instance.Categories.GetMessageJumpUrl(belongsToLeagueCategoryId, channelId, _messageName);
+        return await DiscordBotDatabase.Instance.Categories.GetMessageJumpUrl(belongsToLeagueCategoryId, channelId, _messageName);
     }
 
     private string GetAllowedUnitsAsString(InterfaceLeague _interfaceLeague)
@@ -108,5 +108,11 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         {
             return "Players: " + count;
         }
+    }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
+        //return "Last updated at: " + DateTime.UtcNow.ToLongTimeString() + " " + DateTime.UtcNow.ToLongDateString() + " (GMT+0)";
     }
 }

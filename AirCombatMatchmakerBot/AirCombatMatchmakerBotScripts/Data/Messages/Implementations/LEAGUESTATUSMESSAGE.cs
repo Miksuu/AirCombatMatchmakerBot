@@ -26,7 +26,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         string finalMessage = string.Empty;
         List<Team> sortedTeamListByElo = new List<Team>();
 
-        InterfaceLeague interfaceLeague = 
+        InterfaceLeague interfaceLeague =
             Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
 
         sortedTeamListByElo =
@@ -47,5 +47,10 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         }
 
         return Task.FromResult(finalMessage);
+    }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
     }
 }

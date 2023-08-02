@@ -96,4 +96,9 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
         return Task.FromResult(reportingStatusMessage);
     }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
+    }
 }

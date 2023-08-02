@@ -47,7 +47,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
 
                 if (firstTeam) { generatedMessage += " vs "; firstTeam = false; }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.WriteLine(ex.Message, LogLevel.CRITICAL);
                 continue;
@@ -55,5 +55,10 @@ public class MATCHSTARTMESSAGE : BaseMessage
         }
 
         return Task.FromResult(generatedMessage);
+    }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
     }
 }

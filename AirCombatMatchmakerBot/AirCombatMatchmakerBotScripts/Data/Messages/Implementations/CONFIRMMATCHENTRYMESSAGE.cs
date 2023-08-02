@@ -153,9 +153,9 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                         x => x.GetType() == typeof(MatchQueueAcceptEvent));
 
                 var timeLeft = TimeService.CalculateTimeUntilWithUnixTime(matchQueueEvent.TimeToExecuteTheEventOn);
-                if (timeLeft > 1200) 
+                if (timeLeft > 1200)
                 {
-                    finalMessage += 
+                    finalMessage +=
                         "\n*Note that accepting the match 20 minutes before it's beginning makes your plane selection valid only for 5 minutes!*";
                 }
             }
@@ -169,5 +169,11 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return Task.FromResult(ex.Message);
         }
+    }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
+        //return "Last updated at: " + DateTime.UtcNow.ToLongTimeString() + " " + DateTime.UtcNow.ToLongDateString() + " (GMT+0)";
     }
 }

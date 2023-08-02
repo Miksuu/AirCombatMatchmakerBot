@@ -37,4 +37,9 @@ public class REPORTINGMESSAGE : BaseMessage
 
         return Task.FromResult(thisInterfaceMessage.MessageDescription);
     }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
+    }
 }

@@ -55,7 +55,7 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
                 "**" + requestedTime + " requested by team: " + teamNameThatScheduled + "**\n\n" +
                 "If the time above is fine, use ``/schedule accept`` command, or click the ACCEPT button below. " +
                 "Otherwise refer to the instructions: " + await DiscordBotDatabase.Instance.Categories.GetMessageJumpUrl(
-                    mcc.interfaceLeagueCached.LeagueCategoryId, mcc.leagueMatchCached.MatchChannelId, 
+                    mcc.interfaceLeagueCached.LeagueCategoryId, mcc.leagueMatchCached.MatchChannelId,
                     MessageName.MATCHSCHEDULINGMESSAGE) + " to propose a new time!";
 
             Log.WriteLine(thisInterfaceMessage.MessageDescription);
@@ -67,5 +67,11 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
             Log.WriteLine(ex.Message, LogLevel.CRITICAL);
             return Task.FromResult(ex.Message).Result;
         }
+    }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
+        //return "Last updated at: " + DateTime.UtcNow.ToLongTimeString() + " " + DateTime.UtcNow.ToLongDateString() + " (GMT+0)";
     }
 }

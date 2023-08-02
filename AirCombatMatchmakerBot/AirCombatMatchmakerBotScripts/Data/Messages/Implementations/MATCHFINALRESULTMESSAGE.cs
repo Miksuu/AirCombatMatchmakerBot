@@ -73,7 +73,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
             var baseReportingObject = reportDataKvp.Value.ReportingObjects.FirstOrDefault(
                 x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.REPORTEDSCORE) as BaseReportingObject;
 
-            var interfaceObject = (InterfaceReportingObject) baseReportingObject;
+            var interfaceObject = (InterfaceReportingObject)baseReportingObject;
 
             finalMessage += interfaceObject.ObjectValue;
             if (sIndex == 0) finalMessage += " - ";
@@ -85,7 +85,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         // Shows the rating change
         int rIndex = 0;
         foreach (var reportDataKvp in matchReportingTeamIdsWithReportData)
-        {            
+        {
             Log.WriteLine("FinalEloDelta on report message construction: " + reportDataKvp.Value.FinalEloDelta, LogLevel.DEBUG);
 
             finalMessage += reportDataKvp.Value.TeamName + " ";
@@ -145,5 +145,10 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         Log.WriteLine("Returning: " + finalMessage, LogLevel.DEBUG);
 
         return Task.FromResult(finalMessage);
+    }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
     }
 }

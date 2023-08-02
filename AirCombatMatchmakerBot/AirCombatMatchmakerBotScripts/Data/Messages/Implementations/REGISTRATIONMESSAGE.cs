@@ -39,4 +39,9 @@ public class REGISTRATIONMESSAGE : BaseMessage
 
         return Task.FromResult(thisInterfaceMessage.MessageDescription);
     }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
+    }
 }

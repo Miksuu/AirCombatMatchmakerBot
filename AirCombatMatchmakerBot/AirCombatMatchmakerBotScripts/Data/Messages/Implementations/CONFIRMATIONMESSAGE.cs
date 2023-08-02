@@ -92,4 +92,10 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         return Task.FromResult(finalMessage);
     }
+
+    public override string GenerateMessageFooter()
+    {
+        return "";
+        //return "Last updated at: " + DateTime.UtcNow.ToLongTimeString() + " " + DateTime.UtcNow.ToLongDateString() + " (GMT+0)";
+    }
 }
