@@ -44,7 +44,7 @@ public class Leagues
             StoredLeagues.FirstOrDefault(x => x.LeagueCategoryName == _leagueCategoryName);
         if (FoundLeague == null)
         {
-            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(FoundLeague) + " was null!");
         }
 
@@ -61,7 +61,7 @@ public class Leagues
             x => x.LeagueCategoryId == _leagueCategoryId);
         if (FoundLeague == null)
         {
-            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(FoundLeague) + " was null!");
         }
 
@@ -78,7 +78,7 @@ public class Leagues
             x => x.LeagueCategoryName.ToString() == _leagueCategoryNameString);
         if (FoundLeague == null)
         {
-            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(FoundLeague) + " was null!");
         }
 
@@ -107,14 +107,14 @@ public class Leagues
 
             if (storedLeague == null)
             {
-                Log.WriteLine("storedLeague was null!", LogLevel.CRITICAL);
+                Log.WriteLine("storedLeague was null!", LogLevel.ERROR);
                 continue;
             }
 
             string? storedLeagueString = storedLeague.ToString();
             if (storedLeagueString == null)
             {
-                Log.WriteLine("storedLeagueString was null!", LogLevel.CRITICAL);
+                Log.WriteLine("storedLeagueString was null!", LogLevel.ERROR);
                 return;
             }
 
@@ -148,7 +148,7 @@ public class Leagues
                             }
                             catch (Exception ex)
                             {
-                                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                                Log.WriteLine(ex.Message, LogLevel.ERROR);
                                 return;
                             }
 

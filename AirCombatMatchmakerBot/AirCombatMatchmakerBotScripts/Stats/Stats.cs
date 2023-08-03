@@ -31,7 +31,7 @@ public class Stats
             PLAYERPLANE? teamPlane = _thisTeamReportData.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
             if (teamPlane == null)
             {
-                Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.ERROR);
                 throw new InvalidOperationException(nameof(teamPlane) + " was null!");
             }
 
@@ -81,7 +81,7 @@ public class Stats
         }
         catch (Exception ex) 
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
     }

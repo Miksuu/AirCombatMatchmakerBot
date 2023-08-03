@@ -150,7 +150,7 @@ public class Matches
                 return foundArchivedMatch;
             }
 
-            Log.WriteLine(nameof(foundArchivedMatch) + " was null! (not found on active or archived matches)", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(foundArchivedMatch) + " was null! (not found on active or archived matches)", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(foundArchivedMatch) + " was null!");
         }
 

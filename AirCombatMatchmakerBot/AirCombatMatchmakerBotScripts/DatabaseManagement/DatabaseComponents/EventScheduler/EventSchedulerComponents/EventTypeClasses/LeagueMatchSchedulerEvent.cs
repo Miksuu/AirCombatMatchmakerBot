@@ -31,7 +31,7 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
         lcc = new LeagueCategoryComponents(LeagueCategoryIdCached);
         if (lcc.interfaceLeagueCached == null)
         {
-            Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(lcc) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(lcc) + " was null!");
         }
     }
@@ -43,7 +43,7 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
             lcc = new LeagueCategoryComponents(LeagueCategoryIdCached);
             if (lcc.interfaceLeagueCached == null)
             {
-                Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(lcc) + " was null!", LogLevel.ERROR);
                 throw new InvalidOperationException(nameof(lcc) + " was null!");
             }
 
@@ -72,7 +72,7 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
     }

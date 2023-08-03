@@ -19,7 +19,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
         if (_leagueCategoryId == 0)
         {
-            Log.WriteLine("Failed to receive the _leagueCategoryId!", LogLevel.CRITICAL);
+            Log.WriteLine("Failed to receive the _leagueCategoryId!", LogLevel.ERROR);
             return customId;
         }
 
@@ -49,7 +49,7 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         if (interfaceLeague == null)
         {
             string errorMsg = nameof(interfaceLeague) + " was null! Could not find the league.";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            Log.WriteLine(errorMsg, LogLevel.ERROR);
             return Task.FromResult(new Response(errorMsg, false));
         }
 

@@ -24,7 +24,7 @@ public static class DowntimeManager
         {
             if (user == null)
             {
-                Log.WriteLine("User is null!", LogLevel.CRITICAL);
+                Log.WriteLine("User is null!", LogLevel.ERROR);
                 return;
             }
 
@@ -81,7 +81,7 @@ public static class DowntimeManager
         {
             if (user == null)
             {
-                Log.WriteLine("User was null!", LogLevel.CRITICAL);
+                Log.WriteLine("User was null!", LogLevel.ERROR);
                 return Task.CompletedTask;
             }
 

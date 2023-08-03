@@ -75,7 +75,7 @@ public class Team
             Player? player = Players.FirstOrDefault();
             if (player == null)
             {
-                Log.WriteLine(nameof(player) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(player) + " was null!", LogLevel.ERROR);
                 return "";
             }
 

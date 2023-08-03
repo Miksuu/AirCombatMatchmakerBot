@@ -143,7 +143,7 @@ public class LeagueMatch
         }
         catch(Exception ex) 
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             throw;
         }
     }
@@ -181,7 +181,7 @@ public class LeagueMatch
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                    Log.WriteLine(ex.Message, LogLevel.ERROR);
                     continue;
                 }
             }
@@ -284,7 +284,7 @@ public class LeagueMatch
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return new Response(ex.Message, false);
         }
     }
@@ -352,7 +352,7 @@ public class LeagueMatch
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
     }
@@ -372,7 +372,7 @@ public class LeagueMatch
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
 
@@ -466,7 +466,7 @@ public class LeagueMatch
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
     }

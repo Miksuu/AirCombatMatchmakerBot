@@ -101,7 +101,7 @@ public class DeleteChannelEvent : ScheduledEvent
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
     }
@@ -118,7 +118,7 @@ public class DeleteChannelEvent : ScheduledEvent
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
     }

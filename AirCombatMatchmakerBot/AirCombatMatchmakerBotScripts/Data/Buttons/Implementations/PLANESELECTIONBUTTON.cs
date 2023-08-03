@@ -31,7 +31,7 @@ public class PLANESELECTIONBUTTON : BaseButton
             mcc = new MatchChannelComponents(_interfaceMessage);
             if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
             {
-                Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
                 return Task.FromResult(new Response(nameof(mcc) + " was null!", false));
             }
 
@@ -65,7 +65,7 @@ public class PLANESELECTIONBUTTON : BaseButton
                             TypeOfTheReportingObject.PLAYERPLANE, playerTeam.TeamId) as PLAYERPLANE;
                     if (planeReportObject == null)
                     {
-                        Log.WriteLine(nameof(planeReportObject) + " was null!", LogLevel.CRITICAL);
+                        Log.WriteLine(nameof(planeReportObject) + " was null!", LogLevel.ERROR);
                         continue;
                     }
 
@@ -78,7 +78,7 @@ public class PLANESELECTIONBUTTON : BaseButton
 
                     if (!planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(playerId))
                     {
-                        Log.WriteLine("Does not contain: " + playerId, LogLevel.CRITICAL);
+                        Log.WriteLine("Does not contain: " + playerId, LogLevel.ERROR);
                         continue;
                     }
 
@@ -142,7 +142,7 @@ public class PLANESELECTIONBUTTON : BaseButton
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                    Log.WriteLine(ex.Message, LogLevel.ERROR);
                     continue;
                 }
             }
@@ -150,7 +150,7 @@ public class PLANESELECTIONBUTTON : BaseButton
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return Task.FromResult(new Response(ex.Message, false));
         }
     }

@@ -51,7 +51,7 @@ public static class MessageReceiver
         {
             if (attachment == null)
             {
-                Log.WriteLine(nameof(attachment) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(attachment) + " was null!", LogLevel.ERROR);
                 continue;
             }
 

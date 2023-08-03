@@ -30,7 +30,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
         {
             string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                 nameof(mcc.leagueMatchCached) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            Log.WriteLine(errorMsg, LogLevel.ERROR);
             return Task.FromResult(errorMsg);
         }
 
@@ -41,14 +41,14 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
             if (!mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData.ContainsKey(teamKvp.Key))
             {
                 Log.WriteLine("Does not contain reporting data on: " + teamKvp.Key + " named: " +
-                    teamKvp.Value, LogLevel.CRITICAL);
+                    teamKvp.Value, LogLevel.ERROR);
                 continue;
             }
 
             var teamReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData[teamKvp.Key];
             if (teamReportData == null)
             {
-                Log.WriteLine(nameof(teamReportData) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(teamReportData) + " was null!", LogLevel.ERROR);
                 continue;
             }
 

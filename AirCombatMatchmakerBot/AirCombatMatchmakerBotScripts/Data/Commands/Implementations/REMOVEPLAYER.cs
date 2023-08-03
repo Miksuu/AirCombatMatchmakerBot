@@ -24,7 +24,7 @@ public class REMOVEPLAYER : BaseCommand
         }
         else
         {
-            Log.WriteLine("Command input was invalid " + _firstOptionString, LogLevel.CRITICAL);
+            Log.WriteLine("Command input was invalid " + _firstOptionString, LogLevel.ERROR);
             return new Response("Command input was invalid!", false);
         }
 

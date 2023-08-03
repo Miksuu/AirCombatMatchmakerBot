@@ -23,7 +23,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         mcc = new MatchChannelComponents(this);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
             return;
         }
         Log.WriteLine("units count: " + mcc.interfaceLeagueCached.LeagueUnits.Count);
@@ -51,7 +51,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             mcc = new MatchChannelComponents(this);
             if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
             {
-                Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
                 return Task.FromResult(nameof(mcc) + " was null!");
             }
 
@@ -90,7 +90,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                 PLAYERPLANE? teamPlane = teamKvp.Value.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
                 if (teamPlane == null)
                 {
-                    Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.CRITICAL);
+                    Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.ERROR);
                     return Task.FromResult(nameof(teamPlane) + " was null!");
                 }
 
@@ -166,7 +166,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return Task.FromResult(ex.Message);
         }
     }

@@ -37,7 +37,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         {
             string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                 nameof(mcc.leagueMatchCached) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            Log.WriteLine(errorMsg, LogLevel.ERROR);
             return Task.FromResult(errorMsg);
         }
 

@@ -71,7 +71,7 @@ public class MatchReporting
 
             catch (Exception ex)
             {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                Log.WriteLine(ex.Message, LogLevel.ERROR);
                 continue;
             }
         }
@@ -84,7 +84,7 @@ public class MatchReporting
             => x.GetTypeOfTheReportingObject() == _typeOfTheReportingObject);
         if (reportingObject == null)
         {
-            Log.WriteLine(nameof(reportingObject) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(reportingObject) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(reportingObject) + " was null!");
         }
 
@@ -184,7 +184,7 @@ public class MatchReporting
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return new Response(ex.Message, false);
         }
     }
@@ -199,7 +199,7 @@ public class MatchReporting
                 CheckIfMatchCanBeSentToConfirmation(interfaceLeagueRef.LeagueCategoryId, _messageChannelId);
             if (responseTuple.Item3 == null)
             {
-                Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.CRITICAL);
+                Log.WriteLine(nameof(responseTuple.Item3) + " was null! with playerId: " + _playerId, LogLevel.ERROR);
                 return new Response(response, false);
             }
 
@@ -219,7 +219,7 @@ public class MatchReporting
                 if (finalResultMessage == null)
                 {
                     string errorMsg = nameof(finalResultMessage) + " was null!";
-                    Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                    Log.WriteLine(errorMsg, LogLevel.ERROR);
                     return new Response(errorMsg, false);
                 }
 
@@ -252,7 +252,7 @@ public class MatchReporting
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return new Response(ex.Message, false);
         }
     }
@@ -279,7 +279,7 @@ public class MatchReporting
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return new(ex.Message, false, null);
         }
     }
@@ -361,7 +361,7 @@ public class MatchReporting
             }
             catch (Exception ex)
             {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                Log.WriteLine(ex.Message, LogLevel.ERROR);
                 continue;
             }
         }
@@ -381,7 +381,7 @@ public class MatchReporting
         if (!_leagueMatch.GetIdsOfThePlayersInTheMatchAsArray().Contains(_playerId))
         {
             Log.WriteLine("Error, match: " + _leagueMatch.MatchId +
-                " does not contain: " + _playerId, LogLevel.CRITICAL);
+                " does not contain: " + _playerId, LogLevel.ERROR);
             throw new InvalidOperationException("That's not your match to confirm! by " + _playerId);
         }
 
@@ -397,7 +397,7 @@ public class MatchReporting
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             throw new InvalidOperationException(ex.Message);
         }
 

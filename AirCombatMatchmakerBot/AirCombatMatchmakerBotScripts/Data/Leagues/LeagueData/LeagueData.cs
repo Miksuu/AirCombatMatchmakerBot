@@ -61,7 +61,7 @@ public class LeagueData
         Team? foundTeam = Teams.TeamsConcurrentBag.FirstOrDefault(t => t.TeamId == _teamId && t.TeamActive);
         if (foundTeam == null)
         {
-            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(foundTeam) + " was null!");
         }
 

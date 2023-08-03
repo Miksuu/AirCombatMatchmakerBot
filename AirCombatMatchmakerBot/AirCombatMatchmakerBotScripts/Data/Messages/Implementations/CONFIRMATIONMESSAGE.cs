@@ -39,7 +39,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         mcc = new MatchChannelComponents(this);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
             return Task.FromResult(nameof(mcc) + " was null!");
         }
 

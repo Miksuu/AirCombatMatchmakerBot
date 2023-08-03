@@ -36,7 +36,7 @@ public class MATCHSCHEDULERSTATUSMESSAGE : BaseMessage
             lcc = new LeagueCategoryComponents(thisInterfaceMessage.MessageCategoryId);
             if (lcc.interfaceLeagueCached == null)
             {
-                Log.WriteLine(nameof(lcc) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(lcc) + " was null!", LogLevel.ERROR);
                 throw new InvalidOperationException(nameof(lcc) + " was null!");
             }
 

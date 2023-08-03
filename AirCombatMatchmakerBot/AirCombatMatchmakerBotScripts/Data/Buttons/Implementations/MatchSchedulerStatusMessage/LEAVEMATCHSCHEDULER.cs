@@ -32,7 +32,7 @@ public class LEAVEMATCHSCHEDULER : BaseButton
         if (lcc.interfaceLeagueCached == null)
         {
             string errorMsg = nameof(lcc.interfaceLeagueCached) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            Log.WriteLine(errorMsg, LogLevel.ERROR);
             return new Response(errorMsg, false);
         }
 

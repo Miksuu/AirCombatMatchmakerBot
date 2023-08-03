@@ -36,7 +36,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
         mcc = new MatchChannelComponents(MatchChannelIdCached);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(mcc) + " was null!");
         }
 
@@ -46,13 +46,13 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
             PLAYERPLANE? playerPlane = teamKvp.Value.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
             if (playerPlane == null)
             {
-                Log.WriteLine(nameof(playerPlane) + " was null!", LogLevel.CRITICAL);
+                Log.WriteLine(nameof(playerPlane) + " was null!", LogLevel.ERROR);
                 throw new InvalidOperationException(nameof(playerPlane) + " was null!");
             }
 
             if (!playerPlane.TeamMemberIdsWithSelectedPlanesByTheTeam.ContainsKey(PlayerIdCached))
             {
-                //Log.WriteLine("Did not contain: " + PlayerIdCached, LogLevel.CRITICAL);
+                //Log.WriteLine("Did not contain: " + PlayerIdCached, LogLevel.ERROR);
                 continue;
             }
 
@@ -70,7 +70,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
         mcc = new MatchChannelComponents(MatchChannelIdCached);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
             return;
         }
 
@@ -83,7 +83,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
     }

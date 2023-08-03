@@ -30,7 +30,7 @@ public static class EloSystem
 
         if (_teamsInTheMatch[0] == null)
         {
-            Log.WriteLine(nameof(_teamsInTheMatch) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(_teamsInTheMatch) + " was null!", LogLevel.ERROR);
             return "Error while calculating and saving the final elo delta";
         }
 
@@ -67,7 +67,7 @@ public static class EloSystem
 
         if (_teamsInTheMatch[0] == null)
         {
-            Log.WriteLine(nameof(_teamsInTheMatch) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(_teamsInTheMatch) + " was null!", LogLevel.ERROR);
             return; //"Error while calculating and saving the final elo delta";
         }
 
@@ -98,7 +98,7 @@ public static class EloSystem
             }
             catch (Exception ex)
             {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                Log.WriteLine(ex.Message, LogLevel.ERROR);
                 continue;
             }
         }
@@ -115,7 +115,7 @@ public static class EloSystem
             x => x.GetTypeOfTheReportingObject() == TypeOfTheReportingObject.REPORTEDSCORE);
         if (baseReportingObject == null)
         {
-            Log.WriteLine(nameof(baseReportingObject) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(baseReportingObject) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(baseReportingObject) + " was null!");
         }
 
@@ -138,7 +138,7 @@ public static class EloSystem
             }
             else
             {
-                Log.WriteLine("Parse failed for value (team one): " + teamOneObjectValue, LogLevel.CRITICAL);
+                Log.WriteLine("Parse failed for value (team one): " + teamOneObjectValue, LogLevel.ERROR);
                 return 3;
             }
 
@@ -149,7 +149,7 @@ public static class EloSystem
             }
             else
             {
-                Log.WriteLine("Parse failed for value (team two): " + teamTwoObjectValue, LogLevel.CRITICAL);
+                Log.WriteLine("Parse failed for value (team two): " + teamTwoObjectValue, LogLevel.ERROR);
                 return 3;
             }
 
@@ -170,7 +170,7 @@ public static class EloSystem
         }
         catch (Exception ex) 
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             throw new InvalidOperationException(nameof(InterfaceReportingObject) + " was null!");
         }
     }

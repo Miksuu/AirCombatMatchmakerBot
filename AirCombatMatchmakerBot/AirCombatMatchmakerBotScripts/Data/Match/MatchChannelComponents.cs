@@ -10,7 +10,7 @@ public class MatchChannelComponents
 
     public MatchChannelComponents()
     {
-        Log.WriteLine("Default constructor!", LogLevel.CRITICAL);
+        Log.WriteLine("Default constructor!", LogLevel.ERROR);
     }
 
     public MatchChannelComponents(InterfaceMessage _interfaceMessage)
@@ -33,7 +33,7 @@ public class MatchChannelComponents
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
 
@@ -65,7 +65,7 @@ public class MatchChannelComponents
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
 

@@ -105,7 +105,7 @@ public class Teams
             }
         }
 
-        Log.WriteLine("Did not find any teams that the player was in the league", LogLevel.CRITICAL);
+        Log.WriteLine("Did not find any teams that the player was in the league", LogLevel.ERROR);
 
         return new Team();
     }
@@ -117,7 +117,7 @@ public class Teams
         Team? foundTeam = TeamsConcurrentBag.FirstOrDefault(x => x.TeamId == _id);
         if (foundTeam == null)
         {
-            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(foundTeam) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(foundTeam) + " was null!");
         }
 

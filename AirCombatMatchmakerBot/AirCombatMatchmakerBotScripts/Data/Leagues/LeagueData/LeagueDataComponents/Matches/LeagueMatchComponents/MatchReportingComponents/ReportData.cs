@@ -70,7 +70,7 @@ public class ReportData
         var result = ReportingObjects.FirstOrDefault(x => x.GetTypeOfTheReportingObject() == _typeOfTheReportingObject);
         if (result == null)
         {
-            Log.WriteLine(nameof(_typeOfTheReportingObject) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(_typeOfTheReportingObject) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(_typeOfTheReportingObject) + " was null!");
         }
         Log.WriteLine("Found: " + result.GetTypeOfTheReportingObject());

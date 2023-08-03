@@ -99,7 +99,7 @@ public abstract class BaseLeague : InterfaceLeague
             DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
         if (interfaceCategory == null)
         {
-            Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.ERROR);
             throw new InvalidOperationException(nameof(interfaceCategory) + " was null!");
         }
 
@@ -138,7 +138,7 @@ public abstract class BaseLeague : InterfaceLeague
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
     }
@@ -159,7 +159,7 @@ public abstract class BaseLeague : InterfaceLeague
         }
         catch (Exception ex) 
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return;
         }
 
@@ -191,7 +191,7 @@ public abstract class BaseLeague : InterfaceLeague
                 if (player.PlayerDiscordId == 0)
                 {
                     string errorMsg = "Player's: " + player.PlayerNickName + " id was 0!";
-                    Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                    Log.WriteLine(errorMsg, LogLevel.ERROR);
                     return new Response(errorMsg, false);
                 }
 
@@ -229,7 +229,7 @@ public abstract class BaseLeague : InterfaceLeague
                         // Not implemented yet
                         string errorMsg =
                             "This league is team based with number of players per team: " + leaguePlayerCountPerTeam;
-                        Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                        Log.WriteLine(errorMsg, LogLevel.ERROR);
                         return new Response(errorMsg, false);
                     }
 
@@ -281,7 +281,7 @@ public abstract class BaseLeague : InterfaceLeague
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return new Response(ex.Message, false);
         }
     }

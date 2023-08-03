@@ -84,7 +84,7 @@ public class PlayerData
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return ex.Message;
         }
     }

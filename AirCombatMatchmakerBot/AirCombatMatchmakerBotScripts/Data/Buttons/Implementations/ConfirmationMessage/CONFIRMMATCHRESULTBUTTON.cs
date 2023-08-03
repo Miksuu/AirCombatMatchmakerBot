@@ -29,7 +29,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
             {
                 string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                     nameof(mcc.leagueMatchCached) + " was null!";
-                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                Log.WriteLine(errorMsg, LogLevel.ERROR);
                 return new Response(errorMsg, false);
             }
 
@@ -67,7 +67,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return new Response(ex.Message, false);
         }
     }

@@ -31,7 +31,7 @@ public static class TacviewManager
 
         if (!Directory.Exists(pathToLookFor))
         {
-            Log.WriteLine("Path doesn't exists: " + pathToLookFor, LogLevel.CRITICAL);
+            Log.WriteLine("Path doesn't exists: " + pathToLookFor, LogLevel.ERROR);
             throw new InvalidOperationException("Path doesn't exists: " + pathToLookFor);
         }
 
@@ -94,7 +94,7 @@ public static class TacviewManager
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc.interfaceLeagueCached) + " or " +
-                nameof(mcc.leagueMatchCached) + " was null!", LogLevel.CRITICAL);
+                nameof(mcc.leagueMatchCached) + " was null!", LogLevel.ERROR);
             return;
         }
 

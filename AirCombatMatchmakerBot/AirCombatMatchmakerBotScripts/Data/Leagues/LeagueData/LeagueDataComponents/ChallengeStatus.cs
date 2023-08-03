@@ -84,7 +84,7 @@ public class ChallengeStatus
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                    Log.WriteLine(ex.Message, LogLevel.ERROR);
                     continue;
                     //return new Response(ex.Message, false);
                 }
@@ -107,7 +107,7 @@ public class ChallengeStatus
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return new Response(ex.Message, false);
         }
     }
@@ -142,7 +142,7 @@ public class ChallengeStatus
             }
             catch(Exception ex)
             {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                Log.WriteLine(ex.Message, LogLevel.ERROR);
                 continue;
             }
         }
@@ -199,7 +199,7 @@ public class ChallengeStatus
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return ex.Message;
         }
     }

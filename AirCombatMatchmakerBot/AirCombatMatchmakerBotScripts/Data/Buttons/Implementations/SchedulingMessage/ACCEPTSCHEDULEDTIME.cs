@@ -27,7 +27,7 @@ public class ACCEPTSCHEDULEDTIME : BaseButton
         {
             string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                 nameof(mcc.leagueMatchCached) + " was null!";
-            Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+            Log.WriteLine(errorMsg, LogLevel.ERROR);
             return new Response(errorMsg, false);
         }
 

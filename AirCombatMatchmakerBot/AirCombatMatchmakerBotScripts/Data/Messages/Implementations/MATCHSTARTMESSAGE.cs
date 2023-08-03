@@ -29,7 +29,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
         mcc = new MatchChannelComponents(this);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
-            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.CRITICAL);
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
             return Task.FromResult(nameof(mcc) + " was null!");
         }
 
@@ -49,7 +49,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
             }
             catch (Exception ex)
             {
-                Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                Log.WriteLine(ex.Message, LogLevel.ERROR);
                 continue;
             }
         }

@@ -95,7 +95,7 @@ public class CHALLENGEMESSAGE : BaseMessage
                     }
                     catch (Exception ex)
                     {
-                        Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+                        Log.WriteLine(ex.Message, LogLevel.ERROR);
                         continue;
                     }
                 }
@@ -117,7 +117,7 @@ public class CHALLENGEMESSAGE : BaseMessage
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             throw;
         }
     }
@@ -152,7 +152,7 @@ public class CHALLENGEMESSAGE : BaseMessage
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             throw;
         }
     }

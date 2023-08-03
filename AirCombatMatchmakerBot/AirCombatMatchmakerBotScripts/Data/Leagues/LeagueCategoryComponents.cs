@@ -24,7 +24,7 @@ public class LeagueCategoryComponents
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             throw new InvalidOperationException(ex.Message);
         }
 

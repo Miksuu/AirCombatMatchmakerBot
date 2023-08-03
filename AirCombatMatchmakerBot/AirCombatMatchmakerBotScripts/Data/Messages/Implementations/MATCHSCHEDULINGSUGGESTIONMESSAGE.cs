@@ -35,7 +35,7 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
             {
                 string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                     nameof(mcc.leagueMatchCached) + " was null!";
-                Log.WriteLine(errorMsg, LogLevel.CRITICAL);
+                Log.WriteLine(errorMsg, LogLevel.ERROR);
                 return errorMsg;
             }
 
@@ -64,7 +64,7 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
         }
         catch (Exception ex)
         {
-            Log.WriteLine(ex.Message, LogLevel.CRITICAL);
+            Log.WriteLine(ex.Message, LogLevel.ERROR);
             return Task.FromResult(ex.Message).Result;
         }
     }
