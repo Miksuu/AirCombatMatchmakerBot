@@ -59,11 +59,10 @@ public class ProgramRuntime
     private async void SetupProgramListenersAndSchedulers()
     {
         // Creates the categories and the channels from the interfaces
-        // (dependant on the data from CreateLeaguesOnStartupIfNecessary())
         await CategoryAndChannelManager.CreateCategoriesAndChannelsForTheDiscordServer();
 
         // Creates the league references to the database
-        //await LeagueManager.CreateLeaguesOnStartupIfNecessary();
+        await LeagueManager.CreateLeaguesOnStartupIfNecessary();
 
         // Checks the users that left during down time and sets their teams active
         await DowntimeManager.CheckForUsersThatLeftDuringDowntime();
