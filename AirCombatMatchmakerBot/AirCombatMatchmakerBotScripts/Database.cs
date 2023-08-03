@@ -45,13 +45,7 @@ public class Database
 
     static string appName = GetApplicationName();
 
-    // File paths
-    public static string mainAppnameDataDirectory = @"C:\" + appName + @"\Data\";
-    public static string discordDataDir = mainAppnameDataDirectory + @"\Database";
-    public static string dbPathWithFileName = discordDataDir + @"\";
 
-    static string dbTempFileName = "database.tmp";
-    public static string dbTempPathWithFileName = dbPathWithFileName + @"\" + dbTempFileName;
 
     // The Database components
     [DataMember] public CachedUsers CachedUsers = new CachedUsers();
