@@ -26,14 +26,14 @@ public class CHALLENGEMESSAGE : BaseMessage
         thisInterfaceMessage.MessageDescription = "Insert the challenge message here";
     }
 
-    protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
+    protected override void GenerateButtons(ComponentBuilder _component, ulong _channelCategoryId)
     {
-        base.GenerateRegularButtons(_component, _leagueCategoryId);
+        base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
     private logConcurrentDictionary<int, string> teamsThatHaveMatchesClose = new logConcurrentDictionary<int, string>();
 
-    public override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
+    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
     {
         try
         {

@@ -13,17 +13,17 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         ephemeralResponse = true;
     }
 
-    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId)
+    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
     {
         string customId = string.Empty;
 
-        if (_leagueCategoryId == 0)
+        if (_channelCategoryId == 0)
         {
-            Log.WriteLine("Failed to receive the _leagueCategoryId!", LogLevel.ERROR);
+            Log.WriteLine("Failed to receive the _channelCategoryId!", LogLevel.ERROR);
             return customId;
         }
 
-        customId = _leagueCategoryId.ToString() + "_" + _buttonIndex;
+        customId = _channelCategoryId.ToString() + "_" + _buttonIndex;
         Log.WriteLine("Setting league-registration button custom id to: " +
             customId, LogLevel.DEBUG);
 
@@ -64,9 +64,9 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         return Task.FromResult(response);
     }
 
-    private async void InitMessageModifyOnSecondThread(InterfaceMessage _interfaceMessage, ulong _leagueCategoryId)
+    private async void InitMessageModifyOnSecondThread(InterfaceMessage _interfaceMessage, ulong _channelCategoryId)
     {
-        _interfaceMessage.GenerateAndModifyTheMessage(_leagueCategoryId);
+        _interfaceMessage.GenerateAndModifyTheMessage(_channelCategoryId);
 
         await SerializationManager.SerializeDB();
     }

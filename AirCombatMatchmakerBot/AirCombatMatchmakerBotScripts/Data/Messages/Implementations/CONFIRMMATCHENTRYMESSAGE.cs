@@ -14,9 +14,9 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             " the match will be timed out.";
     }
 
-    protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
+    protected override void GenerateButtons(ComponentBuilder _component, ulong _channelCategoryId)
     {
-        Log.WriteLine("Generating buttons with: " + _leagueCategoryId);
+        Log.WriteLine("Generating buttons with: " + _channelCategoryId);
 
         Dictionary<string, string> buttonsToGenerate = new Dictionary<string, string>();
 
@@ -39,10 +39,10 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         }
 
         base.GenerateButtonsWithCustomPropertiesAndIds(
-            buttonsToGenerate, ButtonName.PLANESELECTIONBUTTON, _component, _leagueCategoryId);
+            buttonsToGenerate, ButtonName.PLANESELECTIONBUTTON, _component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
+    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
     {
         try
         {

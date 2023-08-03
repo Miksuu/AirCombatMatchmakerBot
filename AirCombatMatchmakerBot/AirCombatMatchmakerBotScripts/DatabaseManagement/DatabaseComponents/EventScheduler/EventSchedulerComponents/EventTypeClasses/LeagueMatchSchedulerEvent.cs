@@ -8,17 +8,17 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
     public LeagueMatchSchedulerEvent() { }
 
     public LeagueMatchSchedulerEvent(
-        ulong _timeFromNowToExecuteOn, ulong _leagueCategoryId,
+        ulong _timeFromNowToExecuteOn, ulong _channelCategoryId,
         ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
         Log.WriteLine("Creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
-            _leagueCategoryId);
+            _channelCategoryId);
 
         base.SetupScheduledEvent(_timeFromNowToExecuteOn, _scheduledEvents);
-        LeagueCategoryIdCached = _leagueCategoryId;
+        LeagueCategoryIdCached = _channelCategoryId;
 
         Log.WriteLine("Done creating event: " + nameof(DeleteChannelEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
-            _leagueCategoryId, LogLevel.DEBUG);
+            _channelCategoryId, LogLevel.DEBUG);
     }
 
     public override async Task ExecuteTheScheduledEvent(bool _serialize = true)

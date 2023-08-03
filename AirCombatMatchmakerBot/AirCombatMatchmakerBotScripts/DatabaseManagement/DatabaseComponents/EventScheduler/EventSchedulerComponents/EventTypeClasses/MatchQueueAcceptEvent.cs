@@ -9,18 +9,18 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
     public MatchQueueAcceptEvent() { }
 
     public MatchQueueAcceptEvent(
-        ulong _timeFromNowToExecuteOn, ulong _leagueCategoryIdCached, ulong _matchChannelIdCached,
+        ulong _timeFromNowToExecuteOn, ulong _channelCategoryIdCached, ulong _matchChannelIdCached,
         ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
         Log.WriteLine("Creating event: " + nameof(MatchQueueAcceptEvent) + " with: " + _timeFromNowToExecuteOn + "|" +
-            _leagueCategoryIdCached + "|" + _matchChannelIdCached);
+            _channelCategoryIdCached + "|" + _matchChannelIdCached);
 
         base.SetupScheduledEvent(_timeFromNowToExecuteOn, _scheduledEvents);
-        LeagueCategoryIdCached = _leagueCategoryIdCached;
+        LeagueCategoryIdCached = _channelCategoryIdCached;
         MatchChannelIdCached = _matchChannelIdCached;
 
         Log.WriteLine("Done creating event: " + EventId + " type of: " + nameof(MatchQueueAcceptEvent) + " with: " +
-            _timeFromNowToExecuteOn + "|" + _leagueCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.DEBUG);
+            _timeFromNowToExecuteOn + "|" + _channelCategoryIdCached + "|" + _matchChannelIdCached, LogLevel.DEBUG);
     }
 
     [DataMember] private bool removedFromTheQueues = false;

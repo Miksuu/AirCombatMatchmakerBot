@@ -18,7 +18,7 @@ public class PLANESELECTIONBUTTON : BaseButton
         ephemeralResponse = false;
     }
 
-    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId)
+    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
     {
         return "";
     }

@@ -16,12 +16,12 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         thisInterfaceMessage.MessageDescription = "";
     }
 
-    protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
+    protected override void GenerateButtons(ComponentBuilder _component, ulong _channelCategoryId)
     {
-        base.GenerateRegularButtons(_component, _leagueCategoryId);
+        base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
+    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
     {
         string finalMessage = string.Empty;
         List<Team> sortedTeamListByElo = new List<Team>();

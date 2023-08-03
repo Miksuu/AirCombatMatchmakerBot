@@ -14,19 +14,19 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
 
     public TempQueueEvent() { }
 
-    public TempQueueEvent(ulong _leagueCategoryId, ulong _matchChannelId, ulong _playerId,
+    public TempQueueEvent(ulong _channelCategoryId, ulong _matchChannelId, ulong _playerId,
         ConcurrentBag<ScheduledEvent> _scheduledEvents)
     {
         Log.WriteLine("Creating event: " + nameof(TempQueueEvent) + "|" +
-            _leagueCategoryId + "|" + _matchChannelId);
+            _channelCategoryId + "|" + _matchChannelId);
 
         base.SetupScheduledEvent(300, _scheduledEvents);
-        LeagueCategoryIdCached = _leagueCategoryId;
+        LeagueCategoryIdCached = _channelCategoryId;
         MatchChannelIdCached = _matchChannelId;
         PlayerIdCached = _playerId;
 
         Log.WriteLine("Done creating event: " + EventId + " type of: " + nameof(TempQueueEvent) + " with: " +
-            "|" + _leagueCategoryId + "|" + _matchChannelId, LogLevel.DEBUG);
+            "|" + _channelCategoryId + "|" + _matchChannelId, LogLevel.DEBUG);
     }
 
     [DataMember] private logVar<ulong> playerIdCached = new logVar<ulong>();

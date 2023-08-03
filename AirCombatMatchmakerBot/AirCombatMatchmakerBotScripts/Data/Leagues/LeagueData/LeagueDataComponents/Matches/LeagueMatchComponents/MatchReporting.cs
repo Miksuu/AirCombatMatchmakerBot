@@ -93,14 +93,14 @@ public class MatchReporting
 
     public async Task<Response> ProcessPlayersSentReportObject(
         ulong _playerId, string _reportedObjectByThePlayer, TypeOfTheReportingObject _typeOfTheReportingObject,
-        ulong _leagueCategoryId, ulong _messageChannelId)
+        ulong _channelCategoryId, ulong _messageChannelId)
     {
         try
         {
             string response = string.Empty;
 
             MatchState matchState = Database.Instance.Leagues.GetILeagueByCategoryId(
-                _leagueCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState;
+                _channelCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState;
 
             Log.WriteLine("Processing player's sent " + nameof(BaseReportingObject) + " in league: " +
                 interfaceLeagueRef.LeagueCategoryName + " by: " + _playerId + " with data: " +
@@ -140,7 +140,7 @@ public class MatchReporting
             }
             InterfaceChannel interfaceChannel =
                 DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
-                    _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                    _channelCategoryId).FindInterfaceChannelWithIdInTheCategory(
                         _messageChannelId);
 
             // If the match is on the confirmation phase,
@@ -258,12 +258,12 @@ public class MatchReporting
     }
 
     private (string, bool, InterfaceChannel?) CheckIfMatchCanBeSentToConfirmation(
-        ulong _leagueCategoryId, ulong _messageChannelId)
+        ulong _channelCategoryId, ulong _messageChannelId)
     {
         try
         {
             InterfaceChannel interfaceChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
-                _leagueCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
+                _channelCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
 
             bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown(interfaceChannel);
 
@@ -272,7 +272,7 @@ public class MatchReporting
             if (confirmationMessageCanBeShown)
             {
                 Database.Instance.Leagues.GetILeagueByCategoryId(
-               _leagueCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState = MatchState.CONFIRMATIONPHASE;
+               _channelCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState = MatchState.CONFIRMATIONPHASE;
             }
 
             return ("", confirmationMessageCanBeShown, interfaceChannel);

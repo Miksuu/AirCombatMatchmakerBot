@@ -21,12 +21,12 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
         mentionOtherTeamsPlayers = true;
     }
 
-    protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
+    protected override void GenerateButtons(ComponentBuilder _component, ulong _channelCategoryId)
     {
-        base.GenerateRegularButtons(_component, _leagueCategoryId);
+        base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public async override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
+    public async override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
     {
         try
         {

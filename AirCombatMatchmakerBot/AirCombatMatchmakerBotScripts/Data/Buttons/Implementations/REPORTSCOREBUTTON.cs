@@ -18,7 +18,7 @@ public class REPORTSCOREBUTTON : BaseButton
         ephemeralResponse = true;
     }
 
-    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _leagueCategoryId)
+    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
     {
         thisInterfaceButton.ButtonLabel = _buttonIndex.ToString();
         Log.WriteLine("is: " + nameof(buttonName) +

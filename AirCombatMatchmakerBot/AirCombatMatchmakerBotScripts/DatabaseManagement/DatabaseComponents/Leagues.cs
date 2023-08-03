@@ -52,13 +52,13 @@ public class Leagues
         return FoundLeague;
     }
 
-    public InterfaceLeague GetILeagueByCategoryId(ulong _leagueCategoryId)
+    public InterfaceLeague GetILeagueByCategoryId(ulong _channelCategoryId)
     {
-        Log.WriteLine("Getting ILeague by ID: " + _leagueCategoryId + " with " + nameof(StoredLeagues) +
+        Log.WriteLine("Getting ILeague by ID: " + _channelCategoryId + " with " + nameof(StoredLeagues) +
             " count: " + StoredLeagues.Count, LogLevel.DEBUG);
 
         InterfaceLeague? FoundLeague = StoredLeagues.FirstOrDefault(
-            x => x.LeagueCategoryId == _leagueCategoryId);
+            x => x.LeagueCategoryId == _channelCategoryId);
         if (FoundLeague == null)
         {
             Log.WriteLine(nameof(FoundLeague) + " was null!", LogLevel.ERROR);

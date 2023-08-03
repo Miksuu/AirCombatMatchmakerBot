@@ -18,12 +18,12 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
         thisInterfaceMessage.MessageDescription = "Match scheduling message";
     }
 
-    protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
+    protected override void GenerateButtons(ComponentBuilder _component, ulong _channelCategoryId)
     {
-        base.GenerateRegularButtons(_component, _leagueCategoryId);
+        base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _leagueCategoryId = 0)
+    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
     {
         string finalMessage = "Enter the time you would be able to play the match on in format: \n " +
             "``/schedule 27.11.2022 1030z``\n" + "Instead of using the date 27.11.2022 you can use: [today, tomorrow]," +

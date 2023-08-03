@@ -20,9 +20,9 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
     [DataMember] public ulong belongsToLeagueCategoryId;
 
-    protected override void GenerateButtons(ComponentBuilder _component, ulong _leagueCategoryId)
+    protected override void GenerateButtons(ComponentBuilder _component, ulong _channelCategoryId)
     {
-        base.GenerateRegularButtons(_component, _leagueCategoryId);
+        base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
     public async override Task<string> GenerateMessage(ulong _messageCategoryId = 0)
