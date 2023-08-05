@@ -45,7 +45,7 @@ public class BotRuntimeManager
                 {
                     Log.WriteLine(item.Name, LogLevel.DEBUG);
 
-                    if (item.Name == "info" || item.Name == "test" || item.Name == "main-category")
+                    if (item.Name == "info" || item.Name == "test" || item.Name == "main-category" || item.Name == "development-activity")
                     {
                         continue;
                     }
