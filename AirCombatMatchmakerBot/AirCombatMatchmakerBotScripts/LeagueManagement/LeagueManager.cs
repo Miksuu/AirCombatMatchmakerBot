@@ -6,7 +6,7 @@ public static class LeagueManager
 {
     public static InterfaceLeague GetLeagueCategoryInstance(LeagueName _leagueCategoryName)
     {
-        Log.WriteLine(_leagueCategoryName.ToString());
+        //Log.WriteLine(_leagueCategoryName.ToString());
         return (InterfaceLeague)EnumExtensions.GetInstance(_leagueCategoryName.ToString());
     }
 
@@ -31,7 +31,22 @@ public static class LeagueManager
 
             Log.WriteLine(leagueCategoryName + " does not exists, creating it", LogLevel.DEBUG);
 
+
+            InterfaceCategory interfaceCategory =
+                (InterfaceCategory)EnumExtensions.GetInstance(CategoryType.LEAGUETEMPLATE.ToString());
+
+
+            InterfaceCategory newIC = await CategoryAndChannelManager.GenerateCategoryWithoutItsChannels(
+                CategoryType.LEAGUETEMPLATE, leagueCategoryName);
+
+            interfaceLeagueCategory.LeagueCategoryId= newIC.SocketCategoryChannelId;
+
             Database.Instance.Leagues.AddToStoredLeagues(interfaceLeagueCategory);
+
+            SocketRole role =
+                await RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(leagueCategoryName.ToString());
+
+            await interfaceCategory.CreateChannelsForTheCategory(newIC.SocketCategoryChannelId, role);
         }
     }
 
