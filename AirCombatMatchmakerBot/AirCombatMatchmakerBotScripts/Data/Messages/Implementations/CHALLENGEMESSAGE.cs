@@ -5,6 +5,8 @@ using Discord;
 [DataContract]
 public class CHALLENGEMESSAGE : BaseMessage
 {
+    LeagueCategoryComponents lcc;
+
     [IgnoreDataMember]
     ConcurrentDictionary<int, string> TeamsThatHaveMatchesClose
     {
@@ -37,83 +39,66 @@ public class CHALLENGEMESSAGE : BaseMessage
     {
         try
         {
-            Log.WriteLine("Generating a challenge queue message with _channelId: " +
-                thisInterfaceMessage.MessageChannelId + " on category: " + thisInterfaceMessage.MessageCategoryId);
+            string finalMessage = string.Empty;
 
-            foreach (var createdCategoriesKvp in
-                DiscordBotDatabase.Instance.Categories.CreatedCategoriesWithChannels)
+            lcc = new LeagueCategoryComponents(thisInterfaceMessage.MessageCategoryId);
+            if (lcc.interfaceLeagueCached == null)
             {
-                Log.WriteLine("On league: " +
-                    createdCategoriesKvp.Value.CategoryType);
-
-                string leagueName =
-                    EnumExtensions.GetEnumMemberAttrValue(createdCategoriesKvp.Value.CategoryType);
-
-                Log.WriteLine("Full league name: " + leagueName);
-
-                if (!createdCategoriesKvp.Value.InterfaceChannels.Any(
-                        x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId))
-                {
-                    continue;
-                }
-
-                ulong channelIdToLookFor =
-                    createdCategoriesKvp.Value.InterfaceChannels.FirstOrDefault(
-                        x => x.Value.ChannelId == thisInterfaceMessage.MessageChannelId).Value.ChannelId;
-
-                Log.WriteLine("Looping on league: " + leagueName +
-                    " looking for id: " + channelIdToLookFor);
-
-                if (thisInterfaceMessage.MessageChannelId != channelIdToLookFor)
-                {
-                    continue;
-                }
-
-                Log.WriteLine("Found: " + channelIdToLookFor +
-                    " is league: " + leagueName, LogLevel.DEBUG);
-
-
-                thisInterfaceMessage.MessageEmbedTitle = leagueName + " challenge.";
-                string challengeMessage = "Players In The Queue: \n";
-
-                var leagueCategory =
-                    Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
-
-                foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
-                {
-                    try
-                    {
-                        var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
-                        challengeMessage += "[" + team.SkillRating + "] " + team.TeamName;
-
-                        if (TeamsThatHaveMatchesClose.ContainsKey(teamInt))
-                        {
-                            challengeMessage += TeamsThatHaveMatchesClose[teamInt];
-                        }
-
-                        challengeMessage += "\n";
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.WriteLine(ex.Message, LogLevel.ERROR);
-                        continue;
-                    }
-                }
-
-                if (teamsThatHaveMatchesClose.Count() > 0)
-                {
-                    challengeMessage += "*Players will be removed from the queue 30 minutes before their scheduled match.*";
-                }
-
-                Log.WriteLine("Challenge message generated: " + challengeMessage);
-
-                return Task.FromResult(challengeMessage);
+                Log.WriteLine(nameof(lcc) + " was null!", LogLevel.ERROR);
+                throw new InvalidOperationException(nameof(lcc) + " was null!");
             }
 
-            Log.WriteLine("Did not find a channel id to generate a challenge" +
-                " queue message on!", LogLevel.ERROR);
+            thisInterfaceMessage.MessageEmbedTitle =
+                EnumExtensions.GetEnumMemberAttrValue(lcc.interfaceLeagueCached.LeagueCategoryName);
 
-            return Task.FromResult(string.Empty);
+            var category = DiscordBotDatabase.Instance.Categories.CreatedCategoriesWithChannels[thisInterfaceMessage.MessageCategoryId];
+
+            if (category == null)
+            {
+                Log.WriteLine(nameof(category) + " was null!", LogLevel.ERROR);
+                throw new InvalidOperationException(nameof(category) + " was null!");
+            }
+
+            string challengeMessage = "Players In The Queue: \n";
+
+            var leagueCategory =
+                Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
+
+            foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
+            {
+                try
+                {
+                    var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
+                    challengeMessage += "[" + team.SkillRating + "] " + team.TeamName;
+
+                    if (TeamsThatHaveMatchesClose.ContainsKey(teamInt))
+                    {
+                        challengeMessage += TeamsThatHaveMatchesClose[teamInt];
+                    }
+
+                    challengeMessage += "\n";
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(ex.Message, LogLevel.ERROR);
+                    continue;
+                }
+            }
+
+            if (teamsThatHaveMatchesClose.Count() > 0)
+            {
+                challengeMessage += "*Players will be removed from the queue 30 minutes before their scheduled match.*";
+            }
+
+            Log.WriteLine("Challenge message generated: " + challengeMessage);
+
+            finalMessage += challengeMessage;
+            finalMessage += "*Click the buttons below to join/leave the scheduler*";
+
+            thisInterfaceMessage.MessageDescription = finalMessage;
+
+            return Task.FromResult(thisInterfaceMessage.MessageDescription);
+
         }
         catch (Exception ex)
         {
@@ -121,6 +106,7 @@ public class CHALLENGEMESSAGE : BaseMessage
             throw;
         }
     }
+
 
     public async Task<bool> UpdateTeamsThatHaveMatchesClose()
     {
