@@ -38,4 +38,9 @@ public class REGISTRATIONCHANNEL : BaseChannel
     {
         return Task.CompletedTask;
     }*/
+
+    public override Task<bool> HandleChannelSpecificGenerationBehaviour()
+    {
+        return Task.FromResult(false);
+    }
 }

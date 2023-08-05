@@ -44,4 +44,9 @@ public class MATCHCHANNEL : BaseChannel
 
         return listOfOverwrites;
     }
+
+    public override Task<bool> HandleChannelSpecificGenerationBehaviour()
+    {
+        return Task.FromResult(false);
+    }
 }

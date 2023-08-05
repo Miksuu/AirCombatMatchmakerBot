@@ -35,4 +35,61 @@ public class LEAGUEREGISTRATION : BaseChannel
                 new OverwritePermissions(viewChannel: PermValue.Allow)),
         };
     }
+
+    public async override Task<bool> HandleChannelSpecificGenerationBehaviour()
+    {
+        Log.WriteLine("Starting to to prepare channel messages on " + thisInterfaceChannel.ChannelType +
+            " count: " + Enum.GetValues(typeof(CategoryType)).Length);
+
+        foreach (LeagueName leagueName in Enum.GetValues(typeof(LeagueName)))
+        {
+            Log.WriteLine("Looping on to find leagueName: " + leagueName.ToString());
+
+            string leagueNameString = EnumExtensions.GetEnumMemberAttrValue(leagueName);
+            Log.WriteLine("leagueNameString after enumValueCheck: " + leagueNameString);
+            if (leagueNameString == null)
+            {
+                Log.WriteLine(nameof(leagueNameString) + " was null!", LogLevel.ERROR);
+                continue;
+            }
+
+            try
+            {
+                //var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
+                var leagueInterfaceFromDatabase =
+                    Database.Instance.Leagues.GetILeagueByCategoryName(leagueName);
+
+                Log.WriteLine("Starting to create a league join button for: " + leagueNameString);
+
+                Log.WriteLine(nameof(leagueInterfaceFromDatabase) + " before creating leagueButtonRegisterationCustomId: "
+                    + leagueInterfaceFromDatabase.ToString());
+
+                if (leagueInterfaceFromDatabase.LeagueRegistrationMessageId != 0) continue;
+
+                InterfaceMessage interfaceMessage =
+                    (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString());
+
+                var newInterfaceMessage = await interfaceMessage.CreateTheMessageAndItsButtonsOnTheBaseClass(
+                        thisInterfaceChannel, true, true, leagueInterfaceFromDatabase.LeagueCategoryId);
+
+                leagueInterfaceFromDatabase.LeagueRegistrationMessageId = interfaceMessage.MessageId;
+
+                thisInterfaceChannel.InterfaceMessagesWithIds.TryAdd(
+                    leagueInterfaceFromDatabase.LeagueCategoryId,
+                        (InterfaceMessage)EnumExtensions.GetInstance(MessageName.LEAGUEREGISTRATIONMESSAGE.ToString()));
+
+                Log.WriteLine("Added to the ConcurrentDictionary, count is now: " +
+                    thisInterfaceChannel.InterfaceMessagesWithIds.Count);
+
+                Log.WriteLine("Done looping on: " + leagueNameString);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine(ex.Message, LogLevel.ERROR);
+                continue;
+            }
+        }
+
+        return true;
+    }
 }

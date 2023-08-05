@@ -17,4 +17,9 @@ public class TACVIEWSTORAGE : BaseChannel
         {
         };
     }
+
+    public override Task<bool> HandleChannelSpecificGenerationBehaviour()
+    {
+        return Task.FromResult(false);
+    }
 }
