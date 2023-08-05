@@ -6,13 +6,14 @@ public static class ChannelRestore
 {
     public static bool CheckIfChannelHasBeenDeletedAndRestoreForCategory(
         ulong _categoryId,
-        InterfaceChannel _interfaceChannel,
-        SocketGuild _guild)
+        InterfaceChannel _interfaceChannel)
     {
+        var guild = BotReference.GetGuildRef();
+
         Log.WriteLine("Checking if channel in " + _categoryId +
             " has been deleted. Trying to find: " + _interfaceChannel.ChannelId, LogLevel.DEBUG);
 
-        if (_guild.GetCategoryChannel(_categoryId).Channels.Any(
+        if (guild.GetCategoryChannel(_categoryId).Channels.Any(
             x => x.Id == _interfaceChannel.ChannelId))
         {
             Log.WriteLine("Channel found, returning. ");
