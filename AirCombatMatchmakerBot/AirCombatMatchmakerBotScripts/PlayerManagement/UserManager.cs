@@ -74,7 +74,6 @@ public static class UserManager
         InterfaceLeague _interfaceLeague, ulong _playerId)
     {
         _interfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_playerId).TeamActive = true;
-        await RoleManager.GrantUserAccessWithId(
-            _playerId, _interfaceLeague.LeagueRoleId);
+        await RoleManager.GrantUserAccessWithId(_playerId, _interfaceLeague.LeagueRoleId);
     }
 }
