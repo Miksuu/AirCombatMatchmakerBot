@@ -25,7 +25,10 @@ public static class LeagueManager
 
             if (Database.Instance.Leagues.StoredLeagues.Any(x => x.LeagueCategoryName == leagueCategoryName))
             {
-                Log.WriteLine(leagueCategoryName + " already exists, continuing");
+                Log.WriteLine(leagueCategoryName + " already exists, continuing with setting the references");
+                Database.Instance.Leagues.StoredLeagues.FirstOrDefault(
+                    x => x.LeagueCategoryName == leagueCategoryName).LeagueData.SetReferences(interfaceLeagueCategory);
+
                 continue;
             }
 
