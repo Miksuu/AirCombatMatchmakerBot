@@ -17,6 +17,8 @@ public class LEAGUETEMPLATE : BaseCategory
             ChannelType.CHALLENGE,
             ChannelType.MATCHSCHEDULERCHANNEL,
         };
+
+        thisInterfaceCategory.SkipOnRegularCategoryGeneration = true;
     }
 
     public override List<Overwrite> GetGuildPermissions(
