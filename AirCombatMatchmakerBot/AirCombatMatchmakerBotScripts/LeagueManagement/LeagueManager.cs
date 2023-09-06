@@ -38,16 +38,17 @@ public static class LeagueManager
             InterfaceCategory interfaceCategory =
                 (InterfaceCategory)EnumExtensions.GetInstance(CategoryType.LEAGUETEMPLATE.ToString());
 
-
             InterfaceCategory newIC = await CategoryAndChannelManager.GenerateCategoryWithoutItsChannels(
                 CategoryType.LEAGUETEMPLATE, leagueCategoryName);
 
-            interfaceLeagueCategory.LeagueCategoryId= newIC.SocketCategoryChannelId;
-
-            Database.Instance.Leagues.AddToStoredLeagues(interfaceLeagueCategory);
-
             SocketRole role =
                 await RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(leagueCategoryName.ToString());
+
+            interfaceLeagueCategory.LeagueRoleId = role.Id;
+
+            interfaceLeagueCategory.LeagueCategoryId = newIC.SocketCategoryChannelId;
+
+            Database.Instance.Leagues.AddToStoredLeagues(interfaceLeagueCategory);
 
             await interfaceCategory.CreateChannelsForTheCategory(newIC.SocketCategoryChannelId, role);
         }
