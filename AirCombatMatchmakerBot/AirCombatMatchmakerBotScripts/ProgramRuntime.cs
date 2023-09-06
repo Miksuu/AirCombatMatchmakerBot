@@ -3,7 +3,7 @@ using Discord.WebSocket;
 
 public class ProgramRuntime
 {
-    static public EventManager eventManager;
+    static public EventManager eventManager = new EventManager();
 
     public async Task ProgramRuntimeTask()
     {
