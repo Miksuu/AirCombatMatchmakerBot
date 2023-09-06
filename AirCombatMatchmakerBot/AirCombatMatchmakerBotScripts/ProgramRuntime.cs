@@ -5,14 +5,25 @@ public class ProgramRuntime
 {
     static public EventManager eventManager = new EventManager();
 
+    // !!!
+    // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
+    // !!!
+    static public bool devModeOn = false;
+    // !!!
+    // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
+    // !!!
+
     public async Task ProgramRuntimeTask()
     {
         LogLevelNormalization.InitLogLevelNormalizationStrings();
         // Do not use the logging system before this !!!
 
         // Load the data from the file
-        await SerializationManager.DeSerializeDB();
-
+        if (!devModeOn)
+        {
+            await SerializationManager.DeSerializeDB();
+        }
+        
         // Set up client and return it
         DiscordSocketClient client = BotReference.SetClientRefAndReturnIt();
 
@@ -32,7 +43,10 @@ public class ProgramRuntime
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
 
-                await DevTools.DeleteAllCategoriesChannelsAndRoles();
+                if (devModeOn)
+                {
+                    await DevTools.DeleteAllCategoriesChannelsAndRoles();
+                }
 
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
