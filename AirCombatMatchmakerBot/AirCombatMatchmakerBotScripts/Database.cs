@@ -30,20 +30,4 @@ public class Database : Singleton<Database>
     new logConcurrentDictionary<ulong, ulong>();
     [DataMember]
     public logConcurrentBag<LeagueMatch> archivedLeagueMatches = new logConcurrentBag<LeagueMatch>();
-
-    static string GetApplicationName()
-    {
-        // Get the current assembly (the assembly where your application is defined)
-        Assembly assembly = Assembly.GetEntryAssembly();
-
-        // Get the assembly's full name, which includes the application name
-        string assemblyName = assembly?.GetName()?.FullName;
-
-        // Extract the application name from the full name
-        // The application name is the part before the first comma in the full name
-        int commaIndex = assemblyName.IndexOf(',');
-        string appName = (commaIndex > 0) ? assemblyName.Substring(0, commaIndex) : assemblyName;
-
-        return appName;
-    }
 }
