@@ -42,11 +42,6 @@ public class Database
     // Singleton stuff
     private static Database? instance;
     private static readonly object padlock = new object();
-
-    static string appName = GetApplicationName();
-
-
-
     // The Database components
     [DataMember] public CachedUsers CachedUsers = new CachedUsers();
     [DataMember] public Leagues Leagues = new Leagues();
