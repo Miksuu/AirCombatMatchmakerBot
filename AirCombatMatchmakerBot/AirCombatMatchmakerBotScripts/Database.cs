@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 
 [DataContract]
-public class Database
+public class Database : Singleton<Database>
 {
     [IgnoreDataMember]
     public ConcurrentDictionary<ulong, ulong> MatchChannelsIdWithCategoryId
@@ -20,28 +20,6 @@ public class Database
         set => archivedLeagueMatches.SetValue(value);
     }
 
-    public static Database Instance
-    {
-        get
-        {
-            lock (padlock)
-            {
-                if (instance == null)
-                {
-                    instance = new Database();
-                }
-                return instance;
-            }
-        }
-        set
-        {
-            instance = value;
-        }
-    }
-
-    // Singleton stuff
-    private static Database? instance;
-    private static readonly object padlock = new object();
     // The Database components
     [DataMember] public CachedUsers CachedUsers = new CachedUsers();
     [DataMember] public Leagues Leagues = new Leagues();
