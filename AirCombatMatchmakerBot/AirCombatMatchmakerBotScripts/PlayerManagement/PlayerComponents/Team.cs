@@ -160,17 +160,17 @@ public class Team
             listOfPlayersInUlong.Add(player.PlayerDiscordId);
         }
 
-        var listOfLeagueMatches = Database.Instance.Leagues.CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
+        var listOfLeagueMatches = Database.GetInstance<ApplicationDatabase>().Leagues.CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
             listOfPlayersInUlong, TimeService.GetCurrentUnixTime());
 
-        var listOfMatchesClose = Database.Instance.Leagues.GetListOfMatchesClose(listOfLeagueMatches, _timeOffset);
+        var listOfMatchesClose = Database.GetInstance<ApplicationDatabase>().Leagues.GetListOfMatchesClose(listOfLeagueMatches, _timeOffset);
 
         foreach (LeagueMatch leagueMatch in listOfMatchesClose)
         {
             var timeLeft = TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlaceWithTimeLeft(
                 leagueMatch.MatchEventManager.GetTimeUntilEventOfType(typeof(MatchQueueAcceptEvent)));
 
-            generatedJumpUrlsWithTime += " [" + timeLeft + " until " + await DiscordBotDatabase.Instance.Categories.GetMessageJumpUrl(
+            generatedJumpUrlsWithTime += " [" + timeLeft + " until " + await Database.GetInstance<DiscordBotDatabase>().Categories.GetMessageJumpUrl(
                     leagueMatch.interfaceLeagueRef.LeagueCategoryId, leagueMatch.MatchChannelId,
                     MessageName.MATCHSTARTMESSAGE) + "]";
         }

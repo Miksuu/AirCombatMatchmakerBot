@@ -35,7 +35,7 @@ public static class DowntimeManager
             }
             else
             {
-                if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(user.Id))
+                if (!Database.GetInstance<ApplicationDatabase>().PlayerData.CheckIfUserHasPlayerProfile(user.Id))
                 {
                     Log.WriteLine(
                         user.Username + "(" + user.Id +
@@ -107,7 +107,7 @@ public static class DowntimeManager
             " users on the temp List", LogLevel.DEBUG);
 
         var difference = GetDifferenceBetweenTheCurrentAndCachedUsers(
-                Database.Instance.CachedUsers.CachedUserIDs.ToList(),
+                Database.GetInstance<ApplicationDatabase>().CachedUsers.CachedUserIDs.ToList(),
                 usersOnTheServerAfterDowntime);
 
         if (difference.Count > 0)

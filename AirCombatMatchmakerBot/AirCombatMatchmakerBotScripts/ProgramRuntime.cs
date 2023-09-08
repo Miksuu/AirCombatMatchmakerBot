@@ -8,7 +8,7 @@ public class ProgramRuntime
     // !!!
     // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
     // !!!
-    static public bool devModeOn = true;
+    static public bool devModeOn = false;
     // !!!
     // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
     // !!!
@@ -18,12 +18,6 @@ public class ProgramRuntime
         LogLevelNormalization.InitLogLevelNormalizationStrings();
         // Do not use the logging system before this !!!
 
-        // Load the data from the file
-        if (!devModeOn)
-        {
-            await SerializationManager.DeSerializeDB();
-        }
-        
         // Set up client and return it
         DiscordSocketClient client = BotReference.SetClientRefAndReturnIt();
 
@@ -51,6 +45,9 @@ public class ProgramRuntime
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
+
+                // Load the data from the file
+                SerializationManager.DeSerializeDatabases();
 
                 SetupProgramListenersAndSchedulers();
             }
@@ -85,14 +82,14 @@ public class ProgramRuntime
 
         await DowntimeManager.CheckForUsersThatJoinedAfterDowntime();
 
-        await DiscordBotDatabase.Instance.EventScheduler.CheckCurrentTimeAndExecuteScheduledEvents(true);
+        await Database.GetInstance<DiscordBotDatabase>().EventScheduler.CheckCurrentTimeAndExecuteScheduledEvents(true);
 
         //await SerializationManager.SerializeUsersOnTheServer();
         await SerializationManager.SerializeDB();
 
         await CommandHandler.InstallCommandsAsync();
 
-        Thread secondThread = new Thread(DiscordBotDatabase.Instance.EventScheduler.EventSchedulerLoop);
+        Thread secondThread = new Thread(Database.GetInstance<DiscordBotDatabase>().EventScheduler.EventSchedulerLoop);
         secondThread.Start();
     }
 
@@ -105,7 +102,7 @@ public class ProgramRuntime
         client.UserJoined -= UserManager.HandleUserJoin;
         client.ButtonExecuted -= ButtonHandler.HandleButtonPress;
 
-        client.GuildMemberUpdated -= Database.Instance.PlayerData.HandleRegisteredMemberUpdated;
+        client.GuildMemberUpdated -= Database.GetInstance<ApplicationDatabase>().PlayerData.HandleRegisteredMemberUpdated;
         client.UserLeft -= UserManager.HandleUserLeaveDelegate;
 
         SetupListeners();
@@ -119,7 +116,7 @@ public class ProgramRuntime
         client.ButtonExecuted += ButtonHandler.HandleButtonPress;
 
         // If a member's nickname changes
-        client.GuildMemberUpdated += Database.Instance.PlayerData.HandleRegisteredMemberUpdated;
+        client.GuildMemberUpdated += Database.GetInstance<ApplicationDatabase>().PlayerData.HandleRegisteredMemberUpdated;
         client.UserLeft += UserManager.HandleUserLeaveDelegate;
     }
 }

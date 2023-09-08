@@ -20,7 +20,7 @@ public class LeagueCategoryComponents
         try
         {
             interfaceLeagueCached =
-                Database.Instance.Leagues.GetILeagueByCategoryId(_messageCategoryId);
+                Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryId(_messageCategoryId);
         }
         catch (Exception ex)
         {

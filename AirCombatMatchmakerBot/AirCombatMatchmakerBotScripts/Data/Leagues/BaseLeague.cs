@@ -97,7 +97,7 @@ public abstract class BaseLeague : InterfaceLeague
             " with id: " + LeagueCategoryId);
 
         InterfaceCategory interfaceCategory =
-            DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
+            Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
         if (interfaceCategory == null)
         {
             Log.WriteLine(nameof(interfaceCategory) + " was null!", LogLevel.ERROR);
@@ -115,7 +115,7 @@ public abstract class BaseLeague : InterfaceLeague
         try
         {
             InterfaceCategory leagueCategory =
-                DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
+                Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(LeagueCategoryId);
 
             InterfaceChannel matchReportsChannelInterface =
                 leagueCategory.FindInterfaceChannelWithNameInTheCategory(ChannelType.MATCHREPORTSCHANNEL);
@@ -151,7 +151,7 @@ public abstract class BaseLeague : InterfaceLeague
         try
         {
             InterfaceMessage leagueStatusMessage =
-                DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+                Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
                     LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(ChannelType.LEAGUESTATUS).
                         FindInterfaceMessageWithNameInTheChannel(
                             MessageName.LEAGUESTATUSMESSAGE);
@@ -178,16 +178,16 @@ public abstract class BaseLeague : InterfaceLeague
             Log.WriteLine("Registering user to league: " +
                 thisInterfaceLeague.LeagueCategoryName);
 
-            InterfaceChannel foundChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            InterfaceChannel foundChannel = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
                 LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
                     ChannelType.CHALLENGE);
 
             // Check that the player is in the PlayerData
             // (should be, he doesn't see this button before, except if hes admin)
-            if (Database.Instance.PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(
+            if (Database.GetInstance<ApplicationDatabase>().PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(
                 _userId))
             {
-                Player player = Database.Instance.PlayerData.GetAPlayerProfileById(
+                Player player = Database.GetInstance<ApplicationDatabase>().PlayerData.GetAPlayerProfileById(
                     _userId);
                 if (player.PlayerDiscordId == 0)
                 {

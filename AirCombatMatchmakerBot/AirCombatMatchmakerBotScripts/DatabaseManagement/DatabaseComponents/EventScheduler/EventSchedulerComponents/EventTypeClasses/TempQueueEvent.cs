@@ -76,7 +76,7 @@ public class TempQueueEvent : ScheduledEvent, InterfaceEventType
 
         try
         {
-            DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
                 LeagueCategoryIdCached).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelIdCached).FindInterfaceMessageWithNameInTheChannelAndUpdateItIfItExists(
                         MessageName.CONFIRMMATCHENTRYMESSAGE);

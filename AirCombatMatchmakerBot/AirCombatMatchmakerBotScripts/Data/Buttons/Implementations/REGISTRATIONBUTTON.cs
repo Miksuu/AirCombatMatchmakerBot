@@ -30,7 +30,7 @@ public class REGISTRATIONBUTTON : BaseButton
 
         try
         {
-            registrationChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            registrationChannel = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
                 _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithNameInTheCategory(
                     ChannelType.LEAGUEREGISTRATION);
             registrationChannelCheck = "\n\n Check <#" + registrationChannel.ChannelId + "> for all the available leagues!";
@@ -42,9 +42,9 @@ public class REGISTRATIONBUTTON : BaseButton
         }
 
         // Checks that the player does not exist in the database already, true if this is not the case
-        if (Database.Instance.PlayerData.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
+        if (Database.GetInstance<ApplicationDatabase>().PlayerData.AddNewPlayerToTheDatabaseById(_component.User.Id).Result)
         {
-            Database.Instance.CachedUsers.AddUserIdToCachedConcurrentBag(_component.User.Id);
+            Database.GetInstance<ApplicationDatabase>().CachedUsers.AddUserIdToCachedConcurrentBag(_component.User.Id);
             return Task.FromResult(new Response(_component.User.Mention + ", " +
                 BotMessaging.GetMessageResponse(
                     _component.Data.CustomId,

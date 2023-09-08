@@ -68,7 +68,7 @@ public class Matches
         {
             // Get the category by the league category name passed in the method
             var categoryKvp =
-                Database.Instance.Leagues.GetILeagueByCategoryName(_leagueMatch.MatchLeague);
+                Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryName(_leagueMatch.MatchLeague);
 
             string leagueMatchIdString = _leagueMatch.MatchId.ToString();
 
@@ -78,7 +78,7 @@ public class Matches
             Log.WriteLine("Starting to create a new match channel: " +
                 overriddenMatchName);
 
-            var dbRegularCategory = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(categoryKvp.LeagueCategoryId);
+            var dbRegularCategory = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(categoryKvp.LeagueCategoryId);
 
             // Prepare the match with the ID of the current new match
             InterfaceChannel interfaceChannel = await dbRegularCategory.CreateSpecificChannelFromChannelTypeWithoutRole(
@@ -88,10 +88,10 @@ public class Matches
 
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
-            if (!Database.Instance.MatchChannelsIdWithCategoryId.ContainsKey(
+            if (!Database.GetInstance<ApplicationDatabase>().MatchChannelsIdWithCategoryId.ContainsKey(
                 interfaceChannel.ChannelId))
             {
-                Database.Instance.MatchChannelsIdWithCategoryId.TryAdd(
+                Database.GetInstance<ApplicationDatabase>().MatchChannelsIdWithCategoryId.TryAdd(
                     interfaceChannel.ChannelId, categoryKvp.LeagueCategoryId);
             }
 
@@ -141,7 +141,7 @@ public class Matches
         if (foundMatch == null)
         {
             Log.WriteLine(nameof(foundMatch) + " was null! (user tried to comment after the match has been done)", LogLevel.DEBUG);
-            LeagueMatch? foundArchivedMatch = Database.Instance.ArchivedLeagueMatches.FirstOrDefault(
+            LeagueMatch? foundArchivedMatch = Database.GetInstance<ApplicationDatabase>().ArchivedLeagueMatches.FirstOrDefault(
                 x => x.MatchChannelId == _channelId);
 
             if (foundArchivedMatch != null)

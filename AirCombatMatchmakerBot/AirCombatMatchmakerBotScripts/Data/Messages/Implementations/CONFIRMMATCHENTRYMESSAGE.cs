@@ -139,7 +139,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
                 mcc.leagueMatchCached.MatchState = MatchState.REPORTINGPHASE;
 
-                InterfaceChannel interfaceChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+                InterfaceChannel interfaceChannel = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
                         thisInterfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
                             thisInterfaceMessage.MessageChannelId);
 
