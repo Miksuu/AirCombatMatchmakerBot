@@ -34,7 +34,6 @@ public static class LeagueManager
 
             Log.WriteLine(leagueCategoryName + " does not exists, creating it", LogLevel.DEBUG);
 
-
             InterfaceCategory interfaceCategory =
                 (InterfaceCategory)EnumExtensions.GetInstance(CategoryType.LEAGUETEMPLATE.ToString());
 

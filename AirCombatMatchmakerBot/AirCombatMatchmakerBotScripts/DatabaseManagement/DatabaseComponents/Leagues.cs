@@ -1,12 +1,5 @@
-using Discord;
-using Discord.WebSocket;
-using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
-using System.Reflection.Metadata.Ecma335;
 using System.Runtime.Serialization;
-using System.Security;
-using System.Text.RegularExpressions;
-using System.Threading.Channels;
 
 [DataContract]
 public class Leagues
