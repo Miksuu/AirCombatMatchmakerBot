@@ -18,12 +18,6 @@ public class ProgramRuntime
         LogLevelNormalization.InitLogLevelNormalizationStrings();
         // Do not use the logging system before this !!!
 
-        // Load the data from the file
-        if (!devModeOn)
-        {
-            SerializationManager.DeSerializeDatabases();
-        }
-        
         // Set up client and return it
         DiscordSocketClient client = BotReference.SetClientRefAndReturnIt();
 
@@ -51,6 +45,9 @@ public class ProgramRuntime
                 // !!!
                 // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
                 // !!!
+
+                // Load the data from the file
+                SerializationManager.DeSerializeDatabases();
 
                 SetupProgramListenersAndSchedulers();
             }
