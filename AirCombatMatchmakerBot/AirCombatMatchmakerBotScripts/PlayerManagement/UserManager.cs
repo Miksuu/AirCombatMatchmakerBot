@@ -12,7 +12,7 @@ public static class UserManager
             " has joined the discord with id: " + _user.Id);
 
         // Check if the user is already in the database
-        if (!ApplicationDatabase.Instance.PlayerData.CheckIfUserHasPlayerProfile(_user.Id))
+        if (!Database.GetInstance<ApplicationDatabase>().PlayerData.CheckIfUserHasPlayerProfile(_user.Id))
         {
             Log.WriteLine("User is not in the PlayerID's ConcurrentDictionary," +
                 " disregarding any further action");
@@ -22,7 +22,7 @@ public static class UserManager
         Log.WriteLine("User: " + _user.Username + " (" + _user.Id + ")" +
             " joined with previous profile, adding him to the cache.", LogLevel.DEBUG);
 
-        ApplicationDatabase.Instance.CachedUsers.AddUserIdToCachedConcurrentBag(_user.Id);
+        Database.GetInstance<ApplicationDatabase>().CachedUsers.AddUserIdToCachedConcurrentBag(_user.Id);
 
         await RoleManager.GrantUserAccess(_user.Id, "Member");
 
@@ -44,9 +44,9 @@ public static class UserManager
         Log.WriteLine(_userName + " (" + _userId +
             ") bailed out! Handling deleting registration channels etc.", LogLevel.DEBUG);
 
-        ApplicationDatabase.Instance.Leagues.HandleSettingTeamsInactiveThatUserWasIn(_userId);
+        Database.GetInstance<ApplicationDatabase>().Leagues.HandleSettingTeamsInactiveThatUserWasIn(_userId);
 
-        ApplicationDatabase.Instance.CachedUsers.RemoveUserFromTheCachedConcurrentBag(_userId);
+        Database.GetInstance<ApplicationDatabase>().CachedUsers.RemoveUserFromTheCachedConcurrentBag(_userId);
 
         return Task.CompletedTask;
     }

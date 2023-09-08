@@ -15,10 +15,12 @@ public static class MessageReceiver
         Log.WriteLine("Received message: " + _socketMessage.Content + " in: " + _socketMessage.Channel.Id, LogLevel.DEBUG);
 
         // Disregards any MessageDescription that's not inside the bot's match channels
-        if (!ApplicationDatabase.Instance.MatchChannelsIdWithCategoryId.ContainsKey(
+        if (!Database.GetInstance<ApplicationDatabase>().MatchChannelsIdWithCategoryId.ContainsKey(
             _socketMessage.Channel.Id))
         {
-            Log.WriteLine("Is not in " + nameof(ApplicationDatabase.Instance.MatchChannelsIdWithCategoryId) + ", returning");
+            var matchChannnelsIdWithCategoryId = Database.GetInstance<ApplicationDatabase>().MatchChannelsIdWithCategoryId;
+
+            Log.WriteLine("Is not in " + nameof(matchChannnelsIdWithCategoryId) + ", returning");
             return;
         }
 

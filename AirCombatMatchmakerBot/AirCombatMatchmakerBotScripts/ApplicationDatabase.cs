@@ -7,12 +7,7 @@ using System.Runtime.Serialization;
 [DataContract]
 public class ApplicationDatabase : Database
 {
-    private static readonly Lazy<ApplicationDatabase> lazy =
-    new Lazy<ApplicationDatabase>(() => new ApplicationDatabase());
-
-    public static ApplicationDatabase Instance { get { return lazy.Value; } }
-
-    ApplicationDatabase()
+    public ApplicationDatabase()
     {
         dataDirectory = DatabasePaths.applicationDataDirectory;
         dbTempPathWithFileName = dataDirectory + @"\" + "database.tmp";

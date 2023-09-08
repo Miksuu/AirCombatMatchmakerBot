@@ -27,7 +27,7 @@ public class MatchChannelComponents
         try
         {
             interfaceLeagueCached =
-                ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(_interfaceMessage.MessageCategoryId);
+                Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryId(_interfaceMessage.MessageCategoryId);
             leagueMatchCached = interfaceLeagueCached.LeagueData.Matches.FindLeagueMatchByTheChannelId(
                 _interfaceMessage.MessageChannelId);
         }
@@ -45,7 +45,7 @@ public class MatchChannelComponents
 
     public MatchChannelComponents(ulong _matchChannelIdCached)
     {
-        ulong leagueCategoryIdCached = ApplicationDatabase.Instance.MatchChannelsIdWithCategoryId[_matchChannelIdCached];
+        ulong leagueCategoryIdCached = Database.GetInstance<ApplicationDatabase>().MatchChannelsIdWithCategoryId[_matchChannelIdCached];
 
         Log.WriteLine("Starting to find with matchChannelId: " + _matchChannelIdCached + 
             " and with category id: " + leagueCategoryIdCached);
@@ -59,7 +59,7 @@ public class MatchChannelComponents
         try
         {
             interfaceLeagueCached =
-                ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(leagueCategoryIdCached);
+                Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryId(leagueCategoryIdCached);
             leagueMatchCached =
                 interfaceLeagueCached.LeagueData.Matches.FindLeagueMatchByTheChannelId(_matchChannelIdCached);
         }

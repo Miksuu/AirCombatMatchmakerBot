@@ -33,11 +33,11 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         belongsToLeagueCategoryId = _messageCategoryId;
 
         InterfaceLeague interfaceLeague =
-            ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(belongsToLeagueCategoryId);
+            Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryId(belongsToLeagueCategoryId);
 
         thisInterfaceMessage.MessageEmbedTitle = EnumExtensions.GetEnumMemberAttrValue(interfaceLeague.LeagueCategoryName);
 
-        var category = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(belongsToLeagueCategoryId);
+        var category = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(belongsToLeagueCategoryId);
 
         string returned =
             GetAllowedUnitsAsString(interfaceLeague) + "\n" +
@@ -54,7 +54,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
     {
         var channelId = _interfaceCategory.FindInterfaceChannelWithNameInTheCategory(_channelType).ChannelId;
 
-        return await DiscordBotDatabase.Instance.Categories.GetMessageJumpUrl(belongsToLeagueCategoryId, channelId, _messageName);
+        return await Database.GetInstance<DiscordBotDatabase>().Categories.GetMessageJumpUrl(belongsToLeagueCategoryId, channelId, _messageName);
     }
 
     private string GetAllowedUnitsAsString(InterfaceLeague _interfaceLeague)

@@ -99,7 +99,7 @@ public class MatchReporting
         {
             string response = string.Empty;
 
-            MatchState matchState = ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(
+            MatchState matchState = Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryId(
                 _channelCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState;
 
             Log.WriteLine("Processing player's sent " + nameof(BaseReportingObject) + " in league: " +
@@ -139,7 +139,7 @@ public class MatchReporting
                 }
             }
             InterfaceChannel interfaceChannel =
-                DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+                Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
                     _channelCategoryId).FindInterfaceChannelWithIdInTheCategory(
                         _messageChannelId);
 
@@ -262,7 +262,7 @@ public class MatchReporting
     {
         try
         {
-            InterfaceChannel interfaceChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            InterfaceChannel interfaceChannel = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
                 _channelCategoryId).FindInterfaceChannelWithIdInTheCategory(_messageChannelId);
 
             bool confirmationMessageCanBeShown = CheckIfConfirmationMessageCanBeShown(interfaceChannel);
@@ -271,7 +271,7 @@ public class MatchReporting
 
             if (confirmationMessageCanBeShown)
             {
-                ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(
+                Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryId(
                _channelCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState = MatchState.CONFIRMATIONPHASE;
             }
 

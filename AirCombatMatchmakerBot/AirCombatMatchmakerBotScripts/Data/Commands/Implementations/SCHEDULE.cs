@@ -31,7 +31,7 @@ public class SCHEDULE : BaseMatchCommand
             return new Response(errorMsg, false);
         }
 
-        if (!ApplicationDatabase.Instance.MatchChannelsIdWithCategoryId.ContainsKey(
+        if (!Database.GetInstance<ApplicationDatabase>().MatchChannelsIdWithCategoryId.ContainsKey(
             commandChannelId))
         {
             return new Response("You are not commenting on the match channel!", false);

@@ -47,7 +47,7 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
                 throw new InvalidOperationException(nameof(lcc) + " was null!");
             }
 
-            var channel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
+            var channel = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
                 lcc.interfaceLeagueCached.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
                     ChannelType.CHALLENGE);
 
