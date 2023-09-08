@@ -37,7 +37,7 @@ public class ChallengeStatus
             }
 
             // Prohibits players from joining the queue if they have a match soon
-            var responseFromLeagues = Database.Instance.Leagues.CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
+            var responseFromLeagues = ApplicationDatabase.Instance.Leagues.CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
                 playerIdsInTheTeam, TimeService.GetCurrentUnixTime(), _playerId).Result;
             if (!responseFromLeagues.serialize)
             {
@@ -45,7 +45,7 @@ public class ChallengeStatus
             }
 
             // Add to method
-            foreach (InterfaceLeague league in Database.Instance.Leagues.StoredLeagues)
+            foreach (InterfaceLeague league in ApplicationDatabase.Instance.Leagues.StoredLeagues)
             {
                 try
                 {

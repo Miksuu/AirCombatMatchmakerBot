@@ -68,7 +68,7 @@ public class Matches
         {
             // Get the category by the league category name passed in the method
             var categoryKvp =
-                Database.Instance.Leagues.GetILeagueByCategoryName(_leagueMatch.MatchLeague);
+                ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryName(_leagueMatch.MatchLeague);
 
             string leagueMatchIdString = _leagueMatch.MatchId.ToString();
 
@@ -88,10 +88,10 @@ public class Matches
 
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
-            if (!Database.Instance.MatchChannelsIdWithCategoryId.ContainsKey(
+            if (!ApplicationDatabase.Instance.MatchChannelsIdWithCategoryId.ContainsKey(
                 interfaceChannel.ChannelId))
             {
-                Database.Instance.MatchChannelsIdWithCategoryId.TryAdd(
+                ApplicationDatabase.Instance.MatchChannelsIdWithCategoryId.TryAdd(
                     interfaceChannel.ChannelId, categoryKvp.LeagueCategoryId);
             }
 
@@ -141,7 +141,7 @@ public class Matches
         if (foundMatch == null)
         {
             Log.WriteLine(nameof(foundMatch) + " was null! (user tried to comment after the match has been done)", LogLevel.DEBUG);
-            LeagueMatch? foundArchivedMatch = Database.Instance.ArchivedLeagueMatches.FirstOrDefault(
+            LeagueMatch? foundArchivedMatch = ApplicationDatabase.Instance.ArchivedLeagueMatches.FirstOrDefault(
                 x => x.MatchChannelId == _channelId);
 
             if (foundArchivedMatch != null)

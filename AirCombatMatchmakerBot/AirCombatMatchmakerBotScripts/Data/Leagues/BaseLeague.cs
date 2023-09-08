@@ -184,10 +184,10 @@ public abstract class BaseLeague : InterfaceLeague
 
             // Check that the player is in the PlayerData
             // (should be, he doesn't see this button before, except if hes admin)
-            if (Database.Instance.PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(
+            if (ApplicationDatabase.Instance.PlayerData.CheckIfPlayerDataPlayerIDsContainsKey(
                 _userId))
             {
-                Player player = Database.Instance.PlayerData.GetAPlayerProfileById(
+                Player player = ApplicationDatabase.Instance.PlayerData.GetAPlayerProfileById(
                     _userId);
                 if (player.PlayerDiscordId == 0)
                 {

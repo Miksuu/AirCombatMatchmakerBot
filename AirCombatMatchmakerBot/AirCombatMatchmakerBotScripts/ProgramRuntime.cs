@@ -105,7 +105,7 @@ public class ProgramRuntime
         client.UserJoined -= UserManager.HandleUserJoin;
         client.ButtonExecuted -= ButtonHandler.HandleButtonPress;
 
-        client.GuildMemberUpdated -= Database.Instance.PlayerData.HandleRegisteredMemberUpdated;
+        client.GuildMemberUpdated -= ApplicationDatabase.Instance.PlayerData.HandleRegisteredMemberUpdated;
         client.UserLeft -= UserManager.HandleUserLeaveDelegate;
 
         SetupListeners();
@@ -119,7 +119,7 @@ public class ProgramRuntime
         client.ButtonExecuted += ButtonHandler.HandleButtonPress;
 
         // If a member's nickname changes
-        client.GuildMemberUpdated += Database.Instance.PlayerData.HandleRegisteredMemberUpdated;
+        client.GuildMemberUpdated += ApplicationDatabase.Instance.PlayerData.HandleRegisteredMemberUpdated;
         client.UserLeft += UserManager.HandleUserLeaveDelegate;
     }
 }

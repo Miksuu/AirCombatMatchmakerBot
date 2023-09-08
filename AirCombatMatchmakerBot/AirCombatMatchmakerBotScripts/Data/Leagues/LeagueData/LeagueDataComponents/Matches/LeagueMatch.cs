@@ -123,12 +123,12 @@ public class LeagueMatch
                 Log.WriteLine("final teamsInTheMatch: " + item.Key + " with count: " +TeamsInTheMatch.Count, LogLevel.VERBOSE);
             }
 
-            Log.WriteLine("before incrementing to: " + Database.Instance.Leagues.LeaguesMatchCounter + " with: " + TeamsInTheMatch.Count);
+            Log.WriteLine("before incrementing to: " + ApplicationDatabase.Instance.Leagues.LeaguesMatchCounter + " with: " + TeamsInTheMatch.Count);
 
-            MatchId = Database.Instance.Leagues.LeaguesMatchCounter;
-            Database.Instance.Leagues.LeaguesMatchCounter++;
+            MatchId = ApplicationDatabase.Instance.Leagues.LeaguesMatchCounter;
+            ApplicationDatabase.Instance.Leagues.LeaguesMatchCounter++;
 
-            Log.WriteLine("incremented to: " + Database.Instance.Leagues.LeaguesMatchCounter + " with: " + TeamsInTheMatch.Count);
+            Log.WriteLine("incremented to: " + ApplicationDatabase.Instance.Leagues.LeaguesMatchCounter + " with: " + TeamsInTheMatch.Count);
 
             MatchState = _matchState;
 
@@ -243,7 +243,7 @@ public class LeagueMatch
             }
 
             InterfaceChannel interfaceChannel = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
-                Database.Instance.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
+                ApplicationDatabase.Instance.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                     MatchChannelId);
 
             if (scheduledTime == ScheduleObject.RequestedSchedulingTimeInUnixTime)
@@ -262,7 +262,7 @@ public class LeagueMatch
             }
             AlreadySuggestedTimes.Add(suggestedScheduleDateInUnixTime);
 
-            var response = Database.Instance.Leagues.CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
+            var response = ApplicationDatabase.Instance.Leagues.CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
                 GetIdsOfThePlayersInTheMatchAsArray().ToList(), suggestedScheduleDateInUnixTime, _playerId).Result;
             if (!response.serialize)
             {
@@ -305,7 +305,7 @@ public class LeagueMatch
         Log.WriteLine("player: " + _playerId + " on team: " + _playerTeamId + " accepted the match.", LogLevel.DEBUG);
 
         InterfaceChannel _interfaceChannelTemp = DiscordBotDatabase.Instance.Categories.FindInterfaceCategoryWithCategoryId(
-            Database.Instance.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
+            ApplicationDatabase.Instance.MatchChannelsIdWithCategoryId[MatchChannelId]).FindInterfaceChannelWithIdInTheCategory(
                 MatchChannelId);
 
         ulong timeUntilTemp = TimeService.CalculateTimeUntilWithUnixTime(ScheduleObject.RequestedSchedulingTimeInUnixTime);
@@ -451,10 +451,10 @@ public class LeagueMatch
 
             int matchIdTemp = MatchId;
 
-            Database.Instance.ArchivedLeagueMatches.Add(
+            ApplicationDatabase.Instance.ArchivedLeagueMatches.Add(
                 await interfaceLeagueRef.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(MatchChannelId));
             Log.WriteLine("Added " + matchIdTemp + " to the archive, count is now: " +
-                Database.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
+                ApplicationDatabase.Instance.ArchivedLeagueMatches.Count, LogLevel.DEBUG);
 
             // When removing the player from the database, no need for this because it's done after he is gone from the league
             //if (!_removingPlayerFromDatabase)

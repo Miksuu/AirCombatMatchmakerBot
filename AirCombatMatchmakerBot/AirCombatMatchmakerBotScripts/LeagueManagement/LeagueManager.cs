@@ -21,12 +21,12 @@ public static class LeagueManager
             Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString(), LogLevel.DEBUG);
 
             InterfaceLeague interfaceLeagueCategory = GetLeagueCategoryInstance(leagueCategoryName);
-            Log.WriteLine(nameof(LeagueManager) + " with: " + Database.Instance.PlayerData, LogLevel.VERBOSE);
+            Log.WriteLine(nameof(LeagueManager) + " with: " + ApplicationDatabase.Instance.PlayerData, LogLevel.VERBOSE);
 
-            if (Database.Instance.Leagues.StoredLeagues.Any(x => x.LeagueCategoryName == leagueCategoryName))
+            if (ApplicationDatabase.Instance.Leagues.StoredLeagues.Any(x => x.LeagueCategoryName == leagueCategoryName))
             {
                 Log.WriteLine(leagueCategoryName + " already exists, continuing with setting the references");
-                Database.Instance.Leagues.StoredLeagues.FirstOrDefault(
+                ApplicationDatabase.Instance.Leagues.StoredLeagues.FirstOrDefault(
                     x => x.LeagueCategoryName == leagueCategoryName).LeagueData.SetReferences(interfaceLeagueCategory);
 
                 continue;
@@ -48,7 +48,7 @@ public static class LeagueManager
 
             interfaceLeagueCategory.LeagueCategoryId = newIC.SocketCategoryChannelId;
 
-            Database.Instance.Leagues.AddToStoredLeagues(interfaceLeagueCategory);
+            ApplicationDatabase.Instance.Leagues.AddToStoredLeagues(interfaceLeagueCategory);
 
             await interfaceCategory.CreateChannelsForTheCategory(newIC.SocketCategoryChannelId, role);
         }

@@ -34,12 +34,12 @@ public class PlayerData
         Log.WriteLine("Adding a new player: " + nickName + " (" + _playerId + ").", LogLevel.DEBUG);
 
         // Checks if the player is already in the database, just in case
-        if (!Database.Instance.PlayerData.CheckIfUserHasPlayerProfile(_playerId))
+        if (!ApplicationDatabase.Instance.PlayerData.CheckIfUserHasPlayerProfile(_playerId))
         {
             Log.WriteLine("Player doesn't exist in the database: " + _playerId);
 
             // Add to the profile
-            Database.Instance.PlayerData.AddAPlayerProfile(new Player(_playerId, nickName));
+            ApplicationDatabase.Instance.PlayerData.AddAPlayerProfile(new Player(_playerId, nickName));
 
             // Add the member role for access.
             await RoleManager.GrantUserAccess(_playerId, "Member");
@@ -143,7 +143,7 @@ public class PlayerData
         }
 
         var playerValue =
-            Database.Instance.PlayerData.GetAPlayerProfileById(_socketGuildUserAfter.Id);
+            ApplicationDatabase.Instance.PlayerData.GetAPlayerProfileById(_socketGuildUserAfter.Id);
 
         if (playerValue == null)
         {
@@ -176,7 +176,7 @@ public class PlayerData
         }
 
         Log.WriteLine("Deleting a player profile " + _playerDiscordId, LogLevel.DEBUG);
-        Database.Instance.PlayerData.PlayerIDs.TryRemove(_playerDiscordId, out Player? _player);
+        ApplicationDatabase.Instance.PlayerData.PlayerIDs.TryRemove(_playerDiscordId, out Player? _player);
 
         var user = GetSocketGuildUserById(_playerDiscordId);
         // If the user is in the server

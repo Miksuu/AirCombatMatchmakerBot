@@ -43,11 +43,11 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             "``/schedule 42 minutes``\n" +
             "*Copypasting these messages won't work! You have to type them in manually.*";
 
-        var leagueMatch = Database.Instance.Leagues.GetILeagueByCategoryId(
+        var leagueMatch = ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(
             thisInterfaceMessage.MessageCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(
                 thisInterfaceMessage.MessageChannelId);
 
-        finalMessage += Database.Instance.Leagues.GetListOfTimesThatWontBeSuitableForScheduling(leagueMatch);
+        finalMessage += ApplicationDatabase.Instance.Leagues.GetListOfTimesThatWontBeSuitableForScheduling(leagueMatch);
 
         return Task.FromResult(finalMessage);
     }

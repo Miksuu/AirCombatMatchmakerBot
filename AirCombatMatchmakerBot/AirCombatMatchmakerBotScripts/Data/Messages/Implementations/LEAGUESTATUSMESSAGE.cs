@@ -27,7 +27,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
         List<Team> sortedTeamListByElo = new List<Team>();
 
         InterfaceLeague interfaceLeague =
-            Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
+            ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
 
         sortedTeamListByElo =
             new List<Team>(interfaceLeague.LeagueData.Teams.TeamsConcurrentBag.OrderByDescending(

@@ -62,7 +62,7 @@ public class CHALLENGEMESSAGE : BaseMessage
             string challengeMessage = "Players In The Queue: \n";
 
             var leagueCategory =
-                Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
+                ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
 
             foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
             {
@@ -115,7 +115,7 @@ public class CHALLENGEMESSAGE : BaseMessage
             bool updateTheMessage = false;
 
             var leagueCategory =
-                Database.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
+                ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(thisInterfaceMessage.MessageCategoryId);
 
             TeamsThatHaveMatchesClose.Clear();
 

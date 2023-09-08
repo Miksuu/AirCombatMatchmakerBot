@@ -99,7 +99,7 @@ public class MatchReporting
         {
             string response = string.Empty;
 
-            MatchState matchState = Database.Instance.Leagues.GetILeagueByCategoryId(
+            MatchState matchState = ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(
                 _channelCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState;
 
             Log.WriteLine("Processing player's sent " + nameof(BaseReportingObject) + " in league: " +
@@ -271,7 +271,7 @@ public class MatchReporting
 
             if (confirmationMessageCanBeShown)
             {
-                Database.Instance.Leagues.GetILeagueByCategoryId(
+                ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryId(
                _channelCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(_messageChannelId).MatchState = MatchState.CONFIRMATIONPHASE;
             }
 

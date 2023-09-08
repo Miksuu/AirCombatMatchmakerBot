@@ -160,10 +160,10 @@ public class Team
             listOfPlayersInUlong.Add(player.PlayerDiscordId);
         }
 
-        var listOfLeagueMatches = Database.Instance.Leagues.CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
+        var listOfLeagueMatches = ApplicationDatabase.Instance.Leagues.CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
             listOfPlayersInUlong, TimeService.GetCurrentUnixTime());
 
-        var listOfMatchesClose = Database.Instance.Leagues.GetListOfMatchesClose(listOfLeagueMatches, _timeOffset);
+        var listOfMatchesClose = ApplicationDatabase.Instance.Leagues.GetListOfMatchesClose(listOfLeagueMatches, _timeOffset);
 
         foreach (LeagueMatch leagueMatch in listOfMatchesClose)
         {

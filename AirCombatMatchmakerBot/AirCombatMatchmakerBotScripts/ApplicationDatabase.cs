@@ -5,8 +5,14 @@ using System.Reflection;
 using System.Runtime.Serialization;
 
 [DataContract]
-public class Database : Singleton<Database>
+public class ApplicationDatabase : Database
 {
+    ApplicationDatabase()
+    {
+        dataDirectory = DatabasePaths.applicationDataDirectory;
+        dbTempPathWithFileName = dataDirectory + @"\" + "database.tmp";
+    }
+
     [IgnoreDataMember]
     public ConcurrentDictionary<ulong, ulong> MatchChannelsIdWithCategoryId
     {

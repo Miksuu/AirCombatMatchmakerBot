@@ -57,7 +57,7 @@ public class LEAGUEREGISTRATION : BaseChannel
             {
                 //var leagueInterface = LeagueManager.GetLeagueInstanceWithLeagueCategoryName(leagueName);
                 var leagueInterfaceFromDatabase =
-                    Database.Instance.Leagues.GetILeagueByCategoryName(leagueName);
+                    ApplicationDatabase.Instance.Leagues.GetILeagueByCategoryName(leagueName);
 
                 Log.WriteLine("Starting to create a league join button for: " + leagueNameString);
 

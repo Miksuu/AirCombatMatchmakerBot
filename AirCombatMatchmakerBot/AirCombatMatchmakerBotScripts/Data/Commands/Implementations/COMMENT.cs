@@ -38,7 +38,7 @@ public class COMMENT : BaseMatchCommand
             return new Response(errorMsg, false);
         }
 
-        if (!Database.Instance.MatchChannelsIdWithCategoryId.ContainsKey(
+        if (!ApplicationDatabase.Instance.MatchChannelsIdWithCategoryId.ContainsKey(
             commandChannelId))
         {
             return new Response("You are not commenting on the match channel!", false);

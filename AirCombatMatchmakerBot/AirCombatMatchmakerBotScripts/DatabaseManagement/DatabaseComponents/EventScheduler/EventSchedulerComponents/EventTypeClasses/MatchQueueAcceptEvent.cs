@@ -115,7 +115,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
             {
                 removedFromTheQueues = true;
 
-                Database.Instance.Leagues.RemovePlayersFromQueuesOnceMatchIsCloseEnough(
+                ApplicationDatabase.Instance.Leagues.RemovePlayersFromQueuesOnceMatchIsCloseEnough(
                     mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray().ToList());
             }
 
