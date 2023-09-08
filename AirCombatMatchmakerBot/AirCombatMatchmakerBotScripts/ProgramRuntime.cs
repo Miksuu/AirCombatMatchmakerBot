@@ -21,7 +21,7 @@ public class ProgramRuntime
         // Load the data from the file
         if (!devModeOn)
         {
-            await SerializationManager.DeSerializeDB();
+            SerializationManager.DeSerializeDatabases();
         }
         
         // Set up client and return it
