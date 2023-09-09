@@ -18,8 +18,7 @@ public class LeagueData
 
     public void SetReferences(InterfaceLeague _interfaceLeague)
     {
-        //interfaceLeagueRef = Database.Instance.Leagues.GetILeagueByCategoryId(InterfaceLeagueCategoryId);
-        interfaceLeagueRef = _interfaceLeague;
+        //Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryId(InterfaceLeagueCategoryId);
         Teams.interfaceLeagueRef = _interfaceLeague;
         ChallengeStatus.interfaceLeagueRef = _interfaceLeague;
         MatchScheduler.interfaceLeagueRef = _interfaceLeague;

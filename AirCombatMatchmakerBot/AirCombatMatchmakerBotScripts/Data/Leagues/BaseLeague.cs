@@ -86,7 +86,7 @@ public abstract class BaseLeague : InterfaceLeague
     public BaseLeague()
     {
         thisInterfaceLeague = this;
-        leagueData.SetReferences(thisInterfaceLeague);
+        //leagueData.SetReferences(thisInterfaceLeague);
     }
 
     public abstract List<Overwrite> GetGuildPermissions(SocketGuild _guild, SocketRole _role);

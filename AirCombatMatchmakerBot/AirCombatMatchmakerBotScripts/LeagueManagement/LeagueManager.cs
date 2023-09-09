@@ -23,11 +23,15 @@ public static class LeagueManager
             InterfaceLeague interfaceLeagueCategory = GetLeagueCategoryInstance(leagueCategoryName);
             Log.WriteLine(nameof(LeagueManager) + " with: " + Database.GetInstance<ApplicationDatabase>().PlayerData, LogLevel.VERBOSE);
 
+            var dbT = Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues;
+
             if (Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.Any(x => x.LeagueCategoryName == leagueCategoryName))
             {
                 Log.WriteLine(leagueCategoryName + " already exists, continuing with setting the references");
-                Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.FirstOrDefault(
-                    x => x.LeagueCategoryName == leagueCategoryName).LeagueData.SetReferences(interfaceLeagueCategory);
+                var interfaceLeagueRef = Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.FirstOrDefault(
+                    x => x.LeagueCategoryName == leagueCategoryName);
+
+                interfaceLeagueRef.LeagueData.SetReferences(interfaceLeagueRef);
 
                 continue;
             }
