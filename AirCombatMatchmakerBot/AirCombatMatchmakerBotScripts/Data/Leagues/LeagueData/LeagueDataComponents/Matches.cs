@@ -123,6 +123,8 @@ public class Matches
         // Schedule the match queue timeout (if the players don't accept it in the time), only if the match is in the
         if (_leagueMatch.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
         {
+            Log.WriteLine(_leagueMatch.MatchEventManager.ClassScheduledEvents.Count.ToString());
+
             new MatchQueueAcceptEvent(
                 30, interfaceLeagueRef.LeagueCategoryId,
                 _interfaceChannel.ChannelId, _leagueMatch.MatchEventManager.ClassScheduledEvents);
