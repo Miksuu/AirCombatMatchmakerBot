@@ -314,8 +314,6 @@ public class LeagueMatch
             timeUntilTemp + 900, interfaceLeagueRef.LeagueCategoryId,
             _interfaceChannelTemp.ChannelId, MatchEventManager.ClassScheduledEvents);
 
-        Log.WriteLine(MatchEventManager.ClassScheduledEvents.Count.ToString());
-
         // Improved response time
         Thread secondThread = new Thread(() => StartMatchAfterSchedulingOnAnotherThread(_interfaceChannelTemp, timeUntilTemp));
         secondThread.Start();

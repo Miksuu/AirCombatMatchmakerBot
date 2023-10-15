@@ -57,8 +57,6 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
             string finalMessage = string.Empty;
 
-            Log.WriteLine(mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.Count.ToString());
-
             // Add to a method inside the match
             foreach (ScheduledEvent scheduledEvent in mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents)
             {
