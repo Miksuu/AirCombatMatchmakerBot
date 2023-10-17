@@ -16,7 +16,7 @@
                 "pipeCwd": "${workspaceFolder}",
                 "pipeProgram": "cmd",
                 "pipeArgs": ["/c"],
-                "debuggerPath": "C:\\\"Programs\"\\netcoredbg\\netcoredbg.exe",
+                "debuggerPath": "C:\\Programs\\netcoredbg\\netcoredbg.exe",
                 "quoteArgs": true
             }
         }
