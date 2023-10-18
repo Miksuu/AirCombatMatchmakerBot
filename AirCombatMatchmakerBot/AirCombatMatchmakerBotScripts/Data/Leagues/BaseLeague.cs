@@ -203,8 +203,6 @@ public abstract class BaseLeague : InterfaceLeague
 
                 bool playerIsInActiveTeamAlready = thisInterfaceLeague.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
                     _userId).TeamActive;
-                
-                var teami = thisInterfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_userId);
 
                 if (!playerIsInATeamAlready)
                 {   
