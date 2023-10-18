@@ -71,11 +71,12 @@ public static class UserManager
 
     // Need to make this support teams
     public static async Task SetTeamActiveAndGrantThePlayerRole(
-        InterfaceLeague _interfaceLeague, ulong _playerId)
+        InterfaceLeague _interfaceLeague, ulong _playerId, Team _newTeam)
     {
-        var Team = _interfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_playerId);
+        // Replaced with parameter of _newTeam
+        //var Team = _interfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_playerId);
 
-        Team.TeamActive = true;
+        _newTeam.TeamActive = true;
         await RoleManager.GrantUserAccessWithId(_playerId, _interfaceLeague.LeagueRoleId);
     }
 }

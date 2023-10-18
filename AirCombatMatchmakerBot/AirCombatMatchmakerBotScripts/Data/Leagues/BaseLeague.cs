@@ -235,7 +235,7 @@ public abstract class BaseLeague : InterfaceLeague
                     }
 
                     // Add the role for the player for the specific league and set him teamActive
-                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId, newTeam);
 
                     Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
                         thisInterfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
