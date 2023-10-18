@@ -14,9 +14,8 @@ public class ACCEPTSCHEDULEDTIME : BaseButton
         ephemeralResponse = true;
     }
 
-    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
+    protected override void GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
     {
-        return "";
     }
 
     public async override Task<Response> ActivateButtonFunction(

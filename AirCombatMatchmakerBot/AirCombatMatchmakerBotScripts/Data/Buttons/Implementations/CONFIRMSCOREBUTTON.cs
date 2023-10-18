@@ -18,9 +18,8 @@ public class CONFIRMSCOREBUTTON : BaseButton
         ephemeralResponse = false;
     }
 
-    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
+    protected override void GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
     {
-        return "";
     }
 
     public override Task<Response> ActivateButtonFunction(

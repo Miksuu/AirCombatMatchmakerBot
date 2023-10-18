@@ -13,21 +13,21 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
         ephemeralResponse = true;
     }
 
-    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
+    protected override void GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
     {
         string customId = string.Empty;
 
         if (_channelCategoryId == 0)
         {
             Log.WriteLine("Failed to receive the _channelCategoryId!", LogLevel.ERROR);
-            return customId;
+            return;
         }
 
-        customId = _channelCategoryId.ToString() + "_" + _buttonIndex;
-        Log.WriteLine("Setting league-registration button custom id to: " +
-            customId, LogLevel.DEBUG);
+        InterfaceButton buttonInterface = this;
 
-        return customId;
+        buttonInterface.CustomOperationId = _channelCategoryId.ToString() + "_" + _buttonIndex;
+        Log.WriteLine("Set league-registration button CustomOperationId to: " +
+            buttonInterface.CustomOperationId, LogLevel.DEBUG);
     }
 
     public override Task<Response> ActivateButtonFunction(
@@ -35,7 +35,11 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
     {
         Log.WriteLine("starting leagueRegistration");
 
-        string[] splitStrings = _component.Data.CustomId.Split('_');
+        InterfaceButton buttonInterface = this;
+
+        string[] splitStrings = buttonInterface.CustomOperationId.Split('_');
+
+        Log.WriteLine(Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.Count.ToString());
 
         // Add try-catch here
         InterfaceLeague interfaceLeague =

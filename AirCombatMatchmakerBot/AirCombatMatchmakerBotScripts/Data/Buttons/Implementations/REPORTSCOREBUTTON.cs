@@ -18,13 +18,11 @@ public class REPORTSCOREBUTTON : BaseButton
         ephemeralResponse = true;
     }
 
-    protected override string GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
+    protected override void GenerateCustomButtonProperties(int _buttonIndex, ulong _channelCategoryId)
     {
         thisInterfaceButton.ButtonLabel = _buttonIndex.ToString();
         Log.WriteLine("is: " + nameof(buttonName) +
             " set label to: " + thisInterfaceButton.ButtonLabel);
-
-        return "";
     }
 
     public async override Task<Response> ActivateButtonFunction(
