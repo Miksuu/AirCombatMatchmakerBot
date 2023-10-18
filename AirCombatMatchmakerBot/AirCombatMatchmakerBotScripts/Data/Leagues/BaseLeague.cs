@@ -171,8 +171,8 @@ public abstract class BaseLeague : InterfaceLeague
 
     public async Task<Response> RegisterUserToALeague(ulong _userId)
     {
-        try
-        {
+        // try
+        // {
             string responseMsg = string.Empty;
 
             Log.WriteLine("Registering user to league: " +
@@ -205,7 +205,7 @@ public abstract class BaseLeague : InterfaceLeague
                     _userId).TeamActive;
 
                 if (!playerIsInATeamAlready)
-                {
+                {   
                     Log.WriteLine("The player was not found in any team in the league");
 
                     // Create a team with unique ID and increment that ID
@@ -235,7 +235,7 @@ public abstract class BaseLeague : InterfaceLeague
                     }
 
                     // Add the role for the player for the specific league and set him teamActive
-                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId, newTeam);
 
                     Log.WriteLine("Done creating team: " + newTeam + " team count is now: " +
                         thisInterfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
@@ -249,7 +249,8 @@ public abstract class BaseLeague : InterfaceLeague
                     Log.WriteLine("The player was already in a team in that league!" +
                         " Setting him active", LogLevel.DEBUG);
 
-                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+                    var foundTeam = thisInterfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_userId);
+                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId, foundTeam);
 
                     //responseMsg = "You have rejoined: " +
                     //    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
@@ -257,8 +258,10 @@ public abstract class BaseLeague : InterfaceLeague
                 }
                 else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
                 {
+                    var foundTeam = thisInterfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_userId);
+
                     // Temp fix for fast clickers of two different leagues they can just press it again to receive the role
-                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId, foundTeam);
 
                     Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + thisInterfaceLeague.LeagueCategoryName +
                         ", had a team already active");
@@ -279,12 +282,12 @@ public abstract class BaseLeague : InterfaceLeague
             UpdateLeagueLeaderboard();
 
             return new Response(responseMsg, true);
-        }
-        catch (Exception ex)
-        {
-            Log.WriteLine(ex.Message, LogLevel.ERROR);
-            return new Response(ex.Message, false);
-        }
+        // }
+        // catch (Exception ex)
+        // {
+        //     Log.WriteLine(ex.Message, LogLevel.ERROR);
+        //     return new Response(ex.Message, false);
+        // }
     }
 
     public void HandleLeaguesAndItsMatchesEvents(ulong _currentUnixTime)

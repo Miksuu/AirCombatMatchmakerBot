@@ -37,12 +37,6 @@ public class LEAGUEREGISTRATIONBUTTON : BaseButton
 
         string[] splitStrings = _component.Data.CustomId.Split('_');
 
-        /*
-        foreach (var item in splitStrings)
-        {
-            Log.WriteLine("item: " + item);
-        }*/
-
         // Add try-catch here
         InterfaceLeague interfaceLeague =
             Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryId(ulong.Parse(splitStrings[0]));
