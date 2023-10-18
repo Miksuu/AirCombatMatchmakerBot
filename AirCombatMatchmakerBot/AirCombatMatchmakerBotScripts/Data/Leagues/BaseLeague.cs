@@ -195,11 +195,13 @@ public abstract class BaseLeague : InterfaceLeague
 
         if (!playerIsInATeamAlready)
         {
-            return await HandleNewPlayerRegistration(player);
+            var response = await HandleNewPlayerRegistration(player);
+            responseMsg = response.responseString;
         }
         else if (playerIsInATeamAlready && !playerIsInActiveTeamAlready)
         {
-            return await HandleExistingPlayerRegistration(_userId);
+            var response = await HandleExistingPlayerRegistration(_userId);
+            responseMsg = response.responseString;
         }
         else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
         {
@@ -207,6 +209,7 @@ public abstract class BaseLeague : InterfaceLeague
         }
 
         UpdateLeagueLeaderboard();
+        
         return new Response(responseMsg, true);
     }
 
