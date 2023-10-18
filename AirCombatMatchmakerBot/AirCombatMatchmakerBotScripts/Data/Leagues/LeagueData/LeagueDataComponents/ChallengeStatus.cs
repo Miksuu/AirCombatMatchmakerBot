@@ -28,7 +28,7 @@ public class ChallengeStatus
             Team playerTeam =
                 interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
 
-            Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
+            Log.WriteLine("Team found: " + playerTeam.GetTeamName() +
             " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
 
             foreach (Player player in playerTeam.Players.ToList())
@@ -153,7 +153,7 @@ public class ChallengeStatus
     {
         if (CheckIfPlayerTeamIsAlreadyInQueue(_playerTeam))
         {
-            Log.WriteLine("Team " + _playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
+            Log.WriteLine("Team " + _playerTeam.GetTeamName() +
                 " (" + _playerTeam.TeamId + ")" + " was already in queue!", LogLevel.DEBUG);
             return "alreadyInQueue";
         }
@@ -179,7 +179,7 @@ public class ChallengeStatus
         {
             Team team =
                 interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
-            Log.WriteLine("Team found: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
+            Log.WriteLine("Team found: " + team.GetTeamName() +
                 " (" + team.TeamId + ")" + " adding it to the challenge queue: " + TeamsInTheQueue);
 
             if (!CheckIfPlayerTeamIsAlreadyInQueue(team))

@@ -84,7 +84,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         foreach (Team team in _interfaceLeague.LeagueData.Teams.TeamsConcurrentBag)
         {
-            string TeamName = team.GetTeamName(_interfaceLeague.LeaguePlayerCountPerTeam);
+            string TeamName = team.GetTeamName();
 
             if (team.TeamActive)
             {

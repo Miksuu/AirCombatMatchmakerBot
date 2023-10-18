@@ -39,9 +39,11 @@ public class Teams
 
     public bool CheckIfPlayerIsAlreadyInATeamById(ulong _idToSearchFor)
     {
+        Log.WriteLine("TeamsConcurrentBag count: " + TeamsConcurrentBag.Count);
+
         foreach (Team team in TeamsConcurrentBag)
         {
-            Log.WriteLine("Searching team: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam));
+            Log.WriteLine("Searching team: " + team.GetTeamName());
 
             foreach (Player teamPlayer in team.Players)
             {
@@ -64,7 +66,7 @@ public class Teams
     {
         foreach (Team team in TeamsConcurrentBag)
         {
-            Log.WriteLine("Searching team: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam));
+            Log.WriteLine("Searching team: " + team.GetTeamName());
 
             foreach (Player teamPlayer in team.Players)
             {
@@ -90,8 +92,7 @@ public class Teams
         {
             List<Player> Players = team.Players.ToList();
 
-            Log.WriteLine("Searching team: " + team.GetTeamName(
-                interfaceLeagueRef.LeaguePlayerCountPerTeam) + " with " + Players.Count);
+            Log.WriteLine("Searching team: " + team.GetTeamName() + " with " + Players.Count);
 
             foreach (Player teamPlayer in Players)
             {
@@ -121,8 +122,7 @@ public class Teams
             throw new InvalidOperationException(nameof(foundTeam) + " was null!");
         }
 
-        Log.WriteLine("Found team: " + foundTeam.GetTeamName(
-            interfaceLeagueRef.LeaguePlayerCountPerTeam) +" id: " + foundTeam.TeamId + 
+        Log.WriteLine("Found team: " + foundTeam.GetTeamName() +" id: " + foundTeam.TeamId + 
             " with members: " + foundTeam.GetTeamMembersInAString(), LogLevel.DEBUG);
 
         return foundTeam;
