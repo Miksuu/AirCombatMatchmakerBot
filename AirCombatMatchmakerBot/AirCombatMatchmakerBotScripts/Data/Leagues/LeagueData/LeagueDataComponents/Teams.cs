@@ -39,6 +39,8 @@ public class Teams
 
     public bool CheckIfPlayerIsAlreadyInATeamById(ulong _idToSearchFor)
     {
+        Log.WriteLine("TeamsConcurrentBag count: " + TeamsConcurrentBag.Count);
+
         foreach (Team team in TeamsConcurrentBag)
         {
             Log.WriteLine("Searching team: " + team.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam));
