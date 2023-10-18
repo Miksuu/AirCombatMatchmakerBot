@@ -62,7 +62,7 @@ public class MatchScheduler
             Team playerTeam =
                 interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
 
-            Log.WriteLine("Team found: " + playerTeam.GetTeamName(interfaceLeagueRef.LeaguePlayerCountPerTeam) +
+            Log.WriteLine("Team found: " + playerTeam.GetTeamName() +
                 " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
 
             if (TeamsInTheMatchmaker.Any(x => x.Key == playerTeam.TeamId))

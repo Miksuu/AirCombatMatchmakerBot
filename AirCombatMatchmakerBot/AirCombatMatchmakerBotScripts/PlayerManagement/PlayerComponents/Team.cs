@@ -65,12 +65,12 @@ public class Team
         return playersInATeam;
     }
 
-    public string GetTeamName(int _leagueTeamSize, bool _getAsMention = false)
+    public string GetTeamName(bool _getAsMention = false)
     {
         Log.WriteLine("Getting team name: " + TeamName +
             " with mention: " + _getAsMention);
 
-        if (_leagueTeamSize < 2 && _getAsMention)
+        if (_getAsMention)
         {
             Player? player = Players.FirstOrDefault();
             if (player == null)
@@ -95,7 +95,7 @@ public class Team
 
         if (_includeSkillRating) result += "[" + SkillRating + "] ";
 
-        result += GetTeamName(_leagueTeamSize, true);
+        result += GetTeamName(true);
         if (_leagueTeamSize > 1)
         {
             result += " (" + GetTeamMembersInAString() + ")";
