@@ -203,6 +203,8 @@ public abstract class BaseLeague : InterfaceLeague
 
                 bool playerIsInActiveTeamAlready = thisInterfaceLeague.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(
                     _userId).TeamActive;
+                
+                var teami = thisInterfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_userId);
 
                 if (!playerIsInATeamAlready)
                 {   
@@ -249,7 +251,8 @@ public abstract class BaseLeague : InterfaceLeague
                     Log.WriteLine("The player was already in a team in that league!" +
                         " Setting him active", LogLevel.DEBUG);
 
-                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+                    var foundTeam = thisInterfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_userId);
+                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId, foundTeam);
 
                     //responseMsg = "You have rejoined: " +
                     //    EnumExtensions.GetEnumMemberAttrValue(thisInterfaceLeague.LeagueCategoryName) + "\n" +
@@ -257,8 +260,10 @@ public abstract class BaseLeague : InterfaceLeague
                 }
                 else if (playerIsInATeamAlready && playerIsInActiveTeamAlready)
                 {
+                    var foundTeam = thisInterfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_userId);
+
                     // Temp fix for fast clickers of two different leagues they can just press it again to receive the role
-                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId);
+                    await UserManager.SetTeamActiveAndGrantThePlayerRole(this, _userId, foundTeam);
 
                     Log.WriteLine("Player " + player.PlayerDiscordId + " tried to join: " + thisInterfaceLeague.LeagueCategoryName +
                         ", had a team already active");
