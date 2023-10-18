@@ -155,6 +155,7 @@ public class PLANESELECTIONBUTTON : BaseButton
         return (InterfaceUnit)EnumExtensions.GetInstance(_playerSelectedPlane);
     }
 
+    // Need to fix this
     private bool CheckIfEveryoneIsReady(int _teamId)
     {
         foreach (var teamMember in mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData)
