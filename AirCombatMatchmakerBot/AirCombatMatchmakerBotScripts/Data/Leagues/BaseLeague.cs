@@ -171,8 +171,8 @@ public abstract class BaseLeague : InterfaceLeague
 
     public async Task<Response> RegisterUserToALeague(ulong _userId)
     {
-        try
-        {
+        // try
+        // {
             string responseMsg = string.Empty;
 
             Log.WriteLine("Registering user to league: " +
@@ -205,7 +205,7 @@ public abstract class BaseLeague : InterfaceLeague
                     _userId).TeamActive;
 
                 if (!playerIsInATeamAlready)
-                {
+                {   
                     Log.WriteLine("The player was not found in any team in the league");
 
                     // Create a team with unique ID and increment that ID
@@ -279,12 +279,12 @@ public abstract class BaseLeague : InterfaceLeague
             UpdateLeagueLeaderboard();
 
             return new Response(responseMsg, true);
-        }
-        catch (Exception ex)
-        {
-            Log.WriteLine(ex.Message, LogLevel.ERROR);
-            return new Response(ex.Message, false);
-        }
+        // }
+        // catch (Exception ex)
+        // {
+        //     Log.WriteLine(ex.Message, LogLevel.ERROR);
+        //     return new Response(ex.Message, false);
+        // }
     }
 
     public void HandleLeaguesAndItsMatchesEvents(ulong _currentUnixTime)
