@@ -73,7 +73,9 @@ public static class UserManager
     public static async Task SetTeamActiveAndGrantThePlayerRole(
         InterfaceLeague _interfaceLeague, ulong _playerId)
     {
-        _interfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_playerId).TeamActive = true;
+        var Team = _interfaceLeague.LeagueData.Teams.ReturnTeamThatThePlayerIsIn(_playerId);
+
+        Team.TeamActive = true;
         await RoleManager.GrantUserAccessWithId(_playerId, _interfaceLeague.LeagueRoleId);
     }
 }
