@@ -23,71 +23,19 @@ public class ChallengeStatus
     {
         try
         {
-            List<ulong> playerIdsInTheTeam = new List<ulong>();
+            Team playerTeam = GetPlayerTeam(_playerId);
+            List<ulong> playerIdsInTheTeam = GetPlayerIdsInTheTeam(playerTeam);
 
-            Team playerTeam =
-                interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
-
-            Log.WriteLine("Team found: " + playerTeam.GetTeamName() +
-            " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
-
-            foreach (Player player in playerTeam.Players.ToList())
-            {
-                playerIdsInTheTeam.Add(player.PlayerDiscordId);
-            }
-
-            // Prohibits players from joining the queue if they have a match soon
-            var responseFromLeagues = Database.GetInstance<ApplicationDatabase>().Leagues.CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
-                playerIdsInTheTeam, TimeService.GetCurrentUnixTime(), _playerId).Result;
+            Response responseFromLeagues = CheckIfPlayersCanJoinOrSuggestATimeForTheMatch(playerIdsInTheTeam, _playerId);
             if (!responseFromLeagues.serialize)
             {
                 return new Response(responseFromLeagues.responseString, false);
             }
 
-            // Add to method
-            foreach (InterfaceLeague league in Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues)
+            Response responseFromOtherLeagues = CheckIfPlayerIsInQueueInOtherLeagues(_playerId, playerTeam);
+            if (!responseFromOtherLeagues.serialize)
             {
-                try
-                {
-                    Team teamToSearchFor;
-
-                    var challengeStatusOfTheTempLeague = league.LeagueData.ChallengeStatus;
-
-                    Log.WriteLine("Loop on " + nameof(league) + ": " + league.LeagueCategoryName +
-                        " with cache: " + interfaceLeagueRef.LeagueCategoryName);
-                    if (league.LeagueCategoryName == interfaceLeagueRef.LeagueCategoryName)
-                    {
-                        Log.WriteLine("on " + league.LeagueCategoryName + ", skipping");
-                        continue;
-                    }
-
-                    Log.WriteLine("Searching: " + league.LeagueCategoryName);
-
-                    if (!league.LeagueData.CheckIfPlayerIsParcipiatingInTheLeague(_playerId))
-                    {
-                        Log.WriteLine(_playerId + " is not parcipiating in this league: " +
-                            interfaceLeagueRef.LeagueCategoryName + ", disregarding");
-                        continue;
-                    }
-
-                    Log.WriteLine(_playerId + " is parcipiating in this league: " + league.LeagueCategoryName);
-                    teamToSearchFor = league.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
-
-                    if (challengeStatusOfTheTempLeague.CheckIfPlayerTeamIsAlreadyInQueue(teamToSearchFor))
-                    {
-                        Log.WriteLine(_playerId + " already at queue");
-                        // Add link to the channel
-                        return new Response("You are already in the queue at another league: " + league.LeagueCategoryName, false);
-                    }
-
-                    Log.WriteLine(_playerId + " not in the queue name: " + league.LeagueCategoryName);
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(ex.Message, LogLevel.ERROR);
-                    continue;
-                    //return new Response(ex.Message, false);
-                }
+                return responseFromOtherLeagues;
             }
 
             string response = PostChallengeToThisLeague(playerTeam);
@@ -98,10 +46,7 @@ public class ChallengeStatus
             }
             Log.WriteLine("response was: " + response);
 
-            CHALLENGEMESSAGE challengeMessage = _interfaceMessage as CHALLENGEMESSAGE;
-            await challengeMessage.UpdateTeamsThatHaveMatchesClose();
-
-            challengeMessage.GenerateAndModifyTheMessage();
+            await UpdateAndModifyChallengeMessage(_interfaceMessage);
 
             return new Response(response, true);
         }
@@ -110,6 +55,59 @@ public class ChallengeStatus
             Log.WriteLine(ex.Message, LogLevel.ERROR);
             return new Response(ex.Message, false);
         }
+    }
+
+    private Team GetPlayerTeam(ulong _playerId)
+    {
+        Team playerTeam = interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+        Log.WriteLine("Team found: " + playerTeam.GetTeamName() + " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
+        return playerTeam;
+    }
+
+    private List<ulong> GetPlayerIdsInTheTeam(Team _playerTeam)
+    {
+        return _playerTeam.Players.Select(player => player.PlayerDiscordId).ToList();
+    }
+
+    private Response CheckIfPlayersCanJoinOrSuggestATimeForTheMatch(List<ulong> _playerIdsInTheTeam, ulong _playerId)
+    {
+        return Database.GetInstance<ApplicationDatabase>().Leagues.CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
+            _playerIdsInTheTeam, TimeService.GetCurrentUnixTime(), _playerId).Result;
+    }
+
+    private Response CheckIfPlayerIsInQueueInOtherLeagues(ulong _playerId, Team _playerTeam)
+    {
+        foreach (InterfaceLeague league in Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues)
+        {
+            if (IsPlayerInQueueInLeague(_playerId, _playerTeam, league))
+            {
+                return new Response("You are already in the queue at another league: " + league.LeagueCategoryName, false);
+            }
+        }
+        return new Response("", true);
+    }
+
+    private bool IsPlayerInQueueInLeague(ulong _playerId, Team _playerTeam, InterfaceLeague _league)
+    {
+        if (_league.LeagueCategoryName == interfaceLeagueRef.LeagueCategoryName)
+        {
+            return false;
+        }
+
+        if (!_league.LeagueData.CheckIfPlayerIsParcipiatingInTheLeague(_playerId))
+        {
+            return false;
+        }
+
+        Team teamToSearchFor = _league.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+        return _league.LeagueData.ChallengeStatus.CheckIfPlayerTeamIsAlreadyInQueue(teamToSearchFor);
+    }
+
+    private async Task UpdateAndModifyChallengeMessage(InterfaceMessage _interfaceMessage)
+    {
+        CHALLENGEMESSAGE challengeMessage = _interfaceMessage as CHALLENGEMESSAGE;
+        await challengeMessage.UpdateTeamsThatHaveMatchesClose();
+        challengeMessage.GenerateAndModifyTheMessage();
     }
 
     public void RemoveFromTeamFromTheQueue(Team _Team)
