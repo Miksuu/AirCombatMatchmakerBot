@@ -19,11 +19,12 @@ public class ChallengeStatus
 
     public ChallengeStatus() { }
 
-    public async Task<Response> AddTeamFromPlayerIdToTheQueue(ulong _playerId, InterfaceMessage _interfaceMessage)
+    public async Task<Response> AddTeamFromPlayerIdToTheQueue(
+        ulong _playerId, InterfaceMessage _interfaceMessage, InterfaceLeague _interfaceLeague)
     {
         try
         {
-            Team playerTeam = GetPlayerTeam(_playerId);
+            Team playerTeam = GetPlayerTeam(_playerId, _interfaceLeague);
             List<ulong> playerIdsInTheTeam = GetPlayerIdsInTheTeam(playerTeam);
 
             Response responseFromLeagues = CheckIfPlayersCanJoinOrSuggestATimeForTheMatch(playerIdsInTheTeam, _playerId);
@@ -57,9 +58,9 @@ public class ChallengeStatus
         }
     }
 
-    private Team GetPlayerTeam(ulong _playerId)
+    private Team GetPlayerTeam(ulong _playerId, InterfaceLeague _interfaceLeague)
     {
-        Team playerTeam = interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+        Team playerTeam = _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
         Log.WriteLine("Team found: " + playerTeam.GetTeamName() + " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
         return playerTeam;
     }
@@ -84,6 +85,7 @@ public class ChallengeStatus
                 return new Response("You are already in the queue at another league: " + league.LeagueCategoryName, false);
             }
         }
+        
         return new Response("", true);
     }
 
