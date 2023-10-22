@@ -102,7 +102,7 @@ public class Matches
                 Log.WriteLine(_leagueMatch.MatchEventManager.ClassScheduledEvents.Count.ToString());
 
                 new MatchQueueAcceptEvent(
-                    30, _interfaceLeague.LeagueCategoryId,
+                    300, _interfaceLeague.LeagueCategoryId,
                     interfaceChannel.ChannelId, _leagueMatch.MatchEventManager.ClassScheduledEvents);
             }
 
