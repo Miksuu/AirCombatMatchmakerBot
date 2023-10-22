@@ -103,7 +103,7 @@ public static class TacviewManager
             _socketMessage.Author.Id, _acmiUrl,
                 TypeOfTheReportingObject.TACVIEWLINK,
                 mcc.interfaceLeagueCached.LeagueCategoryId,
-                _socketMessage.Channel.Id).Result;
+                _socketMessage.Channel.Id, mcc.interfaceLeagueCached).Result;
 
         if (!finalResponse.serialize)
         {
@@ -113,7 +113,7 @@ public static class TacviewManager
         if (mcc.leagueMatchCached.MatchState == MatchState.REPORTINGPHASE)
         {
             finalResponse = await mcc.leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
-                _socketMessage.Author.Id, _socketMessage.Channel.Id);
+                _socketMessage.Author.Id, _socketMessage.Channel.Id, mcc.interfaceLeagueCached);
 
             if (!finalResponse.serialize)
             {

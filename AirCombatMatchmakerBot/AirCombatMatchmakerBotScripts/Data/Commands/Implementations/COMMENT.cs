@@ -55,7 +55,7 @@ public class COMMENT : BaseMatchCommand
         var finalResponseTuple =
             await mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
                 commandPlayerId, _firstOptionString, TypeOfTheReportingObject.COMMENTBYTHEUSER,
-                    mcc.interfaceLeagueCached.LeagueCategoryId, commandChannelId);
+                    mcc.interfaceLeagueCached.LeagueCategoryId, commandChannelId, mcc.interfaceLeagueCached);
 
         if (finalResponseTuple.serialize)
         {

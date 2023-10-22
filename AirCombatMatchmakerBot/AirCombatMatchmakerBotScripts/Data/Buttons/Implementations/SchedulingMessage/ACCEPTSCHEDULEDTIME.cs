@@ -35,7 +35,7 @@ public class ACCEPTSCHEDULEDTIME : BaseButton
 
         var response = mcc.leagueMatchCached.AcceptMatchScheduling(
             playerId,
-            mcc.interfaceLeagueCached.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(playerId).TeamId);
+            mcc.interfaceLeagueCached.LeagueData.Teams.CheckIfPlayersTeamIsActiveByIdAndReturnThatTeam(playerId).TeamId, mcc.interfaceLeagueCached);
 
         // If the interaction was succesfull, start removing the message, perhaps move to another thread to improve responsibility
         if (response.serialize)

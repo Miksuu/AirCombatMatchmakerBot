@@ -238,7 +238,7 @@ public abstract class BaseLeague : InterfaceLeague
         Log.WriteLine("Done creating team: " + newTeam + " team count is now: " + thisInterfaceLeague.LeagueData.Teams.TeamsConcurrentBag.Count, LogLevel.DEBUG);
         thisInterfaceLeague.LeagueData.Teams.IncrementCurrentTeamInt();
 
-        return new Response("Registration complete", true);
+        return new Response("", true);
     }
 
     private async Task<Response> HandleExistingPlayerRegistration(ulong _userId)

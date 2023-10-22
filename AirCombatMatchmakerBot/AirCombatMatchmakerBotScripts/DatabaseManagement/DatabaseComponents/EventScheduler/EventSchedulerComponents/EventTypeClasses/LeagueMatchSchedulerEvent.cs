@@ -61,14 +61,14 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
 
             CHALLENGEMESSAGE challengeMessageClass = challengeMessageAsInterface as CHALLENGEMESSAGE;
 
-            bool updateTheMessage = await challengeMessageClass.UpdateTeamsThatHaveMatchesClose();
+            bool updateTheMessage = await challengeMessageClass.UpdateTeamsThatHaveMatchesClose(lcc.interfaceLeagueCached);
 
             if (updateTheMessage)
             {
                 challengeMessageAsInterface.GenerateAndModifyTheMessage();
             }
 
-            lcc.interfaceLeagueCached.LeagueData.MatchScheduler.CheckCurrentStateOfTheMatchmakerAndAssignMatches();
+            lcc.interfaceLeagueCached.LeagueData.MatchScheduler.CheckCurrentStateOfTheMatchmakerAndAssignMatches(lcc.interfaceLeagueCached);
         }
         catch (Exception ex)
         {

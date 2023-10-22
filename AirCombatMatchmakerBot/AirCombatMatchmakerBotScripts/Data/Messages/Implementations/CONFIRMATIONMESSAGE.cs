@@ -67,7 +67,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         {
             if (mcc.leagueMatchCached.MatchState != MatchState.MATCHDONE)
             {
-                mcc.leagueMatchCached.FinishTheMatch();
+                mcc.leagueMatchCached.FinishTheMatch(mcc.interfaceLeagueCached);
             }
             else
             {

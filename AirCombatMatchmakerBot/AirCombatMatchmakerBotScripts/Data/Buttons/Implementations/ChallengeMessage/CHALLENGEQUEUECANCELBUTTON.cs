@@ -35,7 +35,8 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseButton
         }
 
         string response =
-            lcc.interfaceLeagueCached.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(_component.User.Id);
+            lcc.interfaceLeagueCached.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(
+                _component.User.Id, lcc.interfaceLeagueCached);
 
         if (response == "notInTheQueue")
         {

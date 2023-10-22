@@ -56,7 +56,7 @@ public class CONFIRMSCOREBUTTON : BaseButton
         var response = mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
             playerId, playerReportedResult.ToString(),
             TypeOfTheReportingObject.REPORTEDSCORE,
-            _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
+            _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId, mcc.interfaceLeagueCached).Result;
 
         Log.WriteLine("Reached end before the return with player id: " +
             playerId + " with response:" + response.responseString, LogLevel.DEBUG);

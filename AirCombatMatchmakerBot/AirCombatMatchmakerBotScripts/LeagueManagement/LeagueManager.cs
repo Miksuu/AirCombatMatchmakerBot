@@ -31,7 +31,7 @@ public static class LeagueManager
                 var interfaceLeagueRef = Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.FirstOrDefault(
                     x => x.LeagueCategoryName == leagueCategoryName);
 
-                interfaceLeagueRef.LeagueData.SetReferences(interfaceLeagueRef);
+                //interfaceLeagueRef.LeagueData.SetReferences(interfaceLeagueRef);
 
                 continue;
             }

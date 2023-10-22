@@ -29,38 +29,35 @@ public class MatchScheduler
     [DataMember] private logVar<bool> matchSchedulerActive = new logVar<bool>();
     //[DataMember] private logConcurrentBag<int> addedTeamsToTheMatches = new logConcurrentBag<int>();
 
-    // Doesn't need to be serialized, it's gotten from a class that loads the data from it's serialization
-    public InterfaceLeague interfaceLeagueRef;
-
     public MatchScheduler() { }
 
     // TODO: Implement this method so it's executable from some command that admin can use (for initiation of a season, for example)
-    public void ActivateMatchScheduler(ulong _duration)
+    public void ActivateMatchScheduler(ulong _duration, InterfaceLeague _interfaceLeague)
     {
         if (MatchSchedulerActive)
         {
-            Log.WriteLine(interfaceLeagueRef.LeagueCategoryName + "' " + nameof(MatchScheduler) +
+            Log.WriteLine(_interfaceLeague.LeagueCategoryName + "' " + nameof(MatchScheduler) +
                 " already active, returning");
             return;
         }
 
-        Log.WriteLine("Activating " + interfaceLeagueRef.LeagueCategoryName + "' " + nameof(MatchScheduler) +
+        Log.WriteLine("Activating " + _interfaceLeague.LeagueCategoryName + "' " + nameof(MatchScheduler) +
             " with duration: " + _duration);
 
         MatchSchedulerActive = true;
         new LeagueMatchSchedulerEvent(
-            _duration, interfaceLeagueRef.LeagueCategoryId, interfaceLeagueRef.LeagueEventManager.ClassScheduledEvents);
+            _duration, _interfaceLeague.LeagueCategoryId, _interfaceLeague.LeagueEventManager.ClassScheduledEvents);
 
-        Log.WriteLine("Done activating " + interfaceLeagueRef.LeagueCategoryName + "' " + nameof(MatchScheduler) +
+        Log.WriteLine("Done activating " + _interfaceLeague.LeagueCategoryName + "' " + nameof(MatchScheduler) +
              " with duration: " + _duration, LogLevel.DEBUG);
     }
 
-    public Response AddTeamToTheMatchSchedulerWithPlayerId(ulong _playerId)// InterfaceMessage _interfaceMessage)
+    public Response AddTeamToTheMatchSchedulerWithPlayerId(ulong _playerId, InterfaceLeague _interfaceLeague)// InterfaceMessage _interfaceMessage)
     {
         try
         {
             Team playerTeam =
-                interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+                _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
 
             Log.WriteLine("Team found: " + playerTeam.GetTeamName() +
                 " (" + playerTeam.TeamId + ")" + " adding it to the challenge queue.");
@@ -82,10 +79,10 @@ public class MatchScheduler
         }
     }
 
-    public Response RemoveTeamFromTheMatchSchedulerWithPlayerId(ulong _playerId)
+    public Response RemoveTeamFromTheMatchSchedulerWithPlayerId(ulong _playerId, InterfaceLeague _interfaceLeague)
     {
         Team playerTeam =
-            interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+            _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
 
         Log.WriteLine("Removing Team: " + playerTeam + " (" +
             playerTeam.TeamId + ") from the queue");
@@ -108,7 +105,7 @@ public class MatchScheduler
         }
     }
 
-    public void CheckCurrentStateOfTheMatchmakerAndAssignMatches()
+    public void CheckCurrentStateOfTheMatchmakerAndAssignMatches(InterfaceLeague _interfaceLeague)
     {
         Log.WriteLine("Starting to check the status of the matchmaker with: " + TeamsInTheMatchmaker.Count);
 
@@ -138,13 +135,13 @@ public class MatchScheduler
             teamsToMatch.Add(teamKvp);
             teamsToMatch.Add(foundTeamKvp);
 
-            MatchTwoTeamsTogether(teamsToMatch);
+            MatchTwoTeamsTogether(teamsToMatch, _interfaceLeague);
 
             break;
         }
     }
 
-    private async void MatchTwoTeamsTogether(List<KeyValuePair<int, TeamMatchmakerData>> _teamsToMatch)
+    private async void MatchTwoTeamsTogether(List<KeyValuePair<int, TeamMatchmakerData>> _teamsToMatch, InterfaceLeague _interfaceLeague)
     {
         Log.WriteLine("Matching found opponent: " + _teamsToMatch[0].Key + " vs seeker: " + _teamsToMatch[1].Key, LogLevel.DEBUG);
 
@@ -156,10 +153,10 @@ public class MatchScheduler
             Log.WriteLine("Setting values on team: " + teamsArray[t].Key);
         }
 
-        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(
+        await _interfaceLeague.LeagueData.Matches.CreateAMatch(
             teamsArray.Select(x => x.Key).ToArray(),
             MatchState.SCHEDULINGPHASE,
-            true
+            _interfaceLeague, true
         );
 
         Log.WriteLine("Match creation request sent for teams: " + teamsArray[0].Key + " and " + teamsArray[1].Key);

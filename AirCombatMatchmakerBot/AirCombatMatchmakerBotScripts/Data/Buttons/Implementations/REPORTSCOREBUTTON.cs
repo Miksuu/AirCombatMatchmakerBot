@@ -59,7 +59,7 @@ public class REPORTSCOREBUTTON : BaseButton
             Response response = mcc.leagueMatchCached.MatchReporting.ProcessPlayersSentReportObject(
                 playerId, playerReportedResult.ToString(),
                 TypeOfTheReportingObject.REPORTEDSCORE,
-                _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId).Result;
+                _interfaceMessage.MessageCategoryId, _interfaceMessage.MessageChannelId, mcc.interfaceLeagueCached).Result;
 
             if (!response.serialize)
             {
@@ -67,7 +67,7 @@ public class REPORTSCOREBUTTON : BaseButton
             }
 
             response = await mcc.leagueMatchCached.MatchReporting.PrepareFinalMatchResult(
-                playerId, _interfaceMessage.MessageChannelId);
+                playerId, _interfaceMessage.MessageChannelId, mcc.interfaceLeagueCached);
 
             if (!response.serialize)
             {
