@@ -18,8 +18,6 @@ public class Teams
     [DataMember] private logConcurrentBag<Team> teamsConcurrentBag = new logConcurrentBag<Team>();
     [DataMember] private logVar<int> currentTeamInt = new logVar<int>(1);
 
-    public InterfaceLeague interfaceLeagueRef;
-
     public Teams() { }
 
     public void AddToConcurrentBagOfTeams(Team _Team)

@@ -167,7 +167,7 @@ public class Leagues
         }
     }
 
-    public void RemovePlayersFromQueuesOnceMatchIsCloseEnough(List<ulong> _playerIds)
+    public void RemovePlayersFromQueuesOnceMatchIsCloseEnough(List<ulong> _playerIds, InterfaceLeague _interfaceLeague)
     {
         List<InterfaceMessage> toBeModifiedMessages = new List<InterfaceMessage>();
 
@@ -182,7 +182,7 @@ public class Leagues
                     continue;
                 }
 
-                league.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(playerId);
+                league.LeagueData.ChallengeStatus.RemoveChallengeFromThisLeague(playerId, _interfaceLeague);
 
                 InterfaceMessage interfaceMessage = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
                     league.LeagueCategoryId).FindInterfaceChannelWithNameInTheCategory(
@@ -204,15 +204,15 @@ public class Leagues
 
     const ulong earliestOrLatestAllowedTimeBeforeAndAfterTheMatch = 1800;
 
-    public string GetListOfTimesThatWontBeSuitableForScheduling(LeagueMatch _leagueMatch)
+    public string GetListOfTimesThatWontBeSuitableForScheduling(LeagueMatch _leagueMatch, InterfaceLeague _interfaceLeague)
     {
         string finalList = string.Empty;
         List<ulong> matchTimes = new List<ulong>();
 
-        var listOfPlayers = _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray().ToList();
+        var listOfPlayers = _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague).ToList();
 
         var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
-            listOfPlayers, TimeService.GetCurrentUnixTime());
+            listOfPlayers, TimeService.GetCurrentUnixTime(), _interfaceLeague);
 
         List<int> alreadyLoopedThroughMatches = new List<int>();
         foreach (LeagueMatch leagueMatch in listOfLeagueMatches)
@@ -273,11 +273,11 @@ public class Leagues
     }
 
     public async Task<Response> CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
-        List<ulong> _playerIds, ulong _suggestedTime, ulong _suggestedByPlayerId)
+        List<ulong> _playerIds, ulong _suggestedTime, ulong _suggestedByPlayerId, InterfaceLeague _interfaceLeague)
     {
         Log.WriteLine("Checking with " + _playerIds.Count);
         var listOfLeagueMatches = CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
-            _playerIds, _suggestedTime);
+            _playerIds, _suggestedTime, _interfaceLeague);
 
         List<LeagueMatch> listOfMatchesCombined =
             GetListOfMatchesClose(listOfLeagueMatches).Concat(
@@ -305,11 +305,11 @@ public class Leagues
             ulong matchUnixTime = leagueMatch.MatchEventManager.GetEventByType(
                 typeof(MatchQueueAcceptEvent)).TimeToExecuteTheEventOn;
 
-            var playerArray = leagueMatch.GetIdsOfThePlayersInTheMatchAsArray();
+            var playerArray = leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague);
             if (playerArray.Contains(_suggestedByPlayerId))
             {
                 stringOfMatches += "Your match " + await Database.GetInstance<DiscordBotDatabase>().Categories.GetMessageJumpUrl(
-                    leagueMatch.interfaceLeagueRef.LeagueCategoryId, leagueMatch.MatchChannelId, MessageName.MATCHSTARTMESSAGE) + " is at " +
+                    _interfaceLeague.LeagueCategoryId, leagueMatch.MatchChannelId, MessageName.MATCHSTARTMESSAGE) + " is at " +
                     TimeService.ConvertToZuluTimeFromUnixTime(matchUnixTime) + " in: " +
                     TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(matchUnixTime) + ".";
             }
@@ -341,7 +341,7 @@ public class Leagues
     }
 
     public List<LeagueMatch> CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
-        List<ulong> _playersIds, ulong _suggestedTime)
+        List<ulong> _playersIds, ulong _suggestedTime, InterfaceLeague _interfaceLeague)
     {
         try
         {
@@ -382,7 +382,7 @@ public class Leagues
 
                         Log.WriteLine("State: " + leagueMatch.MatchState);
 
-                        var playersOnTheLeagueMatch = leagueMatch.GetIdsOfThePlayersInTheMatchAsArray().ToList();
+                        var playersOnTheLeagueMatch = leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague).ToList();
                         if (!playersOnTheLeagueMatch.Contains(playerId))
                         {
                             Log.WriteLine(leagueMatch.MatchId + " does not contain: " + playerId);

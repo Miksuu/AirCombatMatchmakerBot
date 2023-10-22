@@ -15,8 +15,6 @@ public class ChallengeStatus
 
     [DataMember] private logConcurrentBag<int> teamsInTheQueue = new logConcurrentBag<int>();
 
-    public InterfaceLeague interfaceLeagueRef;
-
     public ChallengeStatus() { }
 
     public async Task<Response> AddTeamFromPlayerIdToTheQueue(
@@ -27,7 +25,7 @@ public class ChallengeStatus
             Team playerTeam = GetPlayerTeam(_playerId, _interfaceLeague);
             List<ulong> playerIdsInTheTeam = GetPlayerIdsInTheTeam(playerTeam);
 
-            Response responseFromLeagues = CheckIfPlayersCanJoinOrSuggestATimeForTheMatch(playerIdsInTheTeam, _playerId);
+            Response responseFromLeagues = CheckIfPlayersCanJoinOrSuggestATimeForTheMatch(playerIdsInTheTeam, _playerId, _interfaceLeague);
             if (!responseFromLeagues.serialize)
             {
                 return new Response(responseFromLeagues.responseString, false);
@@ -39,7 +37,7 @@ public class ChallengeStatus
                 return responseFromOtherLeagues;
             }
 
-            string response = PostChallengeToThisLeague(playerTeam);
+            string response = PostChallengeToThisLeague(playerTeam, _interfaceLeague);
             if (response == "alreadyInQueue")
             {
                 Log.WriteLine(_playerId + " was already in the queue!");
@@ -47,7 +45,7 @@ public class ChallengeStatus
             }
             Log.WriteLine("response was: " + response);
 
-            await UpdateAndModifyChallengeMessage(_interfaceMessage);
+            await UpdateAndModifyChallengeMessage(_interfaceMessage, _interfaceLeague);
 
             return new Response(response, true);
         }
@@ -70,10 +68,11 @@ public class ChallengeStatus
         return _playerTeam.Players.Select(player => player.PlayerDiscordId).ToList();
     }
 
-    private Response CheckIfPlayersCanJoinOrSuggestATimeForTheMatch(List<ulong> _playerIdsInTheTeam, ulong _playerId)
+    private Response CheckIfPlayersCanJoinOrSuggestATimeForTheMatch(
+        List<ulong> _playerIdsInTheTeam, ulong _playerId, InterfaceLeague _interfaceLeague)
     {
         return Database.GetInstance<ApplicationDatabase>().Leagues.CheckIfListOfPlayersCanJoinOrSuggestATimeForTheMatchWithTime(
-            _playerIdsInTheTeam, TimeService.GetCurrentUnixTime(), _playerId).Result;
+            _playerIdsInTheTeam, TimeService.GetCurrentUnixTime(), _playerId, _interfaceLeague).Result;
     }
 
     private Response CheckIfPlayerIsInQueueInOtherLeagues(ulong _playerId, Team _playerTeam)
@@ -85,13 +84,13 @@ public class ChallengeStatus
                 return new Response("You are already in the queue at another league: " + league.LeagueCategoryName, false);
             }
         }
-        
+
         return new Response("", true);
     }
 
     private bool IsPlayerInQueueInLeague(ulong _playerId, Team _playerTeam, InterfaceLeague _league)
     {
-        if (_league.LeagueCategoryName == interfaceLeagueRef.LeagueCategoryName)
+        if (_league.LeagueCategoryName == _league.LeagueCategoryName)
         {
             return false;
         }
@@ -105,10 +104,10 @@ public class ChallengeStatus
         return _league.LeagueData.ChallengeStatus.CheckIfPlayerTeamIsAlreadyInQueue(teamToSearchFor);
     }
 
-    private async Task UpdateAndModifyChallengeMessage(InterfaceMessage _interfaceMessage)
+    private async Task UpdateAndModifyChallengeMessage(InterfaceMessage _interfaceMessage, InterfaceLeague _interfaceLeague)
     {
         CHALLENGEMESSAGE challengeMessage = _interfaceMessage as CHALLENGEMESSAGE;
-        await challengeMessage.UpdateTeamsThatHaveMatchesClose();
+        await challengeMessage.UpdateTeamsThatHaveMatchesClose(_interfaceLeague);
         challengeMessage.GenerateAndModifyTheMessage();
     }
 
@@ -129,15 +128,15 @@ public class ChallengeStatus
 
     // Returns the teams in the queue as a string
     // (useful for printing, in log on the challenge channel)
-    public string ReturnTeamsInTheQueueOfAChallenge()
+    public string ReturnTeamsInTheQueueOfAChallenge(InterfaceLeague _interfaceLeague)
     {
         string teamsString = string.Empty;
         foreach (int teamInt in TeamsInTheQueue)
         {
             try
             {
-                Team team = interfaceLeagueRef.LeagueData.Teams.FindTeamById(teamInt);
-                teamsString += team.GetTeamInAString(true, interfaceLeagueRef.LeaguePlayerCountPerTeam);
+                Team team = _interfaceLeague.LeagueData.Teams.FindTeamById(teamInt);
+                teamsString += team.GetTeamInAString(true, _interfaceLeague.LeaguePlayerCountPerTeam);
                 teamsString += "\n";
             }
             catch(Exception ex)
@@ -149,7 +148,7 @@ public class ChallengeStatus
         return teamsString;
     }
 
-    public string PostChallengeToThisLeague(Team _playerTeam)
+    public string PostChallengeToThisLeague(Team _playerTeam, InterfaceLeague _interfaceLeague)
     {
         if (CheckIfPlayerTeamIsAlreadyInQueue(_playerTeam))
         {
@@ -164,21 +163,21 @@ public class ChallengeStatus
         Log.WriteLine("Done adding the team to the queue. Count is now: " +
             TeamsInTheQueue.Count);
 
-        CheckChallengeStatus();
+        CheckChallengeStatus(_interfaceLeague);
 
-        string teamsInTheQueue = ReturnTeamsInTheQueueOfAChallenge();
+        string teamsInTheQueue = ReturnTeamsInTheQueueOfAChallenge(_interfaceLeague);
 
         Log.WriteLine("Teams in the queue: " + teamsInTheQueue);
 
         return "";
     }
 
-    public string RemoveChallengeFromThisLeague(ulong _playerId)
+    public string RemoveChallengeFromThisLeague(ulong _playerId, InterfaceLeague _interfaceLeague)
     {
         try
         {
             Team team =
-                interfaceLeagueRef.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
+                _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(_playerId);
             Log.WriteLine("Team found: " + team.GetTeamName() +
                 " (" + team.TeamId + ")" + " adding it to the challenge queue: " + TeamsInTheQueue);
 
@@ -191,7 +190,7 @@ public class ChallengeStatus
             RemoveFromTeamFromTheQueue(team);
 
             string teamsInTheQueue =
-                ReturnTeamsInTheQueueOfAChallenge();
+                ReturnTeamsInTheQueueOfAChallenge(_interfaceLeague);
 
             Log.WriteLine("Teams in the queue: " + teamsInTheQueue);
 
@@ -226,7 +225,7 @@ public class ChallengeStatus
         return false;
     }
 
-    public async void CheckChallengeStatus()
+    public async void CheckChallengeStatus(InterfaceLeague _interfaceLeague)
     {
         int[] teamsToFormMatchOn = new int[2];
 
@@ -257,6 +256,6 @@ public class ChallengeStatus
 
         Log.WriteLine("Done looping.");
 
-        await interfaceLeagueRef.LeagueData.Matches.CreateAMatch(teamsToFormMatchOn, MatchState.PLAYERREADYCONFIRMATIONPHASE);
+        await _interfaceLeague.LeagueData.Matches.CreateAMatch(teamsToFormMatchOn, MatchState.PLAYERREADYCONFIRMATIONPHASE, _interfaceLeague);
     }
 }

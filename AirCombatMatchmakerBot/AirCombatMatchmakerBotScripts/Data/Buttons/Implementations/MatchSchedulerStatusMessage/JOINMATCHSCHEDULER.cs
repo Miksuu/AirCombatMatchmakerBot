@@ -39,7 +39,7 @@ public class JOINMATCHSCHEDULER : BaseButton
         var matchScheduler = lcc.interfaceLeagueCached.LeagueData.MatchScheduler;
         Log.WriteLine(nameof(matchScheduler) + matchScheduler, LogLevel.DEBUG);
 
-        var response = matchScheduler.AddTeamToTheMatchSchedulerWithPlayerId(playerId);
+        var response = matchScheduler.AddTeamToTheMatchSchedulerWithPlayerId(playerId, lcc.interfaceLeagueCached);
 
         //_interfaceMessage.GenerateAndModifyTheMessage();
         //Log.WriteLine("After modifying message");

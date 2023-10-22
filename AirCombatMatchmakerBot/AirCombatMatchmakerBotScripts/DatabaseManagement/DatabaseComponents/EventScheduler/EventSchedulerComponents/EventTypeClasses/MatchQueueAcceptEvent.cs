@@ -40,7 +40,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
 
         Log.WriteLine("event: " + EventId + " after setting matchChannelId");
 
-        await mcc.interfaceLeagueCached.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(matchChannelId);
+        await mcc.interfaceLeagueCached.LeagueData.Matches.FindMatchAndRemoveItFromConcurrentBag(matchChannelId, mcc.interfaceLeagueCached);
 
         Log.WriteLine("event: " + EventId + " after removed from bag with: " + matchChannelId);
 
@@ -86,7 +86,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
             }
         }
 
-        mcc.leagueMatchCached.AttemptToPutTheTeamsBackToTheQueueAfterTheMatch();
+        mcc.leagueMatchCached.AttemptToPutTheTeamsBackToTheQueueAfterTheMatch(mcc.interfaceLeagueCached);
 
         // Create the event and execute it instantly
         var newEvent = new DeleteChannelEvent(mcc.interfaceLeagueCached.LeagueCategoryId, matchChannelId, "match");
@@ -116,7 +116,7 @@ public class MatchQueueAcceptEvent : ScheduledEvent, InterfaceEventType
                 removedFromTheQueues = true;
 
                 Database.GetInstance<ApplicationDatabase>().Leagues.RemovePlayersFromQueuesOnceMatchIsCloseEnough(
-                    mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray().ToList());
+                    mcc.leagueMatchCached.GetIdsOfThePlayersInTheMatchAsArray(mcc.interfaceLeagueCached).ToList(), mcc.interfaceLeagueCached);
             }
 
             Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(

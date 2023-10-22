@@ -14,22 +14,10 @@ public class Matches
 
     [DataMember] private logConcurrentBag<LeagueMatch> matchesConcurrentBag = new logConcurrentBag<LeagueMatch>();
 
-    public InterfaceLeague interfaceLeagueRef;
-
     public Matches() { }
 
-    public void SetInterfaceLeagueReferencesForTheMatches(InterfaceLeague _interfaceLeagueRef)
-    {
-        interfaceLeagueRef = _interfaceLeagueRef;
-
-        foreach (var item in MatchesConcurrentBag)
-        {
-            item.SetInterfaceLeagueReferencesForTheMatch(interfaceLeagueRef);
-        }
-    }
-
     public async Task CreateAMatch(
-        int[] _teamsToFormMatchOn, MatchState _matchState,
+        int[] _teamsToFormMatchOn, MatchState _matchState, InterfaceLeague _interfaceLeague,
         bool _attemptToPutTeamsBackToQueueAfterTheMatch = false)
     {
         Log.WriteLine("Creating a match with teams ids: " + _teamsToFormMatchOn[0] + " and " +
@@ -41,7 +29,7 @@ public class Matches
         }
 
         LeagueMatch newMatch = new(
-            interfaceLeagueRef, _teamsToFormMatchOn, _matchState, _attemptToPutTeamsBackToQueueAfterTheMatch);
+            _interfaceLeague, _teamsToFormMatchOn, _matchState, _attemptToPutTeamsBackToQueueAfterTheMatch);
 
         MatchesConcurrentBag.Add(newMatch);
         Log.WriteLine("Added match channel id: " + newMatch.MatchId + " to the MatchesConcurrentBag, count is now: " +
@@ -56,13 +44,14 @@ public class Matches
         //    }
         //}
 
-        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, _matchState);
+        InterfaceChannel newChannel = await CreateAMatchChannel(newMatch, _matchState, _interfaceLeague);
 
         Thread secondThread = new Thread(() => InitChannelOnSecondThread(newMatch, newChannel));
         secondThread.Start();
     }
 
-    public async Task<InterfaceChannel> CreateAMatchChannel(LeagueMatch _leagueMatch, MatchState _matchState)
+    public async Task<InterfaceChannel> CreateAMatchChannel(
+        LeagueMatch _leagueMatch, MatchState _matchState, InterfaceLeague _interfaceLeague)
     {
         try
         {
@@ -84,7 +73,7 @@ public class Matches
             InterfaceChannel interfaceChannel = await dbRegularCategory.CreateSpecificChannelFromChannelTypeWithoutRole(
                     ChannelType.MATCHCHANNEL, categoryKvp.LeagueCategoryId,
                     overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
-                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray());
+                    _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague));
 
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
 
@@ -113,7 +102,7 @@ public class Matches
                 Log.WriteLine(_leagueMatch.MatchEventManager.ClassScheduledEvents.Count.ToString());
 
                 new MatchQueueAcceptEvent(
-                    30, interfaceLeagueRef.LeagueCategoryId,
+                    30, _interfaceLeague.LeagueCategoryId,
                     interfaceChannel.ChannelId, _leagueMatch.MatchEventManager.ClassScheduledEvents);
             }
 
@@ -162,19 +151,19 @@ public class Matches
         return foundMatch;
     }
 
-    public Task<LeagueMatch?> FindMatchAndRemoveItFromConcurrentBag(ulong _matchChannelId)
+    public Task<LeagueMatch?> FindMatchAndRemoveItFromConcurrentBag(ulong _matchChannelId, InterfaceLeague _interfaceLeague)
     {
-        Log.WriteLine("Removing: " + _matchChannelId + " on: " + interfaceLeagueRef.LeagueCategoryName);
+        Log.WriteLine("Removing: " + _matchChannelId + " on: " + _interfaceLeague.LeagueCategoryName);
 
         LeagueMatch tempMatch = null;
         ConcurrentBag<LeagueMatch> updatedMatchesConcurrentBag = new ConcurrentBag<LeagueMatch>();
 
-        while (interfaceLeagueRef.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? match))
+        while (_interfaceLeague.LeagueData.Matches.MatchesConcurrentBag.TryTake(out LeagueMatch? match))
         {
             if (match.MatchChannelId == _matchChannelId)
             {
                 Log.WriteLine("Removed matchId: " + match.MatchId + " on ch: " + _matchChannelId +
-                    " on league: " + interfaceLeagueRef.LeagueCategoryName);
+                    " on league: " + _interfaceLeague.LeagueCategoryName);
                 tempMatch = match;
             }
             else
@@ -183,7 +172,7 @@ public class Matches
             }
         }
 
-        interfaceLeagueRef.LeagueData.Matches.MatchesConcurrentBag = updatedMatchesConcurrentBag;
+        _interfaceLeague.LeagueData.Matches.MatchesConcurrentBag = updatedMatchesConcurrentBag;
 
         return Task.FromResult(tempMatch);
     }

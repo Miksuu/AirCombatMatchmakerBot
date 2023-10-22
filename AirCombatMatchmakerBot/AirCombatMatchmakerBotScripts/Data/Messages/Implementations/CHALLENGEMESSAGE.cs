@@ -108,7 +108,7 @@ public class CHALLENGEMESSAGE : BaseMessage
     }
 
 
-    public async Task<bool> UpdateTeamsThatHaveMatchesClose()
+    public async Task<bool> UpdateTeamsThatHaveMatchesClose(InterfaceLeague _interfaceLeague)
     {
         try
         {
@@ -122,7 +122,7 @@ public class CHALLENGEMESSAGE : BaseMessage
             foreach (int teamInt in leagueCategory.LeagueData.ChallengeStatus.TeamsInTheQueue)
             {
                 var team = leagueCategory.LeagueData.FindActiveTeamWithTeamId(teamInt);
-                var times = await team.GetMatchesThatAreCloseToTeamsMembers(600);
+                var times = await team.GetMatchesThatAreCloseToTeamsMembers(_interfaceLeague, 600);
 
                 if (times == "")
                 {

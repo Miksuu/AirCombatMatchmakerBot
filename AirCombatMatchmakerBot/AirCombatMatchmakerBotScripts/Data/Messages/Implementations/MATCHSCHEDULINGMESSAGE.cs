@@ -5,6 +5,8 @@ using Discord;
 [DataContract]
 public class MATCHSCHEDULINGMESSAGE : BaseMessage
 {
+    MatchChannelComponents mcc;
+
     public MATCHSCHEDULINGMESSAGE()
     {
         thisInterfaceMessage.MessageName = MessageName.MATCHSCHEDULINGMESSAGE;
@@ -25,6 +27,13 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
 
     public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
     {
+        mcc = new MatchChannelComponents(this);
+        if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
+        {
+            Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
+            return Task.FromResult(nameof(mcc) + " was null!");
+        }
+
         string finalMessage = "Enter the time you would be able to play the match on in format: \n " +
             "``/schedule 27.11.2022 1030z``\n" + "Instead of using the date 27.11.2022 you can use: [today, tomorrow]," +
             " [any weekday] (will assume the next day that's available), [now] (will schedule the match 20 minutes away," +
@@ -47,7 +56,7 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
             thisInterfaceMessage.MessageCategoryId).LeagueData.Matches.FindLeagueMatchByTheChannelId(
                 thisInterfaceMessage.MessageChannelId);
 
-        finalMessage += Database.GetInstance<ApplicationDatabase>().Leagues.GetListOfTimesThatWontBeSuitableForScheduling(leagueMatch);
+        finalMessage += Database.GetInstance<ApplicationDatabase>().Leagues.GetListOfTimesThatWontBeSuitableForScheduling(leagueMatch, mcc.interfaceLeagueCached);
 
         return Task.FromResult(finalMessage);
     }

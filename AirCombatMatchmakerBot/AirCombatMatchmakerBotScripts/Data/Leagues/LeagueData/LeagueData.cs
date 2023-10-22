@@ -9,21 +9,19 @@ public class LeagueData
     [DataMember] public MatchScheduler MatchScheduler = new MatchScheduler();
     [DataMember] public Matches Matches = new Matches();
 
-    public InterfaceLeague interfaceLeagueRef;
-
     // Loaded during the serialization
     public LeagueData(){ }
 
     // TODO: Create a method for this where everyclass implementing an interface maybe? does this
 
-    public void SetReferences(InterfaceLeague _interfaceLeague)
-    {
-        //Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryId(InterfaceLeagueCategoryId);
-        Teams.interfaceLeagueRef = _interfaceLeague;
-        ChallengeStatus.interfaceLeagueRef = _interfaceLeague;
-        MatchScheduler.interfaceLeagueRef = _interfaceLeague;
-        Matches.SetInterfaceLeagueReferencesForTheMatches(_interfaceLeague);
-    }
+    // public void SetReferences(InterfaceLeague _interfaceLeague)
+    // {
+    //     //Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryId(InterfaceLeagueCategoryId);
+    //     // Teams.interfaceLeagueRef = _interfaceLeague;
+    //     // ChallengeStatus.interfaceLeagueRef = _interfaceLeague;
+    //     // MatchScheduler.interfaceLeagueRef = _interfaceLeague;
+    //     Matches.SetInterfaceLeagueReferencesForTheMatches(_interfaceLeague);
+    // }
 
     public Team FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(ulong _playerId)
     {

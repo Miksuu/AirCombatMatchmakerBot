@@ -148,7 +148,7 @@ public class Team
     }
 
     // Add 2v2, 3v3 etc functionality here
-    public async Task<string> GetMatchesThatAreCloseToTeamsMembers(ulong _timeOffset = 0)
+    public async Task<string> GetMatchesThatAreCloseToTeamsMembers(InterfaceLeague _interfaceLeague, ulong _timeOffset = 0)
     {
         string generatedJumpUrlsWithTime = string.Empty;
 
@@ -161,7 +161,7 @@ public class Team
         }
 
         var listOfLeagueMatches = Database.GetInstance<ApplicationDatabase>().Leagues.CheckAndReturnTheListOfMatchesThatListPlayersAreIn(
-            listOfPlayersInUlong, TimeService.GetCurrentUnixTime());
+            listOfPlayersInUlong, TimeService.GetCurrentUnixTime(), _interfaceLeague);
 
         var listOfMatchesClose = Database.GetInstance<ApplicationDatabase>().Leagues.GetListOfMatchesClose(listOfLeagueMatches, _timeOffset);
 
@@ -171,7 +171,7 @@ public class Team
                 leagueMatch.MatchEventManager.GetTimeUntilEventOfType(typeof(MatchQueueAcceptEvent)));
 
             generatedJumpUrlsWithTime += " [" + timeLeft + " until " + await Database.GetInstance<DiscordBotDatabase>().Categories.GetMessageJumpUrl(
-                    leagueMatch.interfaceLeagueRef.LeagueCategoryId, leagueMatch.MatchChannelId,
+                    _interfaceLeague.LeagueCategoryId, leagueMatch.MatchChannelId,
                     MessageName.MATCHSTARTMESSAGE) + "]";
         }
 
