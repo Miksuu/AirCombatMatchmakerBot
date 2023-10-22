@@ -101,18 +101,20 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
                 continue;
             }
 
-            if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
-                scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
+            if (scheduledEvent.LeagueCategoryIdCached != mcc.interfaceLeagueCached.LeagueCategoryId ||
+                scheduledEvent.MatchChannelIdCached != mcc.leagueMatchCached.MatchChannelId)
             {
-                if (mcc.leagueMatchCached.IsAScheduledMatch)
-                {
-                    scheduledEventsMessage += "**" +
-                        TimeService.ConvertToZuluTimeFromUnixTime(scheduledEvent.TimeToExecuteTheEventOn).ToString() + "**\n";
-                }
-
-                scheduledEventsMessage += "Time left: " +
-                    TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + "\n";
+                continue;
             }
+
+            if (mcc.leagueMatchCached.IsAScheduledMatch)
+            {
+                scheduledEventsMessage += "**" +
+                    TimeService.ConvertToZuluTimeFromUnixTime(scheduledEvent.TimeToExecuteTheEventOn).ToString() + "**\n";
+            }
+
+            scheduledEventsMessage += "Time left: " +
+                TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + "\n";
         }
 
         return scheduledEventsMessage;
