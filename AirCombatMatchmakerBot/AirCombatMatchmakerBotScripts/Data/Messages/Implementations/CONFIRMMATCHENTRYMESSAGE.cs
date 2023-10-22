@@ -197,18 +197,20 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
     {
         string matchQueueEventMessage = string.Empty;
 
-        if (mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.Any(x => x.GetType() == typeof(MatchQueueAcceptEvent)))
+        if (mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.Any(x => x.GetType() != typeof(MatchQueueAcceptEvent)))
         {
-            var matchQueueEvent =
-                mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.FirstOrDefault(
-                    x => x.GetType() == typeof(MatchQueueAcceptEvent));
+            return matchQueueEventMessage;
+        }
 
-            var timeLeft = TimeService.CalculateTimeUntilWithUnixTime(matchQueueEvent.TimeToExecuteTheEventOn);
-            if (timeLeft > 1200)
-            {
-                matchQueueEventMessage +=
-                    "\n*Note that accepting the match 20 minutes before it's beginning makes your plane selection valid only for 5 minutes!*";
-            }
+        var matchQueueEvent =
+        mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.FirstOrDefault(
+            x => x.GetType() == typeof(MatchQueueAcceptEvent));
+
+        var timeLeft = TimeService.CalculateTimeUntilWithUnixTime(matchQueueEvent.TimeToExecuteTheEventOn);
+        if (timeLeft > 1200)
+        {
+            matchQueueEventMessage +=
+            "\n*Note that accepting the match 20 minutes before it's beginning makes your plane selection valid only for 5 minutes!*";
         }
 
         return matchQueueEventMessage;
