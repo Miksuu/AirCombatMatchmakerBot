@@ -210,7 +210,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         if (timeLeft > 1200)
         {
             matchQueueEventMessage +=
-            "\n*Note that accepting the match 20 minutes before it's beginning makes your plane selection valid only for 5 minutes!*";
+                "\n*Note that accepting the match 20 minutes before it's beginning makes your plane selection valid only for 5 minutes!*";
         }
 
         return matchQueueEventMessage;
