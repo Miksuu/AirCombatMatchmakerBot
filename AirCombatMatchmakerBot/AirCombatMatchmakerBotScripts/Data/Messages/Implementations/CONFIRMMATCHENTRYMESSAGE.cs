@@ -177,20 +177,22 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
     private void CheckPlayersReadyAndStartMatch(string _finalMessage, int _playersThatAreReady)
     {
-        if (_playersThatAreReady >= mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 &&
-            mcc.leagueMatchCached.MatchState == MatchState.PLAYERREADYCONFIRMATIONPHASE)
+        if (_playersThatAreReady < mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 ||
+            mcc.leagueMatchCached.MatchState != MatchState.PLAYERREADYCONFIRMATIONPHASE)
         {
-            mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(MatchQueueAcceptEvent));
-            mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
-
-            mcc.leagueMatchCached.MatchState = MatchState.REPORTINGPHASE;
-
-            InterfaceChannel interfaceChannel = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
-                    thisInterfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                        thisInterfaceMessage.MessageChannelId);
-
-            new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
+            return;
         }
+
+        mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(MatchQueueAcceptEvent));
+        mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
+
+        mcc.leagueMatchCached.MatchState = MatchState.REPORTINGPHASE;
+
+        InterfaceChannel interfaceChannel = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
+                thisInterfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                    thisInterfaceMessage.MessageChannelId);
+
+        new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
     }
 
     private string CheckMatchQueueEvent()
