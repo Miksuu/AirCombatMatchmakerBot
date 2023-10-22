@@ -119,21 +119,32 @@ public class PLANESELECTIONBUTTON : BaseButton
 
                 Log.WriteLine($"Done modifying: {_playerId} with plane: {planeReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam[_playerId]}", LogLevel.DEBUG);
 
-                bool skipCheck = CheckIfEveryoneIsReady(_playerTeam.TeamId);
-                if (skipCheck)
+                bool everyoneIsReady = CheckIfEveryoneIsReady(_playerTeam.TeamId);
+
+                if (!everyoneIsReady)
                 {
+                    _interfaceMessage.GenerateAndModifyTheMessage();
+                    var timeUntil = GetTimeUntil();
+                    if (timeUntil > 1200)
+                    {
+                        CreateTempQueueEvent(_playerId);
+                    }
+
                     return new Response("", true);
                 }
 
-                var timeUntil = GetTimeUntil();
-                if (timeUntil > 1200)
-                {
-                    CreateTempQueueEvent(_playerId);
-                }
+                mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(MatchQueueAcceptEvent));
+                mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
 
-                _interfaceMessage.GenerateAndModifyTheMessage();
+                mcc.leagueMatchCached.MatchState = MatchState.REPORTINGPHASE;
 
-                return new Response("", true);
+                InterfaceChannel interfaceChannel = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
+                        _interfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
+                            _interfaceMessage.MessageChannelId);
+
+                await SerializationManager.SerializeDB();
+
+                new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
             }
             catch (Exception ex)
             {
@@ -173,7 +184,7 @@ public class PLANESELECTIONBUTTON : BaseButton
                 return true;
             }
         }
-        
+
         return false;
     }
 

@@ -83,7 +83,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         var generatedTuple = GenerateMatchReportDataMessage();
         finalMessage += generatedTuple.Item1;
 
-        CheckPlayersReadyAndStartMatch(generatedTuple.Item1, generatedTuple.Item2);
+        //CheckPlayersReadyAndStartMatch(generatedTuple.Item1, generatedTuple.Item2);
 
         finalMessage += CheckMatchQueueEvent();
 
@@ -152,25 +152,25 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         return teamPlane;
     }
 
-    private int UpdateMatchReportDataMessage(ref string matchReportDataMessage, KeyValuePair<int, ReportData> teamKvp, KeyValuePair<ulong, UnitName> kvp, int playersThatAreReady)
+    private int UpdateMatchReportDataMessage(ref string _matchReportDataMessage, KeyValuePair<int, ReportData> _teamKvp, KeyValuePair<ulong, UnitName> _kvp, int _playersThatAreReady)
     {
         string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
 
-        if (kvp.Value != UnitName.NOTSELECTED)
+        if (_kvp.Value != UnitName.NOTSELECTED)
         {
             checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
-            playersThatAreReady++;
+            _playersThatAreReady++;
         }
 
-        matchReportDataMessage += checkmark + " " + teamKvp.Value.TeamName;
+        _matchReportDataMessage += checkmark + " " + _teamKvp.Value.TeamName;
 
         if (mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.Any(e => e.GetType() == typeof(TempQueueEvent)))
         {
-            AppendTempQueueEvents(ref matchReportDataMessage, kvp);
+            AppendTempQueueEvents(ref _matchReportDataMessage, _kvp);
         }
 
-        matchReportDataMessage += "\n";
-        return playersThatAreReady;
+        _matchReportDataMessage += "\n";
+        return _playersThatAreReady;
     }
 
     private void AppendTempQueueEvents(ref string matchReportDataMessage, KeyValuePair<ulong, UnitName> kvp)
@@ -190,25 +190,25 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
         }
     }
 
-    private void CheckPlayersReadyAndStartMatch(string _finalMessage, int _playersThatAreReady)
-    {
-        if (_playersThatAreReady < mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 ||
-            mcc.leagueMatchCached.MatchState != MatchState.PLAYERREADYCONFIRMATIONPHASE)
-        {
-            return;
-        }
+    // private void CheckPlayersReadyAndStartMatch(string _finalMessage, int _playersThatAreReady)
+    // {
+    //     if (_playersThatAreReady < mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2 ||
+    //         mcc.leagueMatchCached.MatchState != MatchState.PLAYERREADYCONFIRMATIONPHASE)
+    //     {
+    //         return;
+    //     }
 
-        mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(MatchQueueAcceptEvent));
-        mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
+    //     mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(MatchQueueAcceptEvent));
+    //     mcc.leagueMatchCached.MatchEventManager.ClearCertainTypeOfEventsFromTheList(typeof(TempQueueEvent));
 
-        mcc.leagueMatchCached.MatchState = MatchState.REPORTINGPHASE;
+    //     mcc.leagueMatchCached.MatchState = MatchState.REPORTINGPHASE;
 
-        InterfaceChannel interfaceChannel = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
-                thisInterfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
-                    thisInterfaceMessage.MessageChannelId);
+    //     InterfaceChannel interfaceChannel = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(
+    //             thisInterfaceMessage.MessageCategoryId).FindInterfaceChannelWithIdInTheCategory(
+    //                 thisInterfaceMessage.MessageChannelId);
 
-        new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
-    }
+    //     new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
+    // }
 
     private string CheckMatchQueueEvent()
     {
