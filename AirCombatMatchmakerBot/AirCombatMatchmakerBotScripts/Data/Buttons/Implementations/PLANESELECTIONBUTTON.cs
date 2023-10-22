@@ -155,23 +155,25 @@ public class PLANESELECTIONBUTTON : BaseButton
         return (InterfaceUnit)EnumExtensions.GetInstance(_playerSelectedPlane);
     }
 
-    // Need to fix this
     private bool CheckIfEveryoneIsReady(int _teamId)
     {
         foreach (var teamMember in mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData)
         {
-            if (teamMember.Key != _teamId)
+            if (teamMember.Key == _teamId)
             {
-                var otherTeamPlaneReportObject = GetPlaneReportObject(teamMember.Key);
+                continue;
+            }
 
-                var status = otherTeamPlaneReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.First();
+            var otherTeamPlaneReportObject = GetPlaneReportObject(teamMember.Key);
 
-                if (status.Value != UnitName.NOTSELECTED)
-                {
-                    return true;
-                }
+            var status = otherTeamPlaneReportObject.TeamMemberIdsWithSelectedPlanesByTheTeam.First();
+
+            if (status.Value != UnitName.NOTSELECTED)
+            {
+                return true;
             }
         }
+        
         return false;
     }
 
