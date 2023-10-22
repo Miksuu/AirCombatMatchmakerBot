@@ -8,7 +8,7 @@ public class ProgramRuntime
     // !!!
     // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
     // !!!
-    static public bool devModeOn = true;
+    static public bool devModeOn = false;
     // !!!
     // ONLY FOR TESTING, DELETES ALL CHANNELS AND CATEGORIES
     // !!!
