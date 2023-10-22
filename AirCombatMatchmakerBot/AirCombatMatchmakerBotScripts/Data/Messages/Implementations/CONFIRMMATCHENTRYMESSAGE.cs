@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using System.Collections.Concurrent;
 using Discord;
 
@@ -123,49 +123,15 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
     private (string, int) GenerateMatchReportDataMessage()
     {
         string matchReportDataMessage = string.Empty;
-
         var matchReportData = mcc.leagueMatchCached.MatchReporting.TeamIdsWithReportData;
-
         int playersThatAreReady = 0;
+
         foreach (var teamKvp in matchReportData)
         {
-            PLAYERPLANE? teamPlane = teamKvp.Value.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
-            if (teamPlane == null)
-            {
-                Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.ERROR);
-                throw new Exception(nameof(teamPlane) + " was null!");
-            }
-
+            PLAYERPLANE? teamPlane = GetTeamPlane(teamKvp);
             foreach (var kvp in teamPlane.TeamMemberIdsWithSelectedPlanesByTheTeam)
             {
-                string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
-
-                if (kvp.Value != UnitName.NOTSELECTED)
-                {
-                    checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
-                    playersThatAreReady++;
-                }
-
-                matchReportDataMessage += checkmark + " " + teamKvp.Value.TeamName;
-
-                if (mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.Any(e => e.GetType() == typeof(TempQueueEvent)))
-                {
-                    var listOfTempQueueEvents = mcc.leagueMatchCached.MatchEventManager.GetListOfEventsByType(typeof(TempQueueEvent));
-
-                    foreach (TempQueueEvent scheduledEvent in listOfTempQueueEvents)
-                    {
-                        if (scheduledEvent.PlayerIdCached != kvp.Key)
-                        {
-                            continue;
-                        }
-
-                        Log.WriteLine(scheduledEvent.TimeToExecuteTheEventOn.ToString());
-
-                        matchReportDataMessage += " (valid for: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + ")";
-                    }
-                }
-
-                matchReportDataMessage += "\n";
+                playersThatAreReady = UpdateMatchReportDataMessage(ref matchReportDataMessage, teamKvp, kvp, playersThatAreReady);
             }
         }
 
@@ -173,6 +139,55 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             mcc.interfaceLeagueCached.LeaguePlayerCountPerTeam * 2, LogLevel.DEBUG);
 
         return (matchReportDataMessage, playersThatAreReady);
+    }
+
+    private PLAYERPLANE GetTeamPlane(KeyValuePair<int, ReportData> teamKvp)
+    {
+        PLAYERPLANE? teamPlane = teamKvp.Value.FindBaseReportingObjectOfType(TypeOfTheReportingObject.PLAYERPLANE) as PLAYERPLANE;
+        if (teamPlane == null)
+        {
+            Log.WriteLine(nameof(teamPlane) + " was null!", LogLevel.ERROR);
+            throw new Exception(nameof(teamPlane) + " was null!");
+        }
+        return teamPlane;
+    }
+
+    private int UpdateMatchReportDataMessage(ref string matchReportDataMessage, KeyValuePair<int, ReportData> teamKvp, KeyValuePair<ulong, UnitName> kvp, int playersThatAreReady)
+    {
+        string checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.REDSQUARE);
+
+        if (kvp.Value != UnitName.NOTSELECTED)
+        {
+            checkmark = EnumExtensions.GetEnumMemberAttrValue(EmojiName.WHITECHECKMARK);
+            playersThatAreReady++;
+        }
+
+        matchReportDataMessage += checkmark + " " + teamKvp.Value.TeamName;
+
+        if (mcc.leagueMatchCached.MatchEventManager.ClassScheduledEvents.Any(e => e.GetType() == typeof(TempQueueEvent)))
+        {
+            AppendTempQueueEvents(ref matchReportDataMessage, kvp);
+        }
+
+        matchReportDataMessage += "\n";
+        return playersThatAreReady;
+    }
+
+    private void AppendTempQueueEvents(ref string matchReportDataMessage, KeyValuePair<ulong, UnitName> kvp)
+    {
+        var listOfTempQueueEvents = mcc.leagueMatchCached.MatchEventManager.GetListOfEventsByType(typeof(TempQueueEvent));
+
+        foreach (TempQueueEvent scheduledEvent in listOfTempQueueEvents)
+        {
+            if (scheduledEvent.PlayerIdCached != kvp.Key)
+            {
+                continue;
+            }
+
+            Log.WriteLine(scheduledEvent.TimeToExecuteTheEventOn.ToString());
+
+            matchReportDataMessage += " (valid for: " + TimeService.ReturnTimeLeftAsStringFromTheTimeTheActionWillTakePlace(scheduledEvent.TimeToExecuteTheEventOn) + ")";
+        }
     }
 
     private void CheckPlayersReadyAndStartMatch(string _finalMessage, int _playersThatAreReady)
