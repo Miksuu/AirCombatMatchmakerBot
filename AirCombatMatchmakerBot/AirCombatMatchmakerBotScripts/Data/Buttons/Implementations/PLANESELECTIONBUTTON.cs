@@ -145,6 +145,9 @@ public class PLANESELECTIONBUTTON : BaseButton
                 await SerializationManager.SerializeDB();
 
                 new Thread(() => mcc.leagueMatchCached.StartTheMatchOnSecondThread(interfaceChannel)).Start();
+
+                // Quits the method, already serialized
+                return new Response("", false);
             }
             catch (Exception ex)
             {
