@@ -1,4 +1,4 @@
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
 using System;
 
@@ -20,7 +20,7 @@ public static class LeagueManager
         {
             Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString(), LogLevel.DEBUG);
 
-            InterfaceLeague interfaceLeagueCategory = GetLeagueCategoryInstance(leagueCategoryName);
+            InterfaceLeague interfaceLeague = GetLeagueCategoryInstance(leagueCategoryName);
             Log.WriteLine(nameof(LeagueManager) + " with: " + Database.GetInstance<ApplicationDatabase>().PlayerData, LogLevel.VERBOSE);
 
             var dbT = Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues;
@@ -47,11 +47,11 @@ public static class LeagueManager
             SocketRole role =
                 await RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(leagueCategoryName.ToString());
 
-            interfaceLeagueCategory.LeagueRoleId = role.Id;
+            interfaceLeague.LeagueRoleId = role.Id;
 
-            interfaceLeagueCategory.LeagueCategoryId = newIC.SocketCategoryChannelId;
+            interfaceLeague.LeagueCategoryId = newIC.SocketCategoryChannelId;
 
-            Database.GetInstance<ApplicationDatabase>().Leagues.AddToStoredLeagues(interfaceLeagueCategory);
+            Database.GetInstance<ApplicationDatabase>().Leagues.AddToStoredLeagues(interfaceLeague);
 
             await interfaceCategory.CreateChannelsForTheCategory(newIC.SocketCategoryChannelId, role);
         }
