@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.WebSocket;
 using System;
 
@@ -27,9 +27,9 @@ public static class LeagueManager
 
             if (Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.Any(x => x.LeagueCategoryName == leagueCategoryName))
             {
-                Log.WriteLine(leagueCategoryName + " already exists, continuing with setting the references");
-                var interfaceLeagueRef = Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.FirstOrDefault(
-                    x => x.LeagueCategoryName == leagueCategoryName);
+                Log.WriteLine(leagueCategoryName + " already exists, continuing");
+                // var interfaceLeagueRef = Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.FirstOrDefault(
+                //     x => x.LeagueCategoryName == leagueCategoryName);
 
                 //interfaceLeagueRef.LeagueData.SetReferences(interfaceLeagueRef);
 
