@@ -257,13 +257,19 @@ public abstract class BaseLeague : InterfaceLeague
         return new Response("You are already part of the league", false);
     }
 
-    public void HandleLeaguesAndItsMatchesEvents(ulong _currentUnixTime)
+    public ConcurrentBag<ScheduledEvent> GetLeagueEventsAndReturnThemInConcurrentBag()
     {
-        thisInterfaceLeague.LeagueEventManager.HandleEvents(_currentUnixTime);
+        ConcurrentBag<ScheduledEvent> events = thisInterfaceLeague.LeagueEventManager.GetEvents();
 
-        foreach (LeagueMatch leagueMatch in  thisInterfaceLeague.LeagueData.Matches.MatchesConcurrentBag)
+        foreach (LeagueMatch leagueMatch in thisInterfaceLeague.LeagueData.Matches.MatchesConcurrentBag)
         {
-            leagueMatch.MatchEventManager.HandleEvents(_currentUnixTime);
+            ConcurrentBag<ScheduledEvent> matchEvents = leagueMatch.MatchEventManager.GetEvents();
+            foreach (var matchEvent in matchEvents)
+            {
+                events.Add(matchEvent);
+            }
         }
+
+        return events;
     }
 }

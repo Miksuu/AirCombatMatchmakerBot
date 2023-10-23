@@ -20,16 +20,16 @@ public static class LeagueManager
         {
             Log.WriteLine("Looping on category name: " + leagueCategoryName.ToString(), LogLevel.DEBUG);
 
-            InterfaceLeague interfaceLeagueCategory = GetLeagueCategoryInstance(leagueCategoryName);
+            InterfaceLeague interfaceLeague = GetLeagueCategoryInstance(leagueCategoryName);
             Log.WriteLine(nameof(LeagueManager) + " with: " + Database.GetInstance<ApplicationDatabase>().PlayerData, LogLevel.VERBOSE);
 
             var dbT = Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues;
 
             if (Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.Any(x => x.LeagueCategoryName == leagueCategoryName))
             {
-                Log.WriteLine(leagueCategoryName + " already exists, continuing with setting the references");
-                var interfaceLeagueRef = Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.FirstOrDefault(
-                    x => x.LeagueCategoryName == leagueCategoryName);
+                Log.WriteLine(leagueCategoryName + " already exists, continuing");
+                // var interfaceLeagueRef = Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues.FirstOrDefault(
+                //     x => x.LeagueCategoryName == leagueCategoryName);
 
                 //interfaceLeagueRef.LeagueData.SetReferences(interfaceLeagueRef);
 
@@ -47,11 +47,13 @@ public static class LeagueManager
             SocketRole role =
                 await RoleManager.CheckIfRoleExistsByNameAndCreateItIfItDoesntElseReturnIt(leagueCategoryName.ToString());
 
-            interfaceLeagueCategory.LeagueRoleId = role.Id;
+            interfaceLeague.LeagueRoleId = role.Id;
 
-            interfaceLeagueCategory.LeagueCategoryId = newIC.SocketCategoryChannelId;
+            interfaceLeague.LeagueCategoryId = newIC.SocketCategoryChannelId;
 
-            Database.GetInstance<ApplicationDatabase>().Leagues.AddToStoredLeagues(interfaceLeagueCategory);
+            Database.GetInstance<ApplicationDatabase>().Leagues.AddToStoredLeagues(interfaceLeague);
+
+            interfaceLeague.LeagueData.MatchScheduler.ActivateMatchScheduler(100000000, interfaceLeague);
 
             await interfaceCategory.CreateChannelsForTheCategory(newIC.SocketCategoryChannelId, role);
         }

@@ -27,5 +27,5 @@ public interface InterfaceLeague
 
     public Task<Response> RegisterUserToALeague(ulong _userId);
 
-    public void HandleLeaguesAndItsMatchesEvents(ulong _currentUnixTime);
+    public ConcurrentBag<ScheduledEvent> GetLeagueEventsAndReturnThemInConcurrentBag();
 }
