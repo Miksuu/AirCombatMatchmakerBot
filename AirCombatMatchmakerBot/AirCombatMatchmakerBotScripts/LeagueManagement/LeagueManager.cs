@@ -53,6 +53,8 @@ public static class LeagueManager
 
             Database.GetInstance<ApplicationDatabase>().Leagues.AddToStoredLeagues(interfaceLeague);
 
+            interfaceLeague.LeagueData.MatchScheduler.ActivateMatchScheduler(100000000, interfaceLeague);
+
             await interfaceCategory.CreateChannelsForTheCategory(newIC.SocketCategoryChannelId, role);
         }
     }
