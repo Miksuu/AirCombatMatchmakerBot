@@ -2,18 +2,16 @@
 
 public static class AdditionalEvents
 {
-    public static ConcurrentBag<ScheduledEvent> GetAdditionalEvents()
+    public static void HandleAdditionalEvents(ulong _currentUnixTime)
     {
-        ConcurrentBag<ScheduledEvent> events = new ConcurrentBag<ScheduledEvent>();
-
         foreach (var league in Database.GetInstance<ApplicationDatabase>().Leagues.StoredLeagues)
         {
-            foreach (var leagueEvent in league.GetLeagueEventsAndReturnThemInConcurrentBag())
+            league.LeagueEventManager.HandleEvents(_currentUnixTime);
+
+            foreach(var match in league.LeagueData.Matches.MatchesConcurrentBag)
             {
-                events.Add(leagueEvent);
+                match.MatchEventManager.HandleEvents(_currentUnixTime);
             }
         }
-
-        return events;
     }
 }
