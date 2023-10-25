@@ -87,8 +87,7 @@ public class MatchScheduler
         Log.WriteLine("Removing Team: " + playerTeam + " (" +
             playerTeam.TeamId + ") from the queue");
 
-        bool removed = TeamsInTheMatchmaker
-            .TryRemove(new KeyValuePair<int, TeamMatchmakerData>(playerTeam.TeamId, null));
+        bool removed = TeamsInTheMatchmaker.TryRemove(playerTeam.TeamId, out _);
 
         Log.WriteLine("Done removing: " + removed + "the team from the queue. Count is now: " +
             TeamsInTheMatchmaker.Count);
