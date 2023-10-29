@@ -35,7 +35,7 @@ public class CHALLENGEMESSAGE : BaseMessage
 
     private logConcurrentDictionary<int, string> teamsThatHaveMatchesClose = new logConcurrentDictionary<int, string>();
 
-    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         try
         {

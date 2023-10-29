@@ -31,7 +31,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         Log.WriteLine("Starting to generate a message for the confirmation", LogLevel.DEBUG);
 
@@ -39,8 +39,10 @@ public class CONFIRMATIONMESSAGE : BaseMessage
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
-            return Task.FromResult(nameof(mcc) + " was null!");
+            return Task.FromResult(new MessageComponents(nameof(mcc) + " was null!"));
         }
+
+        string playersToMention = mcc.leagueMatchCached.GenerateFinalMentionMessage(mcc.interfaceLeagueCached, false);
 
         string finalMessage = "Confirmed:\n";
 
@@ -89,7 +91,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 
-        return Task.FromResult(finalMessage);
+        return Task.FromResult(new MessageComponents(thisInterfaceMessage.MessageDescription, playersToMention));
     }
 
     public override string GenerateMessageFooter()

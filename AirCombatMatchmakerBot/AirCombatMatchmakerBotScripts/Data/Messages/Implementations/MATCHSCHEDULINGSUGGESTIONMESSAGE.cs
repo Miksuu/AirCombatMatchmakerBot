@@ -25,7 +25,7 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public async override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public async override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         try
         {
@@ -35,14 +35,16 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
                 string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                     nameof(mcc.leagueMatchCached) + " was null!";
                 Log.WriteLine(errorMsg, LogLevel.ERROR);
-                return errorMsg;
+                return new MessageComponents(errorMsg, "");
             }
+
+            string playersToMention = mcc.leagueMatchCached.GenerateFinalMentionMessage(mcc.interfaceLeagueCached, true);
 
             var scheduleObject = mcc.leagueMatchCached.ScheduleObject;
             var teamsInTheMatch = mcc.leagueMatchCached.TeamsInTheMatch;
             if (!teamsInTheMatch.ContainsKey(scheduleObject.TeamIdThatRequestedScheduling))
             {
-                return thisInterfaceMessage.MessageDescription;
+                return new MessageComponents(thisInterfaceMessage.MessageDescription, playersToMention);
             }
 
             var requestedTime = TimeService.ConvertToZuluTimeFromUnixTime(scheduleObject.RequestedSchedulingTimeInUnixTime);
@@ -57,14 +59,12 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
                     mcc.interfaceLeagueCached.LeagueCategoryId, mcc.leagueMatchCached.MatchChannelId,
                     MessageName.MATCHSCHEDULINGMESSAGE) + " to propose a new time!";
 
-            Log.WriteLine(thisInterfaceMessage.MessageDescription);
-
-            return thisInterfaceMessage.MessageDescription;
+            return new MessageComponents(thisInterfaceMessage.MessageDescription, playersToMention);
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.ERROR);
-            return Task.FromResult(ex.Message).Result;
+            return Task.FromResult(new MessageComponents(ex.Message, "")).Result;
         }
     }
 

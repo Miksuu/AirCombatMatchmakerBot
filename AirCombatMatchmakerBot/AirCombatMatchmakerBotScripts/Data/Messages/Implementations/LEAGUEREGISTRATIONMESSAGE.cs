@@ -25,7 +25,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public async override Task<string> GenerateMessage(ulong _messageCategoryId = 0)
+    public async override Task<MessageComponents> GenerateMessage(ulong _messageCategoryId = 0)
     {
         Log.WriteLine("Starting to generate the league registration message with: " +
             belongsToLeagueCategoryId, LogLevel.DEBUG);

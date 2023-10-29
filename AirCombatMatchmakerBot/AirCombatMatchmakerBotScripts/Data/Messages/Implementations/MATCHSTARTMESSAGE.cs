@@ -16,7 +16,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         string generatedMessage = "";
         bool firstTeam = true;
@@ -29,8 +29,10 @@ public class MATCHSTARTMESSAGE : BaseMessage
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
-            return Task.FromResult(nameof(mcc) + " was null!");
+            return Task.FromResult(new MessageComponents(nameof(mcc) + " was null!", ""));
         }
+
+        string playersToMention = mcc.leagueMatchCached.GenerateFinalMentionMessage(mcc.interfaceLeagueCached, false);       
 
         foreach (var teamKvp in mcc.leagueMatchCached.TeamsInTheMatch)
         {
@@ -53,7 +55,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
             }
         }
 
-        return Task.FromResult(generatedMessage);
+        return Task.FromResult(new MessageComponents(thisInterfaceMessage.MessageDescription, playersToMention));
     }
 
     public override string GenerateMessageFooter()

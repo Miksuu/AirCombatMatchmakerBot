@@ -23,7 +23,7 @@ public class RAWMESSAGEINPUT : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         if (thisInterfaceMessage.MessageDescription == null)
         {

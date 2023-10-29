@@ -476,4 +476,23 @@ public class LeagueMatch
             }
         }
     }
+
+    public string GenerateFinalMentionMessage(InterfaceLeague _interfaceLeague, bool _mentionOtherTeamsPlayers)
+    {
+        string finalMentionMessage = "";
+        ulong[] playerIdsInTheMatch = GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague);
+        foreach (ulong playerId in playerIdsInTheMatch)
+        {
+            // Skip pinging the team that doesn't need to be pinged (such as when received Schedule request)
+            if (_mentionOtherTeamsPlayers &&
+                _interfaceLeague.LeagueData.FindActiveTeamByPlayerIdInAPredefinedLeagueByPlayerId(playerId).TeamId ==
+                ScheduleObject.TeamIdThatRequestedScheduling)
+            {
+                continue;
+            }
+
+            finalMentionMessage += "<@" + playerId.ToString() + "> ";
+        }
+        return finalMentionMessage;
+    }
 }
