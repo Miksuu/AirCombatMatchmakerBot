@@ -97,7 +97,7 @@ public class CHALLENGEMESSAGE : BaseMessage
 
             thisInterfaceMessage.MessageDescription = finalMessage;
 
-            return Task.FromResult(thisInterfaceMessage.MessageDescription);
+            return Task.FromResult(new MessageComponents(thisInterfaceMessage.MessageDescription));
 
         }
         catch (Exception ex)

@@ -31,7 +31,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
             string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                 nameof(mcc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.ERROR);
-            return Task.FromResult(errorMsg);
+            return Task.FromResult(new MessageComponents(errorMsg));
         }
 
         foreach (var teamKvp in mcc.leagueMatchCached.TeamsInTheMatch)
@@ -94,7 +94,7 @@ public class REPORTINGSTATUSMESSAGE : BaseMessage
 
         Log.WriteLine("Returning: " + reportingStatusMessage, LogLevel.DEBUG);
 
-        return Task.FromResult(reportingStatusMessage);
+        return Task.FromResult(new MessageComponents(reportingStatusMessage));
     }
 
     public override string GenerateMessageFooter()

@@ -54,12 +54,12 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
             Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 
-            return Task.FromResult(finalMessage);
+            return Task.FromResult(new MessageComponents(finalMessage));
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.ERROR);
-            return Task.FromResult(ex.Message);
+            return Task.FromResult(new MessageComponents(ex.Message));
         }
     }
 

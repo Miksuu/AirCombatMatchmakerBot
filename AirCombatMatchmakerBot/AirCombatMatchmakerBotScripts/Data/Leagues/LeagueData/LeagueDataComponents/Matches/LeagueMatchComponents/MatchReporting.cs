@@ -147,7 +147,7 @@ public class MatchReporting
                 var interfaceMessage = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
                     MessageName.MATCHFINALRESULTMESSAGE);
 
-                FinalResultForConfirmation = interfaceMessage.GenerateMessage().Result;
+                FinalResultForConfirmation = interfaceMessage.GenerateMessage().Result.message;
                 // Must be called after GenerateMessage() since it's defined there
                 FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
                 interfaceMessage.GenerateAndModifyTheMessage();

@@ -49,7 +49,7 @@ public class MATCHSCHEDULERSTATUSMESSAGE : BaseMessage
 
             finalMessage += "*Click the buttons below to join/leave the scheduler*";
 
-            return Task.FromResult(thisInterfaceMessage.MessageDescription);
+            return Task.FromResult(new MessageComponents(thisInterfaceMessage.MessageDescription));
         }
         catch (Exception ex)
         {

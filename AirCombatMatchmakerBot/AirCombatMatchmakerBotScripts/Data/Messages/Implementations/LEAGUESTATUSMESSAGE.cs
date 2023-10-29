@@ -46,7 +46,7 @@ public class LEAGUESTATUSMESSAGE : BaseMessage
             Log.WriteLine("Generated the leaderboard: " + finalMessage);
         }
 
-        return Task.FromResult(finalMessage);
+        return Task.FromResult(new MessageComponents(finalMessage));
     }
 
     public override string GenerateMessageFooter()

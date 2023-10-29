@@ -38,7 +38,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
             string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                 nameof(mcc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.ERROR);
-            return Task.FromResult(errorMsg);
+            return Task.FromResult(new MessageComponents(errorMsg));
         }
 
         string finalMessage = string.Empty;
@@ -144,7 +144,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         Log.WriteLine("Returning: " + finalMessage, LogLevel.DEBUG);
 
-        return Task.FromResult(finalMessage);
+        return Task.FromResult(new MessageComponents(finalMessage));
     }
 
     public override string GenerateMessageFooter()

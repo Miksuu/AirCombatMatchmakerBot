@@ -47,7 +47,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         Log.WriteLine(returned);
 
-        return returned;
+        return new MessageComponents(returned);
     }
 
     private async Task<string> GetChannelSpecificJumpUrl(InterfaceCategory _interfaceCategory, ChannelType _channelType, MessageName _messageName)
