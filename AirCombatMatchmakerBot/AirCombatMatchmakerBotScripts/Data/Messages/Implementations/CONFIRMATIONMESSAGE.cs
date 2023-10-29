@@ -91,7 +91,7 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 
-        return Task.FromResult(new MessageComponents(thisInterfaceMessage.MessageDescription, playersToMention));
+        return Task.FromResult(new MessageComponents(finalMessage, playersToMention));
     }
 
     public override string GenerateMessageFooter()
