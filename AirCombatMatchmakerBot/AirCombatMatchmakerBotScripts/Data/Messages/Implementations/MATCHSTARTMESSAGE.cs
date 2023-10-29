@@ -55,7 +55,7 @@ public class MATCHSTARTMESSAGE : BaseMessage
             }
         }
 
-        return Task.FromResult(new MessageComponents(thisInterfaceMessage.MessageDescription, playersToMention));
+        return Task.FromResult(new MessageComponents(generatedMessage, playersToMention));
     }
 
     public override string GenerateMessageFooter()
