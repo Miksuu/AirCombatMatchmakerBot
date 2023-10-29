@@ -25,7 +25,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public async override Task<string> GenerateMessage(ulong _messageCategoryId = 0)
+    public async override Task<MessageComponents> GenerateMessage(ulong _messageCategoryId = 0)
     {
         Log.WriteLine("Starting to generate the league registration message with: " +
             belongsToLeagueCategoryId, LogLevel.DEBUG);
@@ -47,7 +47,7 @@ public class LEAGUEREGISTRATIONMESSAGE : BaseMessage
 
         Log.WriteLine(returned);
 
-        return returned;
+        return new MessageComponents(returned);
     }
 
     private async Task<string> GetChannelSpecificJumpUrl(InterfaceCategory _interfaceCategory, ChannelType _channelType, MessageName _messageName)

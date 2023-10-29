@@ -28,7 +28,7 @@ public class REGISTRATIONMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         /*
         if (MessageDescription == null)
@@ -37,7 +37,7 @@ public class REGISTRATIONMESSAGE : BaseMessage
             return "";
         }*/
 
-        return Task.FromResult(thisInterfaceMessage.MessageDescription);
+        return Task.FromResult(new MessageComponents(thisInterfaceMessage.MessageDescription));
     }
 
     public override string GenerateMessageFooter()

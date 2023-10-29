@@ -42,7 +42,7 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
             buttonsToGenerate, ButtonName.PLANESELECTIONBUTTON, _component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         try
         {
@@ -54,12 +54,12 @@ public class CONFIRMMATCHENTRYMESSAGE : BaseMessage
 
             Log.WriteLine("Generated: " + finalMessage, LogLevel.DEBUG);
 
-            return Task.FromResult(finalMessage);
+            return Task.FromResult(new MessageComponents(finalMessage));
         }
         catch (Exception ex)
         {
             Log.WriteLine(ex.Message, LogLevel.ERROR);
-            return Task.FromResult(ex.Message);
+            return Task.FromResult(new MessageComponents(ex.Message));
         }
     }
 

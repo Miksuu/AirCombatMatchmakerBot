@@ -25,13 +25,13 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         mcc = new MatchChannelComponents(this);
         if (mcc.interfaceLeagueCached == null || mcc.leagueMatchCached == null)
         {
             Log.WriteLine(nameof(mcc) + " was null!", LogLevel.ERROR);
-            return Task.FromResult(nameof(mcc) + " was null!");
+            return Task.FromResult(new MessageComponents(nameof(mcc) + " was null!"));
         }
 
         string finalMessage = "Enter the time you would be able to play the match on in format: \n " +
@@ -58,7 +58,7 @@ public class MATCHSCHEDULINGMESSAGE : BaseMessage
 
         finalMessage += Database.GetInstance<ApplicationDatabase>().Leagues.GetListOfTimesThatWontBeSuitableForScheduling(leagueMatch, mcc.interfaceLeagueCached);
 
-        return Task.FromResult(finalMessage);
+        return Task.FromResult(new MessageComponents(finalMessage));
     }
 
     public override string GenerateMessageFooter()

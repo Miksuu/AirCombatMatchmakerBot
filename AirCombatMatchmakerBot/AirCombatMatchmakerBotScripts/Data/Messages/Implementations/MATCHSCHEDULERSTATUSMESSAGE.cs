@@ -27,7 +27,7 @@ public class MATCHSCHEDULERSTATUSMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         try
         {
@@ -49,7 +49,7 @@ public class MATCHSCHEDULERSTATUSMESSAGE : BaseMessage
 
             finalMessage += "*Click the buttons below to join/leave the scheduler*";
 
-            return Task.FromResult(thisInterfaceMessage.MessageDescription);
+            return Task.FromResult(new MessageComponents(thisInterfaceMessage.MessageDescription));
         }
         catch (Exception ex)
         {

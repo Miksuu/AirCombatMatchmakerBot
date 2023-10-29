@@ -23,15 +23,15 @@ public class RAWMESSAGEINPUT : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         if (thisInterfaceMessage.MessageDescription == null)
         {
             Log.WriteLine("MessageDescription was null!", LogLevel.ERROR);
-            return Task.FromResult("MessageDescription was null!");
+            return Task.FromResult(new MessageComponents("MessageDescription was null!"));
         }
 
-        return Task.FromResult(thisInterfaceMessage.MessageDescription);
+        return Task.FromResult(new MessageComponents(thisInterfaceMessage.MessageDescription));
     }
 
     public string GenerateRawMessage(string _input, string _embedTitle = "")

@@ -28,7 +28,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
         base.GenerateRegularButtons(_component, _channelCategoryId);
     }
 
-    public override Task<string> GenerateMessage(ulong _channelCategoryId = 0)
+    public override Task<MessageComponents> GenerateMessage(ulong _channelCategoryId = 0)
     {
         Log.WriteLine("Starting to generate the message for the match final result");
 
@@ -38,7 +38,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
             string errorMsg = nameof(mcc.interfaceLeagueCached) + " or " +
                 nameof(mcc.leagueMatchCached) + " was null!";
             Log.WriteLine(errorMsg, LogLevel.ERROR);
-            return Task.FromResult(errorMsg);
+            return Task.FromResult(new MessageComponents(errorMsg));
         }
 
         string finalMessage = string.Empty;
@@ -144,7 +144,7 @@ public class MATCHFINALRESULTMESSAGE : BaseMessage
 
         Log.WriteLine("Returning: " + finalMessage, LogLevel.DEBUG);
 
-        return Task.FromResult(finalMessage);
+        return Task.FromResult(new MessageComponents(finalMessage));
     }
 
     public override string GenerateMessageFooter()
