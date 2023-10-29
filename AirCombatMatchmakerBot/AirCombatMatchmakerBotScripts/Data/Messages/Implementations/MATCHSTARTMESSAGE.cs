@@ -9,7 +9,6 @@ public class MATCHSTARTMESSAGE : BaseMessage
     {
         thisInterfaceMessage.MessageName = MessageName.MATCHSTARTMESSAGE;
         thisInterfaceMessage.MessageDescription = "Insert the match start message here";
-        mentionMatchPlayers = true;
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _channelCategoryId)

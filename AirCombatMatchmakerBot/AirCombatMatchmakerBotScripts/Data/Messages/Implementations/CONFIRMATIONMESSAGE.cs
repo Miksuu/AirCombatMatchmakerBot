@@ -24,7 +24,6 @@ public class CONFIRMATIONMESSAGE : BaseMessage
 
         thisInterfaceMessage.MessageEmbedTitle = "Match confirmation";
         thisInterfaceMessage.MessageDescription = "";
-        mentionMatchPlayers = true;
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _channelCategoryId)

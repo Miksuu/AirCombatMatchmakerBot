@@ -18,7 +18,6 @@ public class MATCHSCHEDULINGSUGGESTIONMESSAGE : BaseMessage
             });
 
         thisInterfaceMessage.MessageEmbedTitle = "";
-        mentionOtherTeamsPlayers = true;
     }
 
     protected override void GenerateButtons(ComponentBuilder _component, ulong _channelCategoryId)
