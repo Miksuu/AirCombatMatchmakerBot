@@ -38,6 +38,12 @@ public enum UnitName
     [EnumMember(Value = "F-14B")]
     F14B,
 
+    [EnumMember(Value = "F-15C")]
+    F15C,
+
+    [EnumMember(Value = "F-15E")]
+    F15E,
+
     /*
     [EnumMember(Value = "SA342L")]
     SA342L,
