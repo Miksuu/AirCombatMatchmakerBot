@@ -6,9 +6,12 @@ using System.Runtime.Serialization;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum LeagueName
 {
-    [EnumMember(Value = "1v1 Modern BFM Guns")]
-    ONEMODERNBFMGUNS = 0,
+    [EnumMember(Value = "1v1 Modern BVR")]
+    ONEMODERNBVR = 0,
 
     [EnumMember(Value = "1v1 Modern BFM Fox2")]
     ONEMODERNBFMFOXTWO = 1,
+
+    [EnumMember(Value = "1v1 Modern BFM Guns")]
+    ONEMODERNBFMGUNS = 2,
 }
