@@ -95,9 +95,9 @@ public class CHALLENGEMESSAGE : BaseMessage
             finalMessage += challengeMessage;
             finalMessage += "*Click the buttons below to join/leave the scheduler*";
 
-            thisInterfaceMessage.MessageDescription = finalMessage;
+            //thisInterfaceMessage.MessageDescription = finalMessage;
 
-            return Task.FromResult(new MessageComponents(thisInterfaceMessage.MessageDescription));
+            return Task.FromResult(new MessageComponents(finalMessage));
 
         }
         catch (Exception ex)
