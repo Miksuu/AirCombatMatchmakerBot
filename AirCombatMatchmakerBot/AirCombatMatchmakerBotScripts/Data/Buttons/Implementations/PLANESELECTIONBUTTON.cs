@@ -123,7 +123,7 @@ public class PLANESELECTIONBUTTON : BaseButton
 
                 if (!everyoneIsReady)
                 {
-                    _interfaceMessage.GenerateAndModifyTheMessage();
+                    _interfaceMessage.GenerateAndModifyTheMessageAsync();
                     var timeUntil = GetTimeUntil();
                     if (timeUntil > 1200)
                     {

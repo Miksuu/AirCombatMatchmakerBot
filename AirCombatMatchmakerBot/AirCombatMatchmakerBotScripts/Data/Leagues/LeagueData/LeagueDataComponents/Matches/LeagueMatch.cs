@@ -430,7 +430,7 @@ public class LeagueMatch
                 MatchChannelId, "match", _interfaceLeague.LeagueEventManager.ClassScheduledEvents);
 
             var messageToModify = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(MessageName.CONFIRMATIONMESSAGE);
-            messageToModify.GenerateAndModifyTheMessage();
+            messageToModify.GenerateAndModifyTheMessageAsync();
 
             //await interfaceChannel.DeleteThisChannel(_interfaceLeague.LeagueCategoryId, "match", matchChannelDeleteDelay);
 

@@ -150,13 +150,13 @@ public class MatchReporting
                 FinalResultForConfirmation = interfaceMessage.GenerateMessage().Result.message;
                 // Must be called after GenerateMessage() since it's defined there
                 FinalResultTitleForConfirmation = interfaceMessage.MessageEmbedTitle;
-                interfaceMessage.GenerateAndModifyTheMessage();
+                interfaceMessage.GenerateAndModifyTheMessageAsync();
             }
             else if (matchState == MatchState.REPORTINGPHASE)
             {
                 InterfaceMessage messageToEdit = interfaceChannel.FindInterfaceMessageWithNameInTheChannel(
                 MessageName.REPORTINGSTATUSMESSAGE);
-                messageToEdit.GenerateAndModifyTheMessage();
+                messageToEdit.GenerateAndModifyTheMessageAsync();
             }
 
             foreach (var reportedTeamKvp in TeamIdsWithReportData)

@@ -43,7 +43,7 @@ public class CHALLENGEQUEUECANCELBUTTON : BaseButton
             return new Response("You are not in the queue!!", false);
         }
 
-        _interfaceMessage.GenerateAndModifyTheMessage();
+        _interfaceMessage.GenerateAndModifyTheMessageAsync();
 
         Log.WriteLine("After modifying message");
 

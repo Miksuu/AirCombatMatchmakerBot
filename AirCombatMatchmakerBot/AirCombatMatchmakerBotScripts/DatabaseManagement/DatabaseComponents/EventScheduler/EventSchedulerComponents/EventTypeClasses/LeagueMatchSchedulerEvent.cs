@@ -65,7 +65,7 @@ public class LeagueMatchSchedulerEvent : ScheduledEvent
 
             if (updateTheMessage)
             {
-                challengeMessageAsInterface.GenerateAndModifyTheMessage();
+                challengeMessageAsInterface.GenerateAndModifyTheMessageAsync();
             }
 
             lcc.interfaceLeagueCached.LeagueData.MatchScheduler.CheckCurrentStateOfTheMatchmakerAndAssignMatches(lcc.interfaceLeagueCached);

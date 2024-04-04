@@ -108,7 +108,7 @@ public class ChallengeStatus
     {
         CHALLENGEMESSAGE challengeMessage = _interfaceMessage as CHALLENGEMESSAGE;
         await challengeMessage.UpdateTeamsThatHaveMatchesClose(_interfaceLeague);
-        challengeMessage.GenerateAndModifyTheMessage();
+        challengeMessage.GenerateAndModifyTheMessageAsync();
     }
 
     public void RemoveFromTeamFromTheQueue(Team _Team)

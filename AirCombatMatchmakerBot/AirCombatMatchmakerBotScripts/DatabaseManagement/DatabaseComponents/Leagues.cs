@@ -150,7 +150,7 @@ public class Leagues
 
                             foreach (var messageKvp in leagueRegistrationMessages)
                             {
-                                messageKvp.Value.GenerateAndModifyTheMessage();
+                                messageKvp.Value.GenerateAndModifyTheMessageAsync();
                             }
 
                             break;
@@ -198,7 +198,7 @@ public class Leagues
 
         foreach (var message in toBeModifiedMessages)
         {
-            message.GenerateAndModifyTheMessage();
+            message.GenerateAndModifyTheMessageAsync();
         }
     }
 

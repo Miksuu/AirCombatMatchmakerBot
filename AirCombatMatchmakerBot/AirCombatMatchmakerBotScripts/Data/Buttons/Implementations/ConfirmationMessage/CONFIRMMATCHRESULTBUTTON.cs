@@ -84,6 +84,7 @@ public class CONFIRMMATCHRESULTBUTTON : BaseButton
         Log.WriteLine("Found: " + confirmationMessage.MessageId + " with content: " +
             confirmationMessage.MessageDescription, LogLevel.DEBUG);
 
-       confirmationMessage.GenerateAndModifyTheMessage();
+        confirmationMessage.GenerateAndModifyTheMessageAsync();
     }
 }
+

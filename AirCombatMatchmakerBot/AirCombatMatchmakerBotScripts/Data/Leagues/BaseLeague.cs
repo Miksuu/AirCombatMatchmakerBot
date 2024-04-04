@@ -156,7 +156,7 @@ public abstract class BaseLeague : InterfaceLeague
                         FindInterfaceMessageWithNameInTheChannel(
                             MessageName.LEAGUESTATUSMESSAGE);
 
-            leagueStatusMessage.GenerateAndModifyTheMessage();
+            leagueStatusMessage.GenerateAndModifyTheMessageAsync();
         }
         catch (Exception ex) 
         {
