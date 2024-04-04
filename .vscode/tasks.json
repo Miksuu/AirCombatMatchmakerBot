@@ -1,16 +1,54 @@
 {
 	"version": "2.0.0",
 	"tasks": [
+	//   {
+	// 	"label": "build",
+	// 	"command": "dotnet",
+	// 	"type": "shell",
+	// 	"args": [
+	// 	  "build",
+	// 	  // Add your project file here if it's not in the root directory
+	// 	  "${workspaceFolder}/AirCombatMatchmakerBot.csproj",
+	// 	  // Build properties go here. For example,
+	// 	  "/property:GenerateFullPaths=true"
+	// 	],
+	// 	"group": {
+	// 	  "kind": "build",
+	// 	  "isDefault": true
+	// 	},
+	// 	"presentation": {
+	// 	  "reveal": "silent"
+	// 	},
+	// 	"problemMatcher": "$msCompile"
+	//   }
 	  {
-		"label": "build",
+		"label": "build-debug",
 		"command": "dotnet",
 		"type": "shell",
 		"args": [
 		  "build",
-		  // Add your project file here if it's not in the root directory
 		  "${workspaceFolder}/AirCombatMatchmakerBot.csproj",
-		  // Build properties go here. For example,
-		  "/property:GenerateFullPaths=true"
+		  "/property:GenerateFullPaths=true",
+		  "/property:Configuration=DEBUG"
+		],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		},
+		"presentation": {
+		  "reveal": "silent"
+		},
+		"problemMatcher": "$msCompile"
+	  },
+	  {
+		"label": "build-release",
+		"command": "dotnet",
+		"type": "shell",
+		"args": [
+		  "build",
+		  "${workspaceFolder}/AirCombatMatchmakerBot.csproj",
+		  "/property:GenerateFullPaths=true",
+		  "/property:Configuration=RELEASE"
 		],
 		"group": {
 		  "kind": "build",
