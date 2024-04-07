@@ -374,6 +374,12 @@ public class Leagues
                         //    continue;
                         //}
 
+                        if (matchesThatThePlayersAreIn.Contains(leagueMatch))
+                        {
+                            Log.WriteLine(leagueMatch.MatchId + " was already on the list! (Avoiding duplicates the matches that both players are in already)");
+                            continue;
+                        }
+
                         if (leagueMatch.MatchState != MatchState.PLAYERREADYCONFIRMATIONPHASE)
                         {
                             Log.WriteLine("State was not correct one, continuing");
