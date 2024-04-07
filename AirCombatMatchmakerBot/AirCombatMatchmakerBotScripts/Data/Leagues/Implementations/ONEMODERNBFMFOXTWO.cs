@@ -21,6 +21,9 @@ public class ONEMODERNBFMFOXTWO : BaseLeague
             UnitName.F14B,
             UnitName.F15C,
             UnitName.F15E,
+            UnitName.MIG29,
+            UnitName.J11,
+            UnitName.SU33
         };
     }
 
