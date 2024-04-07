@@ -55,27 +55,39 @@ public class Matches
     {
         try
         {
+            Log.WriteLine("Entering CreateAMatchChannel method.");
             // Get the category by the league category name passed in the method
+            Log.WriteLine("Attempting to get league category by name: " + _leagueMatch.MatchLeague.ToString());
             var categoryKvp =
                 Database.GetInstance<ApplicationDatabase>().Leagues.GetILeagueByCategoryName(_leagueMatch.MatchLeague);
+            Log.WriteLine("League category obtained: " + categoryKvp.ToString());
 
+            Log.WriteLine("Converting LeagueMatch MatchId to string.");
             string leagueMatchIdString = _leagueMatch.MatchId.ToString();
+            Log.WriteLine("LeagueMatchIdString: " + leagueMatchIdString);
 
             // Prep the channel name with match id
+            Log.WriteLine("Preparing overridden match name.");
             string overriddenMatchName = "match-" + leagueMatchIdString;
+            Log.WriteLine("OverriddenMatchName: " + overriddenMatchName);
 
-            Log.WriteLine("Starting to create a new match channel: " +
-                overriddenMatchName);
+            Log.WriteLine("Starting to create a new match channel: " + overriddenMatchName);
 
+            Log.WriteLine("Finding interface category with CategoryId: " + categoryKvp.LeagueCategoryId.ToString());
             var dbRegularCategory = Database.GetInstance<DiscordBotDatabase>().Categories.FindInterfaceCategoryWithCategoryId(categoryKvp.LeagueCategoryId);
+            Log.WriteLine("DbRegularCategory found: " + dbRegularCategory.ToString());
 
             // Prepare the match with the ID of the current new match
+            Log.WriteLine("Creating specific channel from channel type without role.");
             InterfaceChannel interfaceChannel = await dbRegularCategory.CreateSpecificChannelFromChannelTypeWithoutRole(
                     ChannelType.MATCHCHANNEL, categoryKvp.LeagueCategoryId,
                     overriddenMatchName, // Override's the channel's name with the match name with that match-[id]
                     _leagueMatch.GetIdsOfThePlayersInTheMatchAsArray(_interfaceLeague));
+            Log.WriteLine("InterfaceChannel created: " + interfaceChannel.ToString());
 
+            Log.WriteLine("Setting LeagueMatch MatchChannelId.");
             _leagueMatch.MatchChannelId = interfaceChannel.ChannelId;
+            Log.WriteLine("LeagueMatch MatchChannelId set: " + _leagueMatch.MatchChannelId.ToString());
 
             if (!Database.GetInstance<ApplicationDatabase>().MatchChannelsIdWithCategoryId.ContainsKey(
                 interfaceChannel.ChannelId))

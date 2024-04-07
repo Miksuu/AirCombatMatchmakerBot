@@ -80,9 +80,9 @@ public class CONFIRMATIONMESSAGE : BaseMessage
                         if (scheduledEvent.LeagueCategoryIdCached == mcc.interfaceLeagueCached.LeagueCategoryId &&
                             scheduledEvent.MatchChannelIdCached == mcc.leagueMatchCached.MatchChannelId)
                         {
-                            var timeLeft = TimeService.CalculateTimeUntilWithUnixTime(scheduledEvent.TimeToExecuteTheEventOn);// - TimeService.GetCurrentUnixTime();
+                            //var timeLeft = TimeService.CalculateTimeUntilWithUnixTime(scheduledEvent.TimeToExecuteTheEventOn);// - TimeService.GetCurrentUnixTime();
 
-                            finalMessage += "\n\n Match is done. Deleting this channel in " + timeLeft + " seconds!";
+                            finalMessage += "\n\n Match is done. Deleting this channel in 45 seconds!";
                         }
                     }
                 }
