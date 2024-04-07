@@ -10,7 +10,7 @@
   
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.10.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Pastel" Version="4.0.2" />
   </ItemGroup>
 
